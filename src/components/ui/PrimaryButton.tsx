@@ -13,7 +13,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 }) => {
   return (
     <button
-      className={`flex justify-center items-center flex-grow relative gap-1 px-6 py-2 rounded bg-copado-blue text-white shadow-sm hover:bg-copado-dark hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-copado-blue disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`flex justify-center items-center flex-grow relative gap-1 px-6 py-2 rounded bg-copado-blue text-white shadow-sm hover:bg-indigo-600 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-copado-blue disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       disabled={disabled}
       {...props}
     >

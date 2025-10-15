@@ -52,36 +52,47 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div 
-      className={`fixed inset-0 flex items-center justify-center z-50 bg-slate-500/50 backdrop-blur-sm ${overlayClassName}`}
+      className={`fixed inset-0 flex items-center justify-center z-50 bg-[#45556C] ${overlayClassName}`}
       onClick={handleOverlayClick}
     >
-      {/* Close button positioned outside the modal */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 z-[60] w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-      >
-        <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-
       {/* Modal content */}
       <div 
         ref={modalRef}
-        className={`bg-white w-full mx-4 relative min-w-[320px] max-w-2xl rounded-xl shadow-xl p-6 ${contentClassName}`}
+        className={`flex flex-col justify-start items-center w-full max-w-[436px] h-[400px] overflow-hidden gap-6 p-6 rounded-xl bg-white shadow-xl mx-6 max-h-[calc(100vh-48px)] md:w-[436px] md:mx-0 md:max-h-none ${contentClassName}`}
+        style={{ boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -2px rgba(0,0,0,0.05)" }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Close button - X icon positioned in top right */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors z-10"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="text-gray-600"
+          >
+            <path
+              d="M8 6.223L13.223 1L14 1.778L8.777 7L14 12.223L13.223 13L8 7.778L2.777 13L2 12.223L7.223 7L2 1.778L2.777 1L8 6.223Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+
         {/* Title section */}
         {title && (
-          <div className="flex flex-col justify-start items-center gap-2 mb-6">
-            <h2 className="text-2xl font-semibold text-center capitalize text-slate-800 w-full">
+          <div className="flex flex-col justify-start items-center self-stretch flex-grow-0 flex-shrink-0 relative gap-2 px-3">
+            <h2 className="self-stretch flex-grow-0 flex-shrink-0 w-full text-2xl font-semibold text-center capitalize text-slate-950 font-roboto tracking-header">
               {title}
             </h2>
           </div>
         )}
         
         {/* Content */}
-        <div className={`${className}`}>
+        <div className={`flex flex-col justify-start items-start self-stretch flex-grow relative ${className}`}>
           {children}
         </div>
       </div>

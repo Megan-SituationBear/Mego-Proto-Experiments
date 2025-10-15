@@ -69,7 +69,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, hasStart
             </svg>
           </div>
           <div>
-            <h2 className="text-slate-800 font-medium text-lg">Copado AI</h2>
+            <h2 className="text-slate-950 font-semibold text-lg font-roboto tracking-header">Copado AI</h2>
             <p className="text-slate-500 text-sm">Customer planning assistant</p>
           </div>
         </div>
@@ -89,7 +89,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, hasStart
                   : 'bg-gray-100 text-gray-800 rounded-bl-md'
               }`}
             >
-              <p className="text-sm">{message.text}</p>
+              <p className={message.isUser ? 'text-sm text-white' : 'message-text'}>{message.text}</p>
               <p className={`text-xs mt-1 ${
                 message.isUser ? 'text-blue-100' : 'text-gray-500'
               }`}>
@@ -104,13 +104,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, hasStart
       {/* Quick Actions - Only show when not started */}
       {!hasStarted && (
         <div className="p-6 border-t border-slate-200/60">
-          <p className="text-sm text-slate-600 mb-4 font-medium">Start planning for your customer:</p>
-          <div className="space-y-2">
+          <p className="font-inter text-body text-slate-600 mb-4">Start planning for your customer:</p>
+          <div className="flex flex-wrap gap-2">
             {quickActions.map((action, index) => (
               <button
                 key={index}
                 onClick={() => onSendMessage(action)}
-                className="w-full text-left p-3 text-sm bg-slate-50/80 hover:bg-slate-100/80 rounded-xl transition-all duration-200 border border-slate-200/60 hover:border-slate-300/60 hover:shadow-sm"
+                className="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md message-text text-sm"
               >
                 {action}
               </button>

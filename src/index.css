@@ -5,14 +5,51 @@
   --color-copado-dark: #032D60;
 }
 
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap');
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  color: rgb(71 85 105); /* slate-600 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f8fafc;
+}
+
+/* Global header styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-weight: 600; /* semibold */
+  letter-spacing: -0.03em; /* -3% kerning */
+  color: rgb(2 6 23); /* slate-950 */
+}
+
+/* Utility classes for consistent typography */
+.font-inter {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.font-roboto {
+  font-family: 'Roboto', system-ui, sans-serif;
+}
+
+.tracking-header {
+  letter-spacing: -0.03em;
+}
+
+.text-body {
+  font-size: 15px;
+  line-height: 24px;
+}
+
+/* Conversation message styling */
+.message-text {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 24px;
+  color: rgb(71 85 105); /* slate-600 */
 }
 
 /* Custom scrollbar for chat */

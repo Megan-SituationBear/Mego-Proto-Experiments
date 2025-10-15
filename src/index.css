@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-copado-blue: #0070D2;
+  --color-copado-dark: #032D60;
+}
 
 body {
   margin: 0;

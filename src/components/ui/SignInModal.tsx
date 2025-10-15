@@ -64,7 +64,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
       <form onSubmit={handleSignIn} className="flex flex-col gap-6">
         {/* Body text section */}
         <div className="flex flex-col justify-start items-start gap-2">
-          <p className="text-sm font-medium text-left text-[#45556c] w-full">
+          <p className="text-sm font-medium text-left text-slate-600 w-full">
             Sign in to your Copado account to continue.
           </p>
         </div>
@@ -80,7 +80,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-copado-blue focus:border-transparent transition-all"
             required
             disabled={isLoading}
           />
@@ -97,7 +97,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-copado-blue focus:border-transparent transition-all"
             required
             disabled={isLoading}
           />
@@ -108,7 +108,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
           <button
             type="button"
             onClick={handleForgotPassword}
-            className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+            className="text-sm text-copado-blue hover:text-copado-dark transition-colors"
             disabled={isLoading}
           >
             Forgot your password?

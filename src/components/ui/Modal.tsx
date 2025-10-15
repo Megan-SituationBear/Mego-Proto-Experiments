@@ -74,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({
         {/* Title section */}
         {title && (
           <div className="flex flex-col justify-start items-center gap-2 mb-6">
-            <h2 className="text-2xl font-semibold text-center capitalize text-[#020618] w-full">
+            <h2 className="text-2xl font-semibold text-center capitalize text-slate-800 w-full">
               {title}
             </h2>
           </div>

@@ -57,13 +57,13 @@ const IntegrationsModal: React.FC<IntegrationsModalProps> = ({
           {integrations.map((integration, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+              className="border border-gray-200 rounded-lg p-4 hover:border-copado-blue hover:shadow-md transition-all cursor-pointer"
             >
               <div className="flex items-center space-x-3">
                 <span className="text-2xl">{integration.icon}</span>
                 <div>
                   <h3 className="font-semibold text-gray-800">{integration.name}</h3>
-                  <p className="text-sm text-[#45556c]">{integration.description}</p>
+                  <p className="text-sm text-slate-600">{integration.description}</p>
                 </div>
               </div>
             </div>

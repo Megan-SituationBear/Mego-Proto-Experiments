@@ -879,12 +879,9 @@ const AIInput: React.FC<AIInputProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">{getIntegrationInfo(activeIntegrationType)?.emoji}</span>
-                <h3 className="text-lg font-semibold text-slate-900">
-                  {getIntegrationInfo(activeIntegrationType)?.title}
-                </h3>
-              </div>
+              <h3 className="text-lg font-semibold text-slate-900">
+                {getIntegrationInfo(activeIntegrationType)?.title}
+              </h3>
               <button 
                 onClick={() => setShowIntegrationModal(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"

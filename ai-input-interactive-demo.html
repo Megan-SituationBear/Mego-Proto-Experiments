@@ -310,7 +310,17 @@
           </div>
         </div>
         <p class="text-slate-600 mb-4">📍 <strong>When to use:</strong> Dashboard home page, logged-in welcome screen</p>
-        <p class="text-sm text-slate-500">✨ Try adding Slack, Jira, or Confluence from the + menu!</p>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <p class="text-sm font-semibold text-blue-900 mb-2">🧪 Test Integration Flows:</p>
+          <ul class="text-xs text-blue-800 space-y-1.5">
+            <li>1. Click + button → Select "Connect Slack Channel"</li>
+            <li>2. Paste: <code class="bg-blue-100 px-1 rounded">https://workspace.slack.com/archives/C1234ABCD</code></li>
+            <li>3. See auto-extracted channel name → Confirm → Chip appears!</li>
+            <li>4. Try Jira (not connected) - it will ask you to set up in Settings first</li>
+            <li>5. Go to Settings (⚙️ button) → Click Jira to connect it → Try adding a ticket</li>
+            <li>6. Test URLs: <code class="bg-blue-100 px-1 rounded">PROJ-456</code> or <code class="bg-blue-100 px-1 rounded">Sprint-12</code></li>
+          </ul>
+        </div>
       </div>
 
       <!-- Demo Component -->
@@ -423,7 +433,16 @@
           </div>
         </div>
         <p class="text-slate-600 mb-4">📍 <strong>When to use:</strong> Workspace pages, project pages, chat panels</p>
-        <p class="text-sm text-slate-500">✨ "Context For This Work" - Try adding integrations specific to your current project!</p>
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+          <p class="text-sm font-semibold text-amber-900 mb-2">🧪 Test "Context For This Work":</p>
+          <ul class="text-xs text-amber-800 space-y-1.5">
+            <li>1. Notice the + menu says "Context For This Work" (not "Conversation Context")</li>
+            <li>2. Add Confluence doc: <code class="bg-amber-100 px-1 rounded">https://confluence.com/pages/12345/API-Documentation</code></li>
+            <li>3. Try Org connection → Authenticate → Choose sandbox</li>
+            <li>4. Settings button shows "Settings For This Work"</li>
+            <li>5. All context is specific to this workspace/project</li>
+          </ul>
+        </div>
       </div>
 
       <!-- Demo Component -->
@@ -623,10 +642,7 @@
     <div class="modal-content small" onclick="event.stopPropagation()">
       <div class="p-6">
         <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2">
-            <span id="integrationEmoji" class="text-2xl">💬</span>
-            <h3 id="integrationTitle" class="text-lg font-semibold text-slate-900">Add Integration</h3>
-          </div>
+          <h3 id="integrationTitle" class="text-lg font-semibold text-slate-900">Add Integration</h3>
           <button onclick="closeIntegrationModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -667,7 +683,6 @@
       const modal = document.getElementById('integrationModal');
       const info = integrationInfo[type];
       
-      document.getElementById('integrationEmoji').textContent = info.emoji;
       document.getElementById('integrationTitle').textContent = info.title;
       
       renderIntegrationContent();

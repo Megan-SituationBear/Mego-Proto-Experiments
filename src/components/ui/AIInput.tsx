@@ -70,6 +70,12 @@ interface AIInputProps {
   showTypingIndicator?: boolean;
 }
 
+interface CodeSnippet {
+  id: string;
+  content: string;
+  lineCount: number;
+}
+
 const AIInput: React.FC<AIInputProps> = ({
   placeholder = "Try: @Copado what do you do? Or, @project Let's Go!",
   onSendMessage,
@@ -90,6 +96,10 @@ const AIInput: React.FC<AIInputProps> = ({
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showSlackModal, setShowSlackModal] = useState(false);
+  const [slackChannelUrl, setSlackChannelUrl] = useState('');
+  const [isSlackConnected, setIsSlackConnected] = useState(false); // Simulate connection status
+  const [codeSnippets, setCodeSnippets] = useState<CodeSnippet[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -99,6 +109,61 @@ const AIInput: React.FC<AIInputProps> = ({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Detect if pasted content is code
+  const isCodeSnippet = (text: string): boolean => {
+    const lines = text.split('\n');
+    const hasMultipleLines = lines.length > 3;
+    const hasCodePatterns = /[{}\[\];()=>]|function|const|let|var|class|import|export/.test(text);
+    return hasMultipleLines || (hasCodePatterns && text.length > 50);
+  };
+
+  // Handle paste events
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const pastedText = e.clipboardData.getData('text');
+    
+    if (isCodeSnippet(pastedText)) {
+      e.preventDefault();
+      const newSnippet: CodeSnippet = {
+        id: Date.now().toString(),
+        content: pastedText,
+        lineCount: pastedText.split('\n').length
+      };
+      setCodeSnippets(prev => [...prev, newSnippet]);
+    }
+  };
+
+  // Delete code snippet
+  const deleteSnippet = (id: string) => {
+    setCodeSnippets(prev => prev.filter(snippet => snippet.id !== id));
+  };
+
+  // Extract channel name from Slack URL
+  const extractSlackChannelName = (url: string): string => {
+    // Extract from URL like https://workspace.slack.com/archives/C12345678
+    const match = url.match(/\/archives\/([A-Z0-9]+)/);
+    if (match) return `#channel-${match[1].slice(-4)}`;
+    
+    // Try to extract from general URL patterns
+    const channelMatch = url.match(/\/messages\/([^\/]+)/);
+    if (channelMatch) return `#${channelMatch[1]}`;
+    
+    return '#slack-channel';
+  };
+
+  // Handle Slack channel addition
+  const handleAddSlackChannel = () => {
+    if (!slackChannelUrl.trim()) return;
+    
+    const channelName = extractSlackChannelName(slackChannelUrl);
+    console.log(`Adding Slack channel: ${channelName} from URL: ${slackChannelUrl}`);
+    
+    // Here you would actually add the channel to context
+    // For now, just close the modal
+    setShowSlackModal(false);
+    setSlackChannelUrl('');
+    setShowContextMenu(false);
+  };
 
   // Determine current view state
   const getViewState = (): ViewState => {
@@ -246,9 +311,19 @@ const AIInput: React.FC<AIInputProps> = ({
   }, [autoFocus]);
 
   const handleSubmit = () => {
-    if (value.trim() && onSendMessage && !disabled && !loading) {
-      onSendMessage(value.trim());
+    if ((value.trim() || codeSnippets.length > 0) && onSendMessage && !disabled && !loading) {
+      // Combine text and code snippets
+      let messageContent = value.trim();
+      if (codeSnippets.length > 0) {
+        const snippetsText = codeSnippets.map((snippet, i) => 
+          `\n[Code Snippet ${i + 1}]:\n${snippet.content}`
+        ).join('\n');
+        messageContent = messageContent ? messageContent + snippetsText : snippetsText;
+      }
+      
+      onSendMessage(messageContent);
       setValue('');
+      setCodeSnippets([]);
       setHasBeenFocused(false);
     }
   };
@@ -387,6 +462,7 @@ const AIInput: React.FC<AIInputProps> = ({
             onFocus={handleFocus}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
             placeholder={placeholder}
             disabled={disabled || loading}
             className={`w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 ${
@@ -403,6 +479,37 @@ const AIInput: React.FC<AIInputProps> = ({
             }}
             rows={1}
           />
+
+          {/* Code Snippets Display */}
+          {codeSnippets.length > 0 && (
+            <div className="mt-2 space-y-2">
+              {codeSnippets.map((snippet, index) => (
+                <div key={snippet.id} className="flex items-start gap-2">
+                  <div className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                      <span className="text-xs text-slate-400">Code Snippet {index + 1} ({snippet.lineCount} lines)</span>
+                    </div>
+                    <pre className="text-xs text-slate-200 font-mono overflow-auto max-h-32 whitespace-pre-wrap break-all">
+                      {snippet.content}
+                    </pre>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => deleteSnippet(snippet.id)}
+                    className="flex-shrink-0 p-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+                    title="Delete snippet"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Action buttons row - below textarea */}
           <div className="flex items-center justify-between mt-3">
@@ -437,7 +544,7 @@ const AIInput: React.FC<AIInputProps> = ({
                     {/* Menu Header */}
                     <div className="px-3 py-1.5 border-b border-gray-100">
                       <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
-                        Conversation Context:
+                        {pageContext === 'workspace' ? 'Context For This Work:' : 'Conversation Context:'}
                       </p>
                     </div>
 
@@ -463,23 +570,25 @@ const AIInput: React.FC<AIInputProps> = ({
                 )}
               </div>
 
-            <button 
-              type="button"
-              onClick={() => setShowSettingsModal(true)}
-              className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
-              title="Settings"
-            >
-              <Settings className="w-5 h-5 text-gray-600" />
-            </button>
+            {isLoggedIn && (
+              <button 
+                type="button"
+                onClick={() => setShowSettingsModal(true)}
+                className="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group"
+                title="Settings"
+              >
+                <Settings className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" />
+              </button>
+            )}
             </div>
 
             {/* Send button */}
             <button 
               type="button"
               onClick={handleSubmit}
-              disabled={!value.trim() || disabled || loading}
+              disabled={(!value.trim() && codeSnippets.length === 0) || disabled || loading}
               className={`p-3.5 rounded-xl transition-all duration-200 ${
-                value.trim() && !disabled && !loading
+                (value.trim() || codeSnippets.length > 0) && !disabled && !loading
                   ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
                   : 'bg-gray-100 text-gray-400 cursor-not-allowed'
               }`}
@@ -562,7 +671,9 @@ const AIInput: React.FC<AIInputProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-slate-900">Settings For Copado</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                {pageContext === 'workspace' ? 'Settings For This Work' : 'Settings For Copado'}
+              </h3>
               <div className="flex gap-2">
                 <button 
                   onClick={() => {

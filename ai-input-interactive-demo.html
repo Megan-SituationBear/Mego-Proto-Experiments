@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AIInput Component - Interactive Demo</title>
+  <title>AIInput Component - 3 Interactive Variants</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,97 +62,550 @@
     .context-menu:hover {
       display: block;
     }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    
+    .modal.show {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      max-width: 48rem;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      animation: fadeInZoom 0.2s ease-out;
+    }
+    
+    @keyframes fadeInZoom {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    
+    .code-keyword { color: #c792ea; }
+    .code-string { color: #c3e88d; }
+    .code-boolean { color: #f78c6c; }
+    .code-comment { color: #546e7a; }
+    
+    .code-snippet {
+      position: relative;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      color: #e2e8f0;
+      max-height: 120px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    
+    .code-snippet-container {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .delete-snippet-btn {
+      flex-shrink: 0;
+      padding: 0.5rem;
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .delete-snippet-btn:hover {
+      background: #b91c1c;
+    }
+    
+    .snippet-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      background: #334155;
+      color: #94a3b8;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen py-12 px-6">
   
-  <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-slate-900 mb-2 text-center">AI Input Component</h1>
-    <p class="text-slate-600 mb-8 text-center">Click to focus → Type a message → Press Enter → Watch conversation begin</p>
-    
-    <!-- Interactive Demo Container -->
-    <div id="demoContainer" class="w-full">
-      <!-- Conversation will appear here when messages exist -->
-      <div id="conversationArea"></div>
-      
-      <!-- AI Input -->
-      <div id="aiInputContainer" 
-        class="relative bg-white/70 rounded-2xl border-2 border-gray-300 transition-all duration-500 transform hover:shadow-2xl"
-        style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);">
-        
-        <div class="flex flex-col p-3">
-          <!-- Textarea -->
-          <textarea
-            id="aiInput"
-            placeholder="Try: @Copado what do you do? Or, @project Let's Go!"
-            class="w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-gray-400 placeholder-gray-400"
-            style="padding-top: 12px; padding-bottom: 12px; height: 48px; line-height: 1.5; font-family: Inter, system-ui, sans-serif; font-size: 14px;"
-            rows="1"
-          ></textarea>
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-slate-900 mb-3">AIInput Component - 3 Variants</h1>
+      <p class="text-lg text-slate-600 mb-2">Interactive demos showing all states: Default → Focused → Conversation</p>
+      <p class="text-sm text-slate-500">Click to focus → Type a message → Press Enter</p>
+    </div>
 
-          <!-- Action buttons row - below textarea -->
-          <div class="flex items-center justify-between mt-3">
-            <!-- Left action buttons -->
-            <div class="flex items-center gap-2 relative">
-              <!-- Plus button with context menu -->
-              <div class="relative plus-button-wrapper">
-                <button type="button" class="p-2.5 hover:bg-gray-100 rounded-lg transition-colors" title="Add context">
-                  <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                  </svg>
-                </button>
-                
-                <!-- Context Menu -->
-                <div class="context-menu absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-gray-200 shadow-2xl z-50 py-1.5"
-                  style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);">
-                  <div class="px-3 py-1.5 border-b border-gray-100">
-                    <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Conversation Context:</p>
-                  </div>
-                  <div class="py-0.5">
-                    <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
-                      <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-                      <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Add Images and Docs</span>
-                    </button>
-                    <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
-                      <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                      <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Slack Channel</span>
-                    </button>
-                    <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
-                      <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                      <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Org</span>
-                    </button>
-                    <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
-                      <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
-                      <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Jira</span>
-                    </button>
-                    <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
-                      <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                      <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">All Integrations</span>
-                    </button>
+    <!-- Variant 1: Logged Out -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-12 border-2 border-blue-200">
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold mb-2">VARIANT 1</span>
+            <h2 class="text-2xl font-bold text-slate-900">AI Input - Logged Out</h2>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-semibold text-slate-700">Default: 48px</div>
+            <div class="text-sm font-semibold text-slate-700">Focused: 120px</div>
+          </div>
+        </div>
+        <p class="text-slate-600 mb-4">📍 <strong>When to use:</strong> Landing pages, marketing pages, logged-out experience</p>
+      </div>
+
+      <!-- Demo Component -->
+      <div id="demo1" class="mb-6">
+        <div id="conversation1"></div>
+        <div id="input1Container" 
+          class="relative bg-white/70 rounded-2xl border-2 border-gray-300 transition-all duration-500 transform hover:shadow-2xl"
+          style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);">
+          <div class="flex flex-col p-3">
+            <textarea
+              id="input1"
+              placeholder="Try: @Copado what do you do? Or, @project Let's Go!"
+              class="w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-gray-400 placeholder-gray-400"
+              style="padding-top: 12px; padding-bottom: 12px; height: 48px; line-height: 1.5; font-family: Inter, system-ui, sans-serif; font-size: 14px;"
+              rows="1"
+            ></textarea>
+            
+            <!-- Code snippets container -->
+            <div id="snippets1"></div>
+            
+            <div class="flex items-center justify-between mt-3">
+              <div class="flex items-center gap-2 relative">
+                <!-- Plus button with context menu -->
+                <div class="relative plus-button-wrapper">
+                  <button type="button" class="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group">
+                    <svg class="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                  </button>
+                  
+                  <!-- Context Menu -->
+                  <div class="context-menu absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-gray-200 shadow-2xl z-50 py-1.5"
+                    style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);">
+                    <div class="px-3 py-1.5 border-b border-gray-100">
+                      <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Conversation Context:</p>
+                    </div>
+                    <div class="py-0.5">
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Add Images and Docs</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Slack Channel</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Org</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Jira</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">All Integrations</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <button type="button" class="p-2.5 hover:bg-gray-100 rounded-lg transition-colors" title="Settings">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <button id="settings1Btn" type="button" class="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group">
+                  <svg class="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </button>
+              </div>
+              <button id="send1" type="button" class="p-3.5 rounded-xl transition-all duration-200 bg-gray-100 text-gray-400 cursor-not-allowed" disabled>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                 </svg>
               </button>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- Send button -->
-            <button 
-              id="sendButton"
-              type="button"
-              class="p-3.5 rounded-xl transition-all duration-200 bg-gray-100 text-gray-400 cursor-not-allowed"
-              title="Send message"
-              disabled
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+      <!-- Installation Instructions -->
+      <div class="bg-slate-900 rounded-xl p-6">
+        <h3 class="text-white font-semibold mb-3 flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+          </svg>
+          How to Install
+        </h3>
+        <div class="code-block">
+<span class="code-keyword">import</span> { AIInput, ConversationMessage } <span class="code-keyword">from</span> <span class="code-string">'./components/ui'</span>;
+
+<span class="code-keyword">&lt;AIInput</span>
+  placeholder=<span class="code-string">"Try: @Copado what do you do?"</span>
+  onSendMessage={handleSendMessage}
+  messages={messages}
+  showTypingIndicator={isTyping}
+  <span class="code-keyword">isLoggedIn</span>={<span class="code-boolean">false</span>}
+  <span class="code-keyword">pageContext</span>=<span class="code-string">"home"</span>
+  hasConversation={messages.length > <span class="code-boolean">0</span>}
+<span class="code-keyword">/&gt;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variant 2: Home Logged In -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-12 border-2 border-green-200">
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold mb-2">VARIANT 2</span>
+            <h2 class="text-2xl font-bold text-slate-900">AI Input - Home Page (Logged In)</h2>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-semibold text-slate-700">Default: 48px</div>
+            <div class="text-sm font-semibold text-slate-700">Focused: 100px</div>
+            <div class="text-sm font-semibold text-slate-700">+ Conversation: 140px</div>
+          </div>
+        </div>
+        <p class="text-slate-600 mb-4">📍 <strong>When to use:</strong> Dashboard home page, logged-in welcome screen</p>
+      </div>
+
+      <!-- Demo Component -->
+      <div id="demo2" class="mb-6">
+        <div id="conversation2"></div>
+        <div id="input2Container" 
+          class="relative bg-white/80 rounded-2xl border-2 border-blue-200 transition-all duration-500 transform"
+          style="box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.12);">
+          <div class="flex flex-col p-3">
+            <textarea
+              id="input2"
+              placeholder="What would you like to work on today?"
+              class="w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-gray-400 placeholder-gray-400"
+              style="padding-top: 12px; padding-bottom: 12px; height: 48px; line-height: 1.5; font-family: Inter, system-ui, sans-serif; font-size: 14px;"
+              rows="1"
+            ></textarea>
+            
+            <!-- Code snippets container -->
+            <div id="snippets2"></div>
+            
+            <div class="flex items-center justify-between mt-3">
+              <div class="flex items-center gap-2 relative">
+                <!-- Plus button with context menu -->
+                <div class="relative plus-button-wrapper">
+                  <button type="button" class="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group">
+                    <svg class="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                  </button>
+                  <div class="context-menu absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-gray-200 shadow-2xl z-50 py-1.5" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);">
+                    <div class="px-3 py-1.5 border-b border-gray-100">
+                      <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Conversation Context:</p>
+                    </div>
+                    <div class="py-0.5">
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Add Images and Docs</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Slack Channel</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Org</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Jira</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">All Integrations</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button id="settings2Btn" type="button" class="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group">
+                  <svg class="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </button>
+              </div>
+              <button id="send2" type="button" class="p-3.5 rounded-xl transition-all duration-200 bg-gray-100 text-gray-400 cursor-not-allowed" disabled>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Installation Instructions -->
+      <div class="bg-slate-900 rounded-xl p-6">
+        <h3 class="text-white font-semibold mb-3 flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+          </svg>
+          How to Install
+        </h3>
+        <div class="code-block">
+<span class="code-keyword">import</span> { AIInput, ConversationMessage } <span class="code-keyword">from</span> <span class="code-string">'./components/ui'</span>;
+
+<span class="code-keyword">&lt;AIInput</span>
+  placeholder=<span class="code-string">"What would you like to work on today?"</span>
+  onSendMessage={handleSendMessage}
+  messages={messages}
+  showTypingIndicator={isTyping}
+  <span class="code-keyword">isLoggedIn</span>={<span class="code-boolean">true</span>}
+  <span class="code-keyword">pageContext</span>=<span class="code-string">"home"</span>
+  hasConversation={messages.length > <span class="code-boolean">0</span>}
+<span class="code-keyword">/&gt;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variant 3: Context Page -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-12 border-2 border-amber-200">
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="inline-block bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold mb-2">VARIANT 3</span>
+            <h2 class="text-2xl font-bold text-slate-900">AI Input - Context Page (Workspace)</h2>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-semibold text-slate-700">Default: 48px</div>
+            <div class="text-sm font-semibold text-slate-700">Focused: 80px</div>
+            <div class="text-sm font-semibold text-slate-700">+ Conversation: 120px</div>
+          </div>
+        </div>
+        <p class="text-slate-600 mb-4">📍 <strong>When to use:</strong> Workspace pages, project pages, chat panels</p>
+      </div>
+
+      <!-- Demo Component -->
+      <div id="demo3" class="mb-6">
+        <div id="conversation3"></div>
+        <div id="input3Container" 
+          class="relative bg-white/90 rounded-2xl border-2 border-slate-300 transition-all duration-500 transform"
+          style="box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.1);">
+          <div class="flex flex-col p-3">
+            <textarea
+              id="input3"
+              placeholder="Continue the conversation..."
+              class="w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-gray-400 placeholder-gray-400"
+              style="padding-top: 12px; padding-bottom: 12px; height: 48px; line-height: 1.5; font-family: Inter, system-ui, sans-serif; font-size: 14px;"
+              rows="1"
+            ></textarea>
+            
+            <!-- Code snippets container -->
+            <div id="snippets3"></div>
+            
+            <div class="flex items-center justify-between mt-3">
+              <div class="flex items-center gap-2 relative">
+                <!-- Plus button with context menu -->
+                <div class="relative plus-button-wrapper">
+                  <button type="button" class="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group">
+                    <svg class="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                  </button>
+                  <div class="context-menu absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-gray-200 shadow-2xl z-50 py-1.5" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);">
+                    <div class="px-3 py-1.5 border-b border-gray-100">
+                      <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Conversation Context:</p>
+                    </div>
+                    <div class="py-0.5">
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Add Images and Docs</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Slack Channel</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Org</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">Connect Jira</span>
+                      </button>
+                      <button class="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group">
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        <span class="text-xs text-gray-700 group-hover:text-blue-600 font-medium">All Integrations</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button id="settings3Btn" type="button" class="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group">
+                  <svg class="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </button>
+              </div>
+              <button id="send3" type="button" class="p-3.5 rounded-xl transition-all duration-200 bg-gray-100 text-gray-400 cursor-not-allowed" disabled>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Installation Instructions -->
+      <div class="bg-slate-900 rounded-xl p-6">
+        <h3 class="text-white font-semibold mb-3 flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+          </svg>
+          How to Install
+        </h3>
+        <div class="code-block">
+<span class="code-keyword">import</span> { AIInput, ConversationMessage } <span class="code-keyword">from</span> <span class="code-string">'./components/ui'</span>;
+
+<span class="code-keyword">&lt;AIInput</span>
+  placeholder=<span class="code-string">"Continue the conversation..."</span>
+  onSendMessage={handleSendMessage}
+  messages={messages}
+  showTypingIndicator={isTyping}
+  <span class="code-keyword">isLoggedIn</span>={<span class="code-boolean">true</span>}
+  <span class="code-keyword">pageContext</span>=<span class="code-string">"workspace"</span>
+  hasConversation={messages.length > <span class="code-boolean">0</span>}
+<span class="code-keyword">/&gt;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer with Additional Resources -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl shadow-xl p-8 text-white">
+      <h3 class="text-2xl font-bold mb-4">📚 Additional Resources</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div>
+          <h4 class="font-semibold mb-2">📄 Documentation</h4>
+          <p class="text-blue-100">See <code class="bg-blue-800 px-2 py-1 rounded">src/components/ui/AIInput-README.md</code></p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-2">💻 Example Files</h4>
+          <p class="text-blue-100">Check <code class="bg-blue-800 px-2 py-1 rounded">src/components/ui/examples/</code></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Settings Modal (Shared across all variants) -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-slate-900">Settings For Copado</h3>
+          <div class="flex gap-2">
+            <button onclick="document.getElementById('settingsModal').classList.remove('show')" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+              Save
+            </button>
+            <button onclick="document.getElementById('settingsModal').classList.remove('show')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
+          </div>
+        </div>
+        
+        <div style="max-height: 60vh; overflow-y: auto;">
+          <!-- Integrations Section -->
+          <div class="mb-6">
+            <h4 class="text-base font-semibold text-gray-700 mb-3">Integrations</h4>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                <div class="text-2xl mb-2">💬</div>
+                <div class="text-sm font-medium text-gray-700">Slack</div>
+                <div class="text-xs text-gray-500 mt-1">Connect workspace</div>
+              </div>
+              <div class="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                <div class="text-2xl mb-2">📚</div>
+                <div class="text-sm font-medium text-gray-700">Confluence</div>
+                <div class="text-xs text-gray-500 mt-1">Link knowledge base</div>
+              </div>
+              <div class="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                <div class="text-2xl mb-2">🎫</div>
+                <div class="text-sm font-medium text-gray-700">Jira</div>
+                <div class="text-xs text-gray-500 mt-1">Sync with projects</div>
+              </div>
+              <div class="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                <div class="text-2xl mb-2">🐙</div>
+                <div class="text-sm font-medium text-gray-700">GitHub</div>
+                <div class="text-xs text-gray-500 mt-1">Access repositories</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sandbox Setup Section -->
+          <div class="mb-6">
+            <h4 class="text-base font-semibold text-gray-700 mb-3">Set up your sandboxes</h4>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-sm font-medium text-gray-700">Authenticate and assign permissions</div>
+                  <div class="text-xs text-gray-500 mt-1">Connect your Salesforce orgs for seamless deployment</div>
+                </div>
+                <button class="px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                  Authenticate
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Team Rules Section -->
+          <div class="mb-6">
+            <h4 class="text-base font-semibold text-gray-700 mb-3">Team Rules</h4>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="text-sm text-gray-500 italic">Add setup sections here</div>
+            </div>
           </div>
         </div>
       </div>
@@ -160,168 +613,236 @@
   </div>
 
   <script>
-    const input = document.getElementById('aiInput');
-    const inputContainer = document.getElementById('aiInputContainer');
-    const sendButton = document.getElementById('sendButton');
-    const conversationArea = document.getElementById('conversationArea');
-    let isFocused = false;
-    let messages = [];
-    let isTyping = false;
+    // Create demo functionality for each variant
+    function createDemo(variant) {
+      const input = document.getElementById(`input${variant}`);
+      const inputContainer = document.getElementById(`input${variant}Container`);
+      const sendButton = document.getElementById(`send${variant}`);
+      const conversationArea = document.getElementById(`conversation${variant}`);
+      let isFocused = false;
+      let messages = [];
+      let isTyping = false;
+      let codeSnippets = []; // Store pasted code snippets
 
-    // Update input styling based on state
-    function updateInputState() {
-      if (isFocused && messages.length > 0) {
-        // Focused with conversation
-        inputContainer.className = 'relative bg-white/95 backdrop-blur-md rounded-2xl border-2 border-blue-500 transition-all duration-500 transform scale-[1.02] shadow-2xl ring-4 ring-blue-100';
-        input.style.paddingTop = '20px';
-        input.style.paddingBottom = '20px';
-        input.style.height = '120px';
-      } else if (isFocused) {
-        // Just focused
-        inputContainer.className = 'relative bg-white/95 backdrop-blur-md rounded-2xl border-2 border-blue-500 transition-all duration-500 transform scale-[1.02] shadow-2xl ring-4 ring-blue-100';
-        input.style.paddingTop = '20px';
-        input.style.paddingBottom = '20px';
-        input.style.height = '120px';
-      } else {
-        // Default
-        inputContainer.className = 'relative bg-white/70 rounded-2xl border-2 border-gray-300 transition-all duration-500 transform hover:shadow-2xl';
-        input.style.paddingTop = '12px';
-        input.style.paddingBottom = '12px';
-        input.style.height = '48px';
-      }
-    }
+      // Variant-specific styles
+      const styles = {
+        1: { // Logged out
+          default: { height: '48px', padding: '12px', border: 'border-gray-300', bg: 'bg-white/70' },
+          focused: { height: '120px', padding: '20px', border: 'border-blue-500', bg: 'bg-white/95 backdrop-blur-md', ring: 'ring-4 ring-blue-100' },
+          withConv: { height: '120px', padding: '20px', border: 'border-blue-500', bg: 'bg-white/95 backdrop-blur-md', ring: 'ring-4 ring-blue-100' }
+        },
+        2: { // Home logged in
+          default: { height: '48px', padding: '12px', border: 'border-blue-200', bg: 'bg-white/80' },
+          focused: { height: '100px', padding: '16px', border: 'border-blue-400', bg: 'bg-white/90 backdrop-blur-md', ring: 'ring-2 ring-blue-200' },
+          withConv: { height: '140px', padding: '24px', border: 'border-blue-500', bg: 'bg-white/95 backdrop-blur-md', ring: 'ring-4 ring-blue-100' }
+        },
+        3: { // Context page
+          default: { height: '48px', padding: '12px', border: 'border-slate-300', bg: 'bg-white/90' },
+          focused: { height: '80px', padding: '16px', border: 'border-blue-400', bg: 'bg-white/95 backdrop-blur-md', ring: 'ring-2 ring-blue-200' },
+          withConv: { height: '120px', padding: '20px', border: 'border-blue-400', bg: 'bg-white/95 backdrop-blur-md', ring: 'ring-2 ring-blue-200' }
+        }
+      };
 
-    // Update send button state
-    function updateSendButton() {
-      if (input.value.trim() && !isTyping) {
-        sendButton.disabled = false;
-        sendButton.className = 'p-3.5 rounded-xl transition-all duration-200 bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl';
-      } else {
-        sendButton.disabled = true;
-        sendButton.className = 'p-3.5 rounded-xl transition-all duration-200 bg-gray-100 text-gray-400 cursor-not-allowed';
-      }
-    }
-
-    // Render conversation
-    function renderConversation() {
-      if (messages.length === 0 && !isTyping) {
-        conversationArea.innerHTML = '';
-        return;
-      }
-
-      let html = `
-        <div class="mb-4 space-y-3 max-h-[320px] overflow-y-auto px-3 py-4 rounded-2xl border border-gray-200/50 conversation-animate" 
-          style="background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);">
-      `;
-
-      messages.forEach(msg => {
-        const align = msg.isUser ? 'justify-end' : 'justify-start';
-        const bgColor = msg.isUser ? 'bg-blue-600 text-white' : 'bg-white/90 border border-gray-200 text-slate-800 shadow-sm';
+      function updateInputState() {
+        const state = isFocused && messages.length > 0 ? 'withConv' : isFocused ? 'focused' : 'default';
+        const s = styles[variant][state];
         
-        html += `
-          <div class="flex ${align}">
-            <div class="max-w-[75%] px-4 py-2.5 rounded-2xl text-left ${bgColor} transition-all duration-500 ease-out">
-              <p class="font-body text-sm leading-relaxed" style="font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 24px;">
-                ${msg.content}
-              </p>
-            </div>
-          </div>
-        `;
-      });
-
-      // Typing indicator
-      if (isTyping) {
-        html += `
-          <div class="flex justify-start">
-            <div class="bg-white/90 border border-gray-200 shadow-sm px-4 py-2.5 rounded-2xl">
-              <div class="flex items-center gap-1">
-                <div class="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
-                <div class="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
-                <div class="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
-              </div>
-            </div>
-          </div>
-        `;
+        inputContainer.className = `relative ${s.bg} rounded-2xl border-2 ${s.border} transition-all duration-500 transform ${s.ring || ''} ${isFocused ? 'scale-[1.02] shadow-2xl' : ''}`;
+        input.style.paddingTop = s.padding;
+        input.style.paddingBottom = s.padding;
+        input.style.height = s.height;
       }
 
-      html += '</div>';
-      conversationArea.innerHTML = html;
-    }
-
-    // Send message
-    function sendMessage() {
-      const text = input.value.trim();
-      if (!text || isTyping) return;
-
-      // Add user message
-      messages.push({
-        id: Date.now().toString(),
-        content: text,
-        isUser: true
-      });
-
-      input.value = '';
-      updateSendButton();
-      renderConversation();
-      updateInputState();
-
-      // Show typing indicator
-      isTyping = true;
-      renderConversation();
-
-      // Simulate AI response
-      setTimeout(() => {
-        isTyping = false;
-        
-        let aiResponse = '';
-        if (messages.filter(m => m.isUser).length === 1) {
-          // First message: echo back
-          aiResponse = `I see you mentioned "${text}". That sounds interesting! Can you tell me more about what you're trying to accomplish?`;
-        } else if (messages.filter(m => m.isUser).length === 2) {
-          // Second message: creating workspace
-          aiResponse = "Perfect! Let me create a workspace for you to dive deeper into this...";
+      function updateSendButton() {
+        if ((input.value.trim() || codeSnippets.length > 0) && !isTyping) {
+          sendButton.disabled = false;
+          sendButton.className = 'p-3.5 rounded-xl transition-all duration-200 bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl';
         } else {
-          aiResponse = "I understand. Let me help you with that!";
+          sendButton.disabled = true;
+          sendButton.className = 'p-3.5 rounded-xl transition-all duration-200 bg-gray-100 text-gray-400 cursor-not-allowed';
+        }
+      }
+      
+      // Detect if pasted content is code (has multiple lines or code-like patterns)
+      function isCodeSnippet(text) {
+        const lines = text.split('\n');
+        const hasMultipleLines = lines.length > 3;
+        const hasCodePatterns = /[{}\[\];()=>]|function|const|let|var|class|import|export/.test(text);
+        return hasMultipleLines || (hasCodePatterns && text.length > 50);
+      }
+      
+      // Render code snippets below textarea
+      function renderSnippets() {
+        const snippetsContainer = document.getElementById(`snippets${variant}`);
+        if (!snippetsContainer) return;
+        
+        if (codeSnippets.length === 0) {
+          snippetsContainer.innerHTML = '';
+          return;
+        }
+        
+        snippetsContainer.innerHTML = codeSnippets.map((snippet, index) => `
+          <div class="code-snippet-container">
+            <div class="flex-1">
+              <div class="snippet-icon">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                </svg>
+                Code Snippet ${index + 1} (${snippet.split('\n').length} lines)
+              </div>
+              <div class="code-snippet">${snippet}</div>
+            </div>
+            <button class="delete-snippet-btn" onclick="deleteSnippet${variant}(${index})" title="Delete snippet">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        `).join('');
+      }
+      
+      // Delete snippet function (needs to be global for onclick)
+      window[`deleteSnippet${variant}`] = function(index) {
+        codeSnippets.splice(index, 1);
+        renderSnippets();
+        updateSendButton();
+      };
+
+      function renderConversation() {
+        if (messages.length === 0 && !isTyping) {
+          conversationArea.innerHTML = '';
+          return;
         }
 
-        messages.push({
-          id: (Date.now() + 1).toString(),
-          content: aiResponse,
-          isUser: false
+        let html = '<div class="mb-4 space-y-3 max-h-[320px] overflow-y-auto px-3 py-4 rounded-2xl border border-gray-200/50 conversation-animate" style="background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);">';
+
+        messages.forEach(msg => {
+          const align = msg.isUser ? 'justify-end' : 'justify-start';
+          const bgColor = msg.isUser ? 'bg-blue-600 text-white' : 'bg-white/90 border border-gray-200 text-slate-800 shadow-sm';
+          html += `
+            <div class="flex ${align}">
+              <div class="max-w-[75%] px-4 py-2.5 rounded-2xl text-left ${bgColor} transition-all duration-500 ease-out">
+                <p class="font-body text-sm leading-relaxed" style="font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 24px;">
+                  ${msg.content}
+                </p>
+              </div>
+            </div>
+          `;
         });
 
+        if (isTyping) {
+          html += `
+            <div class="flex justify-start">
+              <div class="bg-white/90 border border-gray-200 shadow-sm px-4 py-2.5 rounded-2xl">
+                <div class="flex items-center gap-1">
+                  <div class="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
+                  <div class="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
+                  <div class="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        html += '</div>';
+        conversationArea.innerHTML = html;
+      }
+
+      function sendMessage() {
+        const text = input.value.trim();
+        if ((!text && codeSnippets.length === 0) || isTyping) return;
+
+        // Combine text and code snippets
+        let messageContent = text;
+        if (codeSnippets.length > 0) {
+          const snippetsText = codeSnippets.map((snippet, i) => `\n[Code Snippet ${i + 1}]:\n${snippet}`).join('\n');
+          messageContent = text ? text + snippetsText : snippetsText;
+        }
+
+        messages.push({ id: Date.now().toString(), content: messageContent, isUser: true });
+        input.value = '';
+        codeSnippets = [];
+        renderSnippets();
+        updateSendButton();
         renderConversation();
         updateInputState();
-      }, 1200);
+
+        isTyping = true;
+        renderConversation();
+
+        setTimeout(() => {
+          isTyping = false;
+          const aiResponse = messages.filter(m => m.isUser).length === 1
+            ? `I see you ${codeSnippets.length > 0 ? 'shared some code' : `mentioned "${text}"`}. That sounds interesting! Can you tell me more?`
+            : "Great! I'll help you with that.";
+          
+          messages.push({ id: (Date.now() + 1).toString(), content: aiResponse, isUser: false });
+          renderConversation();
+          updateInputState();
+        }, 1200);
+      }
+
+      input.addEventListener('focus', () => {
+        isFocused = true;
+        input.className = 'w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-slate-700 placeholder-gray-500';
+        updateInputState();
+      });
+
+      input.addEventListener('blur', () => {
+        isFocused = false;
+        input.className = 'w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-gray-400 placeholder-gray-400';
+        updateInputState();
+      });
+
+      input.addEventListener('input', updateSendButton);
+      
+      // Handle paste events
+      input.addEventListener('paste', (e) => {
+        const pastedText = e.clipboardData.getData('text');
+        
+        // Check if it's a code snippet
+        if (isCodeSnippet(pastedText)) {
+          e.preventDefault();
+          codeSnippets.push(pastedText);
+          renderSnippets();
+          updateSendButton();
+          
+          // Clear the textarea if it only had the pasted content
+          if (!input.value.trim()) {
+            input.value = '';
+          }
+        }
+      });
+      
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+      sendButton.addEventListener('click', sendMessage);
+      
+      // Settings button click handler
+      const settingsBtn = document.getElementById(`settings${variant}Btn`);
+      if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+          document.getElementById('settingsModal').classList.add('show');
+        });
+      }
     }
 
-    // Event listeners
-    input.addEventListener('focus', () => {
-      isFocused = true;
-      input.className = 'w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-slate-700 placeholder-gray-500';
-      updateInputState();
-    });
-
-    input.addEventListener('blur', () => {
-      isFocused = false;
-      input.className = 'w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-gray-400 placeholder-gray-400';
-      updateInputState();
-    });
-
-    input.addEventListener('input', () => {
-      updateSendButton();
-    });
-
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
+    // Initialize all three demos
+    createDemo(1);
+    createDemo(2);
+    createDemo(3);
+    
+    // Close modal when clicking outside
+    document.getElementById('settingsModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.remove('show');
       }
     });
-
-    sendButton.addEventListener('click', sendMessage);
   </script>
 
 </body>
 </html>
-

@@ -461,38 +461,36 @@ const AIInput: React.FC<AIInputProps> = ({
         setShowContextMenu(false);
       }
     },
-    ...(isLoggedIn ? [
-      { 
-        icon: MessageSquare, 
-        label: 'Connect Slack Channel',
-        action: () => handleOpenIntegrationModal('slack')
-      },
-      { 
-        icon: Ticket, 
-        label: 'Connect Jira',
-        action: () => handleOpenIntegrationModal('jira')
-      },
-      { 
-        icon: Paperclip, 
-        label: 'Connect Confluence',
-        action: () => handleOpenIntegrationModal('confluence')
-      },
-      { 
-        icon: Building2, 
-        label: 'Connect Org',
-        action: () => handleOpenIntegrationModal('org')
-      },
-      { 
-        icon: Grid, 
-        label: 'All Integrations',
-        action: () => {
-          if (onIntegrationsClick) {
-            onIntegrationsClick();
-          }
-          setShowContextMenu(false);
+    { 
+      icon: MessageSquare, 
+      label: 'Connect Slack Channel',
+      action: () => handleOpenIntegrationModal('slack')
+    },
+    { 
+      icon: Ticket, 
+      label: 'Connect Jira',
+      action: () => handleOpenIntegrationModal('jira')
+    },
+    { 
+      icon: Paperclip, 
+      label: 'Connect Confluence',
+      action: () => handleOpenIntegrationModal('confluence')
+    },
+    { 
+      icon: Building2, 
+      label: 'Connect Org',
+      action: () => handleOpenIntegrationModal('org')
+    },
+    { 
+      icon: Grid, 
+      label: 'All Integrations',
+      action: () => {
+        if (onIntegrationsClick) {
+          onIntegrationsClick();
         }
+        setShowContextMenu(false);
       }
-    ] : [])
+    }
   ];
 
   return (

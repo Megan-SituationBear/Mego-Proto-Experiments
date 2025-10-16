@@ -76,6 +76,15 @@ interface CodeSnippet {
   lineCount: number;
 }
 
+interface IntegrationContext {
+  id: string;
+  type: 'slack' | 'jira' | 'confluence' | 'org';
+  name: string;
+  url?: string;
+}
+
+type IntegrationType = 'slack' | 'jira' | 'confluence' | 'org' | null;
+
 const AIInput: React.FC<AIInputProps> = ({
   placeholder = "Try: @Copado what do you do? Or, @project Let's Go!",
   onSendMessage,
@@ -96,10 +105,21 @@ const AIInput: React.FC<AIInputProps> = ({
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [showSlackModal, setShowSlackModal] = useState(false);
-  const [slackChannelUrl, setSlackChannelUrl] = useState('');
-  const [isSlackConnected, setIsSlackConnected] = useState(false); // Simulate connection status
+  const [showIntegrationModal, setShowIntegrationModal] = useState(false);
+  const [activeIntegrationType, setActiveIntegrationType] = useState<IntegrationType>(null);
+  const [integrationUrl, setIntegrationUrl] = useState('');
+  const [extractedName, setExtractedName] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [codeSnippets, setCodeSnippets] = useState<CodeSnippet[]>([]);
+  const [integrationContexts, setIntegrationContexts] = useState<IntegrationContext[]>([]);
+  
+  // Simulate which integrations are connected (in real app, this would come from props or context)
+  const [connectedIntegrations, setConnectedIntegrations] = useState({
+    slack: true,
+    jira: false,
+    confluence: true,
+    org: false
+  });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -138,31 +158,102 @@ const AIInput: React.FC<AIInputProps> = ({
     setCodeSnippets(prev => prev.filter(snippet => snippet.id !== id));
   };
 
-  // Extract channel name from Slack URL
-  const extractSlackChannelName = (url: string): string => {
-    // Extract from URL like https://workspace.slack.com/archives/C12345678
-    const match = url.match(/\/archives\/([A-Z0-9]+)/);
-    if (match) return `#channel-${match[1].slice(-4)}`;
+  // Extract identifier from URL based on integration type
+  const extractIdentifier = (url: string, type: IntegrationType): string => {
+    if (!type) return '';
     
-    // Try to extract from general URL patterns
-    const channelMatch = url.match(/\/messages\/([^\/]+)/);
-    if (channelMatch) return `#${channelMatch[1]}`;
-    
-    return '#slack-channel';
+    switch (type) {
+      case 'slack':
+        // Extract from URL like https://workspace.slack.com/archives/C12345678
+        const slackMatch = url.match(/\/archives\/([A-Z0-9]+)/);
+        if (slackMatch) return `#channel-${slackMatch[1].slice(-4)}`;
+        const channelMatch = url.match(/\/messages\/([^\/]+)/);
+        if (channelMatch) return `#${channelMatch[1]}`;
+        return '#slack-channel';
+        
+      case 'jira':
+        // Extract ticket ID like PROJ-123 or Sprint ID
+        const ticketMatch = url.match(/([A-Z]+-\d+)/);
+        if (ticketMatch) return ticketMatch[1];
+        const sprintMatch = url.match(/sprint[\/=](\d+)/i);
+        if (sprintMatch) return `Sprint-${sprintMatch[1]}`;
+        // If just an ID was pasted
+        if (/^[A-Z]+-\d+$/.test(url.trim())) return url.trim();
+        if (/^\d+$/.test(url.trim())) return `Sprint-${url.trim()}`;
+        return 'JIRA-001';
+        
+      case 'confluence':
+        // Extract page title or folder name from URL
+        const pageMatch = url.match(/\/pages\/\d+\/([^\/\?]+)/);
+        if (pageMatch) return decodeURIComponent(pageMatch[1].replace(/\+/g, ' '));
+        const spaceMatch = url.match(/\/spaces\/([^\/\?]+)/);
+        if (spaceMatch) return `📁 ${decodeURIComponent(spaceMatch[1].replace(/\+/g, ' '))}`;
+        return '📄 Confluence Doc';
+        
+      case 'org':
+        return 'Salesforce Org';
+        
+      default:
+        return '';
+    }
   };
 
-  // Handle Slack channel addition
-  const handleAddSlackChannel = () => {
-    if (!slackChannelUrl.trim()) return;
-    
-    const channelName = extractSlackChannelName(slackChannelUrl);
-    console.log(`Adding Slack channel: ${channelName} from URL: ${slackChannelUrl}`);
-    
-    // Here you would actually add the channel to context
-    // For now, just close the modal
-    setShowSlackModal(false);
-    setSlackChannelUrl('');
+  // Open integration modal
+  const handleOpenIntegrationModal = (type: IntegrationType) => {
+    setActiveIntegrationType(type);
+    setIntegrationUrl('');
+    setExtractedName('');
+    setShowConfirmation(false);
+    setShowIntegrationModal(true);
     setShowContextMenu(false);
+  };
+
+  // Handle URL input and extraction
+  const handleIntegrationUrlChange = (url: string) => {
+    setIntegrationUrl(url);
+    if (url.trim()) {
+      const extracted = extractIdentifier(url, activeIntegrationType);
+      setExtractedName(extracted);
+      setShowConfirmation(true);
+    } else {
+      setShowConfirmation(false);
+      setExtractedName('');
+    }
+  };
+
+  // Confirm and add integration to context
+  const handleConfirmIntegration = () => {
+    if (!activeIntegrationType || !extractedName) return;
+    
+    const newContext: IntegrationContext = {
+      id: Date.now().toString(),
+      type: activeIntegrationType,
+      name: extractedName,
+      url: integrationUrl
+    };
+    
+    setIntegrationContexts(prev => [...prev, newContext]);
+    setShowIntegrationModal(false);
+    setIntegrationUrl('');
+    setExtractedName('');
+    setShowConfirmation(false);
+    setActiveIntegrationType(null);
+  };
+
+  // Delete integration context
+  const deleteIntegrationContext = (id: string) => {
+    setIntegrationContexts(prev => prev.filter(ctx => ctx.id !== id));
+  };
+
+  // Get integration display info
+  const getIntegrationInfo = (type: IntegrationType) => {
+    const info = {
+      slack: { title: 'Add Slack Channel', placeholder: 'Paste Slack channel URL', emoji: '💬' },
+      jira: { title: 'Add Jira', placeholder: 'Paste Jira ticket URL or ID (e.g., PROJ-123, Sprint-456)', emoji: '🎫' },
+      confluence: { title: 'Add Confluence', placeholder: 'Paste Confluence folder or document URL', emoji: '📚' },
+      org: { title: 'Add Salesforce Org', placeholder: '', emoji: '🏢' }
+    };
+    return type ? info[type] : null;
   };
 
   // Determine current view state
@@ -370,40 +461,38 @@ const AIInput: React.FC<AIInputProps> = ({
         setShowContextMenu(false);
       }
     },
-    { 
-      icon: MessageSquare, 
-      label: 'Connect Slack Channel',
-      action: () => {
-        console.log('Connect Slack');
-        setShowContextMenu(false);
-      }
-    },
-    { 
-      icon: Building2, 
-      label: 'Connect Org',
-      action: () => {
-        console.log('Connect Org');
-        setShowContextMenu(false);
-      }
-    },
-    { 
-      icon: Ticket, 
-      label: 'Connect Jira',
-      action: () => {
-        console.log('Connect Jira');
-        setShowContextMenu(false);
-      }
-    },
-    { 
-      icon: Grid, 
-      label: 'All Integrations',
-      action: () => {
-        if (onIntegrationsClick) {
-          onIntegrationsClick();
+    ...(isLoggedIn ? [
+      { 
+        icon: MessageSquare, 
+        label: 'Connect Slack Channel',
+        action: () => handleOpenIntegrationModal('slack')
+      },
+      { 
+        icon: Ticket, 
+        label: 'Connect Jira',
+        action: () => handleOpenIntegrationModal('jira')
+      },
+      { 
+        icon: Paperclip, 
+        label: 'Connect Confluence',
+        action: () => handleOpenIntegrationModal('confluence')
+      },
+      { 
+        icon: Building2, 
+        label: 'Connect Org',
+        action: () => handleOpenIntegrationModal('org')
+      },
+      { 
+        icon: Grid, 
+        label: 'All Integrations',
+        action: () => {
+          if (onIntegrationsClick) {
+            onIntegrationsClick();
+          }
+          setShowContextMenu(false);
         }
-        setShowContextMenu(false);
       }
-    }
+    ] : [])
   ];
 
   return (
@@ -479,6 +568,31 @@ const AIInput: React.FC<AIInputProps> = ({
             }}
             rows={1}
           />
+
+          {/* Integration Context Chips */}
+          {integrationContexts.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {integrationContexts.map((ctx) => {
+                const info = getIntegrationInfo(ctx.type);
+                return (
+                  <div key={ctx.id} className="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 rounded-lg px-3 py-1.5">
+                    <span className="text-sm">{info?.emoji}</span>
+                    <span className="text-xs font-medium text-blue-700">{ctx.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => deleteIntegrationContext(ctx.id)}
+                      className="ml-1 p-0.5 hover:bg-blue-200 rounded transition-colors"
+                      title="Remove"
+                    >
+                      <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Code Snippets Display */}
           {codeSnippets.length > 0 && (

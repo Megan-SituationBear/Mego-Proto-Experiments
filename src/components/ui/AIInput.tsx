@@ -449,7 +449,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const handleMenuMouseLeave = () => {
     menuTimeoutRef.current = setTimeout(() => {
       setShowContextMenu(false);
-    }, 300); // 300ms delay before hiding
+    }, 500); // 500ms delay before hiding - gives time to click
   };
 
   const contextMenuItems = [

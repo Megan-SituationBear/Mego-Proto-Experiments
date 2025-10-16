@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIInput Component - 3 Variants</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen py-12 px-6">
+  
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-slate-900 mb-3">AIInput Component</h1>
+      <p class="text-xl text-slate-600 mb-2">3 Simple Variants for Your Coworkers</p>
+      <p class="text-sm text-slate-500">Pick the variant that matches your use case and copy the example code</p>
+    </div>
+
+    <!-- Comparison Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+      
+      <!-- Variant 1: Logged Out -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 border-2 border-gray-200">
+        <div class="mb-4">
+          <div class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold mb-3">
+            VARIANT 1
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900 mb-2">Logged Out</h2>
+          <p class="text-sm text-slate-600 mb-4">For landing pages, marketing pages</p>
+        </div>
+
+        <div class="space-y-3 text-xs text-slate-700 mb-6">
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Default:</strong> 48px height, gray border</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Focused:</strong> 120px height, blue ring glow</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>With Conversation:</strong> Shows above input</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 rounded-lg p-4 text-xs font-mono text-slate-800 overflow-x-auto">
+          <pre class="whitespace-pre-wrap">
+<span class="text-purple-600">isLoggedIn</span>=<span class="text-orange-600">{false}</span>
+<span class="text-purple-600">pageContext</span>=<span class="text-green-600">"home"</span>
+          </pre>
+        </div>
+      </div>
+
+      <!-- Variant 2: Home Logged In -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 border-2 border-blue-200">
+        <div class="mb-4">
+          <div class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold mb-3">
+            VARIANT 2
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900 mb-2">Home - Logged In</h2>
+          <p class="text-sm text-slate-600 mb-4">For dashboard home, welcome screen</p>
+        </div>
+
+        <div class="space-y-3 text-xs text-slate-700 mb-6">
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Default:</strong> 48px height, blue-200 border</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Focused:</strong> 100px height, blue-400 border</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>With Conversation:</strong> 140px height</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 rounded-lg p-4 text-xs font-mono text-slate-800 overflow-x-auto">
+          <pre class="whitespace-pre-wrap">
+<span class="text-purple-600">isLoggedIn</span>=<span class="text-orange-600">{true}</span>
+<span class="text-purple-600">pageContext</span>=<span class="text-green-600">"home"</span>
+          </pre>
+        </div>
+      </div>
+
+      <!-- Variant 3: Context Page -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 border-2 border-amber-200">
+        <div class="mb-4">
+          <div class="inline-block bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold mb-3">
+            VARIANT 3
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900 mb-2">Context Page</h2>
+          <p class="text-sm text-slate-600 mb-4">For workspace, project pages, chat panels</p>
+        </div>
+
+        <div class="space-y-3 text-xs text-slate-700 mb-6">
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Default:</strong> 48px height, slate-300 border</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>Focused:</strong> 80px height, blue-400 border</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span><strong>With Conversation:</strong> 120px height</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 rounded-lg p-4 text-xs font-mono text-slate-800 overflow-x-auto">
+          <pre class="whitespace-pre-wrap">
+<span class="text-purple-600">isLoggedIn</span>=<span class="text-orange-600">{true}</span>
+<span class="text-purple-600">pageContext</span>=<span class="text-green-600">"workspace"</span>
+          </pre>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-12">
+      <h3 class="text-2xl font-bold text-slate-900 mb-6 text-center">✨ All Variants Include</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="text-center">
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+            </svg>
+          </div>
+          <h4 class="font-semibold text-slate-900 mb-1">Conversation Display</h4>
+          <p class="text-xs text-slate-600">Messages appear above input automatically</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+          </div>
+          <h4 class="font-semibold text-slate-900 mb-1">Context Menu</h4>
+          <p class="text-xs text-slate-600">Hover + button for integrations</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+          </div>
+          <h4 class="font-semibold text-slate-900 mb-1">Settings Modal</h4>
+          <p class="text-xs text-slate-600">Full configuration UI built-in</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+          </div>
+          <h4 class="font-semibold text-slate-900 mb-1">Upload Modal</h4>
+          <p class="text-xs text-slate-600">Add images and documents easily</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl shadow-lg p-8 text-white text-center">
+      <h3 class="text-2xl font-bold mb-3">🚀 Quick Start</h3>
+      <p class="text-blue-100 mb-6">Check out the example files in <code class="bg-blue-800 px-2 py-1 rounded">src/components/ui/examples/</code></p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <code class="bg-blue-800 px-4 py-2 rounded-lg text-sm">AIInputLoggedOut.example.tsx</code>
+        <code class="bg-blue-800 px-4 py-2 rounded-lg text-sm">AIInputHomeLoggedIn.example.tsx</code>
+        <code class="bg-blue-800 px-4 py-2 rounded-lg text-sm">AIInputContextPage.example.tsx</code>
+      </div>
+      <p class="text-blue-100 mt-6 text-sm">See <code class="bg-blue-800 px-2 py-1 rounded">AIInput-README.md</code> for full documentation</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
+

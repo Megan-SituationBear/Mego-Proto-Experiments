@@ -1,9 +1,52 @@
-import React, { useState, useRef, useEffect } from 'react';
+/**
+ * AIInput Component - Dynamic State-Based Input Field
+ * 
+ * This component renders differently based on three key factors:
+ * 1. Authentication Status (isLoggedIn: boolean)
+ * 2. Page Context (pageContext: 'home' | 'workspace' | 'context')
+ * 3. Interaction State (viewState: 'default' | 'focused' | 'focused-with-conversation')
+ * 
+ * STATE COMBINATIONS:
+ * 
+ * ┌─────────────┬──────────────┬─────────────┬────────────┬────────────┬─────────┬────────────────┐
+ * │ Auth        │ Page         │ View State  │ Height     │ Padding    │ Border  │ Shadow/Ring    │
+ * ├─────────────┼──────────────┼─────────────┼────────────┼────────────┼─────────┼────────────────┤
+ * │ Logged Out  │ Home         │ Default     │ 48px       │ 12px       │ gray-300│ shadow-2xl     │
+ * │ Logged Out  │ Home         │ Focused     │ 120px      │ 20px       │ blue-500│ ring-4 blue-100│
+ * │ Logged Out  │ Home         │ Focused+Conv│ 120px      │ 20px       │ blue-500│ ring-4 blue-100│
+ * ├─────────────┼──────────────┼─────────────┼────────────┼────────────┼─────────┼────────────────┤
+ * │ Logged In   │ Home         │ Default     │ 48px       │ 12px       │ blue-200│ shadow-lg      │
+ * │ Logged In   │ Home         │ Focused     │ 100px      │ 16px       │ blue-400│ ring-2 blue-200│
+ * │ Logged In   │ Home         │ Focused+Conv│ 140px      │ 24px       │ blue-500│ ring-4 blue-100│
+ * ├─────────────┼──────────────┼─────────────┼────────────┼────────────┼─────────┼────────────────┤
+ * │ Any         │ Workspace    │ Default     │ 48px       │ 12px       │ slate-300│ shadow-md     │
+ * │ Any         │ Workspace    │ Focused     │ 80px       │ 16px       │ blue-400│ ring-2 blue-200│
+ * │ Any         │ Workspace    │ Focused+Conv│ 120px      │ 20px       │ blue-400│ ring-2 blue-200│
+ * └─────────────┴──────────────┴─────────────┴────────────┴────────────┴─────────┴────────────────┘
+ * 
+ * USAGE EXAMPLES:
+ * 
+ * // Logged out user on home page
+ * <AIInput isLoggedIn={false} pageContext="home" hasConversation={false} />
+ * 
+ * // Logged in user on home page with active conversation
+ * <AIInput isLoggedIn={true} pageContext="home" hasConversation={true} />
+ * 
+ * // Any user in workspace/context page
+ * <AIInput isLoggedIn={true} pageContext="workspace" hasConversation={messages.length > 0} />
+ */
 
-interface Integration {
-  name: string;
-  icon: string;
-  description: string;
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, Plus, Settings, Paperclip, MessageSquare, Building2, Ticket, Grid } from 'lucide-react';
+
+type PageContext = 'home' | 'workspace' | 'context';
+type ViewState = 'default' | 'focused' | 'focused-with-conversation';
+
+export interface ConversationMessage {
+  id: string;
+  content: string;
+  isUser: boolean;
+  timestamp?: Date;
 }
 
 interface AIInputProps {
@@ -17,563 +60,587 @@ interface AIInputProps {
   className?: string;
   disabled?: boolean;
   loading?: boolean;
+  autoFocus?: boolean;
+  // New state props
+  isLoggedIn?: boolean;
+  pageContext?: PageContext;
+  hasConversation?: boolean;
+  // Conversation props
+  messages?: ConversationMessage[];
+  showTypingIndicator?: boolean;
 }
-
-// Define input states based on user requirements
-type InputState = 'default' | 'typing' | 'pasting-file' | 'attached-image' | 'attached-doc' | 'integrated' | 'typing-with-at' | 'loading' | 'error' | 'success';
 
 const AIInput: React.FC<AIInputProps> = ({
   placeholder = "Try: @Copado what do you do? Or, @project Let's Go!",
   onSendMessage,
-  onUploadImage,
-  onUploadDoc,
-  onExamineSlack,
-  onAddConfluence,
   onIntegrationsClick,
   className = "",
   disabled = false,
   loading = false,
+  autoFocus = false,
+  isLoggedIn = false,
+  pageContext = 'home',
+  hasConversation = false,
+  messages = [],
+  showTypingIndicator = false,
 }) => {
-  const [inputText, setInputText] = useState('');
-  const [inputState, setInputState] = useState<InputState>('default');
+  const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [showPlusMenu, setShowPlusMenu] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isTyping, setIsTyping] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [attachedImage, setAttachedImage] = useState<File | null>(null);
-  const [attachedDoc, setAttachedDoc] = useState<File | null>(null);
-  const [activeIntegration, setActiveIntegration] = useState<string | null>(null);
-  const [hasAtSymbol, setHasAtSymbol] = useState(false);
-  const [isPastingFile, setIsPastingFile] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [hasBeenFocused, setHasBeenFocused] = useState(false);
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Update input state based on loading prop
+  // Scroll to bottom when messages change
   useEffect(() => {
-    if (loading) {
-      setInputState('loading');
-    } else if (errorMessage) {
-      setInputState('error');
-    } else if (inputState === 'loading') {
-      setInputState('success');
-      // Clear success state after a short delay
-      setTimeout(() => setInputState('default'), 1000);
-    }
-  }, [loading, errorMessage]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-  // Check for @ symbol in input text
-  useEffect(() => {
-    const atSymbolPresent = inputText.includes('@');
-    setHasAtSymbol(atSymbolPresent);
-  }, [inputText]);
+  // Determine current view state
+  const getViewState = (): ViewState => {
+    if (isFocused && hasConversation) return 'focused-with-conversation';
+    if (isFocused || hasBeenFocused) return 'focused';
+    return 'default';
+  };
 
-  // Main state management based on current conditions
-  useEffect(() => {
-    if (loading) {
-      setInputState('loading');
-      return;
-    }
-    
-    if (errorMessage) {
-      setInputState('error');
-      return;
-    }
-    
-    if (isPastingFile) {
-      setInputState('pasting-file');
-      return;
-    }
-    
-    if (attachedImage) {
-      setInputState('attached-image');
-      return;
-    }
-    
-    if (attachedDoc) {
-      setInputState('attached-doc');
-      return;
-    }
-    
-    if (activeIntegration) {
-      setInputState('integrated');
-      return;
-    }
-    
-    if (inputText.length > 0) {
-      if (hasAtSymbol) {
-        setInputState('typing-with-at');
-      } else {
-        setInputState('typing');
-      }
-    } else {
-      setInputState('default');
-    }
-  }, [loading, errorMessage, isPastingFile, attachedImage, attachedDoc, activeIntegration, inputText, hasAtSymbol]);
+  const viewState = getViewState();
 
-  // Handle typing state with debounce
-  useEffect(() => {
-    if (inputText.length > 0 && !isPastingFile && !attachedImage && !attachedDoc && !activeIntegration) {
-      setIsTyping(true);
-      
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
-      
-      const timeout = setTimeout(() => {
-        setIsTyping(false);
-      }, 500);
-      
-      setTypingTimeout(timeout);
-    } else {
-      setIsTyping(false);
-    }
-
-    return () => {
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
+  // Get styling based on state combination
+  const getStateStyles = () => {
+    const state = { isLoggedIn, pageContext, viewState };
+    
+    // Base styles for all states
+    const baseStyles = {
+      containerScale: 'scale-100',
+      borderColor: 'border-gray-200',
+      shadow: 'shadow-xl',
+      bgColor: 'bg-white',
+      ring: '',
+      height: '48px',
+      padding: '12px',
     };
-  }, [inputText, isPastingFile, attachedImage, attachedDoc, activeIntegration]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (inputText.trim() && onSendMessage && !disabled && !loading) {
-      setInputState('loading');
-      setErrorMessage(null);
-      onSendMessage(inputText.trim());
-      setInputText('');
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputText(value);
-    setErrorMessage(null); // Clear error when user starts typing
-  };
-
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    const items = e.clipboardData.items;
-    let hasFile = false;
-    
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (item.kind === 'file') {
-        hasFile = true;
-        setIsPastingFile(true);
-        
-        // Handle file pasting based on type
-        if (item.type.startsWith('image/')) {
-          setAttachedImage(item.getAsFile());
-        } else if (item.type.includes('document') || item.type.includes('text')) {
-          setAttachedDoc(item.getAsFile());
-        }
-        
-        // Clear pasting state after a delay
-        setTimeout(() => {
-          setIsPastingFile(false);
-        }, 2000);
-        break;
+    // Logged Out States - Home Page (Landing/Intro)
+    if (!isLoggedIn && pageContext === 'home') {
+      if (viewState === 'default') {
+        // Subtle, inviting default state
+        return {
+          ...baseStyles,
+          shadow: 'shadow-2xl hover:shadow-3xl',
+          borderColor: 'border-gray-200',
+          bgColor: 'bg-white',
+          containerScale: 'scale-100 hover:scale-[1.005]',
+          height: '56px',
+          padding: '14px',
+        };
+      }
+      if (viewState === 'focused') {
+        // Expanded, focused state - no conversation yet
+        return {
+          ...baseStyles,
+          containerScale: 'scale-[1.02]',
+          borderColor: 'border-blue-400',
+          shadow: 'shadow-2xl',
+          ring: 'ring-4 ring-blue-50',
+          bgColor: 'bg-white',
+          height: '100px',
+          padding: '18px',
+        };
+      }
+      if (viewState === 'focused-with-conversation') {
+        // Maximum expansion when conversation is active
+        return {
+          ...baseStyles,
+          containerScale: 'scale-[1.03]',
+          borderColor: 'border-blue-500',
+          shadow: 'shadow-3xl',
+          ring: 'ring-6 ring-blue-100/50',
+          bgColor: 'bg-white',
+          height: '120px',
+          padding: '22px',
+        };
       }
     }
-    
-    if (!hasFile) {
-      setIsPastingFile(false);
+
+    // Logged In States
+    if (isLoggedIn && pageContext === 'home') {
+      if (viewState === 'default') {
+        return {
+          ...baseStyles,
+          shadow: 'shadow-lg',
+          borderColor: 'border-blue-200',
+        };
+      }
+      if (viewState === 'focused') {
+        return {
+          ...baseStyles,
+          containerScale: 'scale-[1.01]',
+          borderColor: 'border-blue-400',
+          shadow: 'shadow-xl',
+          ring: 'ring-2 ring-blue-200',
+          height: '100px',
+          padding: '16px',
+        };
+      }
+      if (viewState === 'focused-with-conversation') {
+        return {
+          ...baseStyles,
+          containerScale: 'scale-[1.02]',
+          borderColor: 'border-blue-500',
+          shadow: 'shadow-2xl',
+          ring: 'ring-4 ring-blue-100',
+          height: '140px',
+          padding: '24px',
+        };
+      }
+    }
+
+    // Context/Workspace Page States
+    if (pageContext === 'context' || pageContext === 'workspace') {
+      if (viewState === 'default') {
+        return {
+          ...baseStyles,
+          shadow: 'shadow-md',
+          borderColor: 'border-slate-300',
+          bgColor: 'bg-white/95',
+        };
+      }
+      if (viewState === 'focused' || viewState === 'focused-with-conversation') {
+        return {
+          ...baseStyles,
+          borderColor: 'border-blue-400',
+          shadow: 'shadow-lg',
+          ring: 'ring-2 ring-blue-200',
+          bgColor: 'bg-white',
+          height: viewState === 'focused-with-conversation' ? '120px' : '80px',
+          padding: viewState === 'focused-with-conversation' ? '20px' : '16px',
+        };
+      }
+    }
+
+    return baseStyles;
+  };
+
+  const stateStyles = getStateStyles();
+
+  // Auto-resize textarea based on state
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea && (isFocused || hasBeenFocused)) {
+      textarea.style.height = 'auto';
+      const newHeight = Math.min(textarea.scrollHeight, 300); // Max height of 300px
+      const minHeight = parseInt(stateStyles.height);
+      textarea.style.height = Math.max(newHeight, minHeight) + 'px';
+    }
+  }, [value, isFocused, hasBeenFocused, stateStyles.height]);
+
+  // Autofocus on mount if requested
+  useEffect(() => {
+    if (autoFocus && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [autoFocus]);
+
+  const handleSubmit = () => {
+    if (value.trim() && onSendMessage && !disabled && !loading) {
+      onSendMessage(value.trim());
+      setValue('');
+      setHasBeenFocused(false);
     }
   };
 
-  const handleUploadImage = () => {
-    if (onUploadImage) {
-      onUploadImage();
-      setAttachedImage(new File([''], 'uploaded-image.jpg', { type: 'image/jpeg' }));
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
     }
-  };
-
-  const handleUploadDoc = () => {
-    if (onUploadDoc) {
-      onUploadDoc();
-      setAttachedDoc(new File([''], 'uploaded-doc.pdf', { type: 'application/pdf' }));
-    }
-  };
-
-  const handleExamineSlack = () => {
-    if (onExamineSlack) {
-      onExamineSlack();
-      setActiveIntegration('slack');
-    }
-  };
-
-  const handleAddConfluence = () => {
-    if (onAddConfluence) {
-      onAddConfluence();
-      setActiveIntegration('confluence');
-    }
-  };
-
-  const handleIntegrationsClick = () => {
-    if (onIntegrationsClick) {
-      onIntegrationsClick();
-      setActiveIntegration('integrated');
-    }
-  };
-
-  const removeAttachment = (type: 'image' | 'doc') => {
-    if (type === 'image') {
-      setAttachedImage(null);
-    } else {
-      setAttachedDoc(null);
-    }
-  };
-
-  const clearIntegration = () => {
-    setActiveIntegration(null);
   };
 
   const handleFocus = () => {
     setIsFocused(true);
-    setShowPlusMenu(false); // Close plus menu when input is focused
+    setHasBeenFocused(true);
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-  };
-
-  const handlePlusMenuToggle = () => {
-    setShowPlusMenu(!showPlusMenu);
-    if (!showPlusMenu) {
-      // Close any existing errors when opening menu
-      setErrorMessage(null);
+    // Keep expanded if there's content
+    if (!value.trim()) {
+      setHasBeenFocused(false);
     }
   };
 
-  const handleMenuItemClick = (action: () => void) => {
-    try {
-      action();
-      setShowPlusMenu(false);
-    } catch (error) {
-      setErrorMessage('An error occurred with this action');
-      setShowPlusMenu(false);
+  const handleMenuMouseEnter = () => {
+    if (menuTimeoutRef.current) {
+      clearTimeout(menuTimeoutRef.current);
     }
+    setShowContextMenu(true);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Escape') {
-      setShowPlusMenu(false);
-      setErrorMessage(null);
-    }
+  const handleMenuMouseLeave = () => {
+    menuTimeoutRef.current = setTimeout(() => {
+      setShowContextMenu(false);
+    }, 300); // 300ms delay before hiding
   };
 
-  // Close plus menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setShowPlusMenu(false);
-    };
-
-    if (showPlusMenu) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
+  const contextMenuItems = [
+    { 
+      icon: Paperclip, 
+      label: 'Add Images and Docs',
+      action: () => {
+        setShowUploadModal(true);
+        setShowContextMenu(false);
+      }
+    },
+    { 
+      icon: MessageSquare, 
+      label: 'Connect Slack Channel',
+      action: () => {
+        console.log('Connect Slack');
+        setShowContextMenu(false);
+      }
+    },
+    { 
+      icon: Building2, 
+      label: 'Connect Org',
+      action: () => {
+        console.log('Connect Org');
+        setShowContextMenu(false);
+      }
+    },
+    { 
+      icon: Ticket, 
+      label: 'Connect Jira',
+      action: () => {
+        console.log('Connect Jira');
+        setShowContextMenu(false);
+      }
+    },
+    { 
+      icon: Grid, 
+      label: 'All Integrations',
+      action: () => {
+        if (onIntegrationsClick) {
+          onIntegrationsClick();
+        }
+        setShowContextMenu(false);
+      }
     }
-  }, [showPlusMenu]);
-
-  // Get dynamic classes based on state
-  const getInputBoxClasses = () => {
-    const baseClasses = "bg-white rounded-3xl shadow-lg border p-4 md:p-6 transition-all duration-200";
-    
-    switch (inputState) {
-      case 'loading':
-        return `${baseClasses} border-blue-300 shadow-blue-100`;
-      case 'error':
-        return `${baseClasses} border-red-300 shadow-red-100`;
-      case 'success':
-        return `${baseClasses} border-green-300 shadow-green-100`;
-      case 'typing':
-        return `${baseClasses} border-blue-200 shadow-blue-50`;
-      case 'typing-with-at':
-        return `${baseClasses} border-purple-200 shadow-purple-50`;
-      case 'pasting-file':
-        return `${baseClasses} border-orange-300 shadow-orange-100 animate-pulse`;
-      case 'attached-image':
-        return `${baseClasses} border-green-300 shadow-green-100`;
-      case 'attached-doc':
-        return `${baseClasses} border-blue-300 shadow-blue-100`;
-      case 'integrated':
-        return `${baseClasses} border-indigo-300 shadow-indigo-100`;
-      case 'default':
-      default:
-        return `${baseClasses} border-blue-100/60`;
-    }
-  };
-
-  const getInputClasses = () => {
-    const baseClasses = "w-full text-base md:text-lg py-3 md:py-4 px-4 md:px-6 border-none outline-none bg-transparent text-center focus:ring-0 transition-all duration-200";
-    
-    if (disabled || loading) {
-      return `${baseClasses} text-gray-400 placeholder-gray-300 cursor-not-allowed`;
-    }
-    
-    switch (inputState) {
-      case 'error':
-        return `${baseClasses} text-red-700 placeholder-red-400`;
-      case 'success':
-        return `${baseClasses} text-green-700 placeholder-green-400`;
-      default:
-        return `${baseClasses} text-gray-700 placeholder-gray-400`;
-    }
-  };
+  ];
 
   return (
-    <div className={`relative ${className}`}>
-      {/* Error Message */}
-      {errorMessage && (
-        <div className="absolute -top-12 left-0 right-0 flex justify-center">
-          <div className="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-sm">
-            {errorMessage}
-          </div>
+    <div className={`w-full ${className}`}>
+      {/* Conversation Display - Above the input */}
+      {(messages.length > 0 || showTypingIndicator) && (
+        <div 
+          className="mb-4 space-y-3 max-h-[320px] overflow-y-auto px-3 py-4 rounded-2xl border border-gray-200/50 animate-in fade-in slide-in-from-top-2 duration-500" 
+          style={{ 
+            background: 'rgba(255, 255, 255, 0.3)', 
+            backdropFilter: 'blur(10px)' 
+          }}
+        >
+          {messages.map((msg) => (
+            <div key={msg.id} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+              <div 
+                className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-left ${
+                  msg.isUser 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-white/90 border border-gray-200 text-slate-800 shadow-sm'
+                } transition-all duration-500 ease-out`}
+              >
+                <p className="font-body text-sm leading-relaxed" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '15px', lineHeight: '24px' }}>
+                  {msg.content}
+                </p>
+              </div>
+            </div>
+          ))}
+
+          {/* AI Thinking Indicator */}
+          {showTypingIndicator && (
+            <div className="flex justify-start">
+              <div className="bg-white/90 border border-gray-200 shadow-sm px-4 py-2.5 rounded-2xl">
+                <div className="flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
       )}
 
-      {/* Main Input Box */}
-      <div className={getInputBoxClasses()}>
-        <form onSubmit={handleSubmit}>
-          <div className="relative flex items-center">
-            {/* Attachment indicators */}
-            {(attachedImage || attachedDoc || activeIntegration || isPastingFile) && (
-              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
-                {isPastingFile && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs">
-                    <div className="animate-spin rounded-full h-3 w-3 border border-orange-600 border-t-transparent"></div>
-                    <span>Pasting file...</span>
-                  </div>
-                )}
-                {attachedImage && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span>Image</span>
-                    <button onClick={() => removeAttachment('image')} className="text-green-600 hover:text-green-800">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
-                {attachedDoc && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span>Document</span>
-                    <button onClick={() => removeAttachment('doc')} className="text-blue-600 hover:text-blue-800">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
-                {activeIntegration && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
-                    <span>{activeIntegration}</span>
-                    <button onClick={clearIntegration} className="text-indigo-600 hover:text-indigo-800">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+      {/* AI Input Field */}
+      <div 
+        className={`relative ${stateStyles.bgColor} rounded-2xl border-2 transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring} hover:shadow-2xl`}
+      >
+        <div className="flex flex-col p-3">
+          {/* Textarea that grows */}
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            disabled={disabled || loading}
+            className={`w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 ${
+              value ? 'text-slate-700' : 'text-gray-400'
+            } ${isFocused ? 'placeholder-gray-500' : 'placeholder-gray-400'}`}
+            style={{
+              paddingTop: stateStyles.padding,
+              paddingBottom: stateStyles.padding,
+              height: stateStyles.height,
+              lineHeight: '1.5',
+              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+              fontFamily: 'Inter, system-ui, sans-serif',
+              fontSize: '14px'
+            }}
+            rows={1}
+          />
 
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputText}
-              onChange={handleInputChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              onKeyDown={handleKeyDown}
-              onPaste={handlePaste}
-              placeholder={
-                isPastingFile ? "Pasting large file..." :
-                attachedImage ? "Image attached - add your message..." :
-                attachedDoc ? "Document attached - add your message..." :
-                activeIntegration ? "Integration active - add your message..." :
-                hasAtSymbol ? "Continue typing with @..." :
-                placeholder
-              }
-              className={`${getInputClasses()} ${(attachedImage || attachedDoc || activeIntegration || isPastingFile) ? 'pl-32' : ''}`}
-              disabled={disabled || loading}
-            />
-            
-            {/* @ symbol indicator */}
-            {hasAtSymbol && !loading && (
-              <div className="absolute right-16 top-1/2 transform -translate-y-1/2">
-                <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center">
-                  <span className="text-purple-600 text-xs font-bold">@</span>
-                </div>
-              </div>
-            )}
-            
-            {/* Loading indicator */}
-            {loading && (
-              <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent"></div>
-              </div>
-            )}
-            
-            {/* Typing indicator */}
-            {isTyping && !loading && !hasAtSymbol && (
-              <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:0.1s]"></div>
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                </div>
-              </div>
-            )}
-          </div>
-        </form>
-        
-        {/* Action Bar */}
-        <div className="flex items-center justify-between mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100">
-          {/* Left side icons */}
-          <div className="flex items-center space-x-2 md:space-x-3">
-            {/* Plus Icon */}
-            <button
-              type="button"
-              onClick={handlePlusMenuToggle}
-              disabled={disabled || loading}
-              className={`w-7 h-7 md:w-8 md:h-8 rounded-full border border-gray-300 flex items-center justify-center transition-colors ${
-                disabled || loading 
-                  ? 'opacity-50 cursor-not-allowed' 
-                  : 'hover:bg-gray-50'
-              } ${showPlusMenu ? 'bg-gray-50' : ''}`}
+          {/* Action buttons row - below textarea */}
+          <div className="flex items-center justify-between mt-3">
+            {/* Left action buttons */}
+            <div className="flex items-center gap-2 relative">
+            {/* Plus button with context menu */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setShowContextMenu(true)}
+              onMouseLeave={() => setShowContextMenu(false)}
             >
-              <svg className="w-3 h-3 md:w-4 md:h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            </button>
-            
-            {/* Grid/App Launcher Icon */}
+                <button 
+                  type="button"
+                  className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="Add context"
+                >
+                  <Plus className="w-5 h-5 text-gray-600" />
+                </button>
+
+                {/* Context Menu Dropdown */}
+                {showContextMenu && (
+                  <div 
+                    ref={menuRef}
+                    className="absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-gray-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-bottom-2 duration-200"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      backdropFilter: 'blur(12px)',
+                    }}
+                  onMouseEnter={() => setShowContextMenu(true)}
+                  onMouseLeave={() => setShowContextMenu(false)}
+                  >
+                    {/* Menu Header */}
+                    <div className="px-3 py-1.5 border-b border-gray-100">
+                      <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                        Conversation Context:
+                      </p>
+                    </div>
+
+                    {/* Menu Items */}
+                    <div className="py-0.5">
+                      {contextMenuItems.map((item, index) => {
+                        const IconComponent = item.icon;
+                        return (
+                          <button
+                            key={index}
+                            onClick={item.action}
+                            className="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group"
+                          >
+                            <IconComponent className="w-4 h-4 text-gray-600 group-hover:text-blue-600" />
+                            <span className="text-xs text-gray-700 group-hover:text-blue-600 font-medium">
+                              {item.label}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
             <button 
               type="button"
-              disabled={disabled || loading}
-              className={`w-7 h-7 md:w-8 md:h-8 rounded-full border border-gray-300 flex items-center justify-center transition-colors ${
-                disabled || loading 
-                  ? 'opacity-50 cursor-not-allowed' 
-                  : 'hover:bg-gray-50'
-              }`}
+              onClick={() => setShowSettingsModal(true)}
+              className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Settings"
             >
-              <svg className="w-3 h-3 md:w-4 md:h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
+              <Settings className="w-5 h-5 text-gray-600" />
             </button>
+            </div>
+
+            {/* Send button */}
+            <button 
+              type="button"
+              onClick={handleSubmit}
+              disabled={!value.trim() || disabled || loading}
+              className={`p-3.5 rounded-xl transition-all duration-200 ${
+                value.trim() && !disabled && !loading
+                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              }`}
+              title="Send message"
+            >
+              <Send className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Character count for long messages */}
+        {value.length > 200 && (
+          <div className="px-6 pb-2 text-xs text-gray-500 font-body">
+            {value.length} characters
+          </div>
+        )}
+      </div>
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowUploadModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-900">Add Images and Documents</h3>
+              <button 
+                onClick={() => setShowUploadModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
             
-            {/* Salesforce Cloud Logo */}
-            <div className="flex items-center">
-              <div className={`w-7 h-7 md:w-8 md:h-8 bg-blue-600 rounded flex items-center justify-center transition-opacity ${
-                disabled || loading ? 'opacity-50' : ''
-              }`}>
-                <span className="text-white text-xs font-bold">SF</span>
+            <div className="space-y-4">
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <p className="text-sm text-gray-600 mb-2">Drag and drop files here</p>
+                <p className="text-xs text-gray-500">or click to browse</p>
+              </div>
+              
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setShowUploadModal(false)}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    console.log('Files uploaded');
+                    setShowUploadModal(false);
+                  }}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Upload
+                </button>
               </div>
             </div>
           </div>
-
-          {/* Right side send button */}
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            disabled={!inputText.trim() || disabled || loading}
-            className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-colors ${
-              inputState === 'success'
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-blue-600 hover:bg-blue-700'
-            } ${
-              !inputText.trim() || disabled || loading
-                ? 'opacity-40 cursor-not-allowed'
-                : ''
-            }`}
-          >
-            {loading ? (
-              <div className="animate-spin rounded-full h-4 w-4 md:h-5 md:w-5 border-2 border-white border-t-transparent"></div>
-            ) : inputState === 'success' ? (
-              <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Plus Menu Popover */}
-      {showPlusMenu && (
-        <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
-          <button 
-            type="button"
-            onClick={() => handleMenuItemClick(handleUploadImage)}
-            className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3"
-          >
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span className="text-gray-700">Upload image</span>
-          </button>
-          <button 
-            type="button"
-            onClick={() => handleMenuItemClick(handleUploadDoc)}
-            className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3"
-          >
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span className="text-gray-700">Upload doc</span>
-          </button>
-          <button 
-            type="button"
-            onClick={() => handleMenuItemClick(handleExamineSlack)}
-            className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3"
-          >
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            <span className="text-gray-700">Examine Slack channel</span>
-          </button>
-          <button 
-            type="button"
-            onClick={() => handleMenuItemClick(handleAddConfluence)}
-            className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3"
-          >
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-            <span className="text-gray-700">Add confluence doc</span>
-          </button>
-          <hr className="my-2 border-gray-100" />
-          <button
-            type="button"
-            onClick={() => handleMenuItemClick(handleIntegrationsClick)}
-            className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3"
-          >
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-            </svg>
-            <span className="text-gray-700">Add integrations</span>
-          </button>
         </div>
       )}
 
-      {/* Click outside to close popover */}
-      {showPlusMenu && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setShowPlusMenu(false)}
-        />
+      {/* Settings Modal */}
+      {showSettingsModal && (
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowSettingsModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col p-6 animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-slate-900">Settings For Copado</h3>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => {
+                    console.log('Settings saved');
+                    setShowSettingsModal(false);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Save
+                </button>
+                <button 
+                  onClick={() => setShowSettingsModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <div className="overflow-y-auto flex-1 pr-2 space-y-6 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400">
+              {/* Integrations Section */}
+              <div className="mb-6">
+                <h4 className="text-base font-semibold text-gray-700 mb-3">Integrations</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                    <div className="text-2xl mb-2">💬</div>
+                    <div className="text-sm font-medium text-gray-700">Slack</div>
+                    <div className="text-xs text-gray-500 mt-1">Connect workspace</div>
+                  </div>
+                  <div className="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                    <div className="text-2xl mb-2">📚</div>
+                    <div className="text-sm font-medium text-gray-700">Confluence</div>
+                    <div className="text-xs text-gray-500 mt-1">Link knowledge base</div>
+                  </div>
+                  <div className="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                    <div className="text-2xl mb-2">🎫</div>
+                    <div className="text-sm font-medium text-gray-700">Jira</div>
+                    <div className="text-xs text-gray-500 mt-1">Sync with projects</div>
+                  </div>
+                  <div className="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                    <div className="text-2xl mb-2">🐙</div>
+                    <div className="text-sm font-medium text-gray-700">GitHub</div>
+                    <div className="text-xs text-gray-500 mt-1">Access repositories</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sandbox Setup Section */}
+              <div className="mb-6">
+                <h4 className="text-base font-semibold text-gray-700 mb-3">Set up your sandboxes</h4>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-sm font-medium text-gray-700">Authenticate and assign permissions</div>
+                      <div className="text-xs text-gray-500 mt-1">Connect your Salesforce orgs for seamless deployment</div>
+                    </div>
+                    <button 
+                      onClick={() => console.log('Authenticating sandbox...')}
+                      className="px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Authenticate
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Team Rules Section */}
+              <div className="mb-6">
+                <h4 className="text-base font-semibold text-gray-700 mb-3">Team Rules</h4>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="text-sm text-gray-500 italic">Add setup sections here</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

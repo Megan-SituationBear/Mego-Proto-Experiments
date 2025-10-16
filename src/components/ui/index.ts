@@ -1,4 +1,5 @@
 export { default as AIInput } from './AIInput';
+export type { ConversationMessage } from './AIInput';
 export { default as Conversation } from '../Conversation';
 export { default as IntegrationsModal } from './IntegrationsModal';
 export { default as SignInModal } from './SignInModal';

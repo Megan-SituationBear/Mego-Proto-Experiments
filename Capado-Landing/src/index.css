@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: -0.03em;
+}
+
+body, p, span, a, button, input, textarea, .font-body {
+  font-family: 'Inter', sans-serif;
+}

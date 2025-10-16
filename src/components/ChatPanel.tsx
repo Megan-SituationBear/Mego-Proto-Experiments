@@ -129,6 +129,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, hasStart
           onExamineSlack={handleExamineSlack}
           onAddConfluence={handleAddConfluence}
           onIntegrationsClick={handleIntegrationsClick}
+          isLoggedIn={true}
+          pageContext="workspace"
+          hasConversation={messages.length > 0}
         />
       </div>
     </div>

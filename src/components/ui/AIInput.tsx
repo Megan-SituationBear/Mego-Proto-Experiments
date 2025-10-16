@@ -867,6 +867,123 @@ const AIInput: React.FC<AIInputProps> = ({
           </div>
         </div>
       )}
+
+      {/* Integration Modal (Slack, Jira, Confluence, Org) */}
+      {showIntegrationModal && activeIntegrationType && (
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowIntegrationModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">{getIntegrationInfo(activeIntegrationType)?.emoji}</span>
+                <h3 className="text-lg font-semibold text-slate-900">
+                  {getIntegrationInfo(activeIntegrationType)?.title}
+                </h3>
+              </div>
+              <button 
+                onClick={() => setShowIntegrationModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Check if integration is connected */}
+            {!connectedIntegrations[activeIntegrationType] ? (
+              <div className="space-y-4">
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-sm text-amber-800">
+                    You need to set up {getIntegrationInfo(activeIntegrationType)?.title.replace('Add ', '')} in Settings first.
+                  </p>
+                </div>
+                <button 
+                  onClick={() => {
+                    setShowIntegrationModal(false);
+                    setShowSettingsModal(true);
+                  }}
+                  className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Open Settings
+                </button>
+              </div>
+            ) : activeIntegrationType === 'org' ? (
+              /* Org-specific flow: Authenticate and choose sandbox */
+              <div className="space-y-4">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm text-gray-700 mb-3">Connect your Salesforce org:</p>
+                  <button className="w-full px-4 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors mb-3">
+                    Authenticate Salesforce
+                  </button>
+                  
+                  {/* Show sandbox selection after auth (simulated) */}
+                  <div className="space-y-2">
+                    <p className="text-xs text-gray-600 mb-2">Choose sandbox:</p>
+                    <button className="w-full px-4 py-2 text-sm text-left border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
+                      Production Org
+                    </button>
+                    <button className="w-full px-4 py-2 text-sm text-left border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
+                      Dev Sandbox
+                    </button>
+                    <button className="w-full px-4 py-2 text-sm text-left border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
+                      QA Sandbox
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Standard flow: Paste URL and confirm */
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {getIntegrationInfo(activeIntegrationType)?.placeholder}
+                  </label>
+                  <input
+                    type="text"
+                    value={integrationUrl}
+                    onChange={(e) => handleIntegrationUrlChange(e.target.value)}
+                    placeholder={getIntegrationInfo(activeIntegrationType)?.placeholder}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  />
+                </div>
+                
+                {/* Confirmation */}
+                {showConfirmation && extractedName && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <p className="text-sm text-blue-900 mb-3">
+                      Add <strong>{extractedName}</strong> to this conversation?
+                    </p>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => {
+                          setIntegrationUrl('');
+                          setExtractedName('');
+                          setShowConfirmation(false);
+                        }}
+                        className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={handleConfirmIntegration}
+                        className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Confirm
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

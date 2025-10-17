@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button } from './ui';
 import type { ConversationMessage } from './Conversation';
+import { Sparkles, ChevronDown } from 'lucide-react';
 
 interface Message {
   id: string;

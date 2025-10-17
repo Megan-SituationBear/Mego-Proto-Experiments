@@ -19,6 +19,7 @@ function App() {
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
   const [userMessageCount, setUserMessageCount] = useState(0);
+  const [projectTitle, setProjectTitle] = useState('Landing Page Redesign');
 
   const generateAIResponse = (userText: string, currentUserMessageCount: number): { message: Message; conversationMessage: ConversationMessage } => {
     const lowerText = userText.toLowerCase();
@@ -39,13 +40,12 @@ function App() {
       timestamp: new Date()
     };
 
-    // First message: Echo back what they said and ask a follow-up
+    // First message: Ask about the business case
     if (currentUserMessageCount === 1) {
-      const echoResponse = `I see you mentioned "${userText}". That sounds interesting! Can you tell me more about what you're trying to accomplish?`;
-      oldMessage.text = echoResponse;
+      oldMessage.text = "Tell me about the business case, please. Is it for a customer? Internal? What do you want it to do?";
       newMessage.content = {
         type: 'text',
-        content: echoResponse
+        content: "Tell me about the business case, please. Is it for a customer? Internal? What do you want it to do?"
       };
       return { message: oldMessage, conversationMessage: newMessage };
     }
@@ -155,6 +155,8 @@ function App() {
 
       // Auto-transition to workspace after second user message
       if (newUserMessageCount === 2) {
+        // Set the project title to the user's second message
+        setProjectTitle(text);
         setTimeout(() => {
           setCurrentView('proto2');
         }, 1500); // Wait 1.5s to show the "creating workspace" message
@@ -191,7 +193,7 @@ function App() {
       
       {/* Right Workspace - 2/3 */}
       <div className="w-2/3 flex flex-col">
-        <Workspace hasStarted={hasStarted} />
+        <Workspace hasStarted={hasStarted} projectTitle={projectTitle} />
       </div>
     </div>
   );

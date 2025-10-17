@@ -1,155 +1,547 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface WorkspaceProps {
   hasStarted: boolean;
+  projectTitle?: string;
 }
 
-const Workspace: React.FC<WorkspaceProps> = ({ hasStarted }) => {
-  const [selectedView, setSelectedView] = useState('projects');
+interface Step {
+  number: number;
+  title: string;
+  description: string;
+}
 
-  const views = [
-    { id: 'projects', label: 'Projects', icon: '📋' },
-    { id: 'deployments', label: 'Deployments', icon: '🚀' },
-    { id: 'orgs', label: 'Orgs', icon: '🏢' },
-    { id: 'analytics', label: 'Analytics', icon: '📊' }
+interface Message {
+  type: 'user' | 'bot';
+  name: string;
+  time: string;
+  text: string;
+  avatar?: string;
+}
+
+const Workspace: React.FC<WorkspaceProps> = ({ hasStarted, projectTitle = 'Landing Page Redesign' }) => {
+  const [isChatCollapsed, setIsChatCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState<'steps' | 'code' | 'artifacts'>('steps');
+  const [selectedStep, setSelectedStep] = useState<Step | null>(null);
+  const [activeStepNumber, setActiveStepNumber] = useState<number | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const steps: Step[] = [
+    {
+      number: 1,
+      title: 'Complete Hero Section Update',
+      description: 'Finalize the new copy and ensure it\'s mobile-responsive. This includes updating the headline, subheadline, and call-to-action buttons.'
+    },
+    {
+      number: 2,
+      title: 'Optimize Images',
+      description: 'Compress and resize images for faster loading times. Target: reduce image sizes by 60% without quality loss.'
+    },
+    {
+      number: 3,
+      title: 'Add Call-to-Action Buttons',
+      description: 'Implement primary and secondary CTAs with proper styling. Primary: Get Started, Secondary: Learn More'
+    },
+    {
+      number: 4,
+      title: 'Test Responsive Design',
+      description: 'Verify layout works across all device sizes: mobile (320px), tablet (768px), and desktop (1200px+)'
+    },
+    {
+      number: 5,
+      title: 'Performance Audit',
+      description: 'Run Lighthouse test and optimize based on results. Target scores: Performance 90+, Accessibility 100, SEO 100'
+    }
   ];
 
-  const mockProjects = [
-    { id: 1, name: 'Q4 Feature Release', status: 'In Progress', progress: 75, lastActivity: '2 hours ago' },
-    { id: 2, name: 'User Permission Audit', status: 'Completed', progress: 100, lastActivity: '1 day ago' },
-    { id: 3, name: 'Integration Setup', status: 'Planning', progress: 25, lastActivity: '3 days ago' },
+  const messages: Message[] = [
+    {
+      type: 'bot',
+      name: 'AI Assistant',
+      time: '10:30 AM',
+      text: `Great! I've created a workspace for "${projectTitle}". Click on any suggested step to load it here for modification.`
+    }
   ];
 
-  const renderProjects = () => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">Your Projects</h3>
-        <button className="px-4 py-2 bg-copado-blue text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-          + New Project
-        </button>
-      </div>
-      
-      <div className="grid gap-4">
-        {mockProjects.map((project) => (
-          <div key={project.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="font-medium text-gray-800">{project.name}</h4>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                project.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                project.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                'bg-yellow-100 text-yellow-800'
-              }`}>
-                {project.status}
-              </span>
-            </div>
-            <div className="mb-2">
-              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                <span>Progress</span>
-                <span>{project.progress}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className={`bg-copado-blue h-2 rounded-full transition-all duration-300`}
-                  style={{ width: `${project.progress}%` }}
-                ></div>
-              </div>
-            </div>
-            <p className="text-sm text-gray-500">Last activity: {project.lastActivity}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  const handleStepClick = (step: Step) => {
+    setSelectedStep(step);
+    setActiveStepNumber(step.number);
+  };
 
-  const renderWelcome = () => (
-    <div className="flex items-center justify-center h-full p-8">
-      <div className="text-center max-w-lg">
-        <div className="w-20 h-20 bg-gradient-to-r from-copado-blue to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-          <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </div>
-        <h2 className="text-3xl font-semibold text-slate-800 mb-3">Create Your Customer Plan</h2>
-        <p className="text-slate-600 mb-8 text-lg leading-relaxed">
-          As a trusted Copado customer, let me help you build a comprehensive strategy for your client's Salesforce needs.
-        </p>
-        
-        <div className="space-y-4 max-w-md mx-auto">
-          <div className="bg-white/60 backdrop-blur-sm border border-slate-200/60 rounded-xl p-4">
-            <p className="text-sm text-slate-700">
-              <span className="font-medium text-copado-blue">Start by describing</span> your customer's current situation, goals, or challenges
-            </p>
-          </div>
-          
-          <div className="flex items-center justify-center space-x-6 text-sm text-slate-500">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-copado-blue rounded-full"></div>
-              <span>Assessment</span>
-            </div>
-            <div className="w-8 h-px bg-slate-300"></div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
-              <span>Strategy</span>
-            </div>
-            <div className="w-8 h-px bg-slate-300"></div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
-              <span>Plan</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const closeWorkItem = () => {
+    setSelectedStep(null);
+    setActiveStepNumber(null);
+  };
+
+  const toggleChat = () => {
+    setIsChatCollapsed(!isChatCollapsed);
+  };
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header - Only show when started */}
-      {hasStarted && (
-        <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-              {views.map((view) => (
-                <button
-                  key={view.id}
-                  onClick={() => setSelectedView(view.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-200 ${
-                    selectedView === view.id
-                      ? 'bg-copado-blue text-white shadow-sm'
-                      : 'text-slate-600 hover:bg-slate-100/80'
-                  }`}
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#ffffff' }}>
+      {/* Header */}
+      <header style={{
+        minHeight: '64px',
+        background: 'white',
+        borderBottom: '1px solid #e5e7eb',
+        padding: '16px 24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#111827', margin: 0 }}>
+            {projectTitle}
+          </h1>
+          <span style={{ fontSize: '14px', color: '#6b7280' }}>Oct 16, 2025</span>
+        </div>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button style={{
+            padding: '8px 16px',
+            border: '1px solid #e5e7eb',
+            background: 'white',
+            borderRadius: '6px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <i className="fas fa-share-alt"></i>
+            <span>Share</span>
+          </button>
+          <button style={{
+            padding: '8px 16px',
+            border: '1px solid #e5e7eb',
+            background: 'white',
+            borderRadius: '6px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <i className="fas fa-copy"></i>
+            <span>Duplicate</span>
+          </button>
+          <button 
+            onClick={toggleFavorite}
+            style={{
+              padding: '8px 16px',
+              border: '1px solid #e5e7eb',
+              background: 'white',
+              borderRadius: '6px',
+              fontSize: '14px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              color: isFavorite ? '#f59e0b' : 'inherit'
+            }}
+          >
+            <i className={isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
+            <span>Favorite</span>
+          </button>
+        </div>
+      </header>
+
+      {/* Main Container */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isChatCollapsed ? '0 1fr' : '1fr 3fr',
+        height: 'calc(100% - 64px)',
+        transition: 'grid-template-columns 0.3s ease'
+      }}>
+        {/* Left Section - Chat */}
+        <section style={{
+          borderRight: isChatCollapsed ? 'none' : '1px solid #e5e7eb',
+          display: 'flex',
+          flexDirection: 'column',
+          background: '#fafafa',
+          position: 'relative',
+          overflow: 'hidden',
+          transition: 'all 0.3s ease'
+        }}>
+          {/* Collapse Toggle */}
+          <div 
+            onClick={toggleChat}
+            style={{
+              position: 'absolute',
+              right: isChatCollapsed ? 'auto' : '-20px',
+              left: isChatCollapsed ? '-20px' : 'auto',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '20px',
+              height: '60px',
+              background: '#2563eb',
+              borderRadius: isChatCollapsed ? '4px 0 0 4px' : '0 4px 4px 0',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              zIndex: 10
+            }}
+          >
+            <i className={`fas fa-chevron-${isChatCollapsed ? 'right' : 'left'}`}></i>
+          </div>
+
+          {/* Chat Header */}
+          <div style={{
+            padding: '20px 24px',
+            background: 'white',
+            borderBottom: '1px solid #e5e7eb'
+          }}>
+            <h2 style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#111827',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              margin: 0
+            }}>
+              <i className="fas fa-comments"></i>
+              Modify Your Work
+            </h2>
+            <p style={{
+              fontSize: '13px',
+              color: '#6b7280',
+              marginTop: '4px',
+              marginBottom: 0
+            }}>
+              Chat with AI to make changes to your project
+            </p>
+          </div>
+
+          {/* Chat Messages */}
+          <div style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '24px'
+          }}>
+            {/* Work Item Preview */}
+            {selectedStep && (
+              <div style={{
+                background: 'white',
+                borderRadius: '8px',
+                padding: '16px',
+                marginBottom: '20px',
+                border: '2px solid #2563eb'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '12px'
+                }}>
+                  <h3 style={{
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#111827',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    margin: 0
+                  }}>
+                    <span style={{
+                      display: 'inline-flex',
+                      width: '24px',
+                      height: '24px',
+                      background: '#2563eb',
+                      color: 'white',
+                      borderRadius: '50%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      fontWeight: 600
+                    }}>
+                      {selectedStep.number}
+                    </span>
+                    <span>{selectedStep.title}</span>
+                  </h3>
+                  <button 
+                    onClick={closeWorkItem}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#6b7280',
+                      cursor: 'pointer',
+                      fontSize: '18px',
+                      padding: '4px'
+                    }}
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                </div>
+                <div style={{
+                  fontSize: '14px',
+                  color: '#374151',
+                  lineHeight: 1.6
+                }}>
+                  {selectedStep.description}
+                </div>
+              </div>
+            )}
+
+            {/* Messages */}
+            {messages.map((message, index) => (
+              <div key={index} style={{ marginBottom: '24px' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '8px'
+                }}>
+                  <div style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    background: message.type === 'bot' ? '#4f46e5' : '#2563eb',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '14px'
+                  }}>
+                    {message.type === 'bot' ? <i className="fas fa-robot"></i> : 'U'}
+                  </div>
+                  <span style={{ fontSize: '14px', fontWeight: 500, color: '#111827' }}>
+                    {message.name}
+                  </span>
+                  <span style={{ fontSize: '12px', color: '#9ca3af' }}>
+                    {message.time}
+                  </span>
+                </div>
+                <div style={{ paddingLeft: '36px' }}>
+                  <p style={{ fontSize: '14px', lineHeight: 1.6, color: '#374151', margin: 0 }}>
+                    {message.text}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Chat Input */}
+          <div style={{
+            padding: '20px 24px',
+            background: 'white',
+            borderTop: '1px solid #e5e7eb'
+          }}>
+            <textarea 
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '14px',
+                resize: 'none',
+                outline: 'none',
+                fontFamily: 'inherit'
+              }}
+              rows={3}
+              placeholder="Type your modification request..."
+            />
+          </div>
+        </section>
+
+        {/* Right Section */}
+        <section style={{
+          display: 'flex',
+          flexDirection: 'column',
+          background: 'white',
+          position: 'relative'
+        }}>
+          {/* Tabs */}
+          <div style={{ borderBottom: '1px solid #e5e7eb', background: 'white' }}>
+            <div style={{ display: 'flex', padding: '0 24px' }}>
+              {(['steps', 'code', 'artifacts'] as const).map((tab) => (
+                <div
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  style={{
+                    padding: '16px 20px',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: activeTab === tab ? '#2563eb' : '#6b7280',
+                    cursor: 'pointer',
+                    borderBottom: activeTab === tab ? '2px solid #2563eb' : '2px solid transparent',
+                    transition: 'all 0.2s'
+                  }}
                 >
-                  <span>{view.icon}</span>
-                  <span className="font-medium">{view.label}</span>
-                </button>
+                  {tab === 'steps' ? 'Suggested Steps' : tab === 'code' ? 'View Code' : 'All Artifacts'}
+                </div>
               ))}
             </div>
-            
-            <div className="flex items-center space-x-3">
-              <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-100/80">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-              <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-100/80">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-              </button>
-            </div>
           </div>
-        </div>
-      )}
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto">
-        {hasStarted ? (
-          <div className="p-6">
-            {selectedView === 'projects' ? renderProjects() : renderWelcome()}
+          {/* Tab Content */}
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            {/* Suggested Steps Tab */}
+            {activeTab === 'steps' && (
+              <div style={{ padding: '24px' }}>
+                {steps.map((step) => (
+                  <div
+                    key={step.number}
+                    onClick={() => handleStepClick(step)}
+                    style={{
+                      background: activeStepNumber === step.number ? '#eff6ff' : '#f9fafb',
+                      border: `1px solid ${activeStepNumber === step.number ? '#2563eb' : '#e5e7eb'}`,
+                      borderRadius: '8px',
+                      padding: '16px',
+                      marginBottom: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <div>
+                      <span style={{
+                        display: 'inline-flex',
+                        width: '24px',
+                        height: '24px',
+                        background: '#2563eb',
+                        color: 'white',
+                        borderRadius: '50%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        marginRight: '12px'
+                      }}>
+                        {step.number}
+                      </span>
+                      <span style={{
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        color: '#111827'
+                      }}>
+                        {step.title}
+                      </span>
+                    </div>
+                    <p style={{
+                      fontSize: '13px',
+                      color: '#6b7280',
+                      paddingLeft: '36px',
+                      margin: '4px 0 0 0'
+                    }}>
+                      {step.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* View Code Tab */}
+            {activeTab === 'code' && (
+              <div style={{ padding: '24px' }}>
+                <div style={{
+                  background: '#1e293b',
+                  color: '#e2e8f0',
+                  padding: '20px',
+                  borderRadius: '8px',
+                  fontFamily: 'Monaco, Consolas, monospace',
+                  fontSize: '13px',
+                  lineHeight: 1.6,
+                  overflowX: 'auto'
+                }}>
+                  <pre style={{ margin: 0 }}>{`<section class="hero-section">
+  <div class="container">
+    <h1 class="hero-title">
+      Transform Your Business with Our Solution
+    </h1>
+    <p class="hero-subtitle">
+      Streamline your workflow and boost productivity
+      with our innovative platform
+    </p>
+    <div class="hero-buttons">
+      <button class="btn-primary">Get Started</button>
+      <button class="btn-secondary">Learn More</button>
+    </div>
+  </div>
+</section>`}</pre>
+                </div>
+              </div>
+            )}
+
+            {/* All Artifacts Tab */}
+            {activeTab === 'artifacts' && (
+              <div style={{ padding: '24px' }}>
+                {[
+                  { name: 'Hero Section v2', type: 'HTML/CSS • Updated 5 mins ago' },
+                  { name: 'Hero Background Image', type: 'PNG • 2.4 MB' },
+                  { name: 'Landing Page Copy', type: 'Text • Updated 10 mins ago' },
+                  { name: 'Style Guide', type: 'CSS • 12 KB' }
+                ].map((artifact, index) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px',
+                    background: '#f9fafb',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    marginBottom: '12px'
+                  }}>
+                    <div>
+                      <div style={{
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        color: '#111827'
+                      }}>
+                        {artifact.name}
+                      </div>
+                      <div style={{
+                        fontSize: '12px',
+                        color: '#6b7280'
+                      }}>
+                        {artifact.type}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button style={{
+                        padding: '6px 14px',
+                        fontSize: '12px',
+                        border: '1px solid #e5e7eb',
+                        background: 'white',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}>
+                        Apply
+                      </button>
+                      <button style={{
+                        padding: '6px 14px',
+                        fontSize: '12px',
+                        border: '1px solid #2563eb',
+                        background: '#2563eb',
+                        color: 'white',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}>
+                        Download
+                      </button>
+                      <button style={{
+                        padding: '6px 14px',
+                        fontSize: '12px',
+                        border: '1px solid #e5e7eb',
+                        background: 'white',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}>
+                        Edit
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          renderWelcome()
-        )}
+        </section>
       </div>
     </div>
   );

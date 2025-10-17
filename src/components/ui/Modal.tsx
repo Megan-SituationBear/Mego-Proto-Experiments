@@ -5,6 +5,7 @@ interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
   title?: string;
+  showLogo?: boolean;
   className?: string;
   overlayClassName?: string;
   contentClassName?: string;
@@ -15,6 +16,7 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   children,
   title,
+  showLogo = true,
   className = "",
   overlayClassName = "",
   contentClassName = "",
@@ -52,48 +54,59 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div 
-      className={`fixed inset-0 flex items-center justify-center z-50 bg-[#45556C] ${overlayClassName}`}
+      className={`fixed inset-0 flex flex-col items-center justify-center z-50 bg-slate-500/80 backdrop-blur-sm ${overlayClassName}`}
       onClick={handleOverlayClick}
     >
-      {/* Modal content */}
-      <div 
-        ref={modalRef}
-        className={`flex flex-col justify-start items-center w-full max-w-[436px] h-[400px] overflow-hidden gap-6 p-6 rounded-xl bg-white shadow-xl mx-6 max-h-[calc(100vh-48px)] md:w-[436px] md:mx-0 md:max-h-none ${contentClassName}`}
-        style={{ boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -2px rgba(0,0,0,0.05)" }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button - X icon positioned in top right */}
+      <div className="relative flex flex-col items-center gap-4">
+        {/* Logo and COPADO AI text - Outside the modal */}
+        {showLogo && (
+          <div className="flex flex-col items-center gap-3 mb-4">
+            {/* Copado Logo */}
+            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h1 className="text-xl font-bold tracking-wider text-white">COPADO AI</h1>
+          </div>
+        )}
+
+        {/* Close button - X positioned to the right */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors z-10"
+          className="absolute -top-2 right-0 w-8 h-8 flex items-center justify-center text-white hover:text-gray-300 transition-colors"
+          aria-label="Close"
         >
           <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="text-gray-600"
+            stroke="currentColor"
+            strokeWidth="2"
           >
-            <path
-              d="M8 6.223L13.223 1L14 1.778L8.777 7L14 12.223L13.223 13L8 7.778L2.777 13L2 12.223L7.223 7L2 1.778L2.777 1L8 6.223Z"
-              fill="currentColor"
-            />
+            <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
 
-        {/* Title section */}
-        {title && (
-          <div className="flex flex-col justify-start items-center self-stretch flex-grow-0 flex-shrink-0 relative gap-2 px-3">
-            <h2 className="self-stretch flex-grow-0 flex-shrink-0 w-full text-2xl font-semibold text-center capitalize text-slate-950 font-roboto tracking-header">
+        {/* Modal content card */}
+        <div 
+          ref={modalRef}
+          className={`flex flex-col items-center w-full max-w-[400px] gap-6 p-8 rounded-2xl bg-white shadow-2xl mx-6 ${contentClassName}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Title section */}
+          {title && (
+            <h2 className="text-[28px] font-roboto font-semibold text-center text-slate-950" style={{ letterSpacing: '-0.03em' }}>
               {title}
             </h2>
+          )}
+          
+          {/* Content */}
+          <div className={`flex flex-col w-full ${className}`}>
+            {children}
           </div>
-        )}
-        
-        {/* Content */}
-        <div className={`flex flex-col justify-start items-start self-stretch flex-grow relative ${className}`}>
-          {children}
         </div>
       </div>
     </div>

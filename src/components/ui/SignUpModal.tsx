@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import Modal from './Modal';
-import { PrimaryButton, SecondaryButton } from './index';
 
 interface SignUpModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSignUp?: (email: string, password: string, confirmPassword: string) => void;
   onSignIn?: () => void;
+  onSSOSignUp?: (provider: string) => void;
 }
 
 const SignUpModal: React.FC<SignUpModalProps> = ({
@@ -14,13 +14,29 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
   onClose,
   onSignUp,
   onSignIn,
+  onSSOSignUp,
 }) => {
+  const [step, setStep] = useState<'sso' | 'email'>('sso');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const handleSSOClick = async (provider: string) => {
+    setIsLoading(true);
+    try {
+      if (onSSOSignUp) {
+        await onSSOSignUp(provider);
+      }
+      onClose();
+    } catch (error) {
+      console.error('SSO sign up error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim() || !confirmPassword.trim()) return;
     
@@ -34,113 +50,154 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
       if (onSignUp) {
         await onSignUp(email, password, confirmPassword);
       }
+      onClose();
     } catch (error) {
-      console.error('Sign up error:', error);
+      console.error('Email sign up error:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSignIn = () => {
-    if (onSignIn) {
-      onSignIn();
-    }
+  const handleCloseModal = () => {
+    setStep('sso');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
     onClose();
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleCloseModal}
       title="Sign Up"
-      className="gap-2"
+      showLogo={true}
+      className="gap-6"
     >
-      <form onSubmit={handleSignUp} className="flex flex-col gap-6 w-full">
-        {/* Body text section */}
-        <div className="flex flex-col justify-start items-start gap-2">
-          <p className="font-inter text-body text-slate-600 w-full">
-            Create your Copado account to get started.
+      {step === 'sso' ? (
+        /* SSO Options View */
+        <div className="flex flex-col gap-4 w-full">
+          {/* SSO Buttons */}
+          <button
+            onClick={() => handleSSOClick('salesforce')}
+            disabled={isLoading}
+            className="w-full px-4 py-3 border border-gray-300 rounded bg-white text-black font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            Salesforce
+          </button>
+          
+          <button
+            onClick={() => handleSSOClick('google')}
+            disabled={isLoading}
+            className="w-full px-4 py-3 border border-gray-300 rounded bg-white text-black font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            Google
+          </button>
+          
+          <button
+            onClick={() => handleSSOClick('github')}
+            disabled={isLoading}
+            className="w-full px-4 py-3 border border-gray-300 rounded bg-white text-black font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            Github
+          </button>
+          
+          <button
+            onClick={() => handleSSOClick('saml')}
+            disabled={isLoading}
+            className="w-full px-4 py-3 border border-gray-300 rounded bg-white text-black font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            SAML
+          </button>
+
+          {/* OR Divider */}
+          <div className="flex items-center gap-4 my-2">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="text-sm text-gray-500">OR</span>
+            <div className="flex-1 h-px bg-gray-300"></div>
+          </div>
+
+          {/* Use Email Button */}
+          <button
+            onClick={() => setStep('email')}
+            disabled={isLoading}
+            className="w-full px-4 py-3 border border-gray-300 rounded bg-white text-black font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            Use Email
+          </button>
+
+          {/* Footer Text */}
+          <p className="text-xs text-center text-gray-600 mt-2">
+            By Signing Up You Agree To Copado's{' '}
+            <a href="#" className="text-blue-600 hover:underline">Terms</a>
+            {' & '}
+            <a href="#" className="text-blue-600 hover:underline">Privacy</a>
           </p>
         </div>
+      ) : (
+        /* Email/Password View */
+        <form onSubmit={handleEmailSignUp} className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col gap-2">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              required
+              disabled={isLoading}
+            />
+          </div>
 
-        {/* Email Input */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="signup-email" className="text-sm font-medium text-gray-700">
-            Email Address
-          </label>
-          <input
-            id="signup-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-copado-blue focus:border-transparent transition-all"
-            required
-            disabled={isLoading}
-          />
-        </div>
+          <div className="flex flex-col gap-2">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              required
+              disabled={isLoading}
+            />
+          </div>
 
-        {/* Password Input */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="signup-password" className="text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            id="signup-password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Create a password"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-copado-blue focus:border-transparent transition-all"
-            required
-            disabled={isLoading}
-          />
-        </div>
+          <div className="flex flex-col gap-2">
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm Password"
+              className="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              required
+              disabled={isLoading}
+            />
+          </div>
 
-        {/* Confirm Password Input */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="confirm-password" className="text-sm font-medium text-gray-700">
-            Confirm Password
-          </label>
-          <input
-            id="confirm-password"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm your password"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-copado-blue focus:border-transparent transition-all"
-            required
-            disabled={isLoading}
-          />
-        </div>
-        
-        {/* Buttons section */}
-        <div className="flex justify-center items-center self-stretch flex-grow-0 flex-shrink-0 gap-4">
-          <SecondaryButton
-            type="button"
-            onClick={handleSignIn}
-            disabled={isLoading}
-            className="flex-1"
-          >
-            Sign In
-          </SecondaryButton>
-          
-          <PrimaryButton
+          <button
             type="submit"
             disabled={!email.trim() || !password.trim() || !confirmPassword.trim() || isLoading}
-            className="flex-1"
+            className="w-full px-4 py-3 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Creating Account...' : 'Sign Up'}
-          </PrimaryButton>
-        </div>
+          </button>
 
-        {/* Additional info */}
-        <div className="text-center">
-          <p className="text-xs text-gray-500">
-            By signing up, you agree to our Terms of Service and Privacy Policy.
+          <button
+            type="button"
+            onClick={() => setStep('sso')}
+            disabled={isLoading}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Back to SSO options
+          </button>
+
+          <p className="text-xs text-center text-gray-600 mt-2">
+            By Signing Up You Agree To Copado's{' '}
+            <a href="#" className="text-blue-600 hover:underline">Terms</a>
+            {' & '}
+            <a href="#" className="text-blue-600 hover:underline">Privacy</a>
           </p>
-        </div>
-      </form>
+        </form>
+      )}
     </Modal>
   );
 };

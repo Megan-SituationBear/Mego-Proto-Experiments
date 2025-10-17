@@ -47,6 +47,20 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
     setShowSignUpModal(false);
   };
 
+  const handleSSOSignIn = async (provider: string) => {
+    console.log('SSO sign in with provider:', provider);
+    // TODO: Implement actual SSO logic
+    // For now, just close the modal and simulate success
+    setShowSignInModal(false);
+  };
+
+  const handleSSOSignUp = async (provider: string) => {
+    console.log('SSO sign up with provider:', provider);
+    // TODO: Implement actual SSO logic
+    // For now, just close the modal and simulate success
+    setShowSignUpModal(false);
+  };
+
   const handleSendMessageWithConversation = (text: string, setTypingIndicator?: (show: boolean) => void) => {
     if (onSendMessage) {
       onSendMessage(text, setTypingIndicator);
@@ -262,6 +276,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
         isOpen={showSignInModal}
         onClose={() => setShowSignInModal(false)}
         onSignIn={handleSignIn}
+        onSSOSignIn={handleSSOSignIn}
         onSignUp={() => {
           setShowSignInModal(false);
           setShowSignUpModal(true);
@@ -272,6 +287,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
         isOpen={showSignUpModal}
         onClose={() => setShowSignUpModal(false)}
         onSignUp={handleSignUp}
+        onSSOSignUp={handleSSOSignUp}
         onSignIn={() => {
           setShowSignUpModal(false);
           setShowSignInModal(true);

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import IntroPage from './components/IntroPage';
 import ChatPanel from './components/ChatPanel';
 import Workspace from './components/Workspace';
-import { ConversationMessage, MessageContent } from './components/Conversation';
+import type { ConversationMessage } from './components/Conversation';
 import './App.css';
 
 // Keep the old interface for ChatPanel compatibility

@@ -114,7 +114,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [integrationContexts, setIntegrationContexts] = useState<IntegrationContext[]>([]);
   
   // Simulate which integrations are connected (in real app, this would come from props or context)
-  const [connectedIntegrations, setConnectedIntegrations] = useState({
+  const [connectedIntegrations] = useState({
     slack: true,
     jira: false,
     confluence: true,
@@ -122,7 +122,6 @@ const AIInput: React.FC<AIInputProps> = ({
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when messages change
@@ -267,8 +266,6 @@ const AIInput: React.FC<AIInputProps> = ({
 
   // Get styling based on state combination
   const getStateStyles = () => {
-    const state = { isLoggedIn, pageContext, viewState };
-    
     // Base styles for all states
     const baseStyles = {
       containerScale: 'scale-100',
@@ -437,19 +434,6 @@ const AIInput: React.FC<AIInputProps> = ({
     if (!value.trim()) {
       setHasBeenFocused(false);
     }
-  };
-
-  const handleMenuMouseEnter = () => {
-    if (menuTimeoutRef.current) {
-      clearTimeout(menuTimeoutRef.current);
-    }
-    setShowContextMenu(true);
-  };
-
-  const handleMenuMouseLeave = () => {
-    menuTimeoutRef.current = setTimeout(() => {
-      setShowContextMenu(false);
-    }, 500); // 500ms delay before hiding - gives time to click
   };
 
   const contextMenuItems = [

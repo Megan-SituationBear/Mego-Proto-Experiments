@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Modal from './Modal';
 import { PrimaryButton, SecondaryButton } from './index';
 
@@ -15,7 +15,6 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
   onClose,
   onSignUp,
   onSignIn,
-  className = "",
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

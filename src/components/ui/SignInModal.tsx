@@ -8,7 +8,6 @@ interface SignInModalProps {
   onSignIn?: (email: string, password: string) => void;
   onSignUp?: () => void;
   onForgotPassword?: () => void;
-  className?: string;
 }
 
 const SignInModal: React.FC<SignInModalProps> = ({

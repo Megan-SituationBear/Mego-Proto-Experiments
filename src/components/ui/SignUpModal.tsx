@@ -7,7 +7,6 @@ interface SignUpModalProps {
   onClose: () => void;
   onSignUp?: (email: string, password: string, confirmPassword: string) => void;
   onSignIn?: () => void;
-  className?: string;
 }
 
 const SignUpModal: React.FC<SignUpModalProps> = ({

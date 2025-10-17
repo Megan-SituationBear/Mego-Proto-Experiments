@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard } from './ui';
+import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard, SecondaryButton } from './ui';
 import type { ConversationMessage } from './Conversation';
 import { ChevronDown } from 'lucide-react';
 
@@ -53,19 +53,10 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
     }
   };
 
-  const templates = [
+  const allTemplates = [
     {
-      category: "Smooth Deployment",
+      category: "Strategists With Data",
       categoryColor: "amber" as const,
-      savedHours: 35,
-      title: "Analyze, Fix & Automate Your Builds Before Deploying",
-      description: "Working on: Saved est 35hrs by analyzing dependencies to avoid deployment failures by using Copado integrations to save 35 hours",
-      favorites: 1234,
-      views: 154
-    },
-    {
-      category: "Strategy & Planning",
-      categoryColor: "purple" as const,
       savedHours: 42,
       title: "Create Comprehensive Deployment Strategy Using Real Data",
       description: "Working on: Saved est 42hrs by analyzing org metadata to avoid technical debt by using automated analysis to save 42 hours",
@@ -73,15 +64,58 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
       views: 203
     },
     {
-      category: "Develop And Deploy",
-      categoryColor: "amber" as const,
+      category: "Customer Satisfaction Heroes",
+      categoryColor: "purple" as const,
+      savedHours: 35,
+      title: "Optimize User Experience with Customer Feedback Analysis",
+      description: "Working on: Saved est 35hrs by analyzing customer data to avoid satisfaction issues by using feedback loops to save 35 hours",
+      favorites: 1234,
+      views: 154
+    },
+    {
+      category: "Managers With An Edge",
+      categoryColor: "blue" as const,
       savedHours: 28,
-      title: "Streamline Development Workflow with Automated Testing",
-      description: "Working on: Saved est 28hrs by analyzing test coverage to avoid production bugs by using CI/CD pipelines to save 28 hours",
+      title: "Lead Teams to Success with Data-Driven Insights",
+      description: "Working on: Saved est 28hrs by analyzing team performance to avoid bottlenecks by using management tools to save 28 hours",
       favorites: 756,
       views: 189
+    },
+    {
+      category: "Developers & Launchers",
+      categoryColor: "green" as const,
+      savedHours: 51,
+      title: "Build and Launch Features Faster with Automation",
+      description: "Working on: Saved est 51hrs by analyzing code patterns to avoid launch delays by using CI/CD pipelines to save 51 hours",
+      favorites: 1456,
+      views: 298
+    },
+    {
+      category: "Effective Planners",
+      categoryColor: "blue" as const,
+      savedHours: 19,
+      title: "Plan Projects with Precision Using Predictive Analytics",
+      description: "Working on: Saved est 19hrs by analyzing project data to avoid timeline issues by using planning tools to save 19 hours",
+      favorites: 623,
+      views: 142
+    },
+    {
+      category: "Strategists With Data",
+      categoryColor: "amber" as const,
+      savedHours: 67,
+      title: "Transform Business Strategy with Data-Driven Decisions",
+      description: "Working on: Saved est 67hrs by analyzing business metrics to avoid strategic missteps by using analytics to save 67 hours",
+      favorites: 891,
+      views: 234
     }
   ];
+
+  const [templates, setTemplates] = useState(allTemplates.slice(0, 3));
+
+  const shuffleTemplates = () => {
+    const shuffled = [...allTemplates].sort(() => Math.random() - 0.5);
+    setTemplates(shuffled.slice(0, 3));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -193,7 +227,10 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
             ))}
           </div>
 
-          <div className="text-center">
+          <div className="text-center flex flex-col gap-4">
+            <SecondaryButton onClick={shuffleTemplates} className="mx-auto">
+              Shuffle
+            </SecondaryButton>
             <button className="bg-white text-slate-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
               View Full Library
             </button>

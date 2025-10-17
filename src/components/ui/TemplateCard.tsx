@@ -33,12 +33,12 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
 }) => {
   return (
     <div
-      className="group relative bg-white rounded border border-gray-300 p-4 flex flex-col gap-3 hover:shadow-xl hover:border-gray-400 transition-all duration-300 cursor-pointer"
+      className="group relative bg-white rounded border border-gray-300 p-4 flex flex-col gap-3 hover:shadow-md hover:border-indigo-600 transition-all duration-300 cursor-pointer"
       onClick={onClick}
     >
       {/* Top Section */}
       <div className="flex flex-col gap-0.5">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center gap-3">
           {/* Category Pill */}
           <div className={`inline-flex items-center px-3 py-0.5 rounded-xl text-[11px] font-roboto tracking-tight leading-5 ${categoryColorMap[categoryColor]}`}>
             {category}
@@ -53,7 +53,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
           
           {/* Icon */}
           <div className="ml-auto">
-            {icon || <Sparkles className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />}
+            {icon || <Sparkles className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />}
           </div>
         </div>
       </div>
@@ -76,8 +76,8 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
         <div className="flex gap-3 items-center">
           {/* Favorites */}
           {favorites > 0 && (
-            <div className="flex items-center gap-1">
-              <Heart className="w-3.5 h-3.5 text-slate-600" />
+            <div className="flex items-center gap-1 hover:text-indigo-600 transition-colors">
+              <Heart className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
               <span className="text-[11px] font-roboto tracking-tight leading-5 text-slate-600">
                 {favorites}
               </span>
@@ -86,8 +86,8 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
           
           {/* Views */}
           {views > 0 && (
-            <div className="flex items-center gap-1">
-              <Eye className="w-3.5 h-3.5 text-slate-600" />
+            <div className="flex items-center gap-1 hover:text-indigo-600 transition-colors">
+              <Eye className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
               <span className="text-[11px] font-roboto tracking-tight leading-5 text-slate-600">
                 {views}
               </span>

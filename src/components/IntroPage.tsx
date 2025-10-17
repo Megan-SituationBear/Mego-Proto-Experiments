@@ -17,12 +17,11 @@ interface IntroPageProps {
   userMessageCount?: number;
 }
 
-const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conversationMessages = [], userMessageCount = 0 }) => {
+const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conversationMessages = [] }) => {
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
-  const [showConversation, setShowConversation] = useState(false);
 
   const handleIntegrationsClick = () => {
     setShowIntegrationsModal(true);
@@ -48,11 +47,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
   };
 
   const handleSendMessageWithConversation = (text: string, setTypingIndicator?: (show: boolean) => void) => {
-    // Show conversation when first message is sent
-    if (userMessageCount === 0) {
-      setShowConversation(true);
-    }
-    
     if (onSendMessage) {
       onSendMessage(text, setTypingIndicator);
     }

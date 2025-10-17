@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Modal from './Modal';
 import { PrimaryButton, SecondaryButton } from './index';
 
@@ -7,7 +7,6 @@ interface SignUpModalProps {
   onClose: () => void;
   onSignUp?: (email: string, password: string, confirmPassword: string) => void;
   onSignIn?: () => void;
-  className?: string;
 }
 
 const SignUpModal: React.FC<SignUpModalProps> = ({
@@ -15,7 +14,6 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
   onClose,
   onSignUp,
   onSignIn,
-  className = "",
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

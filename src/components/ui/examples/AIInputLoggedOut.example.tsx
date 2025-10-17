@@ -6,8 +6,9 @@
  * Copy this entire component to use in your page
  */
 
-import React, { useState } from 'react';
-import { AIInput, ConversationMessage } from '../index';
+import { useState } from 'react';
+import { AIInput } from '../index';
+import type { ConversationMessage } from '../index';
 
 export function AIInputLoggedOutExample() {
   const [messages, setMessages] = useState<ConversationMessage[]>([]);

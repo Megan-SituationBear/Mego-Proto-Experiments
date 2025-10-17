@@ -1,4 +1,14 @@
 import { useState } from 'react';
+import { 
+  ShareIcon, 
+  DocumentDuplicateIcon, 
+  StarIcon as StarOutline,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChatBubbleLeftRightIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline';
+import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
 
 interface WorkspaceProps {
   hasStarted: boolean;
@@ -19,7 +29,7 @@ interface Message {
   avatar?: string;
 }
 
-const Workspace: React.FC<WorkspaceProps> = ({ hasStarted, projectTitle = 'Landing Page Redesign' }) => {
+const Workspace: React.FC<WorkspaceProps> = ({ projectTitle = 'Landing Page Redesign' }) => {
   const [isChatCollapsed, setIsChatCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState<'steps' | 'code' | 'artifacts'>('steps');
   const [selectedStep, setSelectedStep] = useState<Step | null>(null);
@@ -113,7 +123,7 @@ const Workspace: React.FC<WorkspaceProps> = ({ hasStarted, projectTitle = 'Landi
             alignItems: 'center',
             gap: '8px'
           }}>
-            <i className="fas fa-share-alt"></i>
+            <ShareIcon style={{ width: '16px', height: '16px' }} />
             <span>Share</span>
           </button>
           <button style={{
@@ -127,7 +137,7 @@ const Workspace: React.FC<WorkspaceProps> = ({ hasStarted, projectTitle = 'Landi
             alignItems: 'center',
             gap: '8px'
           }}>
-            <i className="fas fa-copy"></i>
+            <DocumentDuplicateIcon style={{ width: '16px', height: '16px' }} />
             <span>Duplicate</span>
           </button>
           <button 
@@ -145,7 +155,11 @@ const Workspace: React.FC<WorkspaceProps> = ({ hasStarted, projectTitle = 'Landi
               color: isFavorite ? '#f59e0b' : 'inherit'
             }}
           >
-            <i className={isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
+            {isFavorite ? (
+              <StarSolid style={{ width: '16px', height: '16px' }} />
+            ) : (
+              <StarOutline style={{ width: '16px', height: '16px' }} />
+            )}
             <span>Favorite</span>
           </button>
         </div>
@@ -189,7 +203,11 @@ const Workspace: React.FC<WorkspaceProps> = ({ hasStarted, projectTitle = 'Landi
               zIndex: 10
             }}
           >
-            <i className={`fas fa-chevron-${isChatCollapsed ? 'right' : 'left'}`}></i>
+            {isChatCollapsed ? (
+              <ChevronRightIcon style={{ width: '16px', height: '16px' }} />
+            ) : (
+              <ChevronLeftIcon style={{ width: '16px', height: '16px' }} />
+            )}
           </div>
 
           {/* Chat Header */}
@@ -207,7 +225,7 @@ const Workspace: React.FC<WorkspaceProps> = ({ hasStarted, projectTitle = 'Landi
               gap: '8px',
               margin: 0
             }}>
-              <i className="fas fa-comments"></i>
+              <ChatBubbleLeftRightIcon style={{ width: '20px', height: '20px' }} />
               Modify Your Work
             </h2>
             <p style={{
@@ -273,11 +291,12 @@ const Workspace: React.FC<WorkspaceProps> = ({ hasStarted, projectTitle = 'Landi
                       border: 'none',
                       color: '#6b7280',
                       cursor: 'pointer',
-                      fontSize: '18px',
-                      padding: '4px'
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center'
                     }}
                   >
-                    <i className="fas fa-times"></i>
+                    <XMarkIcon style={{ width: '20px', height: '20px' }} />
                   </button>
                 </div>
                 <div style={{
@@ -308,9 +327,10 @@ const Workspace: React.FC<WorkspaceProps> = ({ hasStarted, projectTitle = 'Landi
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: 'white',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    fontWeight: 600
                   }}>
-                    {message.type === 'bot' ? <i className="fas fa-robot"></i> : 'U'}
+                    {message.type === 'bot' ? 'AI' : 'U'}
                   </div>
                   <span style={{ fontSize: '14px', fontWeight: 500, color: '#111827' }}>
                     {message.name}

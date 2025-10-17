@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard, SecondaryButton } from './ui';
+import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard, SecondaryButton, TemplateDetailModal } from './ui';
 import type { ConversationMessage } from './Conversation';
 import { ChevronDown } from 'lucide-react';
 
@@ -23,6 +23,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<typeof allTemplates[0] | null>(null);
 
   const handleIntegrationsClick = () => {
     setShowIntegrationsModal(true);
@@ -131,6 +133,18 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
     setTemplates(shuffled.slice(0, 3));
   };
 
+  const handleTemplateClick = (template: typeof allTemplates[0]) => {
+    setSelectedTemplate(template);
+    setShowTemplateModal(true);
+  };
+
+  const handleUseTemplate = () => {
+    console.log('Using template:', selectedTemplate?.title);
+    // TODO: Implement template usage logic
+    // This could navigate to a new page, start a project, or populate the AI input
+    setShowTemplateModal(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation Bar */}
@@ -237,6 +251,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
                 description={template.description}
                 favorites={template.favorites}
                 views={template.views}
+                onClick={() => handleTemplateClick(template)}
               />
             ))}
           </div>
@@ -292,6 +307,13 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
           setShowSignUpModal(false);
           setShowSignInModal(true);
         }}
+      />
+
+      <TemplateDetailModal
+        isOpen={showTemplateModal}
+        onClose={() => setShowTemplateModal(false)}
+        template={selectedTemplate}
+        onUseTemplate={handleUseTemplate}
       />
 
       {/* Debug button for testing */}

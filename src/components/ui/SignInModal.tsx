@@ -12,7 +12,6 @@ const SignInModal: React.FC<SignInModalProps> = ({
   isOpen,
   onClose,
   onSignIn,
-  onSignUp,
   onSSOSignIn,
 }) => {
   const [step, setStep] = useState<'sso' | 'email'>('sso');

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button } from './ui';
+import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard } from './ui';
 import type { ConversationMessage } from './Conversation';
-import { Sparkles, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -56,18 +56,30 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
   const templates = [
     {
       category: "Smooth Deployment",
+      categoryColor: "amber" as const,
+      savedHours: 35,
       title: "Analyze, Fix & Automate Your Builds Before Deploying",
-      categoryColor: "bg-amber-100 text-amber-700"
+      description: "Working on: Saved est 35hrs by analyzing dependencies to avoid deployment failures by using Copado integrations to save 35 hours",
+      favorites: 1234,
+      views: 154
     },
     {
       category: "Strategy & Planning",
-      title: "Analyze, Fix & Automate Your Builds Before Deploying",
-      categoryColor: "bg-purple-100 text-purple-700"
+      categoryColor: "purple" as const,
+      savedHours: 42,
+      title: "Create Comprehensive Deployment Strategy Using Real Data",
+      description: "Working on: Saved est 42hrs by analyzing org metadata to avoid technical debt by using automated analysis to save 42 hours",
+      favorites: 987,
+      views: 203
     },
     {
       category: "Develop And Deploy",
-      title: "Analyze, Fix & Automate Your Builds Before Deploying",
-      categoryColor: "bg-amber-100 text-amber-700"
+      categoryColor: "amber" as const,
+      savedHours: 28,
+      title: "Streamline Development Workflow with Automated Testing",
+      description: "Working on: Saved est 28hrs by analyzing test coverage to avoid production bugs by using CI/CD pipelines to save 28 hours",
+      favorites: 756,
+      views: 189
     }
   ];
 
@@ -168,20 +180,16 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {templates.map((template, index) => (
-              <div 
-                key={index} 
-                className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${template.categoryColor}`}>
-                    {template.category}
-                  </span>
-                  <Sparkles className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
-                </div>
-                <h3 className="text-lg font-semibold text-slate-950 leading-snug">
-                  {template.title}
-                </h3>
-              </div>
+              <TemplateCard
+                key={index}
+                category={template.category}
+                categoryColor={template.categoryColor}
+                savedHours={template.savedHours}
+                title={template.title}
+                description={template.description}
+                favorites={template.favorites}
+                views={template.views}
+              />
             ))}
           </div>
 

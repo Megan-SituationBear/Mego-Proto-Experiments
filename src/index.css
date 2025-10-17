@@ -11,6 +11,14 @@
   
   --font-size-body: 15px;
   --line-height-body: 1.5;
+  
+  /* Card specific colors */
+  --color-card-border: #cad5e2;
+  --color-pill-bg: #e0e7ff;
+  --color-pill-text: #62748e;
+  --color-saved-hours: #ad46ff;
+  --color-text-primary: #020618;
+  --color-text-secondary: #45556c;
 }
 
 body {

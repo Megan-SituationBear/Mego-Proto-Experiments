@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Sparkles, ChevronDown } from 'lucide-react';
 import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button } from './ui';
 import type { ConversationMessage } from './Conversation';
 
@@ -34,6 +35,24 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
     { name: 'Github', icon: '🐙', description: 'Access repositories' }
   ];
 
+  const templates = [
+    {
+      category: "Smooth Deployment",
+      title: "Analyze, Fix & Automate Your Builds Before Deploying",
+      categoryColor: "bg-amber-100 text-amber-700"
+    },
+    {
+      category: "Strategy & Planning",
+      title: "Analyze, Fix & Automate Your Builds Before Deploying",
+      categoryColor: "bg-purple-100 text-purple-700"
+    },
+    {
+      category: "Develop And Deploy",
+      title: "Analyze, Fix & Automate Your Builds Before Deploying",
+      categoryColor: "bg-amber-100 text-amber-700"
+    }
+  ];
+
   const handleSignIn = async (email: string, password: string) => {
     console.log('Sign in attempt:', { email, passwordLength: password.length });
     // TODO: Implement actual sign in logic
@@ -53,80 +72,147 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
   };
 
   return (
-    <div 
-      className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col items-center justify-center p-8"
-      style={{ 
-        minHeight: '100vh',
-        background: 'linear-gradient(to bottom right, #f8fafc, #eff6ff)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem'
-      }}
-    >
-      {/* Header with Sign In/Sign Up */}
-      <div 
-        className="absolute top-0 right-0 p-6 flex gap-3"
-        style={{ 
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          padding: '1.5rem',
-          display: 'flex',
-          gap: '0.75rem'
-        }}
-      >
-        <Button
-          variant="secondary"
-          onClick={() => setShowSignInModal(true)}
-        >
-          Sign In
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => setShowSignUpModal(true)}
-        >
-          Sign Up
-        </Button>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Navigation Bar */}
+      <nav className="border-b border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-end items-center h-16 gap-3">
+            <Button
+              variant="secondary"
+              onClick={() => setShowSignInModal(true)}
+            >
+              Login
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => setShowSignUpModal(true)}
+            >
+              Sign Up
+            </Button>
+          </div>
+        </div>
+      </nav>
+      
+      {/* Hero Section */}
+      <section className="min-h-screen h-screen md:h-auto md:min-h-screen flex flex-col justify-center px-4 relative">
+        <div className="max-w-6xl mx-auto text-center w-full">
+          <div className="-mt-20">
+            {/* Logo */}
+            <div className="flex justify-center mb-6 md:mb-8">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-600 rounded-full flex items-center justify-center">
+                <svg width="32" height="32" className="md:w-10 md:h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
 
-      {/* Interactive AI Input Box - Centered */}
-      <div 
-        className="w-full max-w-4xl mx-auto px-4"
-        style={{ 
-          width: '100%',
-          maxWidth: '56rem',
-          margin: '0 auto',
-          padding: '0 1rem'
-        }}
-      >
-        <AIInput
-          placeholder="Try: @Copado what do you do? Or, @project Let's Go!"
-          onSendMessage={(text) => handleSendMessageWithConversation(text, setShowCopadoTyping)}
-          onIntegrationsClick={handleIntegrationsClick}
-          autoFocus={true}
-          isLoggedIn={false}
-          pageContext="home"
-          hasConversation={conversationMessages.length > 0}
-          messages={conversationMessages.map(msg => ({
-            id: msg.id,
-            content: msg.content.content,
-            isUser: msg.isUser,
-            timestamp: msg.timestamp
-          }))}
-          showTypingIndicator={showCopadoTyping}
-        />
-      </div>
+            {/* Main Heading */}
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-slate-950 mb-4 md:mb-6 leading-tight">
+              Supercharge Salesforce <span className="text-blue-600">Work</span>
+            </h1>
+            
+            {/* Subheading */}
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-600 mb-10 md:mb-16 max-w-3xl mx-auto px-4">
+              Speed Up Everyday Work, Without Sacrificing Quality
+            </p>
 
-      {/* Integrations Modal */}
+            {/* AI Input */}
+            <div className="w-full max-w-4xl mx-auto mb-8 md:mb-12 px-2 sm:px-0">
+              <AIInput
+                placeholder="Try: @Copado what do you do? Or, @project Let's Go!"
+                onSendMessage={(text) => handleSendMessageWithConversation(text, setShowCopadoTyping)}
+                onIntegrationsClick={handleIntegrationsClick}
+                autoFocus={true}
+                isLoggedIn={false}
+                pageContext="home"
+                hasConversation={conversationMessages.length > 0}
+                messages={conversationMessages.map(msg => ({
+                  id: msg.id,
+                  content: msg.content.content,
+                  isUser: msg.isUser,
+                  timestamp: msg.timestamp
+                }))}
+                showTypingIndicator={showCopadoTyping}
+              />
+            </div>
+
+            {/* Version and Links */}
+            <div className="text-xs sm:text-sm text-gray-600">
+              Version number 34910. 
+              <a href="#" className="text-blue-600 hover:underline ml-2">Documentation</a>
+              <a href="#" className="text-blue-600 hover:underline ml-2">Learning Videos</a>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center">
+          <p className="text-xs sm:text-sm text-gray-500 mb-2">cool things to do</p>
+          <div className="animate-bounce">
+            <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 mx-auto" />
+          </div>
+        </div>
+      </section>
+
+      {/* Templates Section */}
+      <section className="bg-slate-900 py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-gray-400 uppercase tracking-wide text-sm mb-2">
+              COPY. MODIFY. LEARN
+            </p>
+            <h2 className="text-4xl font-bold text-white">
+              Quick Start Templates
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {templates.map((template, index) => (
+              <div 
+                key={index} 
+                className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${template.categoryColor}`}>
+                    {template.category}
+                  </span>
+                  <Sparkles className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-950 leading-snug">
+                  {template.title}
+                </h3>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <button className="bg-white text-slate-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              View Full Library
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 border-t border-slate-800 py-8 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-gray-400 text-sm mb-2">
+            Copyright Copado 2025-2029{' '}
+            <a href="#" className="text-blue-500 hover:underline">View Documentation</a>
+          </p>
+          <a href="#" className="text-blue-500 hover:underline text-sm">
+            Enterprise Inquiries
+          </a>
+        </div>
+      </footer>
+
+      {/* Modals */}
       <IntegrationsModal
         isOpen={showIntegrationsModal}
         onClose={() => setShowIntegrationsModal(false)}
         integrations={integrations}
       />
 
-      {/* Sign In Modal */}
       <SignInModal
         isOpen={showSignInModal}
         onClose={() => setShowSignInModal(false)}
@@ -137,7 +223,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
         }}
       />
 
-      {/* Sign Up Modal */}
       <SignUpModal
         isOpen={showSignUpModal}
         onClose={() => setShowSignUpModal(false)}
@@ -147,17 +232,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage, conv
           setShowSignInModal(true);
         }}
       />
-
-      {/* Debug button for testing */}
-      <div className="mt-8">
-        <Button
-          variant="primary"
-          size="lg"
-          onClick={onViewProto2}
-        >
-          View Proto 2
-        </Button>
-      </div>
     </div>
   );
 };

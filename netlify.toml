@@ -1,6 +1,7 @@
 [build]
+  base = "Capado-Landing"
   command = "npm run build"
-  publish = "dist"
+  publish = "build"
 
 [[redirects]]
   from = "/*"

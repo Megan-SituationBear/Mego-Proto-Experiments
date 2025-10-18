@@ -11,13 +11,14 @@ interface Message {
 
 interface IntroPageProps {
   onViewProto2: () => void;
+  onLogin?: () => void;
   onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
   messages?: Message[];
   conversationMessages?: ConversationMessage[];
   userMessageCount?: number;
 }
 
-const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage }) => {
+const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSendMessage }) => {
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
@@ -35,21 +36,33 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage }) =>
   const handleSignIn = async (email: string, password: string) => {
     console.log('Sign in attempt:', { email, passwordLength: password.length });
     setShowSignInModal(false);
+    if (onLogin) {
+      onLogin();
+    }
   };
 
   const handleSignUp = async (email: string, password: string, confirmPassword: string) => {
     console.log('Sign up attempt:', { email, passwordLength: password.length, confirmPasswordLength: confirmPassword.length });
     setShowSignUpModal(false);
+    if (onLogin) {
+      onLogin();
+    }
   };
 
   const handleSSOSignIn = async (provider: string) => {
     console.log('SSO sign in with provider:', provider);
     setShowSignInModal(false);
+    if (onLogin) {
+      onLogin();
+    }
   };
 
   const handleSSOSignUp = async (provider: string) => {
     console.log('SSO sign up with provider:', provider);
     setShowSignUpModal(false);
+    if (onLogin) {
+      onLogin();
+    }
   };
 
   const handleIntegrationsClick = () => {

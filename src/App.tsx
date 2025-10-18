@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import IntroPage from './components/IntroPage';
+import HomePage from './components/HomePage';
 import ChatPanel from './components/ChatPanel';
 import Workspace from './components/Workspace';
 import type { ConversationMessage } from './components/Conversation';
@@ -14,7 +15,9 @@ interface Message {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<'intro' | 'proto2'>('intro');
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'proto2'>('intro');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hasProjects, setHasProjects] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
@@ -168,15 +171,64 @@ function App() {
     setCurrentView('proto2');
   };
 
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setCurrentView('home');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setHasProjects(false);
+    setCurrentView('intro');
+  };
+
+  const handleCreateProject = () => {
+    setCurrentView('proto2');
+    setHasStarted(true);
+  };
+
+  const handleOpenProject = (projectId: string) => {
+    console.log('Opening project:', projectId);
+    setCurrentView('proto2');
+    setHasStarted(true);
+  };
+
+  const handleToggleProjects = () => {
+    setHasProjects(!hasProjects);
+  };
+
   if (currentView === 'intro') {
     return (
       <IntroPage 
-        onViewProto2={handleViewProto2} 
+        onViewProto2={handleViewProto2}
+        onLogin={handleLogin}
         onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator)}
         messages={messages}
         conversationMessages={conversationMessages}
         userMessageCount={userMessageCount}
       />
+    );
+  }
+
+  if (currentView === 'home') {
+    return (
+      <div>
+        <HomePage 
+          hasProjects={hasProjects}
+          onCreateProject={handleCreateProject}
+          onOpenProject={handleOpenProject}
+          onLogout={handleLogout}
+        />
+        {/* Debug button for testing */}
+        <div className="fixed bottom-4 right-4 flex gap-2">
+          <button
+            onClick={handleToggleProjects}
+            className="px-4 py-2 rounded bg-gray-600 text-white text-sm font-medium hover:bg-gray-700 transition-colors"
+          >
+            Toggle Projects
+          </button>
+        </div>
+      </div>
     );
   }
 

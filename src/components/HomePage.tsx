@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PrimaryButton from './ui/PrimaryButton';
-import { AIInput } from './ui';
+import { AIInput, TemplateCard } from './ui';
+import FindTemplatesModal from './ui/FindTemplatesModal';
 
 interface Project {
   id: string;
@@ -16,6 +17,7 @@ interface HomePageProps {
   onOpenProject?: (projectId: string) => void;
   onLogout?: () => void;
   onSendMessage?: (text: string) => void;
+  onViewTemplate?: (template: any) => void;
 }
 
 const HomePage: React.FC<HomePageProps> = ({
@@ -24,6 +26,7 @@ const HomePage: React.FC<HomePageProps> = ({
   onOpenProject,
   onLogout,
   onSendMessage,
+  onViewTemplate,
 }) => {
   // Mock projects data for demo
   const mockProjects: Project[] = [

@@ -194,22 +194,63 @@ const HomePage: React.FC<HomePageProps> = ({
         {/* AI Input Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">What would you like to create today?</h2>
+          
+          {/* Conversation Messages */}
+          {showConversation && conversationMessages.length > 0 && (
+            <div className="mb-4 space-y-4 max-h-96 overflow-y-auto bg-white rounded-lg border border-gray-200 p-4">
+              {conversationMessages.map((msg, idx) => (
+                <div key={idx} className={`flex gap-3 ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+                  {!msg.isUser && (
+                    <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white flex-shrink-0">
+                      🤖
+                    </div>
+                  )}
+                  <div className={`px-4 py-2 rounded-lg max-w-xl ${
+                    msg.isUser 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-100 text-gray-900'
+                  }`}>
+                    <p className="text-sm">{msg.text}</p>
+                  </div>
+                  {msg.isUser && (
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white flex-shrink-0">
+                      U
+                    </div>
+                  )}
+                </div>
+              ))}
+              {isAITyping && (
+                <div className="flex gap-3 justify-start">
+                  <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white flex-shrink-0">
+                    🤖
+                  </div>
+                  <div className="px-4 py-2 rounded-lg bg-gray-100">
+                    <div className="flex gap-1">
+                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></span>
+                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <AIInput
             placeholder="Describe your project idea..."
-            onSendMessage={(text) => {
-              if (onSendMessage) {
-                onSendMessage(text);
-              } else if (onCreateProject) {
-                onCreateProject();
-              }
-            }}
+            onSendMessage={handleSendMessage}
             onIntegrationsClick={() => console.log('Integrations clicked')}
             autoFocus={false}
             isLoggedIn={true}
             pageContext="home"
-            hasConversation={false}
-            messages={[]}
-            showTypingIndicator={false}
+            hasConversation={showConversation}
+            messages={conversationMessages.map((msg, idx) => ({
+              id: idx.toString(),
+              text: msg.text,
+              isUser: msg.isUser,
+              timestamp: new Date()
+            }))}
+            showTypingIndicator={isAITyping}
           />
         </div>
 

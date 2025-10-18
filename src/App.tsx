@@ -281,6 +281,10 @@ function App() {
           onCreateProject={handleCreateProject}
           onOpenProject={handleOpenProject}
           onLogout={handleLogout}
+          onSendMessage={(text) => {
+            console.log('Creating project from message:', text);
+            handleCreateProject();
+          }}
         />
         {/* Debug button for testing */}
         <div className="fixed bottom-4 right-4 flex gap-2">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PrimaryButton from './ui/PrimaryButton';
+import { AIInput } from './ui';
 
 interface Project {
   id: string;
@@ -14,6 +15,7 @@ interface HomePageProps {
   onCreateProject?: () => void;
   onOpenProject?: (projectId: string) => void;
   onLogout?: () => void;
+  onSendMessage?: (text: string) => void;
 }
 
 const HomePage: React.FC<HomePageProps> = ({
@@ -21,6 +23,7 @@ const HomePage: React.FC<HomePageProps> = ({
   onCreateProject,
   onOpenProject,
   onLogout,
+  onSendMessage,
 }) => {
   // Mock projects data for demo
   const mockProjects: Project[] = [
@@ -114,6 +117,28 @@ const HomePage: React.FC<HomePageProps> = ({
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* AI Input Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">What would you like to create today?</h2>
+          <AIInput
+            placeholder="Describe your project idea..."
+            onSendMessage={(text) => {
+              if (onSendMessage) {
+                onSendMessage(text);
+              } else if (onCreateProject) {
+                onCreateProject();
+              }
+            }}
+            onIntegrationsClick={() => console.log('Integrations clicked')}
+            autoFocus={false}
+            isLoggedIn={true}
+            pageContext="home"
+            hasConversation={false}
+            messages={[]}
+            showTypingIndicator={false}
+          />
+        </div>
+
         {projects.length === 0 ? (
           /* Empty State - No Projects */
           <div className="flex flex-col items-center justify-center min-h-[60vh]">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard } from './ui';
+import { AIInput, IntegrationsModal, Button, TemplateCard } from './ui';
+import AuthModal from './ui/AuthModal';
 import type { ConversationMessage } from './Conversation';
 
 interface Message {
@@ -22,8 +23,8 @@ interface IntroPageProps {
 
 const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, onViewTemplate, onSendMessage }) => {
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
-  const [showSignInModal, setShowSignInModal] = useState(false);
-  const [showSignUpModal, setShowSignUpModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
 
   const integrations = [

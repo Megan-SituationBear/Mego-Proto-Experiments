@@ -213,16 +213,20 @@ function App() {
 
   const handleViewTemplate = (template: any) => {
     setSelectedTemplate(template);
-    setCurrentView('template');
-  };
-
-  const handleUseTemplate = () => {
     if (isLoggedIn) {
+      // Logged in users: go directly to project creation
+      setProjectTitle(template.title);
       setCurrentView('proto2');
       setHasStarted(true);
     } else {
-      setCurrentView('pricing');
+      // Logged out users: show full template page with CTA
+      setCurrentView('template');
     }
+  };
+
+  const handleUseTemplate = () => {
+    // This is only called from TemplatePage (logged out users)
+    setCurrentView('pricing');
   };
 
   const handleBackToIntro = () => {
@@ -257,10 +261,8 @@ function App() {
     return (
       <TemplatePage
         template={selectedTemplate}
-        isLoggedIn={isLoggedIn}
         onBack={handleBackToIntro}
         onUseTemplate={handleUseTemplate}
-        onGoToPricing={() => setCurrentView('pricing')}
       />
     );
   }

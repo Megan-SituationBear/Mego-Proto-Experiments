@@ -11,18 +11,14 @@ interface TemplatePageProps {
     favorites: number;
     views: number;
   } | null;
-  isLoggedIn: boolean;
   onBack: () => void;
   onUseTemplate: () => void;
-  onGoToPricing: () => void;
 }
 
 const TemplatePage: React.FC<TemplatePageProps> = ({
   template,
-  isLoggedIn,
   onBack,
   onUseTemplate,
-  onGoToPricing,
 }) => {
   if (!template) {
     return null;
@@ -47,12 +43,9 @@ const TemplatePage: React.FC<TemplatePageProps> = ({
     amber: 'bg-amber-100 text-amber-800',
   };
 
+  // This is only shown to logged-out users
   const handleUseTemplate = () => {
-    if (isLoggedIn) {
-      onUseTemplate();
-    } else {
-      onGoToPricing();
-    }
+    onUseTemplate(); // Goes to pricing page
   };
 
   return (
@@ -314,24 +307,19 @@ const TemplatePage: React.FC<TemplatePageProps> = ({
             <div className="bg-white rounded-lg border border-gray-200 p-6 sticky top-24">
               <h3 className="text-xl font-semibold text-slate-900 mb-4">Ready to Get Started?</h3>
               <p className="text-sm text-gray-600 mb-6">
-                {isLoggedIn 
-                  ? 'Use this template to create your own project and start saving time.'
-                  : 'Sign up to use this template and access all features of Copado AI.'
-                }
+                Sign up to use this template and access all features of Copado AI.
               </p>
 
               <PrimaryButton onClick={handleUseTemplate} className="w-full mb-4">
-                {isLoggedIn ? 'Use This Template' : 'View Pricing Plans'}
+                View Pricing Plans
               </PrimaryButton>
 
-              {!isLoggedIn && (
-                <p className="text-xs text-center text-gray-500">
-                  Already have an account?{' '}
-                  <button onClick={onBack} className="text-blue-600 hover:underline">
-                    Sign in
-                  </button>
-                </p>
-              )}
+              <p className="text-xs text-center text-gray-500">
+                Already have an account?{' '}
+                <button onClick={onBack} className="text-blue-600 hover:underline">
+                  Sign in
+                </button>
+              </p>
 
               {/* Additional Info */}
               <div className="mt-6 pt-6 border-t border-gray-200">

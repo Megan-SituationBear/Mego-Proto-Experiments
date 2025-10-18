@@ -61,6 +61,37 @@ const HomePage: React.FC<HomePageProps> = ({
   ];
 
   const [projects] = useState<Project[]>(hasProjects ? mockProjects : []);
+  const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
+
+  const recommendedTemplates = [
+    {
+      category: "Strategists",
+      categoryColor: "purple" as const,
+      savedHours: 35,
+      title: "Strategy Title Here About Using Real Data",
+      description: "Working On: Saved Est | Hrs | By Analyzing | What | To Avoid | Risk",
+      favorites: 1234,
+      views: 154
+    },
+    {
+      category: "Customer Satisfaction Heroes",
+      categoryColor: "blue" as const,
+      savedHours: 42,
+      title: "Optimize User Experience with Customer Feedback",
+      description: "Working on: Saved est 42hrs by analyzing customer data",
+      favorites: 987,
+      views: 203
+    },
+    {
+      category: "Developers & Launchers",
+      categoryColor: "green" as const,
+      savedHours: 51,
+      title: "Build and Launch Features Faster",
+      description: "Working on: Saved est 51hrs by analyzing code patterns",
+      favorites: 1456,
+      views: 298
+    },
+  ];
 
   const formatDate = (date: Date) => {
     const now = new Date();
@@ -142,9 +173,37 @@ const HomePage: React.FC<HomePageProps> = ({
           />
         </div>
 
+        {/* Templates For You Section */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-slate-900">Templates For You</h2>
+            <button
+              onClick={() => setShowFindTemplatesModal(true)}
+              className="px-4 py-2 rounded-lg border-2 border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors"
+            >
+              Match with Templates
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {recommendedTemplates.map((template, index) => (
+              <TemplateCard
+                key={index}
+                category={template.category}
+                categoryColor={template.categoryColor}
+                savedHours={template.savedHours}
+                title={template.title}
+                description={template.description}
+                favorites={template.favorites}
+                views={template.views}
+                onClick={() => onViewTemplate?.(template)}
+              />
+            ))}
+          </div>
+        </div>
+
         {projects.length === 0 ? (
           /* Empty State - No Projects */
-          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center justify-center min-h-[40vh]">
             <div className="text-center max-w-md">
               {/* Empty State Icon */}
               <div className="mb-6">
@@ -240,6 +299,16 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
         )}
       </main>
+
+      {/* Find Templates Modal */}
+      <FindTemplatesModal
+        isOpen={showFindTemplatesModal}
+        onClose={() => setShowFindTemplatesModal(false)}
+        onSelectTemplate={(template) => {
+          setShowFindTemplatesModal(false);
+          onViewTemplate?.(template);
+        }}
+      />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import HomePage from './components/HomePage';
 import OnboardingFlow from './components/OnboardingFlow';
 import TemplatePage from './components/TemplatePage';
 import PricingPage from './components/PricingPage';
+import ProjectPage from './components/ProjectPage';
 import ChatPanel from './components/ChatPanel';
 import Workspace from './components/Workspace';
 import type { ConversationMessage } from './components/Conversation';
@@ -281,6 +282,7 @@ function App() {
           onCreateProject={handleCreateProject}
           onOpenProject={handleOpenProject}
           onLogout={handleLogout}
+          onViewTemplate={handleViewTemplate}
           onSendMessage={(text) => {
             console.log('Creating project from message:', text);
             handleCreateProject();
@@ -299,22 +301,13 @@ function App() {
     );
   }
 
+  // Use new ProjectPage for in-progress projects
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Left Chat Panel - 1/3 */}
-      <div className="w-1/3 bg-white/80 backdrop-blur-sm border-r border-slate-200/60 flex flex-col">
-        <ChatPanel 
-          messages={messages} 
-          onSendMessage={(text) => handleSendMessage(text)}
-          hasStarted={hasStarted}
-        />
-      </div>
-      
-      {/* Right Workspace - 2/3 */}
-      <div className="w-2/3 flex flex-col">
-        <Workspace hasStarted={hasStarted} projectTitle={projectTitle} />
-      </div>
-    </div>
+    <ProjectPage
+      projectTitle={projectTitle}
+      projectDate={new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+      onBack={() => setCurrentView('home')}
+    />
   );
 }
 

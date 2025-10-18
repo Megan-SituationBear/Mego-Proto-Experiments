@@ -14,18 +14,24 @@ const SignInModal: React.FC<SignInModalProps> = ({
   onSignIn,
   onSSOSignIn,
 }) => {
-  const [step, setStep] = useState<'sso' | 'email'>('sso');
+  const [step, setStep] = useState<'sso' | 'email' | 'sso-terms'>('sso');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedSSOProvider, setSelectedSSOProvider] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSSOClick = async (provider: string) => {
+  const handleSSOClick = (provider: string) => {
+    setSelectedSSOProvider(provider);
+    setStep('sso-terms');
+  };
+
+  const handleSSOTermsAgree = async () => {
     setIsLoading(true);
     try {
       if (onSSOSignIn) {
-        await onSSOSignIn(provider);
+        await onSSOSignIn(selectedSSOProvider);
       }
       resetAndClose();
     } catch (error) {
@@ -56,6 +62,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
     setStep('sso');
     setEmail('');
     setPassword('');
+    setSelectedSSOProvider('');
     onClose();
   };
 
@@ -168,6 +175,63 @@ const SignInModal: React.FC<SignInModalProps> = ({
               >
                 Use Email
               </button>
+            </div>
+          ) : step === 'sso-terms' ? (
+            /* SSO Terms Acceptance Screen */
+            <div className="flex flex-col gap-6">
+              {/* Terms Content */}
+              <div className="bg-gray-50 rounded-lg p-6 max-h-80 overflow-y-auto border border-gray-200">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                  Single Sign-On Terms and Conditions
+                </h3>
+                <div className="text-sm text-slate-700 space-y-3">
+                  <p>
+                    By using Single Sign-On (SSO) with {selectedSSOProvider.charAt(0).toUpperCase() + selectedSSOProvider.slice(1)}, 
+                    you agree to allow Copado AI to access your authentication information through this provider.
+                  </p>
+                  <p>
+                    <strong>What we access:</strong>
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>Your name and email address</li>
+                    <li>Profile information necessary for account creation</li>
+                    <li>Authentication tokens for secure access</li>
+                  </ul>
+                  <p>
+                    <strong>Your data privacy:</strong>
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>We never store your SSO provider passwords</li>
+                    <li>Your data is encrypted and securely stored</li>
+                    <li>You can revoke access at any time through your SSO provider settings</li>
+                  </ul>
+                  <p>
+                    By continuing, you also agree to Copado's{' '}
+                    <a href="#" className="text-blue-600 hover:underline">Terms of Service</a>
+                    {' and '}
+                    <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={handleSSOTermsAgree}
+                  disabled={isLoading}
+                  className="w-full px-8 py-3 bg-blue-600 text-white rounded text-[15px] font-roboto font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? 'Processing...' : 'I Agree - Continue with SSO'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep('sso')}
+                  disabled={isLoading}
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  ← Back to SSO options
+                </button>
+              </div>
             </div>
           ) : (
             /* Email/Password Screen */

@@ -36,7 +36,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
 
   const handleSignIn = async (email: string, password: string) => {
     console.log('Sign in attempt:', { email, passwordLength: password.length });
-    setShowSignInModal(false);
+    setShowAuthModal(false);
     if (onLogin) {
       onLogin();
     }
@@ -44,7 +44,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
 
   const handleSignUp = async (email: string, password: string, confirmPassword: string) => {
     console.log('Sign up attempt:', { email, passwordLength: password.length, confirmPasswordLength: confirmPassword.length });
-    setShowSignUpModal(false);
+    setShowAuthModal(false);
     if (onSignUp) {
       onSignUp();
     }
@@ -52,7 +52,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
 
   const handleSSOSignIn = async (provider: string) => {
     console.log('SSO sign in with provider:', provider);
-    setShowSignInModal(false);
+    setShowAuthModal(false);
     if (onLogin) {
       onLogin();
     }
@@ -60,10 +60,24 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
 
   const handleSSOSignUp = async (provider: string) => {
     console.log('SSO sign up with provider:', provider);
-    setShowSignUpModal(false);
+    setShowAuthModal(false);
     if (onSignUp) {
       onSignUp();
     }
+  };
+
+  const openSignInModal = () => {
+    setAuthMode('signin');
+    setShowAuthModal(true);
+  };
+
+  const openSignUpModal = () => {
+    setAuthMode('signup');
+    setShowAuthModal(true);
+  };
+
+  const switchAuthMode = () => {
+    setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
   };
 
   const handleIntegrationsClick = () => {
@@ -153,13 +167,13 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-end items-center h-16 gap-3">
             <button
-              onClick={() => setShowSignInModal(true)}
+              onClick={openSignInModal}
               className="px-6 py-2 rounded border border-gray-300 text-slate-900 text-sm font-medium hover:bg-gray-50 transition-colors"
             >
               Login
             </button>
             <button
-              onClick={() => setShowSignUpModal(true)}
+              onClick={openSignUpModal}
               className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
             >
               Sign Up
@@ -278,26 +292,15 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
         integrations={integrations}
       />
 
-      <SignInModal
-        isOpen={showSignInModal}
-        onClose={() => setShowSignInModal(false)}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        mode={authMode}
         onSignIn={handleSignIn}
-        onSSOSignIn={handleSSOSignIn}
-        onSignUp={() => {
-          setShowSignInModal(false);
-          setShowSignUpModal(true);
-        }}
-      />
-
-      <SignUpModal
-        isOpen={showSignUpModal}
-        onClose={() => setShowSignUpModal(false)}
         onSignUp={handleSignUp}
+        onSSOSignIn={handleSSOSignIn}
         onSSOSignUp={handleSSOSignUp}
-        onSignIn={() => {
-          setShowSignUpModal(false);
-          setShowSignInModal(true);
-        }}
+        onSwitchMode={switchAuthMode}
       />
 
 

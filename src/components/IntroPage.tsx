@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard, TemplateDetailModal } from './ui';
+import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard } from './ui';
 import type { ConversationMessage } from './Conversation';
 
 interface Message {
@@ -12,18 +12,18 @@ interface Message {
 interface IntroPageProps {
   onViewProto2: () => void;
   onLogin?: () => void;
+  onSignUp?: () => void;
+  onViewTemplate?: (template: any) => void;
   onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
   messages?: Message[];
   conversationMessages?: ConversationMessage[];
   userMessageCount?: number;
 }
 
-const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSendMessage }) => {
+const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, onViewTemplate, onSendMessage }) => {
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
-  const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<typeof allTemplates[0] | null>(null);
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
 
   const integrations = [
@@ -44,8 +44,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSendMess
   const handleSignUp = async (email: string, password: string, confirmPassword: string) => {
     console.log('Sign up attempt:', { email, passwordLength: password.length, confirmPasswordLength: confirmPassword.length });
     setShowSignUpModal(false);
-    if (onLogin) {
-      onLogin();
+    if (onSignUp) {
+      onSignUp();
     }
   };
 
@@ -60,8 +60,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSendMess
   const handleSSOSignUp = async (provider: string) => {
     console.log('SSO sign up with provider:', provider);
     setShowSignUpModal(false);
-    if (onLogin) {
-      onLogin();
+    if (onSignUp) {
+      onSignUp();
     }
   };
 
@@ -140,13 +140,9 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSendMess
   };
 
   const handleTemplateClick = (template: typeof allTemplates[0]) => {
-    setSelectedTemplate(template);
-    setShowTemplateModal(true);
-  };
-
-  const handleUseTemplate = () => {
-    console.log('Using template:', selectedTemplate?.title);
-    setShowTemplateModal(false);
+    if (onViewTemplate) {
+      onViewTemplate(template);
+    }
   };
 
   return (
@@ -303,12 +299,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSendMess
         }}
       />
 
-      <TemplateDetailModal
-        isOpen={showTemplateModal}
-        onClose={() => setShowTemplateModal(false)}
-        template={selectedTemplate}
-        onUseTemplate={handleUseTemplate}
-      />
 
       {/* Debug button for testing */}
       <div className="fixed bottom-4 right-4">

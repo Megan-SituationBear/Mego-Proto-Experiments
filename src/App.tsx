@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import IntroPage from './components/IntroPage';
 import HomePage from './components/HomePage';
+import OnboardingFlow from './components/OnboardingFlow';
+import TemplatePage from './components/TemplatePage';
+import PricingPage from './components/PricingPage';
 import ChatPanel from './components/ChatPanel';
 import Workspace from './components/Workspace';
 import type { ConversationMessage } from './components/Conversation';
@@ -15,9 +18,10 @@ interface Message {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'proto2'>('intro');
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'proto2'>('intro');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hasProjects, setHasProjects] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
@@ -176,6 +180,15 @@ function App() {
     setCurrentView('home');
   };
 
+  const handleSignUp = () => {
+    setCurrentView('onboarding');
+  };
+
+  const handleOnboardingComplete = () => {
+    setIsLoggedIn(true);
+    setCurrentView('home');
+  };
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     setHasProjects(false);
@@ -197,15 +210,65 @@ function App() {
     setHasProjects(!hasProjects);
   };
 
+  const handleViewTemplate = (template: any) => {
+    setSelectedTemplate(template);
+    setCurrentView('template');
+  };
+
+  const handleUseTemplate = () => {
+    if (isLoggedIn) {
+      setCurrentView('proto2');
+      setHasStarted(true);
+    } else {
+      setCurrentView('pricing');
+    }
+  };
+
+  const handleBackToIntro = () => {
+    setCurrentView('intro');
+  };
+
+  const handleSelectPlan = (plan: string) => {
+    console.log('Selected plan:', plan);
+    setCurrentView('onboarding');
+  };
+
   if (currentView === 'intro') {
     return (
       <IntroPage 
         onViewProto2={handleViewProto2}
         onLogin={handleLogin}
+        onSignUp={handleSignUp}
+        onViewTemplate={handleViewTemplate}
         onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator)}
         messages={messages}
         conversationMessages={conversationMessages}
         userMessageCount={userMessageCount}
+      />
+    );
+  }
+
+  if (currentView === 'onboarding') {
+    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
+  }
+
+  if (currentView === 'template') {
+    return (
+      <TemplatePage
+        template={selectedTemplate}
+        isLoggedIn={isLoggedIn}
+        onBack={handleBackToIntro}
+        onUseTemplate={handleUseTemplate}
+        onGoToPricing={() => setCurrentView('pricing')}
+      />
+    );
+  }
+
+  if (currentView === 'pricing') {
+    return (
+      <PricingPage
+        onBack={handleBackToIntro}
+        onSelectPlan={handleSelectPlan}
       />
     );
   }

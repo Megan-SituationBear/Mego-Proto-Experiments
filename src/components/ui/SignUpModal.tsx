@@ -81,8 +81,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: '#8E9BAD' }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-white"
       onClick={handleBackdropClick}
     >
       <div className="relative flex flex-col items-center w-full max-w-md px-4">
@@ -112,7 +111,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
 
         {/* White Modal Card */}
         <div 
-          className="w-full bg-white rounded-2xl p-8 shadow-2xl"
+          className="w-full bg-white rounded-2xl p-8 border border-gray-100 shadow-sm"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Sign Up Title */}

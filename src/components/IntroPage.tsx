@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard, TemplateDetailModal } from './ui';
+import { AIInput, IntegrationsModal, SignInModal, SignUpModal, Button, TemplateCard, TemplateDetailModal } from './ui';
 import type { ConversationMessage } from './Conversation';
-import { Plus, Send } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -24,7 +23,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage }) =>
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof allTemplates[0] | null>(null);
-  const [inputValue, setInputValue] = useState('');
+  const [showCopadoTyping, setShowCopadoTyping] = useState(false);
 
   const integrations = [
     { name: 'Slack', icon: '💬', description: 'Connect your Slack workspace' },
@@ -51,6 +50,16 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage }) =>
   const handleSSOSignUp = async (provider: string) => {
     console.log('SSO sign up with provider:', provider);
     setShowSignUpModal(false);
+  };
+
+  const handleIntegrationsClick = () => {
+    setShowIntegrationsModal(true);
+  };
+
+  const handleSendMessageWithConversation = (text: string, setTypingIndicator?: (show: boolean) => void) => {
+    if (onSendMessage) {
+      onSendMessage(text, setTypingIndicator);
+    }
   };
 
   const allTemplates = [
@@ -127,20 +136,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage }) =>
     setShowTemplateModal(false);
   };
 
-  const handleSendMessage = () => {
-    if (inputValue.trim() && onSendMessage) {
-      onSendMessage(inputValue.trim());
-      setInputValue('');
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation Bar */}
@@ -164,10 +159,10 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage }) =>
       </nav>
 
       {/* Hero Section with Templates - Dark Background */}
-      <section className="bg-slate-800 py-16 px-4">
+      <section className="bg-slate-800 py-12 px-4">
         <div className="max-w-6xl mx-auto">
           {/* Logo */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-4">
             <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -176,24 +171,24 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage }) =>
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl font-bold text-white text-center mb-4">
+          <h1 className="text-5xl font-bold text-white text-center mb-2">
             Copado AI
           </h1>
 
           {/* Subtitle */}
-          <p className="text-2xl text-white text-center mb-12">
+          <p className="text-2xl text-white text-center mb-8">
             Streamline & Supercharge Salesforce
           </p>
 
           {/* Section Label */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <p className="text-blue-400 uppercase tracking-wider text-sm font-medium">
               SAMPLES OF POPULAR TIME SAVERS
             </p>
           </div>
 
           {/* Template Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {templates.map((template, index) => (
               <TemplateCard
                 key={index}
@@ -222,42 +217,26 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onSendMessage }) =>
       </section>
 
       {/* Input Section - Light Background */}
-      <section className="bg-white py-20 px-4">
+      <section className="bg-white py-16 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Heading */}
-          <h2 className="text-4xl font-bold text-slate-900 text-center mb-12">
+          <h2 className="text-4xl font-bold text-slate-900 text-center mb-8">
             What Are Your Time Savers?
           </h2>
 
-          {/* Input Box */}
-          <div className="mb-8">
-            <div className="relative border-2 border-blue-500 rounded-2xl bg-white shadow-sm">
-              <div className="flex items-center p-4 gap-3">
-                {/* Plus Button */}
-                <button className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors">
-                  <Plus className="w-5 h-5" />
-                </button>
-
-                {/* Input */}
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="You want to .... make what ... for whom?"
-                  className="flex-1 text-base text-slate-900 placeholder-gray-400 focus:outline-none bg-transparent"
-                />
-
-                {/* Send Button */}
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!inputValue.trim()}
-                  className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Send className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+          {/* AI Input Component */}
+          <div className="mb-6">
+            <AIInput
+              placeholder="You want to .... make what ... for whom?"
+              onSendMessage={(text) => handleSendMessageWithConversation(text, setShowCopadoTyping)}
+              onIntegrationsClick={handleIntegrationsClick}
+              autoFocus={false}
+              isLoggedIn={false}
+              pageContext="home"
+              hasConversation={false}
+              messages={[]}
+              showTypingIndicator={showCopadoTyping}
+            />
           </div>
 
           {/* Find Templates Button */}

@@ -11,24 +11,24 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
 
   const roles = [
     {
-      title: 'Save Time Deploying',
-      description: 'Automate and streamline Salesforce deployments',
-      icon: '🚀',
+      title: 'Bring Customer Issues & Prioritize',
+      description: 'Surface critical issues and help teams focus on what matters',
+      icon: '🎯',
     },
     {
-      title: 'Plan Using Data',
-      description: 'Make decisions with analytics and insights',
-      icon: '📊',
+      title: 'Analyze & Fix Broken Builds',
+      description: 'Upload failed builds and get instant analysis and fixes',
+      icon: '🔧',
     },
     {
-      title: 'Ensure Quality',
-      description: 'Test and validate Salesforce changes',
-      icon: '✓',
+      title: 'Fix User Stories From History',
+      description: 'Learn from past failures to prevent future issues',
+      icon: '📖',
     },
     {
-      title: 'Manage Releases',
-      description: 'Coordinate and track release cycles',
-      icon: '📦',
+      title: 'All of the Above',
+      description: 'I need help with everything',
+      icon: '⚡',
     },
   ];
 

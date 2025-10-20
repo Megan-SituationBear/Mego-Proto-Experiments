@@ -81,12 +81,12 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
     >
       {step === 'sso' ? (
         /* SSO Options Screen */
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
           {/* Salesforce Button */}
           <button
             onClick={() => handleSSOClick('salesforce')}
             disabled={isLoading}
-            className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+            className="w-full px-6 py-2 rounded-lg border border-[#90A1B9] bg-white text-[#020618] text-[15px] font-roboto shadow-sm hover:bg-slate-100 hover:shadow-md transition-all disabled:opacity-50"
             style={{ letterSpacing: '-0.02em' }}
           >
             Salesforce
@@ -96,7 +96,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
           <button
             onClick={() => handleSSOClick('google')}
             disabled={isLoading}
-            className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+            className="w-full px-6 py-2 rounded-lg border border-[#90A1B9] bg-white text-[#020618] text-[15px] font-roboto shadow-sm hover:bg-slate-100 hover:shadow-md transition-all disabled:opacity-50"
             style={{ letterSpacing: '-0.02em' }}
           >
             Google
@@ -106,7 +106,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
           <button
             onClick={() => handleSSOClick('github')}
             disabled={isLoading}
-            className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+            className="w-full px-6 py-2 rounded-lg border border-[#90A1B9] bg-white text-[#020618] text-[15px] font-roboto shadow-sm hover:bg-slate-100 hover:shadow-md transition-all disabled:opacity-50"
             style={{ letterSpacing: '-0.02em' }}
           >
             Github
@@ -116,14 +116,14 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
           <button
             onClick={() => handleSSOClick('saml')}
             disabled={isLoading}
-            className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+            className="w-full px-6 py-2 rounded-lg border border-[#90A1B9] bg-white text-[#020618] text-[15px] font-roboto shadow-sm hover:bg-slate-100 hover:shadow-md transition-all disabled:opacity-50"
             style={{ letterSpacing: '-0.02em' }}
           >
             SAML
           </button>
 
           {/* OR Divider */}
-          <div className="flex items-center gap-3 py-1">
+          <div className="flex items-center gap-2 py-1">
             <div className="flex-1 border-t border-[#cad5e2]"></div>
             <span className="text-[15px] font-roboto text-[#020618]">OR</span>
             <div className="flex-1 border-t border-[#cad5e2]"></div>
@@ -133,7 +133,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
           <button
             onClick={() => setStep('email')}
             disabled={isLoading}
-            className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+            className="w-full px-6 py-2 rounded-lg border border-[#90A1B9] bg-white text-[#020618] text-[15px] font-roboto shadow-sm hover:bg-slate-100 hover:shadow-md transition-all disabled:opacity-50"
             style={{ letterSpacing: '-0.02em' }}
           >
             Use Email
@@ -141,7 +141,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
         </div>
       ) : step === 'sso-terms' ? (
         /* SSO Terms Acceptance Screen */
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
           {/* Terms Content - No inner scrollbar */}
           <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">
@@ -198,7 +198,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
         </div>
       ) : (
         /* Email/Password Screen */
-        <form onSubmit={handleEmailSignUp} className="flex flex-col gap-6">
+        <form onSubmit={handleEmailSignUp} className="flex flex-col gap-3">
           <input
             type="email"
             value={email}

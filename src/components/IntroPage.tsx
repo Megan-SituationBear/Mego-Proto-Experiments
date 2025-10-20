@@ -183,7 +183,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
       </nav>
 
       {/* Hero Section with Templates - Dark Background */}
-      <section className="bg-slate-800 py-12 px-4">
+      <section className="bg-[#1a2b4a] py-12 px-4">
         <div className="max-w-6xl mx-auto">
           {/* Logo */}
           <div className="flex justify-center mb-4">
@@ -207,7 +207,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
           {/* Section Label */}
           <div className="text-center mb-6">
             <p className="text-blue-400 uppercase tracking-wider text-sm font-medium">
-              SAMPLES OF POPULAR TIME SAVERS
+              THIS WEEK'S POPULAR TIME SAVERS
             </p>
           </div>
 
@@ -228,13 +228,13 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
             ))}
           </div>
 
-          {/* Shuffle Button */}
+          {/* Find My Matches Button */}
           <div className="text-center">
             <button
               onClick={shuffleTemplates}
-              className="px-8 py-2 rounded border border-white bg-transparent text-white text-sm font-medium hover:bg-white/10 transition-colors"
+              className="px-8 py-2 rounded border border-white bg-white text-slate-900 text-sm font-medium hover:bg-gray-100 transition-colors"
             >
-              Shuffle These
+              Find My Matches
             </button>
           </div>
         </div>
@@ -245,13 +245,13 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
         <div className="max-w-4xl mx-auto">
           {/* Heading */}
           <h2 className="text-4xl font-bold text-slate-900 text-center mb-8">
-            What Are Your Time Savers?
+            Start Something New
           </h2>
 
           {/* AI Input Component */}
           <div className="mb-6">
             <AIInput
-              placeholder="You want to .... make what ... for whom?"
+              placeholder="Describe how I can help ...."
               onSendMessage={(text) => handleSendMessageWithConversation(text, setShowCopadoTyping)}
               onIntegrationsClick={handleIntegrationsClick}
               autoFocus={false}
@@ -263,12 +263,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
             />
           </div>
 
-          {/* Find Templates Button */}
-          <div className="text-center">
-            <button className="px-8 py-2 rounded border border-gray-300 text-slate-900 text-sm font-medium hover:bg-gray-50 transition-colors">
-              Find Templates
-            </button>
-          </div>
         </div>
       </section>
 

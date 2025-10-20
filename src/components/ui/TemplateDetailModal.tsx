@@ -46,8 +46,8 @@ const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+      style={{ backgroundColor: 'rgba(3, 20, 45, 0.85)' }}
       onClick={handleBackdropClick}
     >
       <div className="relative w-full max-w-2xl mx-4">

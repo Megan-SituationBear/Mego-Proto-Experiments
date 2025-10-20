@@ -54,14 +54,14 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div 
-      className={`fixed inset-0 flex items-center justify-center z-50 ${overlayClassName}`}
-      style={{ backgroundColor: '#8E9BAD' }}
+      className={`fixed inset-0 flex items-center justify-center z-50 p-4 overflow-y-auto ${overlayClassName}`}
+      style={{ backgroundColor: 'rgba(3, 20, 45, 0.85)' }}
       onClick={handleOverlayClick}
     >
-      <div className="relative flex flex-col items-center">
+      <div className="relative flex flex-col items-center my-8">
         {/* Header section with logo, text, and X */}
         {showLogo && (
-          <div className="flex items-center justify-center gap-3 sm:gap-6 mb-6 sm:mb-8 relative w-full max-w-[400px] px-4">
+          <div className="flex items-center justify-center gap-3 sm:gap-6 mb-6 sm:mb-8 relative w-full max-w-[400px]">
             {/* Logo */}
             <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
               <svg width="24" height="24" className="sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -97,7 +97,7 @@ const Modal: React.FC<ModalProps> = ({
         {/* Modal content card */}
         <div 
           ref={modalRef}
-          className={`flex flex-col w-full max-w-[400px] gap-4 sm:gap-6 px-6 py-6 sm:px-10 sm:py-8 rounded-xl bg-white shadow-2xl mx-4 sm:mx-6 max-h-[calc(100vh-120px)] overflow-y-auto ${contentClassName}`}
+          className={`flex flex-col w-full max-w-[400px] gap-4 sm:gap-6 px-6 py-6 sm:px-10 sm:py-8 rounded-xl bg-white shadow-2xl max-h-[calc(100vh-160px)] overflow-y-auto ${contentClassName}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Title section */}

@@ -74,10 +74,11 @@ const SignInModal: React.FC<SignInModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-white"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+      style={{ backgroundColor: 'rgba(3, 20, 45, 0.85)' }}
       onClick={handleBackdropClick}
     >
-      <div className="relative flex flex-col items-center w-full max-w-md px-4">
+      <div className="relative flex flex-col items-center w-full max-w-md my-8">
         {/* Header: Logo + COPADO AI + X */}
         <div className="flex items-center gap-4 mb-6 w-full justify-center relative">
           {/* Logo */}
@@ -104,7 +105,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
 
         {/* White Modal Card */}
         <div 
-          className="w-full bg-white rounded-2xl p-8 border border-gray-100 shadow-sm"
+          className="w-full bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-2xl max-h-[calc(100vh-120px)] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Login Title */}

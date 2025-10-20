@@ -104,7 +104,8 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+      style={{ backgroundColor: 'rgba(3, 20, 45, 0.85)' }}
       onClick={handleBackdropClick}
     >
       <div 

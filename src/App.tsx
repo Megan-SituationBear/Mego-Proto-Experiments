@@ -30,6 +30,7 @@ function App() {
   const [hasStarted, setHasStarted] = useState(false);
   const [userMessageCount, setUserMessageCount] = useState(0);
   const [projectTitle, setProjectTitle] = useState('Landing Page Redesign');
+  const userName = 'Jill'; // Could be set from auth in future
 
   const generateAIResponse = (userText: string, currentUserMessageCount: number): { message: Message; conversationMessage: ConversationMessage } => {
     const lowerText = userText.toLowerCase();
@@ -311,6 +312,7 @@ function App() {
   if (currentView === 'home') {
     return (
       <HomePage 
+        userName={userName}
         hasProjects={hasProjects}
         onCreateProject={handleCreateProject}
         onOpenProject={handleOpenProject}

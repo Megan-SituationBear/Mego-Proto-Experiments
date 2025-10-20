@@ -7,6 +7,7 @@ interface WorkItemTemplateProps {
   isLoggedIn?: boolean;
   initialIsFavorite?: boolean;
   isNewProject?: boolean;
+  isDuplicatedTemplate?: boolean;
   onBack?: () => void;
   onUseTemplate?: () => void;
   onSignIn?: () => void;
@@ -22,6 +23,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   isLoggedIn = false,
   initialIsFavorite = false,
   isNewProject = false,
+  isDuplicatedTemplate = false,
   onBack,
   onUseTemplate,
   onSignIn,
@@ -33,6 +35,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [showAllSteps, setShowAllSteps] = useState(false);
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
+  const [activeTab, setActiveTab] = useState<'work' | 'highlights' | 'output'>('work');
 
   const handleToggleFavorite = () => {
     const newFavoriteState = !isFavorite;
@@ -141,6 +144,159 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
 
   const categoryColorClass = categoryColors[templateData.category] || 'bg-purple-100 text-purple-700';
+
+  // Duplicated Template View - when user clicks "Use This Template"
+  if (isDuplicatedTemplate) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-300 shadow-md">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              {/* Back Button */}
+              <button
+                onClick={onBack}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                title="Back"
+              >
+                <ArrowLeft className="w-6 h-6 text-gray-700" />
+              </button>
+
+              {/* Center: Title */}
+              <div className="flex-1 text-center">
+                <p className="text-xs text-gray-500 mb-1">Template Duplicate | Last Activity {getRelativeTime()}</p>
+                <h1 className="text-lg font-bold text-gray-900">{templateData.title}</h1>
+              </div>
+
+              {/* Right: Share and Favorite */}
+              <div className="flex items-center gap-2">
+                <button
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  title="Share"
+                >
+                  <Share2 className="w-5 h-5 text-gray-700" />
+                </button>
+                <button
+                  onClick={handleToggleFavorite}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  title={isFavorite ? 'Unfavorite' : 'Favorite'}
+                >
+                  <Star
+                    className={`w-5 h-5 ${isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-700'}`}
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress Steps */}
+        <div className="bg-gradient-to-r from-indigo-400 to-indigo-600">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="mb-3">
+              <p className="text-white text-sm">Last Step: Duplicated The Template</p>
+            </div>
+            <div className="bg-indigo-700 bg-opacity-50 rounded px-4 py-2">
+              <p className="text-white text-sm font-semibold">Next Step:</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-center gap-8 py-3">
+              <button
+                onClick={() => setActiveTab('work')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  activeTab === 'work'
+                    ? 'bg-indigo-100 text-indigo-700'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                The Work
+              </button>
+              <button
+                onClick={() => setActiveTab('highlights')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  activeTab === 'highlights'
+                    ? 'bg-indigo-100 text-indigo-700'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Highlights
+              </button>
+              <button
+                onClick={() => setActiveTab('output')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  activeTab === 'output'
+                    ? 'bg-indigo-100 text-indigo-700'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Output
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* AI Input Section */}
+          <div className="mb-8">
+            <AIInput
+              placeholder="Use As Is or Modify by typing here"
+              onSendMessage={(text) => {
+                if (onSendMessage) {
+                  onSendMessage(text, setShowCopadoTyping);
+                }
+              }}
+              onIntegrationsClick={() => console.log('Integrations clicked')}
+              autoFocus={false}
+              isLoggedIn={true}
+              pageContext="workspace"
+              hasConversation={conversationMessages.length > 0}
+              messages={conversationMessages}
+              showTypingIndicator={showCopadoTyping}
+            />
+          </div>
+
+          {/* Tab Content */}
+          {activeTab === 'work' && (
+            <div className="bg-white rounded-lg shadow p-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Action Stuff Here</h2>
+              <p className="text-gray-600">
+                Start working with this template. Modify it to fit your needs or use it as is.
+              </p>
+            </div>
+          )}
+
+          {activeTab === 'highlights' && (
+            <div className="bg-white rounded-lg shadow p-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Highlights</h2>
+              <ul className="space-y-3">
+                {templateData.whatsIncluded?.map((item: string, index: number) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-green-600 mr-2">✓</span>
+                    <span className="text-gray-700">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {activeTab === 'output' && (
+            <div className="bg-white rounded-lg shadow p-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Expected Output</h2>
+              <p className="text-gray-600">
+                The output section will show results and artifacts generated from this template.
+              </p>
+            </div>
+          )}
+        </main>
+      </div>
+    );
+  }
 
   // New Project View - simplified layout with conversation
   if (isNewProject) {

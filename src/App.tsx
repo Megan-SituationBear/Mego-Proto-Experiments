@@ -33,6 +33,7 @@ function App() {
   const userName = 'Jill'; // Could be set from auth in future
   const [favoritedTemplates, setFavoritedTemplates] = useState<any[]>([]);
   const [activeProjects, setActiveProjects] = useState<any[]>([]);
+  const [isDuplicatedTemplate, setIsDuplicatedTemplate] = useState(false);
 
   const generateAIResponse = (userText: string, currentUserMessageCount: number): { message: Message; conversationMessage: ConversationMessage } => {
     const lowerText = userText.toLowerCase();
@@ -228,6 +229,7 @@ function App() {
   const handleViewTemplate = (template: any) => {
     setSelectedTemplate(template);
     setWorkItemType('project'); // Templates are always 'project' type
+    setIsDuplicatedTemplate(false); // Reset duplicated state when viewing a template
     setCurrentView('work-item'); // Navigate to work item template page
   };
 
@@ -329,12 +331,14 @@ function App() {
         templateData={selectedTemplate}
         initialIsFavorite={isFavorited}
         isNewProject={isNewProject}
+        isDuplicatedTemplate={isDuplicatedTemplate}
         onBack={() => {
           // Always reset conversation when going back to home
           setMessages([]);
           setConversationMessages([]);
           setUserMessageCount(0);
           setHasStarted(false);
+          setIsDuplicatedTemplate(false);
           setCurrentView(isLoggedIn ? 'home' : 'intro');
         }}
         onUseTemplate={() => {
@@ -351,12 +355,13 @@ function App() {
             // Set project title and create new project view
             setProjectTitle(selectedTemplate?.title || 'New Project');
             setSelectedTemplate(newProject);
-            setHasStarted(true);
+            setIsDuplicatedTemplate(true);
             
             // Reset conversation for new project
             setConversationMessages([]);
             setMessages([]);
             setUserMessageCount(0);
+            setHasStarted(false);
           } else {
             setCurrentView('pricing');
           }

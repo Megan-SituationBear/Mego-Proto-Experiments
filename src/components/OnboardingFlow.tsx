@@ -26,6 +26,11 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
       icon: '📖',
     },
     {
+      title: 'See Behind The Complexity of Orgs',
+      description: 'Visualize and understand complex Salesforce architectures',
+      icon: '🔍',
+    },
+    {
       title: 'All of the Above',
       description: 'I need help with everything',
       icon: '⚡',

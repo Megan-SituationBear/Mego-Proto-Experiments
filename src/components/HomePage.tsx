@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { AIInput, TemplateCard } from './ui';
 import FindTemplatesModal from './ui/FindTemplatesModal';
 
+interface Message {
+  id: string;
+  text: string;
+  isUser: boolean;
+  timestamp: Date;
+}
+
 interface HomePageProps {
   userName?: string;
   hasProjects?: boolean;
@@ -9,8 +16,11 @@ interface HomePageProps {
   onCreateProject?: () => void;
   onOpenProject?: (projectId: string) => void;
   onLogout?: () => void;
-  onSendMessage?: (text: string) => void;
+  onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
   onViewTemplate?: (template: any) => void;
+  messages?: Message[];
+  conversationMessages?: any[];
+  userMessageCount?: number;
 }
 
 const HomePage: React.FC<HomePageProps> = ({
@@ -21,13 +31,12 @@ const HomePage: React.FC<HomePageProps> = ({
   onLogout,
   onSendMessage,
   onViewTemplate,
+  conversationMessages = [],
+  userMessageCount = 0,
 }) => {
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'work' | 'templates'>(hasProjects ? 'work' : 'templates');
-  // const [showConversation, setShowConversation] = useState(false);
-  // const [conversationMessages, setConversationMessages] = useState<Array<{text: string, isUser: boolean}>>([]);
-  // const [userMessageCount, setUserMessageCount] = useState(0);
-  // const [isAITyping, setIsAITyping] = useState(false);
+  const [showCopadoTyping, setShowCopadoTyping] = useState(false);
 
   const recommendedTemplates = [
     {
@@ -169,7 +178,7 @@ const HomePage: React.FC<HomePageProps> = ({
             placeholder="What action do you want to start?"
             onSendMessage={(text) => {
               if (onSendMessage) {
-                onSendMessage(text);
+                onSendMessage(text, setShowCopadoTyping);
               } else if (onCreateProject) {
                 onCreateProject();
               }
@@ -178,10 +187,24 @@ const HomePage: React.FC<HomePageProps> = ({
             autoFocus={false}
             isLoggedIn={true}
             pageContext="home"
-            hasConversation={false}
-            messages={[]}
-            showTypingIndicator={false}
+            hasConversation={conversationMessages.length > 0}
+            messages={conversationMessages}
+            showTypingIndicator={showCopadoTyping}
           />
+
+          {/* Show "Creating workspace..." message after second user message */}
+          {userMessageCount === 2 && (
+            <div className="mt-4 text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg">
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                </div>
+                <span className="font-medium">Creating workspace...</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Your Work | Templates For You Section */}

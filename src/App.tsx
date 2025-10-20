@@ -338,10 +338,10 @@ function App() {
         onOpenProject={handleOpenProject}
         onLogout={handleLogout}
         onViewTemplate={handleViewTemplate}
-        onSendMessage={(text) => {
-          console.log('Creating project from message:', text);
-          handleCreateProject();
-        }}
+        onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator)}
+        messages={messages}
+        conversationMessages={conversationMessages}
+        userMessageCount={userMessageCount}
       />
     );
   }

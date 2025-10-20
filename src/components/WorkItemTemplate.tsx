@@ -29,7 +29,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   onSendMessage,
   templateData: customTemplateData,
   conversationMessages = [],
-  userMessageCount = 0,
 }) => {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [showAllSteps, setShowAllSteps] = useState(false);
@@ -213,7 +212,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               onIntegrationsClick={() => console.log('Integrations clicked')}
               autoFocus={false}
               isLoggedIn={true}
-              pageContext="project"
+              pageContext="workspace"
               hasConversation={conversationMessages.length > 0}
               messages={conversationMessages}
               showTypingIndicator={showCopadoTyping}

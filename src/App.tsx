@@ -32,6 +32,7 @@ function App() {
   const [projectTitle, setProjectTitle] = useState('Landing Page Redesign');
   const userName = 'Jill'; // Could be set from auth in future
   const [favoritedTemplates, setFavoritedTemplates] = useState<any[]>([]);
+  const [activeProjects, setActiveProjects] = useState<any[]>([]);
 
   const generateAIResponse = (userText: string, currentUserMessageCount: number): { message: Message; conversationMessage: ConversationMessage } => {
     const lowerText = userText.toLowerCase();
@@ -331,12 +332,24 @@ function App() {
         }}
         onUseTemplate={() => {
           if (isLoggedIn || workItemType === 'artifact') {
-            // Set project title from template
-            if (selectedTemplate?.title) {
-              setProjectTitle(selectedTemplate.title);
-            }
-            setCurrentView('proto2');
+            // Add to active projects and show in "My Work"
+            const newProject = {
+              ...selectedTemplate,
+              id: Date.now().toString(),
+              startedAt: new Date(),
+            };
+            setActiveProjects(prev => [...prev, newProject]);
+            setHasProjects(true);
+            
+            // Set project title and create new project view
+            setProjectTitle(selectedTemplate?.title || 'New Project');
+            setSelectedTemplate(newProject);
             setHasStarted(true);
+            
+            // Reset conversation for new project
+            setConversationMessages([]);
+            setMessages([]);
+            setUserMessageCount(0);
           } else {
             setCurrentView('pricing');
           }
@@ -356,6 +369,7 @@ function App() {
         userName={userName}
         hasProjects={hasProjects}
         favoritedTemplates={favoritedTemplates}
+        activeProjects={activeProjects}
         onCreateProject={handleCreateProject}
         onOpenProject={handleOpenProject}
         onLogout={handleLogout}

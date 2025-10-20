@@ -13,6 +13,7 @@ interface HomePageProps {
   userName?: string;
   hasProjects?: boolean;
   favoritedTemplates?: any[];
+  activeProjects?: any[];
   onCreateProject?: () => void;
   onOpenProject?: (projectId: string) => void;
   onLogout?: () => void;
@@ -27,6 +28,7 @@ const HomePage: React.FC<HomePageProps> = ({
   userName = 'User',
   hasProjects = false,
   favoritedTemplates = [],
+  activeProjects = [],
   onCreateProject,
   onLogout,
   onSendMessage,
@@ -248,23 +250,40 @@ const HomePage: React.FC<HomePageProps> = ({
                 />
               ))
             ) : (
-              favoritedTemplates.length > 0 ? (
-                favoritedTemplates.map((template, index) => (
-                  <TemplateCard
-                    key={index}
-                    category={template.category}
-                    categoryColor={template.categoryColor}
-                    savedHours={template.savedHours}
-                    title={template.title}
-                    description={template.description}
-                    favorites={template.favorites}
-                    views={template.views}
-                    onClick={() => onViewTemplate?.(template)}
-                  />
-                ))
+              (activeProjects.length > 0 || favoritedTemplates.length > 0) ? (
+                <>
+                  {/* Active Projects */}
+                  {activeProjects.map((project, index) => (
+                    <TemplateCard
+                      key={`project-${index}`}
+                      category={project.category || 'Active Project'}
+                      categoryColor={project.categoryColor || 'blue'}
+                      savedHours={project.savedHours}
+                      title={project.title}
+                      description={project.description || 'Work in progress'}
+                      favorites={project.favorites}
+                      views={project.views}
+                      onClick={() => onViewTemplate?.(project)}
+                    />
+                  ))}
+                  {/* Favorited Templates */}
+                  {favoritedTemplates.map((template, index) => (
+                    <TemplateCard
+                      key={`favorite-${index}`}
+                      category={template.category}
+                      categoryColor={template.categoryColor}
+                      savedHours={template.savedHours}
+                      title={template.title}
+                      description={template.description}
+                      favorites={template.favorites}
+                      views={template.views}
+                      onClick={() => onViewTemplate?.(template)}
+                    />
+                  ))}
+                </>
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-gray-500">No favorited templates yet. Star a template to add it to your work!</p>
+                  <p className="text-gray-500">No work items yet. Use a template or star one to add it to your work!</p>
                 </div>
               )
             )}

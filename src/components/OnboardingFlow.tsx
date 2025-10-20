@@ -152,7 +152,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
               <p className="text-xl text-white/90 mb-12">
                 Pick your primary focus
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 {roles.map((role, index) => (
                   <button
                     key={role.title}

@@ -11,18 +11,18 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
 
   const roles = [
     {
-      title: 'Bring Customer Issues & Prioritize',
-      description: 'Surface critical issues and help teams focus on what matters',
+      title: 'Auto-Detect & Prioritize Critical Issues',
+      description: 'AI surfaces urgent customer issues before they escalate',
       icon: '🎯',
     },
     {
-      title: 'Analyze & Fix Broken Builds',
-      description: 'Upload failed builds and get instant analysis and fixes',
+      title: 'Catch & Auto-Fix Build Failures',
+      description: 'AI monitors builds and prevents failures in real-time',
       icon: '🔧',
     },
     {
-      title: 'Fix User Stories From History',
-      description: 'Learn from past failures to prevent future issues',
+      title: 'Prevent Issues Before They Happen',
+      description: 'AI learns from history to stop problems proactively',
       icon: '📖',
     },
     {

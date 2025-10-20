@@ -24,7 +24,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hasProjects, setHasProjects] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
-  const [workItemType] = useState<'project' | 'artifact'>('project');
+  const [workItemType, setWorkItemType] = useState<'project' | 'artifact'>('project');
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
@@ -211,20 +211,16 @@ function App() {
 
   const handleViewTemplate = (template: any) => {
     setSelectedTemplate(template);
-    if (isLoggedIn) {
-      // Logged in users: go directly to project creation
-      setProjectTitle(template.title);
-      setCurrentView('proto2');
-      setHasStarted(true);
-    } else {
-      // Logged out users: show full template page with CTA
-      setCurrentView('template');
-    }
+    setWorkItemType('project'); // Templates are always 'project' type
+    setCurrentView('work-item'); // Navigate to work item template page
   };
 
-  // Temporarily unused - will be connected to UI later
-  // const handleViewWorkItem = (type: 'project' | 'artifact') => {
+  // Available for future use - view work item directly
+  // const handleViewWorkItem = (type: 'project' | 'artifact', template?: any) => {
   //   setWorkItemType(type);
+  //   if (template) {
+  //     setSelectedTemplate(template);
+  //   }
   //   setCurrentView('work-item');
   // };
 
@@ -285,9 +281,14 @@ function App() {
       <WorkItemTemplate
         type={workItemType}
         isLoggedIn={isLoggedIn}
+        templateData={selectedTemplate}
         onBack={() => setCurrentView(isLoggedIn ? 'home' : 'intro')}
         onUseTemplate={() => {
           if (isLoggedIn || workItemType === 'artifact') {
+            // Set project title from template
+            if (selectedTemplate?.title) {
+              setProjectTitle(selectedTemplate.title);
+            }
             setCurrentView('proto2');
             setHasStarted(true);
           } else {

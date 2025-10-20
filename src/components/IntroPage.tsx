@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AIInput, IntegrationsModal, TemplateCard } from './ui';
 import AuthModal from './ui/AuthModal';
+import MatchingModal from './ui/MatchingModal';
 import type { ConversationMessage } from './Conversation';
 
 interface Message {
@@ -14,15 +15,17 @@ interface IntroPageProps {
   onLogin?: () => void;
   onSignUp?: () => void;
   onViewTemplate?: (template: any) => void;
+  onViewPricing?: () => void;
   onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
   messages?: Message[];
   conversationMessages?: ConversationMessage[];
   userMessageCount?: number;
 }
 
-const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate, onSendMessage }) => {
+const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate, onViewPricing, onSendMessage }) => {
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showMatchingModal, setShowMatchingModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
 
@@ -146,12 +149,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
     }
   ];
 
-  const [templates, setTemplates] = useState(allTemplates.slice(0, 3));
-
-  const shuffleTemplates = () => {
-    const shuffled = [...allTemplates].sort(() => Math.random() - 0.5);
-    setTemplates(shuffled.slice(0, 3));
-  };
+  const templates = allTemplates.slice(0, 3);
 
   const handleTemplateClick = (template: typeof allTemplates[0]) => {
     if (onViewTemplate) {
@@ -230,7 +228,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
           {/* Find My Matches Button */}
           <div className="text-center">
             <button
-              onClick={shuffleTemplates}
+              onClick={() => setShowMatchingModal(true)}
               className="px-8 py-2 rounded border border-white bg-white text-slate-900 text-sm font-medium hover:bg-gray-100 transition-colors"
             >
               Find My Matches
@@ -294,6 +292,16 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
         onSSOSignIn={handleSSOSignIn}
         onSSOSignUp={handleSSOSignUp}
         onSwitchMode={switchAuthMode}
+      />
+
+      <MatchingModal
+        isOpen={showMatchingModal}
+        onClose={() => setShowMatchingModal(false)}
+        onComplete={() => {
+          if (onViewPricing) {
+            onViewPricing();
+          }
+        }}
       />
     </div>
   );

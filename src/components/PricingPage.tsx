@@ -40,7 +40,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
       highlighted: false,
     },
     {
-      name: 'Professional',
+      name: 'Projects + Templates',
       description: 'For growing teams that need advanced features',
       monthlyPrice: 79,
       annualPrice: 790,

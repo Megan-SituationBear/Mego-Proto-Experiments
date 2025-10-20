@@ -249,6 +249,7 @@ function App() {
         onLogin={handleLogin}
         onSignUp={handleSignUp}
         onViewTemplate={handleViewTemplate}
+        onViewPricing={() => setCurrentView('pricing')}
         onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator)}
         messages={messages}
         conversationMessages={conversationMessages}

@@ -175,10 +175,6 @@ function App() {
     }, 1200);
   };
 
-  const handleViewProto2 = () => {
-    setCurrentView('proto2');
-  };
-
   const handleLogin = () => {
     setIsLoggedIn(true);
     setCurrentView('home');
@@ -250,7 +246,6 @@ function App() {
   if (currentView === 'intro') {
     return (
       <IntroPage 
-        onViewProto2={handleViewProto2}
         onLogin={handleLogin}
         onSignUp={handleSignUp}
         onViewTemplate={handleViewTemplate}

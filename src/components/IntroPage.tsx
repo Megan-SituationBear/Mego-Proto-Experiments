@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, Button, TemplateCard } from './ui';
+import { AIInput, IntegrationsModal, TemplateCard } from './ui';
 import AuthModal from './ui/AuthModal';
 import type { ConversationMessage } from './Conversation';
 
@@ -11,7 +11,6 @@ interface Message {
 }
 
 interface IntroPageProps {
-  onViewProto2: () => void;
   onLogin?: () => void;
   onSignUp?: () => void;
   onViewTemplate?: (template: any) => void;
@@ -21,7 +20,7 @@ interface IntroPageProps {
   userMessageCount?: number;
 }
 
-const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, onViewTemplate, onSendMessage }) => {
+const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate, onSendMessage }) => {
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
@@ -296,18 +295,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
         onSSOSignUp={handleSSOSignUp}
         onSwitchMode={switchAuthMode}
       />
-
-
-      {/* Debug button for testing */}
-      <div className="fixed bottom-4 right-4">
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={onViewProto2}
-        >
-          View Proto 2
-        </Button>
-      </div>
     </div>
   );
 };

@@ -62,10 +62,10 @@ const HomePage: React.FC<HomePageProps> = ({
 
   const [projects] = useState<Project[]>(hasProjects ? mockProjects : []);
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
-  const [showConversation, setShowConversation] = useState(false);
-  const [conversationMessages, setConversationMessages] = useState<Array<{text: string, isUser: boolean}>>([]);
-  const [userMessageCount, setUserMessageCount] = useState(0);
-  const [isAITyping, setIsAITyping] = useState(false);
+  // const [showConversation, setShowConversation] = useState(false);
+  // const [conversationMessages, setConversationMessages] = useState<Array<{text: string, isUser: boolean}>>([]);
+  // const [userMessageCount, setUserMessageCount] = useState(0);
+  // const [isAITyping, setIsAITyping] = useState(false);
 
   const recommendedTemplates = [
     {
@@ -107,41 +107,41 @@ const HomePage: React.FC<HomePageProps> = ({
     return date.toLocaleDateString();
   };
 
-  const handleSendMessage = (text: string) => {
-    if (!text.trim()) return;
+  // const _handleSendMessage = (text: string) => {
+  //   if (!text.trim()) return;
 
-    // Add user message
-    const newMessages = [...conversationMessages, { text, isUser: true }];
-    setConversationMessages(newMessages);
-    setShowConversation(true);
-    setIsAITyping(true);
+  //   // Add user message
+  //   const newMessages = [...conversationMessages, { text, isUser: true }];
+  //   setConversationMessages(newMessages);
+  //   setShowConversation(true);
+  //   setIsAITyping(true);
 
-    const newCount = userMessageCount + 1;
-    setUserMessageCount(newCount);
+  //   const newCount = userMessageCount + 1;
+  //   setUserMessageCount(newCount);
 
-    // Simulate AI response
-    setTimeout(() => {
-      let aiResponse = '';
+  //   // Simulate AI response
+  //   setTimeout(() => {
+  //     let aiResponse = '';
       
-      if (newCount === 1) {
-        aiResponse = "Great! Tell me more about what you're trying to build. What's the main goal of this project?";
-      } else if (newCount === 2) {
-        aiResponse = "Perfect! I have enough information to get started. Let me create your project workspace...";
-      }
+  //     if (newCount === 1) {
+  //       aiResponse = "Great! Tell me more about what you're trying to build. What's the main goal of this project?";
+  //     } else if (newCount === 2) {
+  //       aiResponse = "Perfect! I have enough information to get started. Let me create your project workspace...";
+  //     }
 
-      setConversationMessages([...newMessages, { text: aiResponse, isUser: false }]);
-      setIsAITyping(false);
+  //     setConversationMessages([...newMessages, { text: aiResponse, isUser: false }]);
+  //     setIsAITyping(false);
 
-      // After second exchange, create project
-      if (newCount === 2) {
-        setTimeout(() => {
-          if (onSendMessage) {
-            onSendMessage(text);
-          }
-        }, 1500);
-      }
-    }, 1000);
-  };
+  //     // After second exchange, create project
+  //     if (newCount === 2) {
+  //       setTimeout(() => {
+  //         if (onSendMessage) {
+  //           onSendMessage(text);
+  //         }
+  //       }, 1500);
+  //     }
+  //   }, 1000);
+  // };
 
   return (
     <div className="min-h-screen bg-gray-50">

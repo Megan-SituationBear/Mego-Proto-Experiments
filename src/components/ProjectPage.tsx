@@ -53,7 +53,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({
 
   const [inputValue, setInputValue] = useState('');
   const [isFavorite, setIsFavorite] = useState(false);
-  const [showTabs, setShowTabs] = useState(false);
+  const [showTabs] = useState(false);
   const [activeTab, setActiveTab] = useState('Steps');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);

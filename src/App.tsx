@@ -5,8 +5,8 @@ import OnboardingFlow from './components/OnboardingFlow';
 import TemplatePage from './components/TemplatePage';
 import PricingPage from './components/PricingPage';
 import ProjectPage from './components/ProjectPage';
-import ChatPanel from './components/ChatPanel';
-import Workspace from './components/Workspace';
+// import ChatPanel from './components/ChatPanel';
+// import Workspace from './components/Workspace';
 import type { ConversationMessage } from './components/Conversation';
 import './App.css';
 

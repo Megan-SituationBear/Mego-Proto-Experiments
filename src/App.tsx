@@ -123,7 +123,7 @@ function App() {
     return { message: oldMessage, conversationMessage: newMessage };
   };
 
-  const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void) => {
+  const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void, fromWorkItem: boolean = false) => {
     if (!hasStarted) {
       setHasStarted(true);
     }
@@ -166,17 +166,22 @@ function App() {
         setTypingIndicator(false);
       }
 
-      // Auto-transition to workspace after second user message
-      if (newUserMessageCount === 2) {
+      // Auto-transition to workspace after second user message (only from home page, not from work item)
+      if (newUserMessageCount === 2 && !fromWorkItem && currentView === 'home') {
         // Set the project title to the user's second message
         setProjectTitle(text);
         setTimeout(() => {
           // Create new project work item
-          setSelectedTemplate({
+          const newProject = {
             title: text,
             category: 'New Project',
             savedHours: 0,
-          });
+            id: Date.now().toString(),
+            startedAt: new Date(),
+          };
+          setSelectedTemplate(newProject);
+          setActiveProjects(prev => [...prev, newProject]);
+          setHasProjects(true);
           setWorkItemType('project');
           setCurrentView('work-item');
         }, 1500); // Wait 1.5s to show the "creating workspace" message
@@ -357,7 +362,7 @@ function App() {
         onToggleFavorite={(isFavorited) => handleToggleFavorite(selectedTemplate, isFavorited)}
         onSignIn={handleLogin}
         conversationMessages={conversationMessages}
-        onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator)}
+        onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator, true)}
         userMessageCount={userMessageCount}
       />
     );

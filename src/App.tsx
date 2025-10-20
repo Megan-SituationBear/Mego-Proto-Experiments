@@ -182,6 +182,7 @@ function App() {
   };
 
   const handleSignUp = () => {
+    // After sign-up modal, go to onboarding flow
     setCurrentView('onboarding');
   };
 

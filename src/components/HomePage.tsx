@@ -39,6 +39,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'work' | 'templates'>(hasProjects ? 'work' : 'templates');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   const recommendedTemplates = [
     {
@@ -150,17 +151,70 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             {/* Right: Hamburger Menu */}
-            <button 
-              onClick={onLogout}
-              className="p-2 hover:bg-gray-100 rounded transition-colors"
-              title="Menu"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="3" y1="6" x2="21" y2="6" strokeLinecap="round"/>
-                <line x1="3" y1="12" x2="21" y2="12" strokeLinecap="round"/>
-                <line x1="3" y1="18" x2="21" y2="18" strokeLinecap="round"/>
-              </svg>
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-2 hover:bg-gray-100 rounded transition-colors"
+                title="Menu"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="6" x2="21" y2="6" strokeLinecap="round"/>
+                  <line x1="3" y1="12" x2="21" y2="12" strokeLinecap="round"/>
+                  <line x1="3" y1="18" x2="21" y2="18" strokeLinecap="round"/>
+                </svg>
+              </button>
+
+              {/* Dropdown Menu */}
+              {showMenu && (
+                <>
+                  {/* Backdrop */}
+                  <div 
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowMenu(false)}
+                  />
+                  
+                  {/* Menu Panel */}
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm font-semibold text-gray-900">{userName}</p>
+                      <p className="text-xs text-gray-500">Free Plan</p>
+                    </div>
+                    
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        // Navigate to settings (placeholder)
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Settings
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        // Navigate to help (placeholder)
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Help & Documentation
+                    </button>
+                    
+                    <div className="border-t border-gray-100 mt-2 pt-2">
+                      <button
+                        onClick={() => {
+                          setShowMenu(false);
+                          onLogout?.();
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </nav>

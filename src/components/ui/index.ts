@@ -17,6 +17,7 @@ export { default as TemplateDetailModal } from './TemplateDetailModal';
 
 // Input
 export { default as AIInput } from './AIInput';
+export type { ConversationMessage } from './AIInput';
 
 // Cards
 export { default as TemplateCard } from './TemplateCard';

@@ -93,7 +93,15 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     ],
   };
 
-  const templateData = customTemplateData || defaultTemplateData;
+  // Merge custom template data with defaults
+  const templateData = customTemplateData 
+    ? {
+        ...defaultTemplateData,
+        ...customTemplateData,
+        // Use description as subtitle if subtitle not provided
+        subtitle: customTemplateData.subtitle || customTemplateData.description || defaultTemplateData.subtitle,
+      }
+    : defaultTemplateData;
 
   const getStepStatus = (status: string) => {
     if (status === 'completed') {

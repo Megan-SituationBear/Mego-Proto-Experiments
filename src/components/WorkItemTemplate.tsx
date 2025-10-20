@@ -118,21 +118,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
       }
     : defaultTemplateData;
 
-  const getStepStatus = (status: string) => {
-    if (status === 'completed') {
-      return 'bg-blue-600 border-blue-600';
-    } else if (status === 'current') {
-      return 'bg-green-500 border-green-500';
-    }
-    return 'bg-gray-300 border-gray-300';
-  };
-
-  const getStepLineStatus = (index: number) => {
-    if (steps[index].status === 'completed') {
-      return 'bg-blue-600';
-    }
-    return 'bg-gray-300';
-  };
 
   const categoryColorClass = categoryColors[templateData.category] || 'bg-purple-100 text-purple-700';
 
@@ -228,63 +213,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
         </div>
       )}
 
-      {/* Progress Steps */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="relative flex items-center justify-between">
-            {steps.map((step, index) => (
-              <div key={index} className="flex flex-col items-center flex-1 relative">
-                {/* Line before circle (except first) */}
-                {index > 0 && (
-                  <div
-                    className={`absolute top-4 right-1/2 w-full h-0.5 ${getStepLineStatus(
-                      index - 1
-                    )}`}
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-                {/* Circle */}
-                <div
-                  className={`relative z-10 w-8 h-8 rounded-full border-2 ${getStepStatus(
-                    step.status
-                  )} flex items-center justify-center`}
-                >
-                  {step.status === 'completed' && (
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </div>
-                {/* Label */}
-                <div className="mt-2 text-center">
-                  <div
-                    className={`text-sm whitespace-pre-line ${
-                      step.status === 'current'
-                        ? 'font-semibold text-gray-900'
-                        : 'text-gray-600'
-                    }`}
-                  >
-                    {step.label}
-                  </div>
-                </div>
-                {/* Line after circle (except last) */}
-                {index < steps.length - 1 && (
-                  <div
-                    className={`absolute top-4 left-1/2 w-full h-0.5 ${getStepLineStatus(
-                      index
-                    )}`}
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">

@@ -73,15 +73,17 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     { label: 'Saved', status: 'upcoming' },
   ];
 
-  // Category color mapping
+  // Category color mapping - standardized across all pages
   const categoryColors: Record<string, string> = {
-    'Strategists With Data': 'bg-orange-100 text-orange-700',
-    'Customer Satisfaction Heroes': 'bg-cyan-100 text-cyan-700',
-    'Managers With An Edge': 'bg-blue-100 text-blue-700',
+    'Strategists With Data': 'bg-indigo-100 text-indigo-700',
+    'Customer Satisfaction Heroes': 'bg-blue-100 text-blue-700',
+    'Managers With An Edge': 'bg-amber-100 text-amber-700',
     'Developers & Launchers': 'bg-green-100 text-green-700',
-    'Effective Planners': 'bg-purple-100 text-purple-700',
-    'Strategists': 'bg-purple-100 text-purple-700',
+    'Effective Planners': 'bg-amber-100 text-amber-700',
+    'Strategists': 'bg-indigo-100 text-indigo-700',
     'Deployment Artifacts': 'bg-blue-100 text-blue-700',
+    'Deployment Fixes': 'bg-gray-100 text-gray-700',
+    'New Project': 'bg-indigo-100 text-indigo-700',
   };
 
   // Default template data - can be overridden via props

@@ -152,9 +152,11 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
             {/* Center: Category Pill + Title */}
             <div className="flex-1 flex flex-col items-center justify-center">
-              {/* Date (only for projects) */}
+              {/* Project - Last Modified (only for projects) */}
               {type === 'project' && (
-                <div className="text-xs text-gray-500 mb-1">{getRelativeTime()}</div>
+                <div className="text-xs text-gray-500 mb-1">
+                  Project - Last Modified: {getRelativeTime()}
+                </div>
               )}
               {/* Category Pill */}
               <span className={`px-3 py-1 text-xs font-medium rounded-full mb-2 ${categoryColorClass}`}>
@@ -162,7 +164,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               </span>
               {/* Title */}
               <h1 className="text-xl font-semibold text-gray-900 text-center">
-                {type === 'project' ? 'Project: ' : ''}{templateData.title}
+                {templateData.title}
               </h1>
             </div>
 

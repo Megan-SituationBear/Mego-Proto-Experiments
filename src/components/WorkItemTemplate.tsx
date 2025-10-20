@@ -150,18 +150,18 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
 
-            {/* Center: Category Pill + Title */}
+            {/* Center: Title */}
             <div className="flex-1 flex flex-col items-center justify-center">
-              {/* Project - Last Modified (only for projects) */}
-              {type === 'project' && (
-                <div className="text-xs text-gray-500 mb-1">
-                  Project - Last Modified: {getRelativeTime()}
-                </div>
+              {/* Last Modified Date */}
+              <div className="text-xs text-gray-500 mb-1">
+                {type === 'artifact' ? 'Artifact' : 'Project'} - Last Modified: {getRelativeTime()}
+              </div>
+              {/* Category Pill (only for templates/projects) */}
+              {type !== 'artifact' && (
+                <span className={`px-3 py-1 text-xs font-medium rounded-full mb-2 ${categoryColorClass}`}>
+                  {templateData.category}
+                </span>
               )}
-              {/* Category Pill */}
-              <span className={`px-3 py-1 text-xs font-medium rounded-full mb-2 ${categoryColorClass}`}>
-                {templateData.category}
-              </span>
               {/* Title */}
               <h1 className="text-xl font-semibold text-gray-900 text-center">
                 {templateData.title}
@@ -288,7 +288,40 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Artifact Layout - Simple */}
+        {type === 'artifact' ? (
+          <div className="max-w-3xl mx-auto">
+            {/* Artifact Message */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-center">
+              <p className="text-gray-700">
+                Modify this artifact at any time here. A new version will be saved.
+              </p>
+            </div>
+
+            {/* Input Area */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div className="flex items-center gap-3">
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+                <input
+                  type="text"
+                  placeholder="How do you want to modify this work?"
+                  className="flex-1 border-none outline-none text-gray-700 placeholder-gray-400"
+                />
+                <button className="p-3 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          // Project/Template Layout - Full UI
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2">
             {/* Tabs */}
@@ -427,7 +460,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               </div>
             </div>
           </div>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

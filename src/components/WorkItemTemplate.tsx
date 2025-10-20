@@ -35,7 +35,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [showAllSteps, setShowAllSteps] = useState(false);
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
-  const [activeTab, setActiveTab] = useState<'work' | 'highlights' | 'output'>('work');
+  const [selectedContent, setSelectedContent] = useState<{type: 'output' | 'highlight', title: string, content: string} | null>(null);
 
   const handleToggleFavorite = () => {
     const newFavoriteState = !isFavorite;
@@ -147,10 +147,24 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
   // Duplicated Template View - when user clicks "Use This Template"
   if (isDuplicatedTemplate) {
+    const outputItems = [
+      { title: 'Code', subtitle: 'asdlfsdf', content: 'Code implementation details here. You can modify and customize this code to fit your specific needs.' },
+      { title: 'Artifact', subtitle: 'asdkfjasdfj', content: 'Artifact documentation and resources. Update this section with your specific artifact details.' }
+    ];
+
+    const highlightItems = templateData.whatsIncluded || [
+      'Step-by-step guidance',
+      'AI-powered assistance',
+      'Best practice recommendations',
+      'Automated testing',
+      'Deployment checklist',
+      'Documentation templates',
+    ];
+
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="bg-white border-b border-gray-300 shadow-md">
+        <div className="bg-white border-b border-gray-300">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               {/* Back Button */}
@@ -161,12 +175,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               >
                 <ArrowLeft className="w-6 h-6 text-gray-700" />
               </button>
-
-              {/* Center: Title */}
-              <div className="flex-1 text-center">
-                <p className="text-xs text-gray-500 mb-1">Template Duplicate | Last Activity {getRelativeTime()}</p>
-                <h1 className="text-lg font-bold text-gray-900">{templateData.title}</h1>
-              </div>
 
               {/* Right: Share and Favorite */}
               <div className="flex items-center gap-2">
@@ -192,108 +200,111 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
         {/* Progress Steps */}
         <div className="bg-gradient-to-r from-indigo-400 to-indigo-600">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="mb-3">
-              <p className="text-white text-sm">Last Step: Duplicated The Template</p>
-            </div>
-            <div className="bg-indigo-700 bg-opacity-50 rounded px-4 py-2">
-              <p className="text-white text-sm font-semibold">Next Step:</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-center gap-8 py-3">
-              <button
-                onClick={() => setActiveTab('work')}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  activeTab === 'work'
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                The Work
-              </button>
-              <button
-                onClick={() => setActiveTab('highlights')}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  activeTab === 'highlights'
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Highlights
-              </button>
-              <button
-                onClick={() => setActiveTab('output')}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  activeTab === 'output'
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Output
-              </button>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <button
+              onClick={() => setShowAllSteps(!showAllSteps)}
+              className="flex items-center gap-2 text-white text-sm mb-2"
+            >
+              {showAllSteps ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              <span>Show All Steps</span>
+            </button>
+            <div>
+              <p className="text-white text-sm font-semibold">Next Step: Set up sandboxes</p>
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* AI Input Section */}
-          <div className="mb-8">
-            <AIInput
-              placeholder="Use As Is or Modify by typing here"
-              onSendMessage={(text) => {
-                if (onSendMessage) {
-                  onSendMessage(text, setShowCopadoTyping);
-                }
-              }}
-              onIntegrationsClick={() => console.log('Integrations clicked')}
-              autoFocus={false}
-              isLoggedIn={true}
-              pageContext="workspace"
-              hasConversation={conversationMessages.length > 0}
-              messages={conversationMessages}
-              showTypingIndicator={showCopadoTyping}
-            />
+        {/* Main Content - Two Column Layout */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex gap-8">
+            {/* Left Column - Main Content */}
+            <div className="flex-1">
+              <div className="mb-6">
+                <p className="text-sm text-gray-500">Project | {getRelativeTime()}</p>
+                <h1 className="text-2xl font-bold text-gray-900 mt-1">{templateData.title}</h1>
+              </div>
+
+              {/* AI Input Section */}
+              <div className="mb-6">
+                <p className="text-gray-600 text-sm mb-4">
+                  Modify this artifact at any time here. A new version will be saved.
+                </p>
+                <AIInput
+                  placeholder="Describe modifications..."
+                  onSendMessage={(text) => {
+                    if (onSendMessage) {
+                      onSendMessage(text, setShowCopadoTyping);
+                    }
+                  }}
+                  onIntegrationsClick={() => console.log('Integrations clicked')}
+                  autoFocus={false}
+                  isLoggedIn={true}
+                  pageContext="workspace"
+                  hasConversation={conversationMessages.length > 0}
+                  messages={conversationMessages}
+                  showTypingIndicator={showCopadoTyping}
+                />
+              </div>
+
+              {/* Selected Content Display */}
+              {selectedContent ? (
+                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">{selectedContent.title}</h2>
+                  <p className="text-gray-700 whitespace-pre-wrap">{selectedContent.content}</p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                  <p className="text-gray-500">Select an output or highlight from the right panel to view and edit</p>
+                </div>
+              )}
+            </div>
+
+            {/* Right Sidebar - Output & Highlights */}
+            <div className="w-80 space-y-6">
+              {/* Output Section */}
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Output</h3>
+                <div className="space-y-3">
+                  {outputItems.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedContent({
+                        type: 'output',
+                        title: item.title,
+                        content: item.content
+                      })}
+                      className="w-full text-left p-3 hover:bg-gray-50 rounded transition-colors border border-gray-200"
+                    >
+                      <p className="font-semibold text-gray-900">{item.title}:</p>
+                      <p className="text-sm text-gray-600">{item.subtitle}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Highlights Section */}
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Highlights</h3>
+                <div className="space-y-2">
+                  {highlightItems.map((item: string, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedContent({
+                        type: 'highlight',
+                        title: `Highlight: ${item}`,
+                        content: `Details about ${item}. This section provides comprehensive information and guidance.`
+                      })}
+                      className="w-full text-left p-2 hover:bg-gray-50 rounded transition-colors text-sm text-gray-700"
+                    >
+                      <span className="text-green-600 mr-2">✓</span>
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* Tab Content */}
-          {activeTab === 'work' && (
-            <div className="bg-white rounded-lg shadow p-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Action Stuff Here</h2>
-              <p className="text-gray-600">
-                Start working with this template. Modify it to fit your needs or use it as is.
-              </p>
-            </div>
-          )}
-
-          {activeTab === 'highlights' && (
-            <div className="bg-white rounded-lg shadow p-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Highlights</h2>
-              <ul className="space-y-3">
-                {templateData.whatsIncluded?.map((item: string, index: number) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-green-600 mr-2">✓</span>
-                    <span className="text-gray-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {activeTab === 'output' && (
-            <div className="bg-white rounded-lg shadow p-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Expected Output</h2>
-              <p className="text-gray-600">
-                The output section will show results and artifacts generated from this template.
-              </p>
-            </div>
-          )}
-        </main>
+        </div>
       </div>
     );
   }

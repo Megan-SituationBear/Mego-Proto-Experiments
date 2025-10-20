@@ -192,12 +192,12 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl font-bold text-white text-center mb-2">
+          <h1 className="text-5xl font-bold text-center mb-2" style={{ color: 'white' }}>
             Copado AI
           </h1>
 
           {/* Subtitle */}
-          <p className="text-2xl text-white text-center mb-8">
+          <p className="text-2xl text-center mb-8" style={{ color: 'white' }}>
             Streamline & Supercharge Salesforce
           </p>
 

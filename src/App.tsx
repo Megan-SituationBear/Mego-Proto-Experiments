@@ -5,6 +5,7 @@ import OnboardingFlow from './components/OnboardingFlow';
 import TemplatePage from './components/TemplatePage';
 import PricingPage from './components/PricingPage';
 import ProjectPage from './components/ProjectPage';
+import WorkItemTemplate from './components/WorkItemTemplate';
 // import ChatPanel from './components/ChatPanel';
 // import Workspace from './components/Workspace';
 import type { ConversationMessage } from './components/Conversation';
@@ -19,10 +20,11 @@ interface Message {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'proto2'>('intro');
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'proto2' | 'work-item'>('intro');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hasProjects, setHasProjects] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [workItemType] = useState<'project' | 'artifact'>('project');
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
@@ -220,6 +222,12 @@ function App() {
     }
   };
 
+  // Temporarily unused - will be connected to UI later
+  // const handleViewWorkItem = (type: 'project' | 'artifact') => {
+  //   setWorkItemType(type);
+  //   setCurrentView('work-item');
+  // };
+
   const handleUseTemplate = () => {
     // This is only called from TemplatePage (logged out users)
     setCurrentView('pricing');
@@ -268,6 +276,25 @@ function App() {
       <PricingPage
         onBack={handleBackToIntro}
         onSelectPlan={handleSelectPlan}
+      />
+    );
+  }
+
+  if (currentView === 'work-item') {
+    return (
+      <WorkItemTemplate
+        type={workItemType}
+        isLoggedIn={isLoggedIn}
+        onBack={() => setCurrentView(isLoggedIn ? 'home' : 'intro')}
+        onUseTemplate={() => {
+          if (isLoggedIn || workItemType === 'artifact') {
+            setCurrentView('proto2');
+            setHasStarted(true);
+          } else {
+            setCurrentView('pricing');
+          }
+        }}
+        onSignIn={handleLogin}
       />
     );
   }

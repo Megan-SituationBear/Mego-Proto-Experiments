@@ -151,73 +151,112 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             {/* Right: Hamburger Menu */}
-            <div className="relative">
-              <button 
-                onClick={() => setShowMenu(!showMenu)}
-                className="p-2 hover:bg-gray-100 rounded transition-colors"
-                title="Menu"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="3" y1="6" x2="21" y2="6" strokeLinecap="round"/>
-                  <line x1="3" y1="12" x2="21" y2="12" strokeLinecap="round"/>
-                  <line x1="3" y1="18" x2="21" y2="18" strokeLinecap="round"/>
-                </svg>
-              </button>
-
-              {/* Dropdown Menu */}
-              {showMenu && (
-                <>
-                  {/* Backdrop */}
-                  <div 
-                    className="fixed inset-0 z-10"
-                    onClick={() => setShowMenu(false)}
-                  />
-                  
-                  {/* Menu Panel */}
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
-                    <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-semibold text-gray-900">{userName}</p>
-                      <p className="text-xs text-gray-500">Free Plan</p>
-                    </div>
-                    
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        // Navigate to settings (placeholder)
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      Settings
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        // Navigate to help (placeholder)
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      Help & Documentation
-                    </button>
-                    
-                    <div className="border-t border-gray-100 mt-2 pt-2">
-                      <button
-                        onClick={() => {
-                          setShowMenu(false);
-                          onLogout?.();
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+            <button 
+              onClick={() => setShowMenu(!showMenu)}
+              className="p-2 hover:bg-gray-100 rounded transition-colors"
+              title="Menu"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="3" y1="6" x2="21" y2="6" strokeLinecap="round"/>
+                <line x1="3" y1="12" x2="21" y2="12" strokeLinecap="round"/>
+                <line x1="3" y1="18" x2="21" y2="18" strokeLinecap="round"/>
+              </svg>
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* Slide-out Drawer Menu */}
+      {showMenu && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+            onClick={() => setShowMenu(false)}
+          />
+          
+          {/* Drawer Panel */}
+          <div 
+            className={`fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+              showMenu ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          >
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Menu</h2>
+              <button
+                onClick={() => setShowMenu(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="4" y1="4" x2="16" y2="16" strokeLinecap="round"/>
+                  <line x1="16" y1="4" x2="4" y2="16" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            {/* User Info Section */}
+            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-lg">
+                  {userName.charAt(0)}
+                </div>
+                <div>
+                  <p className="text-base font-semibold text-gray-900">{userName}</p>
+                  <p className="text-sm text-gray-500">Free Plan</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Menu Options */}
+            <div className="py-4">
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  // Navigate to settings (placeholder)
+                }}
+                className="w-full px-6 py-3 text-left text-base text-gray-700 hover:bg-gray-100 transition-colors flex items-center space-x-3"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="10" cy="10" r="3"/>
+                  <path d="M10 1v2m0 14v2M4.22 4.22l1.42 1.42m8.72 8.72l1.42 1.42M1 10h2m14 0h2M4.22 15.78l1.42-1.42m8.72-8.72l1.42-1.42"/>
+                </svg>
+                <span>Settings</span>
+              </button>
+              
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  // Navigate to help (placeholder)
+                }}
+                className="w-full px-6 py-3 text-left text-base text-gray-700 hover:bg-gray-100 transition-colors flex items-center space-x-3"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="10" cy="10" r="9"/>
+                  <path d="M10 14v.5M10 6v5"/>
+                </svg>
+                <span>Help & Documentation</span>
+              </button>
+            </div>
+
+            {/* Logout Button at Bottom */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  onLogout?.();
+                }}
+                className="w-full px-6 py-3 text-left text-base text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center space-x-3"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M13 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3M8 17l-5-5 5-5m-5 5h12"/>
+                </svg>
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

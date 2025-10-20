@@ -2,17 +2,10 @@ import { useState } from 'react';
 import { AIInput, TemplateCard } from './ui';
 import FindTemplatesModal from './ui/FindTemplatesModal';
 
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  lastModified: Date;
-  category: string;
-}
-
 interface HomePageProps {
   userName?: string;
   hasProjects?: boolean;
+  favoritedTemplates?: any[];
   onCreateProject?: () => void;
   onOpenProject?: (projectId: string) => void;
   onLogout?: () => void;
@@ -23,45 +16,12 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({
   userName = 'User',
   hasProjects = false,
+  favoritedTemplates = [],
   onCreateProject,
-  onOpenProject,
   onLogout,
   onSendMessage,
   onViewTemplate,
 }) => {
-  // Mock projects data for demo
-  const mockProjects: Project[] = [
-    {
-      id: '1',
-      title: 'Landing Page Redesign',
-      description: 'Redesigning the main landing page with new brand guidelines',
-      lastModified: new Date('2024-10-15'),
-      category: 'Design'
-    },
-    {
-      id: '2',
-      title: 'API Integration',
-      description: 'Integrate Salesforce API with customer portal',
-      lastModified: new Date('2024-10-16'),
-      category: 'Development'
-    },
-    {
-      id: '3',
-      title: 'User Research Study',
-      description: 'Conducting user interviews for feature prioritization',
-      lastModified: new Date('2024-10-17'),
-      category: 'Research'
-    },
-    {
-      id: '4',
-      title: 'Database Migration',
-      description: 'Migrating legacy database to new cloud infrastructure',
-      lastModified: new Date('2024-10-14'),
-      category: 'DevOps'
-    }
-  ];
-
-  const [projects] = useState<Project[]>(hasProjects ? mockProjects : []);
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'work' | 'templates'>(hasProjects ? 'work' : 'templates');
   // const [showConversation, setShowConversation] = useState(false);
@@ -125,16 +85,6 @@ const HomePage: React.FC<HomePageProps> = ({
       views: 154
     },
   ];
-
-  const formatDate = (date: Date) => {
-    const now = new Date();
-    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (diffInDays === 0) return 'Today';
-    if (diffInDays === 1) return 'Yesterday';
-    if (diffInDays < 7) return `${diffInDays} days ago`;
-    return date.toLocaleDateString();
-  };
 
   // const _handleSendMessage = (text: string) => {
   //   if (!text.trim()) return;
@@ -275,33 +225,23 @@ const HomePage: React.FC<HomePageProps> = ({
                 />
               ))
             ) : (
-              projects.length > 0 ? (
-                projects.map((project) => (
-                  <div
-                    key={project.id}
-                    onClick={() => onOpenProject?.(project.id)}
-                    className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer group"
-                  >
-                    <div className="mb-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {project.category}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                      {project.description}
-                    </p>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>Last modified</span>
-                      <span className="font-medium">{formatDate(project.lastModified)}</span>
-                    </div>
-                  </div>
+              favoritedTemplates.length > 0 ? (
+                favoritedTemplates.map((template, index) => (
+                  <TemplateCard
+                    key={index}
+                    category={template.category}
+                    categoryColor={template.categoryColor}
+                    savedHours={template.savedHours}
+                    title={template.title}
+                    description={template.description}
+                    favorites={template.favorites}
+                    views={template.views}
+                    onClick={() => onViewTemplate?.(template)}
+                  />
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-gray-500">No work items yet. Start by using a template!</p>
+                  <p className="text-gray-500">No favorited templates yet. Star a template to add it to your work!</p>
                 </div>
               )
             )}

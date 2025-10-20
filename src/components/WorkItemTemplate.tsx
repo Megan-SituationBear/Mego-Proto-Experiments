@@ -4,22 +4,34 @@ import { ArrowLeft, Star, Eye, Clock, Share2, ChevronDown, ChevronUp } from 'luc
 interface WorkItemTemplateProps {
   type: 'project' | 'artifact';
   isLoggedIn?: boolean;
+  initialIsFavorite?: boolean;
   onBack?: () => void;
   onUseTemplate?: () => void;
   onSignIn?: () => void;
+  onToggleFavorite?: (isFavorited: boolean) => void;
   templateData?: any; // Can pass custom template data
 }
 
 const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   type,
   isLoggedIn = false,
+  initialIsFavorite = false,
   onBack,
   onUseTemplate,
   onSignIn,
+  onToggleFavorite,
   templateData: customTemplateData,
 }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [showAllSteps, setShowAllSteps] = useState(false);
+
+  const handleToggleFavorite = () => {
+    const newFavoriteState = !isFavorite;
+    setIsFavorite(newFavoriteState);
+    if (onToggleFavorite) {
+      onToggleFavorite(newFavoriteState);
+    }
+  };
 
   // For artifacts, isLoggedIn is always true
   const actualIsLoggedIn = type === 'artifact' ? true : isLoggedIn;
@@ -159,7 +171,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                 <Share2 className="w-5 h-5 text-gray-600" />
               </button>
               <button
-                onClick={() => setIsFavorite(!isFavorite)}
+                onClick={handleToggleFavorite}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <Star

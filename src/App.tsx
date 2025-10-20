@@ -31,6 +31,7 @@ function App() {
   const [userMessageCount, setUserMessageCount] = useState(0);
   const [projectTitle, setProjectTitle] = useState('Landing Page Redesign');
   const userName = 'Jill'; // Could be set from auth in future
+  const [favoritedTemplates, setFavoritedTemplates] = useState<any[]>([]);
 
   const generateAIResponse = (userText: string, currentUserMessageCount: number): { message: Message; conversationMessage: ConversationMessage } => {
     const lowerText = userText.toLowerCase();
@@ -213,6 +214,23 @@ function App() {
     setCurrentView('work-item'); // Navigate to work item template page
   };
 
+  const handleToggleFavorite = (template: any, isFavorited: boolean) => {
+    if (isFavorited) {
+      // Add to favorites
+      setFavoritedTemplates(prev => [...prev, template]);
+      setHasProjects(true); // Show "Your Work" tab
+    } else {
+      // Remove from favorites
+      setFavoritedTemplates(prev => 
+        prev.filter(t => t.title !== template.title)
+      );
+      // If no more favorites, hide "Your Work" tab
+      if (favoritedTemplates.length === 1) {
+        setHasProjects(false);
+      }
+    }
+  };
+
   // Available for future use - view work item directly
   // const handleViewWorkItem = (type: 'project' | 'artifact', template?: any) => {
   //   setWorkItemType(type);
@@ -282,11 +300,15 @@ function App() {
   }
 
   if (currentView === 'work-item') {
+    // Check if current template is favorited
+    const isFavorited = favoritedTemplates.some(t => t.title === selectedTemplate?.title);
+    
     return (
       <WorkItemTemplate
         type={workItemType}
         isLoggedIn={isLoggedIn}
         templateData={selectedTemplate}
+        initialIsFavorite={isFavorited}
         onBack={() => setCurrentView(isLoggedIn ? 'home' : 'intro')}
         onUseTemplate={() => {
           if (isLoggedIn || workItemType === 'artifact') {
@@ -300,6 +322,7 @@ function App() {
             setCurrentView('pricing');
           }
         }}
+        onToggleFavorite={(isFavorited) => handleToggleFavorite(selectedTemplate, isFavorited)}
         onSignIn={handleLogin}
       />
     );
@@ -310,6 +333,7 @@ function App() {
       <HomePage 
         userName={userName}
         hasProjects={hasProjects}
+        favoritedTemplates={favoritedTemplates}
         onCreateProject={handleCreateProject}
         onOpenProject={handleOpenProject}
         onLogout={handleLogout}

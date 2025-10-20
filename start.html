@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Copado Prototype & Components</title>
+  <title>Copado Prototype</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,140 +11,109 @@
   <style>
     body {
       font-family: 'Inter', system-ui, sans-serif;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-    .split-container {
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-    }
-    .panel {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      border-right: 2px solid #e2e8f0;
-    }
-    .panel:last-child {
-      border-right: none;
-    }
-    .panel-header {
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      color: white;
-      padding: 1rem 1.5rem;
-      font-weight: 600;
-      font-size: 0.875rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 10;
-    }
-    .panel-content {
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-    }
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: white;
-    }
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.5;
-      }
-    }
-    .loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      color: #64748b;
-    }
-    .spinner {
-      border: 3px solid #f3f4f6;
-      border-top: 3px solid #3b82f6;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 1rem;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-8">
   
-  <div class="split-container">
+  <div class="max-w-2xl w-full">
     
-    <!-- Left Panel: Prototype -->
-    <div class="panel">
-      <div class="panel-header">
-        <span>🚀 Full Prototype</span>
-        <span class="status-badge">
-          <span class="status-dot"></span>
-          In Progress
-        </span>
-      </div>
-      <div class="panel-content">
-        <div class="loading" id="prototypeLoading">
-          <div class="spinner"></div>
-          <p>Add your prototype URL...</p>
-        </div>
-        <!-- Replace the src with your deployed prototype URL -->
-        <!-- <iframe id="prototypeFrame" src="YOUR_PROTOTYPE_URL_HERE" onload="document.getElementById('prototypeLoading').style.display='none'"></iframe> -->
-      </div>
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-5xl font-bold text-slate-900 mb-4">Copado Prototype</h1>
+      <p class="text-lg text-slate-600">Interactive design prototypes & components</p>
     </div>
 
-    <!-- Right Panel: Components -->
-    <div class="panel">
-      <div class="panel-header">
-        <span>🎨 Component Demos</span>
-        <span class="status-badge">
-          <span class="status-dot"></span>
-          Live
-        </span>
-      </div>
-      <div class="panel-content">
-        <div class="loading" id="componentsLoading">
-          <div class="spinner"></div>
-          <p>Loading components...</p>
+    <!-- Links -->
+    <div class="space-y-4">
+      
+      <!-- Full Prototype Link -->
+      <a href="index.html" 
+         class="block bg-white rounded-xl p-6 shadow-lg hover:shadow-xl border-2 border-slate-200 hover:border-blue-500 transition-all group">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-semibold text-slate-900 mb-2">Full Prototype</h2>
+            <p class="text-slate-600">Complete React app (in progress)</p>
+          </div>
+          <svg class="w-8 h-8 text-blue-600 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
         </div>
-        <iframe 
-          id="componentsFrame" 
-          src="ai-input-interactive-demo.html" 
-          onload="document.getElementById('componentsLoading').style.display='none'"
-        ></iframe>
+      </a>
+
+      <!-- Divider -->
+      <div class="relative py-4">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-slate-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-4 bg-slate-50 text-slate-500 font-medium">Components</span>
+        </div>
       </div>
+
+      <!-- AI Input Component - Interactive Demo -->
+      <a href="ai-input-interactive-demo.html" 
+         class="block bg-white rounded-xl p-6 shadow-lg hover:shadow-xl border-2 border-slate-200 hover:border-blue-500 transition-all group">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">AI Input - Interactive Demo</h2>
+            <p class="text-slate-600 text-sm">3 interactive variants with live demos</p>
+          </div>
+          <svg class="w-7 h-7 text-blue-600 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- AI Input Component - Clean Demo -->
+      <a href="ai-input-demo-clean.html" 
+         class="block bg-white rounded-xl p-6 shadow-lg hover:shadow-xl border-2 border-slate-200 hover:border-blue-500 transition-all group">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">AI Input - New Layout</h2>
+            <p class="text-slate-600 text-sm">Clean layout with all component states</p>
+          </div>
+          <svg class="w-7 h-7 text-blue-600 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- AI Input Component - States Demo -->
+      <a href="ai-input-states-demo.html" 
+         class="block bg-white rounded-xl p-6 shadow-lg hover:shadow-xl border-2 border-slate-200 hover:border-blue-500 transition-all group">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">AI Input - States Demo</h2>
+            <p class="text-slate-600 text-sm">All component states and interactions</p>
+          </div>
+          <svg class="w-7 h-7 text-blue-600 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- AI Input Component - Variants Comparison -->
+      <a href="ai-input-variants-comparison.html" 
+         class="block bg-white rounded-xl p-6 shadow-lg hover:shadow-xl border-2 border-slate-200 hover:border-blue-500 transition-all group">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">AI Input - 3 Variants</h2>
+            <p class="text-slate-600 text-sm">Side-by-side comparison with code examples</p>
+          </div>
+          <svg class="w-7 h-7 text-blue-600 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Placeholder for more components -->
+      <div class="block bg-slate-100 rounded-xl p-6 border-2 border-dashed border-slate-300">
+        <div class="text-center text-slate-500">
+          <p class="font-medium">More components coming soon...</p>
+        </div>
+      </div>
+
     </div>
 
   </div>

@@ -67,13 +67,31 @@ const HomePage: React.FC<HomePageProps> = ({
   const [userMessageCount, setUserMessageCount] = useState(0);
   const [isAITyping, setIsAITyping] = useState(false);
 
-  const recommendedTemplates = [
+  const allTemplates = [
     {
       category: "Strategists",
       categoryColor: "purple" as const,
       savedHours: 35,
       title: "Strategy Title Here About Using Real Data",
-      description: "Working On: Saved Est | Hrs | By Analyzing | What | To Avoid | Risk",
+      description: "Working On: Saved Est | Hrs | By Analyzing | What | To Avoid | Risk | By | Using Integrations | To Save | # Hours |",
+      favorites: 1234,
+      views: 154
+    },
+    {
+      category: "Strategists",
+      categoryColor: "purple" as const,
+      savedHours: 35,
+      title: "Strategy Title Here About Using Real Data",
+      description: "Working On: Saved Est | Hrs | By Analyzing | What | To Avoid | Risk | By | Using Integrations | To Save | # Hours |",
+      favorites: 1234,
+      views: 154
+    },
+    {
+      category: "Strategists",
+      categoryColor: "purple" as const,
+      savedHours: 35,
+      title: "Strategy Title Here About Using Real Data",
+      description: "Working On: Saved Est | Hrs | By Analyzing | What | To Avoid | Risk | By | Using Integrations | To Save | # Hours |",
       favorites: 1234,
       views: 154
     },
@@ -81,8 +99,8 @@ const HomePage: React.FC<HomePageProps> = ({
       category: "Customer Satisfaction Heroes",
       categoryColor: "blue" as const,
       savedHours: 42,
-      title: "Optimize User Experience with Customer Feedback",
-      description: "Working on: Saved est 42hrs by analyzing customer data",
+      title: "Optimize User Experience with Customer Feedback Analysis",
+      description: "Working on: Saved est 42hrs by analyzing customer data to avoid satisfaction issues by using feedback loops",
       favorites: 987,
       views: 203
     },
@@ -90,12 +108,28 @@ const HomePage: React.FC<HomePageProps> = ({
       category: "Developers & Launchers",
       categoryColor: "green" as const,
       savedHours: 51,
-      title: "Build and Launch Features Faster",
-      description: "Working on: Saved est 51hrs by analyzing code patterns",
+      title: "Build and Launch Features Faster with Automation",
+      description: "Working on: Saved est 51hrs by analyzing code patterns to avoid launch delays by using CI/CD pipelines",
       favorites: 1456,
       views: 298
     },
+    {
+      category: "Effective Planners",
+      categoryColor: "amber" as const,
+      savedHours: 19,
+      title: "Plan Projects with Precision Using Predictive Analytics",
+      description: "Working on: Saved est 19hrs by analyzing project data to avoid timeline issues by using planning tools",
+      favorites: 623,
+      views: 142
+    }
   ];
+
+  const [templates, setTemplates] = useState(allTemplates.slice(0, 3));
+
+  const shuffleTemplates = () => {
+    const shuffled = [...allTemplates].sort(() => Math.random() - 0.5);
+    setTemplates(shuffled.slice(0, 3));
+  };
 
   const formatDate = (date: Date) => {
     const now = new Date();
@@ -192,7 +226,7 @@ const HomePage: React.FC<HomePageProps> = ({
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* AI Input Section */}
-        <div className="mb-8">
+        <div className="mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">What would you like to create today?</h2>
           <AIInput
             placeholder="Describe your project idea..."
@@ -213,19 +247,18 @@ const HomePage: React.FC<HomePageProps> = ({
           />
         </div>
 
-        {/* Templates For You Section */}
+        {/* Template Suggestions for New Users */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-slate-900">Templates For You</h2>
-            <button
-              onClick={() => setShowFindTemplatesModal(true)}
-              className="px-4 py-2 rounded-lg border-2 border-blue-600 text-blue-600 font-medium hover:bg-blue-50 transition-colors"
-            >
-              Match with Templates
-            </button>
+          {/* Section Label */}
+          <div className="text-center mb-6">
+            <p className="text-blue-600 uppercase tracking-wider text-sm font-medium">
+              SAMPLES OF POPULAR TIME SAVERS
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {recommendedTemplates.map((template, index) => (
+
+          {/* Template Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            {templates.map((template, index) => (
               <TemplateCard
                 key={index}
                 category={template.category}
@@ -238,6 +271,16 @@ const HomePage: React.FC<HomePageProps> = ({
                 onClick={() => onViewTemplate?.(template)}
               />
             ))}
+          </div>
+
+          {/* Shuffle Button */}
+          <div className="text-center">
+            <button
+              onClick={shuffleTemplates}
+              className="px-8 py-2 rounded-lg border border-gray-300 bg-white text-slate-900 text-sm font-medium shadow-sm hover:bg-slate-100 hover:shadow-md transition-all"
+            >
+              Shuffle These
+            </button>
           </div>
         </div>
 

@@ -107,7 +107,8 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-white p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+      style={{ backgroundColor: 'rgba(3, 20, 45, 0.85)' }}
       onClick={handleBackdropClick}
     >
       <div className="relative flex flex-col items-center w-full max-w-md my-8">
@@ -121,12 +122,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
           </div>
           
           {/* COPADO AI Text */}
-          <h1 className="text-xl font-bold text-slate-900 tracking-[0.2em]">COPADO AI</h1>
+          <h1 className="text-xl font-bold text-white tracking-[0.2em]">COPADO AI</h1>
           
           {/* X Close Button */}
           <button
             onClick={resetAndClose}
-            className="absolute right-0 text-gray-600 hover:text-gray-800 transition-colors"
+            className="absolute right-0 text-white hover:text-gray-300 transition-colors"
             aria-label="Close"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -137,12 +138,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
         {/* White Modal Card */}
         <div 
-          className="w-full bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-sm max-h-[calc(100vh-120px)] overflow-y-auto"
+          className="w-full bg-white rounded-xl p-6 shadow-lg max-h-[calc(100vh-120px)] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Title */}
           <h2 
-            className="text-2xl sm:text-[28px] font-roboto font-semibold text-center text-slate-950 mb-6 sm:mb-8" 
+            className="text-[28px] font-roboto font-semibold text-center text-slate-950 mb-6" 
             style={{ letterSpacing: '-0.03em' }}
           >
             {mode === 'signin' ? 'Login' : 'Sign Up'}
@@ -150,7 +151,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
           {step === 'sso' ? (
             /* SSO Options Screen */
-            <div className="flex flex-col gap-4 sm:gap-5">
+            <div className="flex flex-col gap-6">
               {/* Salesforce Button */}
               <button
                 onClick={() => handleSSOClick('salesforce')}
@@ -267,7 +268,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           ) : (
             /* Email/Password Screen */
-            <form onSubmit={mode === 'signin' ? handleEmailSignIn : handleEmailSignUp} className="flex flex-col gap-4 sm:gap-5">
+            <form onSubmit={mode === 'signin' ? handleEmailSignIn : handleEmailSignUp} className="flex flex-col gap-6">
               <input
                 type="email"
                 value={email}
@@ -325,7 +326,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {/* Terms & Privacy Footer */}
-          <p className="text-xs sm:text-[15px] text-center font-roboto text-[#020618] mt-6 sm:mt-8" style={{ letterSpacing: '-0.02em' }}>
+          <p className="text-[15px] text-center font-roboto text-[#020618] mt-6" style={{ letterSpacing: '-0.02em' }}>
             By Signing {mode === 'signin' ? 'In' : 'Up'} you agree to Copado's{' '}
             <a href="#" className="text-blue-600 hover:underline">Terms</a>
             {' & '}

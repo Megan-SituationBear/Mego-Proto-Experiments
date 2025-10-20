@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PrimaryButton from './ui/PrimaryButton';
 
 interface PricingPageProps {
   onBack: () => void;
@@ -195,16 +194,16 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
                 </div>
 
                 {/* CTA Button */}
-                <PrimaryButton
+                <button
                   onClick={() => onSelectPlan(plan.name)}
-                  className={`w-full mb-6 ${
+                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-all mb-6 ${
                     plan.highlighted
-                      ? ''
-                      : '!bg-white !text-blue-600 border-2 border-blue-600 hover:!bg-blue-50'
+                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
+                      : 'bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50'
                   }`}
                 >
                   {plan.cta}
-                </PrimaryButton>
+                </button>
 
                 {/* Features List */}
                 <div className="space-y-3">

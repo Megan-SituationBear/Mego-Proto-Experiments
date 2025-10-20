@@ -34,10 +34,20 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     { label: 'Saved', status: 'upcoming' },
   ];
 
+  // Category color mapping
+  const categoryColors: Record<string, string> = {
+    'Strategists With Data': 'bg-orange-100 text-orange-700',
+    'Customer Satisfaction Heroes': 'bg-cyan-100 text-cyan-700',
+    'Managers With An Edge': 'bg-blue-100 text-blue-700',
+    'Developers & Launchers': 'bg-green-100 text-green-700',
+    'Effective Planners': 'bg-purple-100 text-purple-700',
+    'Strategists': 'bg-purple-100 text-purple-700',
+    'Deployment Artifacts': 'bg-blue-100 text-blue-700',
+  };
+
   // Default template data - can be overridden via props
   const defaultTemplateData = {
     category: type === 'artifact' ? 'Deployment Artifacts' : 'Strategists',
-    categoryColor: type === 'artifact' ? 'blue' : 'purple',
     favorites: 1234,
     views: 154,
     title: type === 'artifact' 
@@ -101,26 +111,35 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     return 'bg-gray-300';
   };
 
+  const categoryColorClass = categoryColors[templateData.category] || 'bg-purple-100 text-purple-700';
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      {/* Header - New Design with centered title */}
+      <div className="bg-white border-b border-slate-300 shadow-md">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={onBack}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
-              </button>
-              <div>
-                <div className="text-sm text-gray-500">Date</div>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  [Item]: {templateData.title}
-                </h1>
-              </div>
+            {/* Left: Back Button */}
+            <button
+              onClick={onBack}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </button>
+
+            {/* Center: Category Pill + Title */}
+            <div className="flex-1 flex flex-col items-center justify-center">
+              {/* Category Pill */}
+              <span className={`px-3 py-1 text-xs font-medium rounded-full mb-2 ${categoryColorClass}`}>
+                {templateData.category}
+              </span>
+              {/* Title */}
+              <h1 className="text-xl font-semibold text-gray-900 text-center">
+                {templateData.title}
+              </h1>
             </div>
+
+            {/* Right: Share and Favorite Buttons */}
             <div className="flex items-center gap-2">
               <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <Share2 className="w-5 h-5 text-gray-600" />
@@ -221,31 +240,17 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
               {/* Tab Content */}
               <div className="p-6">
-                {/* Category Badge and Stats */}
-                <div className="flex items-center gap-4 mb-4">
-                  <span className={`px-3 py-1 ${
-                    templateData.categoryColor === 'purple' 
-                      ? 'bg-purple-100 text-purple-700' 
-                      : 'bg-blue-100 text-blue-700'
-                  } text-sm font-medium rounded-full`}>
-                    {templateData.category}
-                  </span>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4" />
-                      <span>{templateData.favorites.toLocaleString()}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
-                      <span>{templateData.views} views</span>
-                    </div>
+                {/* Stats */}
+                <div className="flex items-center gap-4 text-sm text-gray-600 mb-6">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4" />
+                    <span>{templateData.favorites.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Eye className="w-4 h-4" />
+                    <span>{templateData.views} views</span>
                   </div>
                 </div>
-
-                {/* Title */}
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  {templateData.title}
-                </h2>
 
                 {/* Subtitle */}
                 <p className="text-gray-600 mb-6">{templateData.subtitle}</p>

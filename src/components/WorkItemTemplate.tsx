@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Star, Eye, Clock, Share2 } from 'lucide-react';
+import { ArrowLeft, Star, Eye, Clock, Share2, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface WorkItemTemplateProps {
   type: 'project' | 'artifact';
@@ -19,9 +19,24 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   templateData: customTemplateData,
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showAllSteps, setShowAllSteps] = useState(false);
 
   // For artifacts, isLoggedIn is always true
   const actualIsLoggedIn = type === 'artifact' ? true : isLoggedIn;
+  
+  // Format relative time for projects
+  const getRelativeTime = () => {
+    const now = new Date();
+    const createdDate = new Date(now.getTime() - (2 * 60 * 60 * 1000)); // 2 hours ago for demo
+    const diffMs = now.getTime() - createdDate.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}hr ago`;
+    return `${diffDays}d ago`;
+  };
 
   // Progress steps
   const steps = [
@@ -137,13 +152,17 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
             {/* Center: Category Pill + Title */}
             <div className="flex-1 flex flex-col items-center justify-center">
+              {/* Date (only for projects) */}
+              {type === 'project' && (
+                <div className="text-xs text-gray-500 mb-1">{getRelativeTime()}</div>
+              )}
               {/* Category Pill */}
               <span className={`px-3 py-1 text-xs font-medium rounded-full mb-2 ${categoryColorClass}`}>
                 {templateData.category}
               </span>
               {/* Title */}
               <h1 className="text-xl font-semibold text-gray-900 text-center">
-                {templateData.title}
+                {type === 'project' ? 'Project: ' : ''}{templateData.title}
               </h1>
             </div>
 
@@ -166,6 +185,46 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Next Step Section - Only for projects */}
+      {type === 'project' && (
+        <div className="bg-indigo-600 border-b border-indigo-700">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            {/* Toggle All Steps */}
+            <button
+              onClick={() => setShowAllSteps(!showAllSteps)}
+              className="flex items-center gap-2 text-white text-sm mb-2 hover:text-indigo-100 transition-colors"
+            >
+              {showAllSteps ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+              <span>{showAllSteps ? 'Hide' : 'Show'} All Steps</span>
+            </button>
+
+            {/* All Steps List (collapsible) */}
+            {showAllSteps && (
+              <div className="mb-3 pl-6 space-y-1">
+                {steps.map((step, index) => (
+                  <button
+                    key={index}
+                    className="block text-white text-sm hover:text-indigo-100 hover:underline transition-colors"
+                  >
+                    {index + 1}. {step.label.replace('\n', ' ')}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Next Step */}
+            <div className="text-white">
+              <span className="font-semibold">Next Step:</span>
+              <span className="ml-2">Set up sandboxes</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Progress Steps */}
       <div className="bg-white border-b border-gray-200">

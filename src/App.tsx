@@ -207,10 +207,6 @@ function App() {
     setHasStarted(true);
   };
 
-  const handleToggleProjects = () => {
-    setHasProjects(!hasProjects);
-  };
-
   const handleViewTemplate = (template: any) => {
     setSelectedTemplate(template);
     if (isLoggedIn) {
@@ -278,28 +274,17 @@ function App() {
 
   if (currentView === 'home') {
     return (
-      <div>
-        <HomePage 
-          hasProjects={hasProjects}
-          onCreateProject={handleCreateProject}
-          onOpenProject={handleOpenProject}
-          onLogout={handleLogout}
-          onViewTemplate={handleViewTemplate}
-          onSendMessage={(text) => {
-            console.log('Creating project from message:', text);
-            handleCreateProject();
-          }}
-        />
-        {/* Debug button for testing */}
-        <div className="fixed bottom-4 right-4 flex gap-2">
-          <button
-            onClick={handleToggleProjects}
-            className="px-4 py-2 rounded bg-gray-600 text-white text-sm font-medium hover:bg-gray-700 transition-colors"
-          >
-            Toggle Projects
-          </button>
-        </div>
-      </div>
+      <HomePage 
+        hasProjects={hasProjects}
+        onCreateProject={handleCreateProject}
+        onOpenProject={handleOpenProject}
+        onLogout={handleLogout}
+        onViewTemplate={handleViewTemplate}
+        onSendMessage={(text) => {
+          console.log('Creating project from message:', text);
+          handleCreateProject();
+        }}
+      />
     );
   }
 

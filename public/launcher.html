@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Copado AI Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-8">
+  
+  <div class="max-w-2xl w-full">
+    
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <div class="flex justify-center mb-6">
+        <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <h1 class="text-5xl font-bold text-slate-900 mb-4">Copado AI Prototype</h1>
+      <p class="text-lg text-slate-600">Interactive design prototypes & components</p>
+    </div>
+
+    <!-- Links -->
+    <div class="space-y-4">
+      
+      <!-- Full Prototype Link -->
+      <div class="block bg-white rounded-xl p-6 shadow-lg border-2 border-slate-200">
+        <div class="mb-4">
+          <h2 class="text-2xl font-semibold text-slate-900 mb-2">Full Prototype</h2>
+          <p class="text-slate-600 mb-4">Complete interactive Copado AI application</p>
+          
+          <a href="./app.html" 
+             class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all">
+            <span>Launch Prototype</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="relative py-4">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-slate-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-4 bg-slate-50 text-slate-500 font-medium">Components</span>
+        </div>
+      </div>
+
+      <!-- AI Input Component - Interactive Demo -->
+      <a href="ai-input-interactive-demo.html" 
+         class="block bg-white rounded-xl p-6 shadow-lg hover:shadow-xl border-2 border-slate-200 hover:border-blue-500 transition-all group">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">AI Input - Interactive Demo</h2>
+            <p class="text-slate-600 text-sm">3 interactive variants with live demos</p>
+          </div>
+          <svg class="w-7 h-7 text-blue-600 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- AI Input Component - Clean Demo -->
+      <a href="ai-input-demo-clean.html" 
+         class="block bg-white rounded-xl p-6 shadow-lg hover:shadow-xl border-2 border-slate-200 hover:border-blue-500 transition-all group">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">AI Input - New Layout</h2>
+            <p class="text-slate-600 text-sm">Clean layout with all component states</p>
+          </div>
+          <svg class="w-7 h-7 text-blue-600 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- AI Input Component - States Demo -->
+      <a href="ai-input-states-demo.html" 
+         class="block bg-white rounded-xl p-6 shadow-lg hover:shadow-xl border-2 border-slate-200 hover:border-blue-500 transition-all group">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">AI Input - States Demo</h2>
+            <p class="text-slate-600 text-sm">All component states and interactions</p>
+          </div>
+          <svg class="w-7 h-7 text-blue-600 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- AI Input Component - Variants Comparison -->
+      <a href="ai-input-variants-comparison.html" 
+         class="block bg-white rounded-xl p-6 shadow-lg hover:shadow-xl border-2 border-slate-200 hover:border-blue-500 transition-all group">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">AI Input - 3 Variants</h2>
+            <p class="text-slate-600 text-sm">Side-by-side comparison with code examples</p>
+          </div>
+          <svg class="w-7 h-7 text-blue-600 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Placeholder for more components -->
+      <div class="block bg-slate-100 rounded-xl p-6 border-2 border-dashed border-slate-300">
+        <div class="text-center text-slate-500">
+          <p class="font-medium">More components coming soon...</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-12 text-center text-sm text-slate-500">
+      <p>Copado AI Prototype © 2025</p>
+    </div>
+
+  </div>
+
+</body>
+</html>

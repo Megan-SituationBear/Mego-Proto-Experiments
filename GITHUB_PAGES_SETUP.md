@@ -43,8 +43,12 @@ https://<your-username>.github.io/<repository-name>/
 ```
 
 For example:
-- Repository: `https://github.com/johndoe/copado-ai-prototype`
-- GitHub Pages URL: `https://johndoe.github.io/copado-ai-prototype/`
+- Repository: `https://github.com/Megan-SituationBear/Mego-Proto-Experiments`
+- GitHub Pages URL: `https://megan-situationbear.github.io/Mego-Proto-Experiments/`
+
+The main page will show a launcher menu with links to:
+- **Full Prototype** (`/app.html`) - Complete React application
+- **AI Input Components** - Individual component demos
 
 ### 5. Custom Domain (Optional)
 
@@ -79,10 +83,14 @@ To use a custom domain:
 Continue developing locally as usual:
 
 ```bash
-npm run dev       # Development server
-npm run build     # Build for production
-npm run preview   # Preview production build
+npm run dev          # Development server (directly loads React app)
+npm run build        # Build React app only
+npm run build:pages  # Build with launcher page (for GitHub Pages)
+npm run preview      # Preview production build
 ```
+
+**Note:** When previewing locally, `http://localhost:4173` will show the launcher menu.
+Click "Launch Prototype" to access the full React app.
 
 ## Status Badge (Optional)
 

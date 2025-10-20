@@ -1,29 +1,39 @@
 import { useState } from 'react';
 import { ArrowLeft, Star, Eye, Clock, Share2, ChevronDown, ChevronUp } from 'lucide-react';
+import { AIInput } from './ui';
 
 interface WorkItemTemplateProps {
   type: 'project' | 'artifact';
   isLoggedIn?: boolean;
   initialIsFavorite?: boolean;
+  isNewProject?: boolean;
   onBack?: () => void;
   onUseTemplate?: () => void;
   onSignIn?: () => void;
   onToggleFavorite?: (isFavorited: boolean) => void;
+  onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
   templateData?: any; // Can pass custom template data
+  conversationMessages?: any[];
+  userMessageCount?: number;
 }
 
 const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   type,
   isLoggedIn = false,
   initialIsFavorite = false,
+  isNewProject = false,
   onBack,
   onUseTemplate,
   onSignIn,
   onToggleFavorite,
+  onSendMessage,
   templateData: customTemplateData,
+  conversationMessages = [],
+  userMessageCount = 0,
 }) => {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [showAllSteps, setShowAllSteps] = useState(false);
+  const [showCopadoTyping, setShowCopadoTyping] = useState(false);
 
   const handleToggleFavorite = () => {
     const newFavoriteState = !isFavorite;
@@ -132,6 +142,92 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
 
   const categoryColorClass = categoryColors[templateData.category] || 'bg-purple-100 text-purple-700';
+
+  // New Project View - simplified layout with conversation
+  if (isNewProject) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-4xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              {/* Left: Back Button */}
+              <button
+                onClick={onBack}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-600" />
+              </button>
+
+              {/* Center: Title */}
+              <div className="flex-1 text-center">
+                <div className="text-xs text-gray-500 mb-1">
+                  Project - New
+                </div>
+                <h1 className="text-xl font-semibold text-gray-900">
+                  {templateData.title}
+                </h1>
+              </div>
+
+              {/* Right: Share and Favorite */}
+              <div className="flex items-center gap-2">
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Share2 className="w-5 h-5 text-gray-600" />
+                </button>
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Star className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress Sections */}
+        <div className="bg-indigo-100 border-b border-indigo-200 px-6 py-3">
+          <div className="max-w-4xl mx-auto text-sm text-slate-900">
+            <span className="font-semibold">Last Step:</span> Created Project Space
+          </div>
+        </div>
+
+        <div className="bg-indigo-600 border-b border-indigo-700 px-6 py-3">
+          <div className="max-w-4xl mx-auto text-sm text-white">
+            <span className="font-semibold">Next Step:</span>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          {/* Continue Conversation Section */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <h2 className="text-center text-gray-600 font-medium mb-6">
+              Continue The Conversation
+            </h2>
+
+            <AIInput
+              placeholder=""
+              onSendMessage={(text) => {
+                if (onSendMessage) {
+                  onSendMessage(text, setShowCopadoTyping);
+                }
+              }}
+              onIntegrationsClick={() => console.log('Integrations clicked')}
+              autoFocus={false}
+              isLoggedIn={true}
+              pageContext="project"
+              hasConversation={conversationMessages.length > 0}
+              messages={conversationMessages}
+              showTypingIndicator={showCopadoTyping}
+            />
+          </div>
+
+          {/* Conversation Label */}
+          <div className="text-sm text-gray-600">
+            Conv
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

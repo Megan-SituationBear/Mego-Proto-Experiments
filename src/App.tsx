@@ -170,7 +170,14 @@ function App() {
         // Set the project title to the user's second message
         setProjectTitle(text);
         setTimeout(() => {
-          setCurrentView('proto2');
+          // Create new project work item
+          setSelectedTemplate({
+            title: text,
+            category: 'New Project',
+            savedHours: 0,
+          });
+          setWorkItemType('project');
+          setCurrentView('work-item');
         }, 1500); // Wait 1.5s to show the "creating workspace" message
       }
     }, 1200);
@@ -302,6 +309,8 @@ function App() {
   if (currentView === 'work-item') {
     // Check if current template is favorited
     const isFavorited = favoritedTemplates.some(t => t.title === selectedTemplate?.title);
+    // Check if this is a new project created from conversation
+    const isNewProject = hasStarted && conversationMessages.length >= 2;
     
     return (
       <WorkItemTemplate
@@ -309,7 +318,17 @@ function App() {
         isLoggedIn={isLoggedIn}
         templateData={selectedTemplate}
         initialIsFavorite={isFavorited}
-        onBack={() => setCurrentView(isLoggedIn ? 'home' : 'intro')}
+        isNewProject={isNewProject}
+        onBack={() => {
+          // Reset conversation when going back from new project
+          if (isNewProject) {
+            setMessages([]);
+            setConversationMessages([]);
+            setUserMessageCount(0);
+            setHasStarted(false);
+          }
+          setCurrentView(isLoggedIn ? 'home' : 'intro');
+        }}
         onUseTemplate={() => {
           if (isLoggedIn || workItemType === 'artifact') {
             // Set project title from template
@@ -324,6 +343,9 @@ function App() {
         }}
         onToggleFavorite={(isFavorited) => handleToggleFavorite(selectedTemplate, isFavorited)}
         onSignIn={handleLogin}
+        conversationMessages={conversationMessages}
+        onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator)}
+        userMessageCount={userMessageCount}
       />
     );
   }

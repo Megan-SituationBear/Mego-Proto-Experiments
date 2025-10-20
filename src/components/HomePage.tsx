@@ -2,13 +2,6 @@ import { useState } from 'react';
 import { AIInput, TemplateCard } from './ui';
 import FindTemplatesModal from './ui/FindTemplatesModal';
 
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-}
-
 interface HomePageProps {
   userName?: string;
   hasProjects?: boolean;
@@ -19,7 +12,6 @@ interface HomePageProps {
   onLogout?: () => void;
   onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
   onViewTemplate?: (template: any) => void;
-  messages?: Message[];
   conversationMessages?: any[];
   userMessageCount?: number;
 }
@@ -33,6 +25,7 @@ const HomePage: React.FC<HomePageProps> = ({
   onLogout,
   onSendMessage,
   onViewTemplate,
+  conversationMessages = [],
   userMessageCount = 0,
 }) => {
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
@@ -281,8 +274,8 @@ const HomePage: React.FC<HomePageProps> = ({
             autoFocus={false}
             isLoggedIn={true}
             pageContext="home"
-            hasConversation={false}
-            messages={[]}
+            hasConversation={conversationMessages.length > 0}
+            messages={conversationMessages}
             showTypingIndicator={showCopadoTyping}
           />
 

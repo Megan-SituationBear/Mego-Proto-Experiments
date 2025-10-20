@@ -382,7 +382,6 @@ function App() {
         onLogout={handleLogout}
         onViewTemplate={handleViewTemplate}
         onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator)}
-        messages={messages}
         conversationMessages={conversationMessages}
         userMessageCount={userMessageCount}
       />

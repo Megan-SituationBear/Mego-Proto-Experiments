@@ -169,81 +169,140 @@ const HomePage: React.FC<HomePageProps> = ({
           
           {/* Drawer Panel */}
           <div 
-            className={`fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+            className={`fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
               showMenu ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            {/* Drawer Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Menu</h2>
+            {/* Close Button */}
+            <div className="flex items-center justify-start p-6">
               <button
                 onClick={() => setShowMenu(false)}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="4" y1="4" x2="16" y2="16" strokeLinecap="round"/>
-                  <line x1="16" y1="4" x2="4" y2="16" strokeLinecap="round"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round"/>
+                  <line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round"/>
                 </svg>
               </button>
             </div>
 
-            {/* User Info Section */}
-            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-lg">
-                  {userName.charAt(0)}
-                </div>
-                <div>
-                  <p className="text-base font-semibold text-gray-900">{userName}</p>
-                  <p className="text-sm text-gray-500">Free Plan</p>
-                </div>
+            {/* Free Plan Banner */}
+            <div className="mx-6 mb-6 p-4 bg-cyan-100 rounded text-center">
+              <p className="text-sm font-semibold text-gray-800">YOU'RE ON THE FREE PLAN</p>
+              <button className="text-sm text-blue-600 font-semibold hover:underline">
+                UPGRADE TO USE TEMPLATES
+              </button>
+            </div>
+
+            {/* Recent Section */}
+            <div className="px-6 mb-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Recent</h3>
+              <div className="space-y-3">
+                {/* Recent Templates and Projects */}
+                {favoritedTemplates.slice(0, 2).map((template, index) => (
+                  <button
+                    key={`fav-${index}`}
+                    onClick={() => {
+                      setShowMenu(false);
+                      onViewTemplate?.(template);
+                    }}
+                    className="w-full text-left py-2 text-base text-gray-900 hover:text-blue-600 transition-colors"
+                  >
+                    Template: {template.title.substring(0, 30)}...
+                  </button>
+                ))}
+                
+                {activeProjects.slice(0, 2).map((project, index) => (
+                  <button
+                    key={`proj-${index}`}
+                    onClick={() => {
+                      setShowMenu(false);
+                      onViewTemplate?.(project);
+                    }}
+                    className="w-full text-left py-2 text-base text-gray-900 hover:text-blue-600 transition-colors"
+                  >
+                    Project: {project.title.substring(0, 30)}...
+                  </button>
+                ))}
+
+                {favoritedTemplates.length === 0 && activeProjects.length === 0 && (
+                  <p className="text-gray-500 text-sm py-2">No recent items</p>
+                )}
+                
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setActiveTab('work');
+                  }}
+                  className="w-full text-left py-2 text-base text-gray-900 hover:text-blue-600 transition-colors font-medium"
+                >
+                  View All
+                </button>
               </div>
             </div>
 
-            {/* Menu Options */}
-            <div className="py-4">
+            {/* Template Library */}
+            <div className="px-6 mb-6">
               <button
                 onClick={() => {
                   setShowMenu(false);
-                  // Navigate to settings (placeholder)
+                  setActiveTab('templates');
                 }}
-                className="w-full px-6 py-3 text-left text-base text-gray-700 hover:bg-gray-100 transition-colors flex items-center space-x-3"
+                className="w-full text-left py-2 text-lg font-bold text-gray-900 hover:text-blue-600 transition-colors"
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <circle cx="10" cy="10" r="3"/>
-                  <path d="M10 1v2m0 14v2M4.22 4.22l1.42 1.42m8.72 8.72l1.42 1.42M1 10h2m14 0h2M4.22 15.78l1.42-1.42m8.72-8.72l1.42-1.42"/>
-                </svg>
-                <span>Settings</span>
+                Template Library
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-gray-200 my-4"></div>
+
+            {/* Account Section */}
+            <div className="px-6 space-y-1">
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  // Navigate to account
+                }}
+                className="w-full text-left py-3 text-base text-gray-900 hover:text-blue-600 transition-colors"
+              >
+                My Account
               </button>
               
               <button
                 onClick={() => {
                   setShowMenu(false);
-                  // Navigate to help (placeholder)
+                  // Navigate to billing
                 }}
-                className="w-full px-6 py-3 text-left text-base text-gray-700 hover:bg-gray-100 transition-colors flex items-center space-x-3"
+                className="w-full text-left py-3 text-base text-gray-900 hover:text-blue-600 transition-colors"
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <circle cx="10" cy="10" r="9"/>
-                  <path d="M10 14v.5M10 6v5"/>
-                </svg>
-                <span>Help & Documentation</span>
+                Billing & Subscriptions
+              </button>
+              
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  // Navigate to settings
+                }}
+                className="w-full text-left py-3 text-base text-gray-900 hover:text-blue-600 transition-colors"
+              >
+                Settings
               </button>
             </div>
 
-            {/* Logout Button at Bottom */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
+            {/* Divider */}
+            <div className="border-t border-gray-200 my-4"></div>
+
+            {/* Logout */}
+            <div className="px-6 pb-6">
               <button
                 onClick={() => {
                   setShowMenu(false);
                   onLogout?.();
                 }}
-                className="w-full px-6 py-3 text-left text-base text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center space-x-3"
+                className="w-full text-left py-3 text-base text-gray-900 hover:text-red-600 transition-colors"
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M13 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3M8 17l-5-5 5-5m-5 5h12"/>
-                </svg>
-                <span>Logout</span>
+                Log Out
               </button>
             </div>
           </div>

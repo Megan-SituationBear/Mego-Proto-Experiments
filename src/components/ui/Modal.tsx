@@ -97,7 +97,7 @@ const Modal: React.FC<ModalProps> = ({
         {/* Modal content card */}
         <div 
           ref={modalRef}
-          className={`flex flex-col w-full max-w-[400px] gap-4 sm:gap-6 px-6 py-6 sm:px-10 sm:py-8 rounded-xl bg-white shadow-2xl max-h-[calc(100vh-160px)] overflow-y-auto ${contentClassName}`}
+          className={`flex flex-col w-full max-w-[400px] gap-6 p-6 rounded-xl bg-white shadow-lg max-h-[calc(100vh-160px)] overflow-y-auto ${contentClassName}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Title section */}

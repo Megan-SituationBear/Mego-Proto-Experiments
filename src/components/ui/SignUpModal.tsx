@@ -112,12 +112,12 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
 
         {/* White Modal Card */}
         <div 
-          className="w-full bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-2xl max-h-[calc(100vh-120px)] overflow-y-auto"
+          className="w-full bg-white rounded-xl p-6 shadow-lg max-h-[calc(100vh-120px)] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Sign Up Title */}
           <h2 
-            className="text-[28px] font-roboto font-semibold text-center text-slate-950 mb-8" 
+            className="text-[28px] font-roboto font-semibold text-center text-slate-950 mb-6" 
             style={{ letterSpacing: '-0.03em' }}
           >
             Sign Up
@@ -125,7 +125,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
 
           {step === 'sso' ? (
             /* SSO Options Screen */
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-6">
               {/* Salesforce Button */}
               <button
                 onClick={() => handleSSOClick('salesforce')}
@@ -242,7 +242,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
             </div>
           ) : (
             /* Email/Password Screen */
-            <form onSubmit={handleEmailSignUp} className="flex flex-col gap-5">
+            <form onSubmit={handleEmailSignUp} className="flex flex-col gap-6">
               <input
                 type="email"
                 value={email}
@@ -293,7 +293,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
           )}
 
           {/* Terms & Privacy Footer */}
-          <p className="text-[15px] text-center font-roboto text-[#020618] mt-8" style={{ letterSpacing: '-0.02em' }}>
+          <p className="text-[15px] text-center font-roboto text-[#020618] mt-6" style={{ letterSpacing: '-0.02em' }}>
             By Signing Up you agree to Copado's{' '}
             <a href="#" className="text-blue-600 hover:underline">Terms</a>
             {' & '}

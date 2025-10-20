@@ -71,7 +71,7 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
         {/* Close Button */}
         <button
           onClick={resetAndClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors z-10"
           aria-label="Close"
         >
           <X className="w-6 h-6" />
@@ -83,7 +83,7 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
             <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">
               What do you want to accomplish?
             </h2>
-            <p className="text-gray-600 mb-8 text-center">
+            <p className="text-slate-600 mb-8 text-center">
               Select all that apply
             </p>
 
@@ -95,7 +95,7 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
                   className={`w-full p-4 rounded-lg border-2 transition-all text-left flex items-center gap-4 ${
                     selectedGoals.includes(goal.id)
                       ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                      : 'border-slate-200 hover:border-slate-300 bg-white'
                   }`}
                 >
                   <span className="text-2xl">{goal.icon}</span>
@@ -125,7 +125,7 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
               className={`w-full py-3 rounded-lg font-semibold transition-all ${
                 selectedGoals.length > 0
                   ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
               Continue
@@ -137,7 +137,7 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
             <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">
               Perfect Match! 🎯
             </h2>
-            <p className="text-gray-600 mb-8 text-center">
+            <p className="text-slate-600 mb-8 text-center">
               Based on your goals, we've found{' '}
               <span className="font-semibold text-blue-600">
                 {12 + selectedGoals.length * 3} templates
@@ -174,7 +174,7 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
               </button>
               <button
                 onClick={resetAndClose}
-                className="w-full py-3 rounded-lg border-2 border-gray-300 text-slate-900 font-medium hover:bg-gray-50 transition-all"
+                className="w-full py-3 rounded-lg border-2 border-slate-300 text-slate-900 font-medium hover:bg-slate-50 transition-all"
               >
                 Browse Templates
               </button>

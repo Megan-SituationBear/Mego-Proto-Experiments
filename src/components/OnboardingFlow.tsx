@@ -90,14 +90,14 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
             <div
               key={s}
               className={`h-2 rounded-full transition-all ${
-                s === step ? 'w-12 bg-blue-600' : s < step ? 'w-8 bg-blue-400' : 'w-8 bg-gray-300'
+                s === step ? 'w-12 bg-blue-600' : s < step ? 'w-8 bg-blue-400' : 'w-8 bg-slate-300'
               }`}
             />
           ))}
         </div>
 
         {/* Content Card */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 md:p-12">
+        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 md:p-12">
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
@@ -115,7 +115,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
           </h2>
 
           {/* Subtitle */}
-          <p className="text-center text-gray-600 mb-8">
+          <p className="text-center text-slate-600 mb-8">
             {step === 1 && "What's Your Name?"}
             {step === 2 && "Select all that apply"}
             {step === 3 && "Start with a 14-day free trial"}
@@ -129,7 +129,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your name"
-                className="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none text-lg transition-all"
+                className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none text-lg transition-all"
                 autoFocus
               />
             </div>
@@ -144,12 +144,12 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                   className={`p-6 rounded-xl border-2 transition-all text-left ${
                     selectedInterests.includes(interest.title)
                       ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
                   <div className="text-3xl mb-2">{interest.icon}</div>
                   <h3 className="font-semibold text-slate-900 mb-1">{interest.title}</h3>
-                  <p className="text-sm text-gray-600">{interest.description}</p>
+                  <p className="text-sm text-slate-600">{interest.description}</p>
                 </button>
               ))}
             </div>
@@ -164,7 +164,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                   className={`w-full p-6 rounded-xl border-2 transition-all text-left relative ${
                     selectedPlan === plan.name
                       ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
                   {plan.popular && (
@@ -175,7 +175,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="text-xl font-bold text-slate-900">{plan.name}</h3>
-                      <p className="text-sm text-gray-600">{plan.description}</p>
+                      <p className="text-sm text-slate-600">{plan.description}</p>
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-blue-600">{plan.price}</div>
@@ -185,7 +185,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                     {plan.features.map((feature, idx) => (
                       <span
                         key={idx}
-                        className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full"
+                        className="text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full"
                       >
                         {feature}
                       </span>
@@ -201,7 +201,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
             {step > 1 && (
               <button
                 onClick={() => setStep(step - 1)}
-                className="px-6 py-3 rounded-xl border-2 border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-all"
+                className="px-6 py-3 rounded-xl border-2 border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-all"
               >
                 Back
               </button>
@@ -219,7 +219,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
           {step < 3 && (
             <button
               onClick={onComplete}
-              className="w-full text-center text-sm text-gray-500 hover:text-gray-700 mt-4 transition-colors"
+              className="w-full text-center text-sm text-slate-500 hover:text-slate-700 mt-4 transition-colors"
             >
               Skip for now
             </button>

@@ -77,14 +77,14 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Top Navigation */}
-      <nav className="bg-white border-b border-gray-200">
+      <nav className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left: Back button and Logo */}
             <div className="flex items-center gap-3">
               <button
                 onClick={onBack}
-                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                className="p-2 rounded hover:bg-slate-100 transition-colors"
                 aria-label="Back"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -107,18 +107,18 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
         <h1 className="text-5xl font-bold text-slate-900 mb-4">
           Choose Your Plan
         </h1>
-        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
           Start saving time today with Copado AI. All plans include a 14-day free trial.
         </p>
 
         {/* Billing Toggle */}
-        <div className="inline-flex items-center bg-white border border-gray-200 rounded-lg p-1 shadow-sm">
+        <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
           <button
             onClick={() => setBillingCycle('monthly')}
             className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
               billingCycle === 'monthly'
                 ? 'bg-blue-600 text-white'
-                : 'text-gray-700 hover:bg-gray-50'
+                : 'text-slate-700 hover:bg-slate-50'
             }`}
           >
             Monthly
@@ -128,7 +128,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
             className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
               billingCycle === 'annual'
                 ? 'bg-blue-600 text-white'
-                : 'text-gray-700 hover:bg-gray-50'
+                : 'text-slate-700 hover:bg-slate-50'
             }`}
           >
             Annual
@@ -161,7 +161,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">
                   {plan.name}
                 </h3>
-                <p className="text-sm text-gray-600 mb-6">
+                <p className="text-sm text-slate-600 mb-6">
                   {plan.description}
                 </p>
 
@@ -173,15 +173,15 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
                         <span className="text-5xl font-bold text-slate-900">
                           ${plan.monthlyPrice === 0 ? '0' : (billingCycle === 'monthly' ? plan.monthlyPrice : Math.floor(plan.annualPrice / 12))}
                         </span>
-                        <span className="text-gray-600">/month</span>
+                        <span className="text-slate-600">/month</span>
                       </div>
                       {billingCycle === 'annual' && plan.monthlyPrice > 0 && (
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-slate-500 mt-1">
                           ${plan.annualPrice} billed annually
                         </p>
                       )}
                       {plan.monthlyPrice === 0 && (
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-slate-500 mt-1">
                           Forever free
                         </p>
                       )}
@@ -223,7 +223,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-sm text-gray-700">{feature}</span>
+                      <span className="text-sm text-slate-700">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -234,7 +234,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
       </div>
 
       {/* FAQ Section */}
-      <div className="bg-gray-50 border-t border-gray-200 py-16">
+      <div className="bg-slate-50 border-t border-slate-200 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
             Frequently Asked Questions
@@ -244,7 +244,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
               <h3 className="text-lg font-semibold text-slate-900 mb-2">
                 Can I switch plans later?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-slate-600">
                 Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.
               </p>
             </div>
@@ -252,7 +252,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
               <h3 className="text-lg font-semibold text-slate-900 mb-2">
                 What payment methods do you accept?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-slate-600">
                 We accept all major credit cards, PayPal, and wire transfers for Enterprise customers.
               </p>
             </div>
@@ -260,7 +260,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
               <h3 className="text-lg font-semibold text-slate-900 mb-2">
                 Is there a free trial?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-slate-600">
                 Yes! All plans come with a 14-day free trial. No credit card required to start.
               </p>
             </div>
@@ -268,7 +268,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
               <h3 className="text-lg font-semibold text-slate-900 mb-2">
                 What happens after my trial ends?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-slate-600">
                 You'll be automatically enrolled in your selected plan. You can cancel anytime before the trial ends with no charges.
               </p>
             </div>
@@ -277,16 +277,16 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
       </div>
 
       {/* Footer CTA */}
-      <div className="bg-white border-t border-gray-200 py-12">
+      <div className="bg-white border-t border-slate-200 py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">
             Still have questions?
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-slate-600 mb-6">
             Our team is here to help you find the perfect plan for your needs.
           </p>
           <div className="flex justify-center gap-4">
-            <button className="px-6 py-2 rounded border border-gray-300 text-slate-900 text-sm font-medium hover:bg-gray-50 transition-colors">
+            <button className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors">
               Contact Sales
             </button>
             <button className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors">

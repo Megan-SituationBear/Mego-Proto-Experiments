@@ -162,7 +162,7 @@ const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
               </button>
               <button
                 onClick={onClose}
-                className="px-6 py-3 border border-gray-300 text-slate-700 rounded-lg font-roboto font-medium hover:bg-gray-50 transition-colors"
+                className="px-6 py-3 border border-slate-300 text-slate-700 rounded-lg font-roboto font-medium hover:bg-slate-50 transition-colors"
               >
                 Cancel
               </button>

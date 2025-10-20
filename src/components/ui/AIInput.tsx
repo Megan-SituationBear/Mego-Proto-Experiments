@@ -11,7 +11,7 @@
  * ┌─────────────┬──────────────┬─────────────┬────────────┬────────────┬─────────┬────────────────┐
  * │ Auth        │ Page         │ View State  │ Height     │ Padding    │ Border  │ Shadow/Ring    │
  * ├─────────────┼──────────────┼─────────────┼────────────┼────────────┼─────────┼────────────────┤
- * │ Logged Out  │ Home         │ Default     │ 48px       │ 12px       │ gray-300│ shadow-2xl     │
+ * │ Logged Out  │ Home         │ Default     │ 48px       │ 12px       │ slate-300│ shadow-2xl     │
  * │ Logged Out  │ Home         │ Focused     │ 120px      │ 20px       │ blue-500│ ring-4 blue-100│
  * │ Logged Out  │ Home         │ Focused+Conv│ 120px      │ 20px       │ blue-500│ ring-4 blue-100│
  * ├─────────────┼──────────────┼─────────────┼────────────┼────────────┼─────────┼────────────────┤
@@ -269,7 +269,7 @@ const AIInput: React.FC<AIInputProps> = ({
     // Base styles for all states
     const baseStyles = {
       containerScale: 'scale-100',
-      borderColor: 'border-gray-200',
+      borderColor: 'border-slate-200',
       shadow: 'shadow-xl',
       bgColor: 'bg-white',
       ring: '',
@@ -284,7 +284,7 @@ const AIInput: React.FC<AIInputProps> = ({
         return {
           ...baseStyles,
           shadow: 'shadow-2xl hover:shadow-3xl',
-          borderColor: 'border-gray-200',
+          borderColor: 'border-slate-200',
           bgColor: 'bg-white',
           containerScale: 'scale-100 hover:scale-[1.005]',
           height: '56px',
@@ -482,7 +482,7 @@ const AIInput: React.FC<AIInputProps> = ({
       {/* Conversation Display - Above the input */}
       {(messages.length > 0 || showTypingIndicator) && (
         <div 
-          className="mb-4 space-y-3 max-h-[320px] overflow-y-auto px-3 py-4 rounded-2xl border border-gray-200/50 animate-in fade-in slide-in-from-top-2 duration-500" 
+          className="mb-4 space-y-3 max-h-[320px] overflow-y-auto px-3 py-4 rounded-2xl border border-slate-200/50 animate-in fade-in slide-in-from-top-2 duration-500" 
           style={{ 
             background: 'rgba(255, 255, 255, 0.3)', 
             backdropFilter: 'blur(10px)' 
@@ -494,7 +494,7 @@ const AIInput: React.FC<AIInputProps> = ({
                 className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-left ${
                   msg.isUser 
                     ? 'bg-blue-600 text-white' 
-                    : 'bg-white/90 border border-gray-200 text-slate-800 shadow-sm'
+                    : 'bg-white/90 border border-slate-200 text-slate-800 shadow-sm'
                 } transition-all duration-500 ease-out`}
               >
                 <p className="font-body text-sm leading-relaxed" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '15px', lineHeight: '24px' }}>
@@ -507,11 +507,11 @@ const AIInput: React.FC<AIInputProps> = ({
           {/* AI Thinking Indicator */}
           {showTypingIndicator && (
             <div className="flex justify-start">
-              <div className="bg-white/90 border border-gray-200 shadow-sm px-4 py-2.5 rounded-2xl">
+              <div className="bg-white/90 border border-slate-200 shadow-sm px-4 py-2.5 rounded-2xl">
                 <div className="flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                 </div>
               </div>
             </div>
@@ -537,8 +537,8 @@ const AIInput: React.FC<AIInputProps> = ({
             placeholder={placeholder}
             disabled={disabled || loading}
             className={`w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 ${
-              value ? 'text-slate-700' : 'text-gray-400'
-            } ${isFocused ? 'placeholder-gray-500' : 'placeholder-gray-400'}`}
+              value ? 'text-slate-700' : 'text-slate-400'
+            } ${isFocused ? 'placeholder-slate-500' : 'placeholder-slate-400'}`}
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
@@ -619,17 +619,17 @@ const AIInput: React.FC<AIInputProps> = ({
             >
                 <button 
                   type="button"
-                  className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2.5 hover:bg-slate-100 rounded-lg transition-colors"
                   title="Add context"
                 >
-                  <Plus className="w-5 h-5 text-gray-600" />
+                  <Plus className="w-5 h-5 text-slate-600" />
                 </button>
 
                 {/* Context Menu Dropdown */}
                 {showContextMenu && (
                   <div 
                     ref={menuRef}
-                    className="absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-gray-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-bottom-2 duration-200"
+                    className="absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-bottom-2 duration-200"
                     style={{
                       background: 'rgba(255, 255, 255, 0.95)',
                       backdropFilter: 'blur(12px)',
@@ -638,8 +638,8 @@ const AIInput: React.FC<AIInputProps> = ({
                   onMouseLeave={() => setShowContextMenu(false)}
                   >
                     {/* Menu Header */}
-                    <div className="px-3 py-1.5 border-b border-gray-100">
-                      <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                    <div className="px-3 py-1.5 border-b border-slate-100">
+                      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                         {pageContext === 'workspace' ? 'Context For This Work:' : 'Conversation Context:'}
                       </p>
                     </div>
@@ -654,8 +654,8 @@ const AIInput: React.FC<AIInputProps> = ({
                             onClick={item.action}
                             className="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group"
                           >
-                            <IconComponent className="w-4 h-4 text-gray-600 group-hover:text-blue-600" />
-                            <span className="text-xs text-gray-700 group-hover:text-blue-600 font-medium">
+                            <IconComponent className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
+                            <span className="text-xs text-slate-700 group-hover:text-blue-600 font-medium">
                               {item.label}
                             </span>
                           </button>
@@ -673,7 +673,7 @@ const AIInput: React.FC<AIInputProps> = ({
                 className="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group"
                 title="Settings"
               >
-                <Settings className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" />
+                <Settings className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors" />
               </button>
             )}
             </div>
@@ -686,7 +686,7 @@ const AIInput: React.FC<AIInputProps> = ({
               className={`p-3.5 rounded-xl transition-all duration-200 ${
                 (value.trim() || codeSnippets.length > 0) && !disabled && !loading
                   ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-slate-100 text-slate-400 cursor-not-allowed'
               }`}
               title="Send message"
             >
@@ -697,7 +697,7 @@ const AIInput: React.FC<AIInputProps> = ({
 
         {/* Character count for long messages */}
         {value.length > 200 && (
-          <div className="px-6 pb-2 text-xs text-gray-500 font-body">
+          <div className="px-6 pb-2 text-xs text-slate-500 font-body">
             {value.length} characters
           </div>
         )}
@@ -717,27 +717,27 @@ const AIInput: React.FC<AIInputProps> = ({
               <h3 className="text-lg font-semibold text-slate-900">Add Images and Documents</h3>
               <button 
                 onClick={() => setShowUploadModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
               >
-                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
             
             <div className="space-y-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors cursor-pointer">
-                <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                <svg className="w-12 h-12 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <p className="text-sm text-gray-600 mb-2">Drag and drop files here</p>
-                <p className="text-xs text-gray-500">or click to browse</p>
+                <p className="text-sm text-slate-600 mb-2">Drag and drop files here</p>
+                <p className="text-xs text-slate-500">or click to browse</p>
               </div>
               
               <div className="flex gap-2">
                 <button 
                   onClick={() => setShowUploadModal(false)}
-                  className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex-1 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
                 >
                   Cancel
                 </button>
@@ -782,9 +782,9 @@ const AIInput: React.FC<AIInputProps> = ({
                 </button>
                 <button 
                   onClick={() => setShowSettingsModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                 >
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -794,39 +794,39 @@ const AIInput: React.FC<AIInputProps> = ({
             <div className="overflow-y-auto flex-1 pr-2 space-y-6 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400">
               {/* Integrations Section */}
               <div className="mb-6">
-                <h4 className="text-base font-semibold text-gray-700 mb-3">Integrations</h4>
+                <h4 className="text-base font-semibold text-slate-700 mb-3">Integrations</h4>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                  <div className="border-2 border-slate-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
                     <div className="text-2xl mb-2">💬</div>
-                    <div className="text-sm font-medium text-gray-700">Slack</div>
-                    <div className="text-xs text-gray-500 mt-1">Connect workspace</div>
+                    <div className="text-sm font-medium text-slate-700">Slack</div>
+                    <div className="text-xs text-slate-500 mt-1">Connect workspace</div>
                   </div>
-                  <div className="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                  <div className="border-2 border-slate-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
                     <div className="text-2xl mb-2">📚</div>
-                    <div className="text-sm font-medium text-gray-700">Confluence</div>
-                    <div className="text-xs text-gray-500 mt-1">Link knowledge base</div>
+                    <div className="text-sm font-medium text-slate-700">Confluence</div>
+                    <div className="text-xs text-slate-500 mt-1">Link knowledge base</div>
                   </div>
-                  <div className="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                  <div className="border-2 border-slate-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
                     <div className="text-2xl mb-2">🎫</div>
-                    <div className="text-sm font-medium text-gray-700">Jira</div>
-                    <div className="text-xs text-gray-500 mt-1">Sync with projects</div>
+                    <div className="text-sm font-medium text-slate-700">Jira</div>
+                    <div className="text-xs text-slate-500 mt-1">Sync with projects</div>
                   </div>
-                  <div className="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+                  <div className="border-2 border-slate-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
                     <div className="text-2xl mb-2">🐙</div>
-                    <div className="text-sm font-medium text-gray-700">GitHub</div>
-                    <div className="text-xs text-gray-500 mt-1">Access repositories</div>
+                    <div className="text-sm font-medium text-slate-700">GitHub</div>
+                    <div className="text-xs text-slate-500 mt-1">Access repositories</div>
                   </div>
                 </div>
               </div>
 
               {/* Sandbox Setup Section */}
               <div className="mb-6">
-                <h4 className="text-base font-semibold text-gray-700 mb-3">Set up your sandboxes</h4>
-                <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="text-base font-semibold text-slate-700 mb-3">Set up your sandboxes</h4>
+                <div className="bg-slate-50 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-gray-700">Authenticate and assign permissions</div>
-                      <div className="text-xs text-gray-500 mt-1">Connect your Salesforce orgs for seamless deployment</div>
+                      <div className="text-sm font-medium text-slate-700">Authenticate and assign permissions</div>
+                      <div className="text-xs text-slate-500 mt-1">Connect your Salesforce orgs for seamless deployment</div>
                     </div>
                     <button 
                       onClick={() => console.log('Authenticating sandbox...')}
@@ -840,9 +840,9 @@ const AIInput: React.FC<AIInputProps> = ({
 
               {/* Team Rules Section */}
               <div className="mb-6">
-                <h4 className="text-base font-semibold text-gray-700 mb-3">Team Rules</h4>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm text-gray-500 italic">Add setup sections here</div>
+                <h4 className="text-base font-semibold text-slate-700 mb-3">Team Rules</h4>
+                <div className="bg-slate-50 rounded-lg p-4">
+                  <div className="text-sm text-slate-500 italic">Add setup sections here</div>
                 </div>
               </div>
             </div>
@@ -866,9 +866,9 @@ const AIInput: React.FC<AIInputProps> = ({
               </h3>
               <button 
                 onClick={() => setShowIntegrationModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
               >
-                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -895,22 +895,22 @@ const AIInput: React.FC<AIInputProps> = ({
             ) : activeIntegrationType === 'org' ? (
               /* Org-specific flow: Authenticate and choose sandbox */
               <div className="space-y-4">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-700 mb-3">Connect your Salesforce org:</p>
+                <div className="bg-slate-50 rounded-lg p-4">
+                  <p className="text-sm text-slate-700 mb-3">Connect your Salesforce org:</p>
                   <button className="w-full px-4 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors mb-3">
                     Authenticate Salesforce
                   </button>
                   
                   {/* Show sandbox selection after auth (simulated) */}
                   <div className="space-y-2">
-                    <p className="text-xs text-gray-600 mb-2">Choose sandbox:</p>
-                    <button className="w-full px-4 py-2 text-sm text-left border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
+                    <p className="text-xs text-slate-600 mb-2">Choose sandbox:</p>
+                    <button className="w-full px-4 py-2 text-sm text-left border-2 border-slate-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
                       Production Org
                     </button>
-                    <button className="w-full px-4 py-2 text-sm text-left border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
+                    <button className="w-full px-4 py-2 text-sm text-left border-2 border-slate-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
                       Dev Sandbox
                     </button>
-                    <button className="w-full px-4 py-2 text-sm text-left border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
+                    <button className="w-full px-4 py-2 text-sm text-left border-2 border-slate-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
                       QA Sandbox
                     </button>
                   </div>
@@ -920,7 +920,7 @@ const AIInput: React.FC<AIInputProps> = ({
               /* Standard flow: Paste URL and confirm */
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
                     {getIntegrationInfo(activeIntegrationType)?.placeholder}
                   </label>
                   <input
@@ -928,7 +928,7 @@ const AIInput: React.FC<AIInputProps> = ({
                     value={integrationUrl}
                     onChange={(e) => handleIntegrationUrlChange(e.target.value)}
                     placeholder={getIntegrationInfo(activeIntegrationType)?.placeholder}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                   />
                 </div>
                 
@@ -945,7 +945,7 @@ const AIInput: React.FC<AIInputProps> = ({
                           setExtractedName('');
                           setShowConfirmation(false);
                         }}
-                        className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="flex-1 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
                       >
                         Cancel
                       </button>

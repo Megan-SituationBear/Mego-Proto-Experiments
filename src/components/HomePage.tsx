@@ -36,7 +36,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const recommendedTemplates = [
     {
       category: "Deployment Fixes",
-      categoryColor: "gray" as const,
+      categoryColor: "slate" as const,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
       description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
@@ -45,7 +45,7 @@ const HomePage: React.FC<HomePageProps> = ({
     },
     {
       category: "Deployment Fixes",
-      categoryColor: "gray" as const,
+      categoryColor: "slate" as const,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
       description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
@@ -54,7 +54,7 @@ const HomePage: React.FC<HomePageProps> = ({
     },
     {
       category: "Deployment Fixes",
-      categoryColor: "gray" as const,
+      categoryColor: "slate" as const,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
       description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
@@ -63,7 +63,7 @@ const HomePage: React.FC<HomePageProps> = ({
     },
     {
       category: "Deployment Fixes",
-      categoryColor: "gray" as const,
+      categoryColor: "slate" as const,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
       description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
@@ -72,7 +72,7 @@ const HomePage: React.FC<HomePageProps> = ({
     },
     {
       category: "Deployment Fixes",
-      categoryColor: "gray" as const,
+      categoryColor: "slate" as const,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
       description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
@@ -81,7 +81,7 @@ const HomePage: React.FC<HomePageProps> = ({
     },
     {
       category: "Deployment Fixes",
-      categoryColor: "gray" as const,
+      categoryColor: "slate" as const,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
       description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
@@ -127,9 +127,9 @@ const HomePage: React.FC<HomePageProps> = ({
   // };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Top Navigation Bar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <nav className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left: Logo and Title */}
@@ -145,7 +145,7 @@ const HomePage: React.FC<HomePageProps> = ({
             {/* Right: Hamburger Menu */}
             <button 
               onClick={() => setShowMenu(!showMenu)}
-              className="p-2 hover:bg-gray-100 rounded transition-colors"
+              className="p-2 hover:bg-slate-100 rounded transition-colors"
               title="Menu"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -177,7 +177,7 @@ const HomePage: React.FC<HomePageProps> = ({
             <div className="flex items-center justify-start p-6">
               <button
                 onClick={() => setShowMenu(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round"/>
@@ -188,7 +188,7 @@ const HomePage: React.FC<HomePageProps> = ({
 
             {/* Free Plan Banner */}
             <div className="mx-6 mb-6 p-4 bg-cyan-100 rounded text-center">
-              <p className="text-sm font-semibold text-gray-800">YOU'RE ON THE FREE PLAN</p>
+              <p className="text-sm font-semibold text-slate-800">YOU'RE ON THE FREE PLAN</p>
               <button className="text-sm text-blue-600 font-semibold hover:underline">
                 UPGRADE TO USE TEMPLATES
               </button>
@@ -196,7 +196,7 @@ const HomePage: React.FC<HomePageProps> = ({
 
             {/* Recent Section */}
             <div className="px-6 mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Recent</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-4">Recent</h3>
               <div className="space-y-3">
                 {/* Recent Templates and Projects */}
                 {favoritedTemplates.slice(0, 2).map((template, index) => (
@@ -206,7 +206,7 @@ const HomePage: React.FC<HomePageProps> = ({
                       setShowMenu(false);
                       onViewTemplate?.(template);
                     }}
-                    className="w-full text-left py-2 text-base text-gray-900 hover:text-blue-600 transition-colors"
+                    className="w-full text-left py-2 text-base text-slate-900 hover:text-blue-600 transition-colors"
                   >
                     Template: {template.title.substring(0, 30)}...
                   </button>
@@ -219,14 +219,14 @@ const HomePage: React.FC<HomePageProps> = ({
                       setShowMenu(false);
                       onViewTemplate?.(project);
                     }}
-                    className="w-full text-left py-2 text-base text-gray-900 hover:text-blue-600 transition-colors"
+                    className="w-full text-left py-2 text-base text-slate-900 hover:text-blue-600 transition-colors"
                   >
                     Project: {project.title.substring(0, 30)}...
                   </button>
                 ))}
 
                 {favoritedTemplates.length === 0 && activeProjects.length === 0 && (
-                  <p className="text-gray-500 text-sm py-2">No recent items</p>
+                  <p className="text-slate-500 text-sm py-2">No recent items</p>
                 )}
                 
                 <button
@@ -234,7 +234,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     setShowMenu(false);
                     setActiveTab('work');
                   }}
-                  className="w-full text-left py-2 text-base text-gray-900 hover:text-blue-600 transition-colors font-medium"
+                  className="w-full text-left py-2 text-base text-slate-900 hover:text-blue-600 transition-colors font-medium"
                 >
                   View All
                 </button>
@@ -248,14 +248,14 @@ const HomePage: React.FC<HomePageProps> = ({
                   setShowMenu(false);
                   setActiveTab('templates');
                 }}
-                className="w-full text-left py-2 text-lg font-bold text-gray-900 hover:text-blue-600 transition-colors"
+                className="w-full text-left py-2 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
               >
                 Template Library
               </button>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-gray-200 my-4"></div>
+            <div className="border-t border-slate-200 my-4"></div>
 
             {/* Account Section */}
             <div className="px-6 space-y-1">
@@ -264,7 +264,7 @@ const HomePage: React.FC<HomePageProps> = ({
                   setShowMenu(false);
                   // Navigate to account
                 }}
-                className="w-full text-left py-3 text-base text-gray-900 hover:text-blue-600 transition-colors"
+                className="w-full text-left py-3 text-base text-slate-900 hover:text-blue-600 transition-colors"
               >
                 My Account
               </button>
@@ -274,7 +274,7 @@ const HomePage: React.FC<HomePageProps> = ({
                   setShowMenu(false);
                   // Navigate to billing
                 }}
-                className="w-full text-left py-3 text-base text-gray-900 hover:text-blue-600 transition-colors"
+                className="w-full text-left py-3 text-base text-slate-900 hover:text-blue-600 transition-colors"
               >
                 Billing & Subscriptions
               </button>
@@ -284,14 +284,14 @@ const HomePage: React.FC<HomePageProps> = ({
                   setShowMenu(false);
                   // Navigate to settings
                 }}
-                className="w-full text-left py-3 text-base text-gray-900 hover:text-blue-600 transition-colors"
+                className="w-full text-left py-3 text-base text-slate-900 hover:text-blue-600 transition-colors"
               >
                 Settings
               </button>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-gray-200 my-4"></div>
+            <div className="border-t border-slate-200 my-4"></div>
 
             {/* Logout */}
             <div className="px-6 pb-6">
@@ -300,7 +300,7 @@ const HomePage: React.FC<HomePageProps> = ({
                   setShowMenu(false);
                   onLogout?.();
                 }}
-                className="w-full text-left py-3 text-base text-gray-900 hover:text-red-600 transition-colors"
+                className="w-full text-left py-3 text-base text-slate-900 hover:text-red-600 transition-colors"
               >
                 Log Out
               </button>
@@ -359,21 +359,21 @@ const HomePage: React.FC<HomePageProps> = ({
             <h2 className="text-3xl font-bold text-slate-900 mb-4">
               <button 
                 onClick={() => setActiveTab('work')}
-                className={`${activeTab === 'work' ? 'text-slate-900' : 'text-gray-400'} hover:text-slate-900 transition-colors`}
+                className={`${activeTab === 'work' ? 'text-slate-900' : 'text-slate-400'} hover:text-slate-900 transition-colors`}
               >
                 Your Work
               </button>
-              <span className="text-gray-400 mx-2">|</span>
+              <span className="text-slate-400 mx-2">|</span>
               <button 
                 onClick={() => setActiveTab('templates')}
-                className={`${activeTab === 'templates' ? 'text-slate-900' : 'text-gray-400'} hover:text-slate-900 transition-colors`}
+                className={`${activeTab === 'templates' ? 'text-slate-900' : 'text-slate-400'} hover:text-slate-900 transition-colors`}
               >
                 Templates For You
               </button>
             </h2>
             <button
               onClick={() => setShowFindTemplatesModal(true)}
-              className="px-6 py-2 rounded border border-gray-300 text-slate-900 text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors"
             >
               Find Templates
             </button>
@@ -427,7 +427,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 </>
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-gray-500">No work items yet. Use a template or star one to add it to your work!</p>
+                  <p className="text-slate-500">No work items yet. Use a template or star one to add it to your work!</p>
                 </div>
               )
             )}

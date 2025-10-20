@@ -120,7 +120,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
           {/* X Close Button - Top Right Corner */}
           <button
             onClick={resetAndClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
             aria-label="Close"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -142,7 +142,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 onClick={() => handleSSOClick('salesforce')}
                 disabled={isLoading}
-                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Salesforce
@@ -152,7 +152,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 onClick={() => handleSSOClick('google')}
                 disabled={isLoading}
-                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Google
@@ -162,7 +162,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 onClick={() => handleSSOClick('github')}
                 disabled={isLoading}
-                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Github
@@ -172,7 +172,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 onClick={() => handleSSOClick('saml')}
                 disabled={isLoading}
-                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 SAML
@@ -189,7 +189,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 onClick={() => setStep('email')}
                 disabled={isLoading}
-                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-6 sm:px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-sm sm:text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Use Email
@@ -199,7 +199,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             /* SSO Terms Acceptance Screen */
             <div className="flex flex-col gap-6">
               {/* Terms Content */}
-              <div className="bg-gray-50 rounded-lg p-4 sm:p-6 max-h-60 sm:max-h-80 overflow-y-auto border border-gray-200">
+              <div className="bg-slate-50 rounded-lg p-4 sm:p-6 max-h-60 sm:max-h-80 overflow-y-auto border border-slate-200">
                 <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">
                   Single Sign-On Terms and Conditions
                 </h3>
@@ -260,7 +260,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
-                className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-sm sm:text-[15px] font-roboto placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-sm sm:text-[15px] font-roboto placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 required
                 disabled={isLoading}
               />
@@ -270,7 +270,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-sm sm:text-[15px] font-roboto placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-sm sm:text-[15px] font-roboto placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 required
                 disabled={isLoading}
               />
@@ -281,7 +281,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm Password"
-                  className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-sm sm:text-[15px] font-roboto placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-sm sm:text-[15px] font-roboto placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   required
                   disabled={isLoading}
                 />
@@ -321,7 +321,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
           {/* Switch Mode */}
           {onSwitchMode && (
-            <p className="text-xs sm:text-sm text-center text-gray-600 mt-4">
+            <p className="text-xs sm:text-sm text-center text-slate-600 mt-4">
               {mode === 'signin' ? "Don't have an account? " : "Already have an account? "}
               <button onClick={onSwitchMode} className="text-blue-600 hover:underline font-medium">
                 {mode === 'signin' ? 'Sign Up' : 'Sign In'}

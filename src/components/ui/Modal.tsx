@@ -75,7 +75,7 @@ const Modal: React.FC<ModalProps> = ({
             {/* Close button */}
             <button
               onClick={onClose}
-              className="ml-auto w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-white hover:text-gray-300 transition-colors flex-shrink-0"
+              className="ml-auto w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-white hover:text-slate-300 transition-colors flex-shrink-0"
               aria-label="Close"
             >
               <svg

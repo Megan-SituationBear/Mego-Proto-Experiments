@@ -82,7 +82,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     'Effective Planners': 'bg-amber-100 text-amber-700',
     'Strategists': 'bg-indigo-100 text-indigo-700',
     'Deployment Artifacts': 'bg-blue-100 text-blue-700',
-    'Deployment Fixes': 'bg-gray-100 text-gray-700',
+    'Deployment Fixes': 'bg-slate-100 text-slate-700',
     'New Project': 'bg-indigo-100 text-indigo-700',
   };
 
@@ -164,41 +164,41 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     ];
 
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-50">
         {/* Header */}
-        <div className="bg-white border-b border-gray-300 shadow-md">
+        <div className="bg-white border-b border-slate-300 shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               {/* Back Button */}
               <button
                 onClick={onBack}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                 title="Back"
               >
-                <ArrowLeft className="w-6 h-6 text-gray-700" />
+                <ArrowLeft className="w-6 h-6 text-slate-700" />
               </button>
 
               {/* Center: Title */}
               <div className="flex-1 text-center">
-                <p className="text-xs text-gray-500 mb-1">Template Duplicate | {getRelativeTime()}</p>
-                <h1 className="text-lg font-bold text-gray-900">{templateData.title}</h1>
+                <p className="text-xs text-slate-500 mb-1">Template Duplicate | {getRelativeTime()}</p>
+                <h1 className="text-lg font-bold text-slate-900">{templateData.title}</h1>
               </div>
 
               {/* Right: Share and Favorite */}
               <div className="flex items-center gap-2">
                 <button
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                   title="Share"
                 >
-                  <Share2 className="w-5 h-5 text-gray-700" />
+                  <Share2 className="w-5 h-5 text-slate-700" />
                 </button>
                 <button
                   onClick={handleToggleFavorite}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                   title={isFavorite ? 'Unfavorite' : 'Favorite'}
                 >
                   <Star
-                    className={`w-5 h-5 ${isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-700'}`}
+                    className={`w-5 h-5 ${isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-slate-700'}`}
                   />
                 </button>
               </div>
@@ -229,7 +229,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
             <div className="flex-1">
               {/* AI Input Section */}
               <div className="mb-6">
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-slate-600 text-sm mb-4">
                   Modify this artifact at any time here. A new version will be saved.
                 </p>
                 <AIInput
@@ -251,13 +251,13 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
               {/* Selected Content Display */}
               {selectedContent ? (
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">{selectedContent.title}</h2>
-                  <p className="text-gray-700 whitespace-pre-wrap">{selectedContent.content}</p>
+                <div className="bg-white rounded-lg border border-slate-200 p-6">
+                  <h2 className="text-xl font-bold text-slate-900 mb-4">{selectedContent.title}</h2>
+                  <p className="text-slate-700 whitespace-pre-wrap">{selectedContent.content}</p>
                 </div>
               ) : (
-                <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-                  <p className="text-gray-500">Select an output or highlight from the right panel to view and edit</p>
+                <div className="bg-white rounded-lg border border-slate-200 p-8 text-center">
+                  <p className="text-slate-500">Select an output or highlight from the right panel to view and edit</p>
                 </div>
               )}
             </div>
@@ -265,8 +265,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
             {/* Right Sidebar - Output & Highlights */}
             <div className="w-80 space-y-6">
               {/* Output Section */}
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Output</h3>
+              <div className="bg-white rounded-lg border border-slate-200 p-4">
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Output</h3>
                 <div className="space-y-3">
                   {outputItems.map((item, index) => (
                     <button
@@ -276,18 +276,18 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                         title: item.title,
                         content: item.content
                       })}
-                      className="w-full text-left p-3 hover:bg-gray-50 rounded transition-colors border border-gray-200"
+                      className="w-full text-left p-3 hover:bg-slate-50 rounded transition-colors border border-slate-200"
                     >
-                      <p className="font-semibold text-gray-900">{item.title}:</p>
-                      <p className="text-sm text-gray-600">{item.subtitle}</p>
+                      <p className="font-semibold text-slate-900">{item.title}:</p>
+                      <p className="text-sm text-slate-600">{item.subtitle}</p>
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* Highlights Section */}
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Highlights</h3>
+              <div className="bg-white rounded-lg border border-slate-200 p-4">
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Highlights</h3>
                 <div className="space-y-2">
                   {highlightItems.map((item: string, index: number) => (
                     <button
@@ -297,7 +297,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                         title: `Highlight: ${item}`,
                         content: `Details about ${item}. This section provides comprehensive information and guidance.`
                       })}
-                      className="w-full text-left p-2 hover:bg-gray-50 rounded transition-colors text-sm text-gray-700"
+                      className="w-full text-left p-2 hover:bg-slate-50 rounded transition-colors text-sm text-slate-700"
                     >
                       <span className="text-green-600 mr-2">✓</span>
                       {item}
@@ -315,36 +315,36 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   // New Project View - simplified layout with conversation
   if (isNewProject) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-50">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-white border-b border-slate-200">
           <div className="max-w-4xl mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               {/* Left: Back Button */}
               <button
                 onClick={onBack}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
               >
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
+                <ArrowLeft className="w-5 h-5 text-slate-600" />
               </button>
 
               {/* Center: Title */}
               <div className="flex-1 text-center">
-                <div className="text-xs text-gray-500 mb-1">
+                <div className="text-xs text-slate-500 mb-1">
                   Project - New
                 </div>
-                <h1 className="text-xl font-semibold text-gray-900">
+                <h1 className="text-xl font-semibold text-slate-900">
                   {templateData.title}
                 </h1>
               </div>
 
               {/* Right: Share and Favorite */}
               <div className="flex items-center gap-2">
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Share2 className="w-5 h-5 text-gray-600" />
+                <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                  <Share2 className="w-5 h-5 text-slate-600" />
                 </button>
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Star className="w-5 h-5 text-gray-600" />
+                <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                  <Star className="w-5 h-5 text-slate-600" />
                 </button>
               </div>
             </div>
@@ -367,8 +367,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
         {/* Main Content */}
         <div className="max-w-4xl mx-auto px-6 py-8">
           {/* Continue Conversation Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-            <h2 className="text-center text-gray-600 font-medium mb-6">
+          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+            <h2 className="text-center text-slate-600 font-medium mb-6">
               Continue The Conversation
             </h2>
 
@@ -390,7 +390,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           </div>
 
           {/* Conversation Label */}
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-slate-600">
             Conv
           </div>
         </div>
@@ -399,7 +399,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Header - New Design with centered title */}
       <div className="bg-white border-b border-slate-300 shadow-md">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -407,15 +407,15 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
             {/* Left: Back Button */}
             <button
               onClick={onBack}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
+              <ArrowLeft className="w-5 h-5 text-slate-600" />
             </button>
 
             {/* Center: Title */}
             <div className="flex-1 flex flex-col items-center justify-center">
               {/* Last Modified Date */}
-              <div className="text-xs text-gray-500 mb-1">
+              <div className="text-xs text-slate-500 mb-1">
                 {type === 'artifact' ? 'Artifact' : 'Project'} - Last Modified: {getRelativeTime()}
               </div>
               {/* Category Pill (only for templates/projects) */}
@@ -425,23 +425,23 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                 </span>
               )}
               {/* Title */}
-              <h1 className="text-xl font-semibold text-gray-900 text-center">
+              <h1 className="text-xl font-semibold text-slate-900 text-center">
                 {templateData.title}
               </h1>
             </div>
 
             {/* Right: Share and Favorite Buttons */}
             <div className="flex items-center gap-2">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <Share2 className="w-5 h-5 text-gray-600" />
+              <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                <Share2 className="w-5 h-5 text-slate-600" />
               </button>
               <button
                 onClick={handleToggleFavorite}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <Star
                   className={`w-5 h-5 ${
-                    isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-600'
+                    isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-slate-600'
                   }`}
                 />
               </button>
@@ -498,23 +498,23 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           <div className="max-w-3xl mx-auto">
             {/* Artifact Message */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-center">
-              <p className="text-gray-700">
+              <p className="text-slate-700">
                 Modify this artifact at any time here. A new version will be saved.
               </p>
             </div>
 
             {/* Input Area */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
               <div className="flex items-center gap-3">
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                  <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                 </button>
                 <input
                   type="text"
                   placeholder="How do you want to modify this work?"
-                  className="flex-1 border-none outline-none text-gray-700 placeholder-gray-400"
+                  className="flex-1 border-none outline-none text-slate-700 placeholder-slate-400"
                 />
                 <button className="p-3 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -530,16 +530,16 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2">
             {/* Tabs */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="border-b border-gray-200">
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+              <div className="border-b border-slate-200">
                 <div className="flex">
                   <button className="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600">
                     The Work
                   </button>
-                  <button className="px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                  <button className="px-6 py-4 text-sm font-medium text-slate-500 hover:text-slate-700">
                     Highlights
                   </button>
-                  <button className="px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                  <button className="px-6 py-4 text-sm font-medium text-slate-500 hover:text-slate-700">
                     Output
                   </button>
                 </div>
@@ -548,7 +548,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               {/* Tab Content */}
               <div className="p-6">
                 {/* Stats */}
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-6">
+                <div className="flex items-center gap-4 text-sm text-slate-600 mb-6">
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4" />
                     <span>{templateData.favorites.toLocaleString()}</span>
@@ -560,7 +560,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                 </div>
 
                 {/* Subtitle */}
-                <p className="text-gray-600 mb-6">{templateData.subtitle}</p>
+                <p className="text-slate-600 mb-6">{templateData.subtitle}</p>
 
                 {/* Time Savings */}
                 <div className="flex items-center gap-2 text-blue-600 mb-8">
@@ -573,11 +573,11 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                 {/* How This Template Works */}
                 {templateData.sections.map((section: any, idx: number) => (
                   <div key={idx} className="mb-8">
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-6">
+                      <h3 className="text-xl font-bold text-slate-900 mb-4">
                         {section.title}
                       </h3>
-                      <p className="text-gray-600 mb-6">{section.description}</p>
+                      <p className="text-slate-600 mb-6">{section.description}</p>
 
                       {/* Steps */}
                       <div className="space-y-4">
@@ -587,10 +587,10 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                               {step.number}
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-900 mb-1">
+                              <h4 className="font-semibold text-slate-900 mb-1">
                                 {step.title}
                               </h4>
-                              <p className="text-sm text-gray-600">{step.description}</p>
+                              <p className="text-sm text-slate-600">{step.description}</p>
                             </div>
                           </div>
                         ))}
@@ -604,14 +604,14 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
           {/* Right Column - CTA Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-6">
+              <h3 className="text-xl font-bold text-slate-900 mb-4">
                 Ready to Get Started?
               </h3>
 
               {actualIsLoggedIn ? (
                 <>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-slate-600 mb-6">
                     Use this template to start your {type === 'project' ? 'project' : 'artifact'}.
                   </p>
                   <button
@@ -623,7 +623,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                 </>
               ) : (
                 <>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-slate-600 mb-6">
                     Sign up to use this template and access all features of Copado AI.
                   </p>
                   <button
@@ -632,7 +632,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                   >
                     View Pricing Plans
                   </button>
-                  <div className="text-center text-sm text-gray-600">
+                  <div className="text-center text-sm text-slate-600">
                     Already have an account?{' '}
                     <button onClick={onSignIn} className="text-blue-600 hover:text-blue-700 font-medium">
                       Sign in
@@ -642,11 +642,11 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               )}
 
               {/* What's Included */}
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-4">What's Included:</h4>
+              <div className="mt-8 pt-6 border-t border-slate-200">
+                <h4 className="font-semibold text-slate-900 mb-4">What's Included:</h4>
                 <ul className="space-y-3">
                   {templateData.whatsIncluded.map((item: string, idx: number) => (
-                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                    <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
                       <svg
                         className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
                         fill="currentColor"

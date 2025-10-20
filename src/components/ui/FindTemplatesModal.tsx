@@ -86,7 +86,7 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     blue: 'bg-blue-100 text-blue-700',
     green: 'bg-green-100 text-green-700',
     amber: 'bg-amber-100 text-amber-700',
-    gray: 'bg-gray-100 text-gray-700',
+    slate: 'bg-slate-100 text-slate-700',
   };
 
   const filteredTemplates = allTemplates.filter(template => {
@@ -113,14 +113,14 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Find Templates</h2>
-            <p className="text-sm text-gray-600">Discover time-saving templates for your projects</p>
+            <p className="text-sm text-slate-600">Discover time-saving templates for your projects</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
             aria-label="Close"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -130,10 +130,10 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
         </div>
 
         {/* Search Bar */}
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-slate-200">
           <div className="relative">
             <svg 
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" 
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" 
               width="20" 
               height="20" 
               viewBox="0 0 24 24" 
@@ -149,15 +149,15 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search templates..."
-              className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all"
+              className="w-full pl-12 pr-4 py-3 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all"
             />
           </div>
         </div>
 
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar - Categories */}
-          <div className="w-64 border-r border-gray-200 p-4 overflow-y-auto">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">Categories</h3>
+          <div className="w-64 border-r border-slate-200 p-4 overflow-y-auto">
+            <h3 className="text-sm font-semibold text-slate-500 uppercase mb-3">Categories</h3>
             <div className="space-y-1">
               {categories.map((category) => (
                 <button
@@ -166,7 +166,7 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
                   className={`w-full text-left px-4 py-2 rounded-lg transition-all ${
                     selectedCategory === category.id
                       ? 'bg-blue-50 text-blue-700 font-medium'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -174,7 +174,7 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
                     <span className={`text-xs px-2 py-1 rounded-full ${
                       selectedCategory === category.id
                         ? 'bg-blue-100 text-blue-700'
-                        : 'bg-gray-100 text-gray-600'
+                        : 'bg-slate-100 text-slate-600'
                     }`}>
                       {category.count}
                     </span>
@@ -188,14 +188,14 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
           <div className="flex-1 p-6 overflow-y-auto">
             {filteredTemplates.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"/>
                     <path d="m21 21-4.35-4.35"/>
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">No templates found</h3>
-                <p className="text-gray-600">Try adjusting your search or filters</p>
+                <p className="text-slate-600">Try adjusting your search or filters</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -203,7 +203,7 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
                   <button
                     key={index}
                     onClick={() => onSelectTemplate(template)}
-                    className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-lg hover:border-blue-300 transition-all text-left group"
+                    className="bg-white rounded-lg border border-slate-200 p-5 hover:shadow-lg hover:border-blue-300 transition-all text-left group"
                   >
                     {/* Category Badge */}
                     <div className="mb-3">
@@ -218,12 +218,12 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
                     </h3>
 
                     {/* Description */}
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    <p className="text-sm text-slate-600 mb-4 line-clamp-2">
                       {template.description}
                     </p>
 
                     {/* Stats */}
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center justify-between text-xs text-slate-500">
                       <div className="flex items-center gap-4">
                         <span className="flex items-center gap-1">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">

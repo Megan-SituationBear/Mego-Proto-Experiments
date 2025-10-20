@@ -236,7 +236,14 @@ function App() {
 
   const handleSelectPlan = (plan: string) => {
     console.log('Selected plan:', plan);
-    setCurrentView('onboarding');
+    if (plan === 'Free') {
+      // Free plan: log in and go directly to home
+      setIsLoggedIn(true);
+      setCurrentView('home');
+    } else {
+      // Other plans: go to onboarding
+      setCurrentView('onboarding');
+    }
   };
 
   if (currentView === 'intro') {

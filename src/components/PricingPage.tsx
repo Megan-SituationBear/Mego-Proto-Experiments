@@ -11,6 +11,20 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
 
   const plans = [
     {
+      name: 'Free',
+      description: 'Get started with essential features at no cost',
+      monthlyPrice: 0,
+      annualPrice: 0,
+      features: [
+        '3 projects per month',
+        'Basic AI assistance',
+        'Community templates',
+        'Community support',
+      ],
+      cta: 'Get Started Free',
+      highlighted: false,
+    },
+    {
       name: 'Starter',
       description: 'Perfect for individuals and small teams getting started',
       monthlyPrice: 29,
@@ -128,7 +142,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
 
       {/* Pricing Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {plans.map((plan, index) => (
             <div
               key={index}
@@ -154,17 +168,22 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
 
                 {/* Price */}
                 <div className="mb-6">
-                  {plan.monthlyPrice ? (
+                  {plan.monthlyPrice !== null ? (
                     <div>
                       <div className="flex items-baseline gap-2">
                         <span className="text-5xl font-bold text-slate-900">
-                          ${billingCycle === 'monthly' ? plan.monthlyPrice : Math.floor(plan.annualPrice / 12)}
+                          ${plan.monthlyPrice === 0 ? '0' : (billingCycle === 'monthly' ? plan.monthlyPrice : Math.floor(plan.annualPrice / 12))}
                         </span>
                         <span className="text-gray-600">/month</span>
                       </div>
-                      {billingCycle === 'annual' && (
+                      {billingCycle === 'annual' && plan.monthlyPrice > 0 && (
                         <p className="text-sm text-gray-500 mt-1">
                           ${plan.annualPrice} billed annually
+                        </p>
+                      )}
+                      {plan.monthlyPrice === 0 && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          Forever free
                         </p>
                       )}
                     </div>

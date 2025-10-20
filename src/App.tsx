@@ -181,12 +181,12 @@ function App() {
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    // Stay on intro page - modal will close and user stays on same view
+    setCurrentView('home');
   };
 
   const handleSignUp = () => {
     setIsLoggedIn(true);
-    // Skip onboarding - go directly to logged in state
+    setCurrentView('home');
   };
 
   const handleOnboardingComplete = () => {

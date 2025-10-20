@@ -207,6 +207,10 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setHasProjects(false);
+    setMessages([]);
+    setConversationMessages([]);
+    setUserMessageCount(0);
+    setHasStarted(false);
     setCurrentView('intro');
   };
 
@@ -326,13 +330,11 @@ function App() {
         initialIsFavorite={isFavorited}
         isNewProject={isNewProject}
         onBack={() => {
-          // Reset conversation when going back from new project
-          if (isNewProject) {
-            setMessages([]);
-            setConversationMessages([]);
-            setUserMessageCount(0);
-            setHasStarted(false);
-          }
+          // Always reset conversation when going back to home
+          setMessages([]);
+          setConversationMessages([]);
+          setUserMessageCount(0);
+          setHasStarted(false);
           setCurrentView(isLoggedIn ? 'home' : 'intro');
         }}
         onUseTemplate={() => {

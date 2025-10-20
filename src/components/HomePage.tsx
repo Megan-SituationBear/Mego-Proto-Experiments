@@ -33,7 +33,6 @@ const HomePage: React.FC<HomePageProps> = ({
   onLogout,
   onSendMessage,
   onViewTemplate,
-  conversationMessages = [],
   userMessageCount = 0,
 }) => {
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
@@ -282,8 +281,8 @@ const HomePage: React.FC<HomePageProps> = ({
             autoFocus={false}
             isLoggedIn={true}
             pageContext="home"
-            hasConversation={conversationMessages.length > 0}
-            messages={conversationMessages}
+            hasConversation={false}
+            messages={[]}
             showTypingIndicator={showCopadoTyping}
           />
 

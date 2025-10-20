@@ -9,26 +9,26 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const [name, setName] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const interests = [
+  const roles = [
     {
-      title: 'Fix Issues Faster',
-      description: 'Resolve bugs and issues quickly',
-      icon: '🔧',
-    },
-    {
-      title: 'Deploy More Often',
-      description: 'Streamline deployment process',
+      title: 'Save Time Deploying',
+      description: 'Automate and streamline Salesforce deployments',
       icon: '🚀',
     },
     {
-      title: 'Manage Teams',
-      description: 'Collaborate effectively',
-      icon: '👥',
+      title: 'Plan Using Data',
+      description: 'Make decisions with analytics and insights',
+      icon: '📊',
     },
     {
-      title: 'Automate Workflows',
-      description: 'Save time with automation',
-      icon: '⚡',
+      title: 'Ensure Quality',
+      description: 'Test and validate Salesforce changes',
+      icon: '✓',
+    },
+    {
+      title: 'Manage Releases',
+      description: 'Coordinate and track release cycles',
+      icon: '📦',
     },
   ];
 
@@ -66,7 +66,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
     }
   };
 
-  const handleInterestClick = (title: string) => {
+  const handleRoleClick = (title: string) => {
     setIsAnimating(false);
     setTimeout(() => setStep(3), 300);
   };
@@ -138,31 +138,31 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
             </div>
           )}
 
-          {/* Step 2: Interests */}
+          {/* Step 2: Salesforce Role */}
           {step === 2 && (
             <div className="text-center">
               <h1 className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
-                What Would You Like To Spend Time Fixing?
+                What Do You Do With Salesforce?
               </h1>
               <p className="text-xl text-white/90 mb-12">
-                Pick one to continue
+                Pick your primary focus
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                {interests.map((interest, index) => (
+                {roles.map((role, index) => (
                   <button
-                    key={interest.title}
-                    onClick={() => handleInterestClick(interest.title)}
+                    key={role.title}
+                    onClick={() => handleRoleClick(role.title)}
                     className="group p-8 rounded-2xl bg-white/95 backdrop-blur-sm hover:bg-white hover:scale-105 transition-all duration-300 text-left shadow-2xl"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
-                      {interest.icon}
+                      {role.icon}
                     </div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">
-                      {interest.title}
+                      {role.title}
                     </h3>
                     <p className="text-gray-600">
-                      {interest.description}
+                      {role.description}
                     </p>
                   </button>
                 ))}

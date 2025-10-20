@@ -164,7 +164,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="bg-white border-b border-gray-300">
+        <div className="bg-white border-b border-gray-300 shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               {/* Back Button */}
@@ -175,6 +175,12 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               >
                 <ArrowLeft className="w-6 h-6 text-gray-700" />
               </button>
+
+              {/* Center: Title */}
+              <div className="flex-1 text-center">
+                <p className="text-xs text-gray-500 mb-1">Template Duplicate | {getRelativeTime()}</p>
+                <h1 className="text-lg font-bold text-gray-900">{templateData.title}</h1>
+              </div>
 
               {/* Right: Share and Favorite */}
               <div className="flex items-center gap-2">
@@ -219,11 +225,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           <div className="flex gap-8">
             {/* Left Column - Main Content */}
             <div className="flex-1">
-              <div className="mb-6">
-                <p className="text-sm text-gray-500">Project | {getRelativeTime()}</p>
-                <h1 className="text-2xl font-bold text-gray-900 mt-1">{templateData.title}</h1>
-              </div>
-
               {/* AI Input Section */}
               <div className="mb-6">
                 <p className="text-gray-600 text-sm mb-4">

@@ -31,8 +31,12 @@ const HomePage: React.FC<HomePageProps> = ({
   // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
   const [selectedGoalsForTemplates, setSelectedGoalsForTemplates] = useState<string[]>([]);
-  const hasWork = hasProjects || favoritedTemplates.length > 0 || activeProjects.length > 0;
-  const [activeTab, setActiveTab] = useState<'work' | 'templates'>(hasWork ? 'work' : 'templates');
+  const hasWork = recentItems.length > 0 || favoritedTemplates.length > 0;
+  const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'suggested'>(
+    recentItems.length > 0 ? 'recent' : 
+    favoritedTemplates.length > 0 ? 'favorites' : 
+    'suggested'
+  );
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   
@@ -367,35 +371,45 @@ const HomePage: React.FC<HomePageProps> = ({
           )}
         </div>
 
-        {/* Your Work | Templates For You Section */}
+        {/* Pick up these Section */}
         <div className="mb-12">
           <div className="text-center mb-6">
             <h2 className="text-3xl font-bold text-slate-900 mb-6">
-              {activeTab === 'work' ? 'My Work' : 'Templates For You'}
+              Pick up these
             </h2>
             
             {/* Toggle Button */}
             <div className="flex flex-col items-center gap-3 mb-6">
               <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
                 <button
-                  onClick={() => setActiveTab('work')}
+                  onClick={() => setActiveTab('recent')}
                   className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeTab === 'work'
+                    activeTab === 'recent'
                       ? 'bg-blue-600 text-white'
                       : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  My Work
+                  Recent
                 </button>
                 <button
-                  onClick={() => setActiveTab('templates')}
+                  onClick={() => setActiveTab('favorites')}
                   className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeTab === 'templates'
+                    activeTab === 'favorites'
                       ? 'bg-blue-600 text-white'
                       : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  Templates
+                  Favorites
+                </button>
+                <button
+                  onClick={() => setActiveTab('suggested')}
+                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                    activeTab === 'suggested'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  Suggested Templates
                 </button>
               </div>
               
@@ -408,10 +422,51 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activeTab === 'templates' ? (
+            {activeTab === 'recent' ? (
+              recentItems.length > 0 ? (
+                recentItems.map((item, index) => (
+                  <TemplateCard
+                    key={`recent-${index}`}
+                    category={item.category || 'Recent Item'}
+                    title={item.title}
+                    description={item.description || 'Recently accessed'}
+                    remixCount={item.views || 0}
+                    favoriteCount={item.favorites || 0}
+                    variant="standard"
+                    isFavorited={favoritedTemplates.some(t => t.title === item.title)}
+                    onClick={() => onViewTemplate?.(item)}
+                  />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-slate-500">No recent items yet. Start working on templates to see them here!</p>
+                </div>
+              )
+            ) : activeTab === 'favorites' ? (
+              favoritedTemplates.length > 0 ? (
+                favoritedTemplates.map((template, index) => (
+                  <TemplateCard
+                    key={`favorite-${index}`}
+                    category={template.category}
+                    title={template.title}
+                    description={template.description}
+                    remixCount={template.views || 0}
+                    favoriteCount={template.favorites || 0}
+                    variant="standard"
+                    isFavorited={true}
+                    onClick={() => onViewTemplate?.(template)}
+                  />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-slate-500">No favorites yet. Star templates to save them here!</p>
+                </div>
+              )
+            ) : (
+              // Suggested Templates
               recommendedTemplates.map((template, index) => (
                 <TemplateCard
-                  key={index}
+                  key={`suggested-${index}`}
                   category={template.category}
                   title={template.title}
                   description={template.description}
@@ -422,43 +477,6 @@ const HomePage: React.FC<HomePageProps> = ({
                   onClick={() => onViewTemplate?.(template)}
                 />
               ))
-            ) : (
-              (activeProjects.length > 0 || favoritedTemplates.length > 0) ? (
-                <>
-                  {/* Active Projects */}
-                  {activeProjects.map((project, index) => (
-                    <TemplateCard
-                      key={`project-${index}`}
-                      category={project.category || 'Active Project'}
-                      title={project.title}
-                      description={project.description || 'Work in progress'}
-                      remixCount={project.views || 0}
-                      favoriteCount={project.favorites || 0}
-                      variant="standard"
-                      isFavorited={false}
-                      onClick={() => onViewTemplate?.(project)}
-                    />
-                  ))}
-                  {/* Favorited Templates */}
-                  {favoritedTemplates.map((template, index) => (
-                    <TemplateCard
-                      key={`favorite-${index}`}
-                      category={template.category}
-                      title={template.title}
-                      description={template.description}
-                      remixCount={template.views || 0}
-                      favoriteCount={template.favorites || 0}
-                      variant="standard"
-                      isFavorited={true}
-                      onClick={() => onViewTemplate?.(template)}
-                    />
-                  ))}
-                </>
-              ) : (
-                <div className="col-span-full text-center py-12">
-                  <p className="text-slate-500">No work items yet. Use a template or star one to add it to your work!</p>
-                </div>
-              )
             )}
           </div>
         </div>

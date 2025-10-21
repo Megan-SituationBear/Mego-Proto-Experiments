@@ -441,7 +441,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           isFavorited={isFavorite}
           onFavorite={handleToggleFavorite}
           primaryAction={{
-            label: 'Remix',
+            label: 'Run',
             onClick: () => onUseTemplate?.(), // Opens pricing page when not logged in
             variant: 'blue'
           }}
@@ -655,7 +655,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           isFavorited={isFavorite}
           onFavorite={handleToggleFavorite}
           primaryAction={{
-            label: 'Remix',
+            label: 'Run',
             onClick: () => {
               setTemplateName(templateData.title || 'My Project');
               setShowRenameModal(true);

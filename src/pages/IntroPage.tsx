@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, TemplateCard, type ConversationMessage } from '../components/ui';
+import { AIInput, IntegrationsModal, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
 import AuthModal from '../components/ui/AuthModal';
 import MatchingModal from '../components/ui/MatchingModal';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
@@ -199,24 +199,13 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation Bar */}
-      <nav className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-end items-center h-16 gap-3">
-            <button
-              onClick={openSignInModal}
-              className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors"
-            >
-              Login
-            </button>
-            <button
-              onClick={openSignUpModal}
-              className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
-            >
-              Sign Up
-            </button>
-          </div>
-        </div>
-      </nav>
+      <TopNav
+        title=""
+        showBackButton={false}
+        showAuthButtons={true}
+        onLogin={openSignInModal}
+        onSignUp={openSignUpModal}
+      />
 
       {/* Hero Section with Templates - Dark Background */}
       <section className="bg-[#1a2b4a] py-12 px-4">

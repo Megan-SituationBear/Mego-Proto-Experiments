@@ -31,6 +31,11 @@ interface TopNavProps {
   // Logo (for landing/home)
   showLogo?: boolean;
   logoText?: string;
+  
+  // Landing page specific (logged out)
+  showAuthButtons?: boolean;
+  onLogin?: () => void;
+  onSignUp?: () => void;
 }
 
 const TopNav: React.FC<TopNavProps> = ({
@@ -47,6 +52,9 @@ const TopNav: React.FC<TopNavProps> = ({
   onHamburgerClick,
   showLogo = false,
   logoText = '+ ASK COPADO',
+  showAuthButtons = false,
+  onLogin,
+  onSignUp,
 }) => {
   const badgeColors = {
     green: 'bg-green-100 text-green-700',
@@ -103,6 +111,23 @@ const TopNav: React.FC<TopNavProps> = ({
 
           {/* Right Side */}
           <div className="flex items-center gap-3">
+            {showAuthButtons && (
+              <>
+                <button
+                  onClick={onLogin}
+                  className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={onSignUp}
+                  className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
+            
             {showFavorite && onFavorite && (
               <button
                 onClick={onFavorite}

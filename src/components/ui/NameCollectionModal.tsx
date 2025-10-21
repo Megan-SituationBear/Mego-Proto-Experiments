@@ -31,50 +31,54 @@ const NameCollectionModal: React.FC<NameCollectionModalProps> = ({
       />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="relative bg-white rounded-2xl p-8 shadow-2xl max-w-md w-full">
-          {/* Title */}
-          <h2 
-            className="text-2xl sm:text-[28px] font-roboto font-semibold text-center text-slate-950 mb-2" 
-            style={{ letterSpacing: '-0.03em' }}
-          >
-            What should we call you?
-          </h2>
+        <DialogPanel 
+          className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full"
+          style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+        >
+          <div className="p-8">
+            {/* Title */}
+            <h2 className="text-2xl font-bold text-slate-900 mb-2 text-center">
+              What should we call you?
+            </h2>
 
-          {/* Subtitle */}
-          <p className="text-sm text-slate-600 text-center mb-8">
-            Help us personalize your Copado experience
-          </p>
+            {/* Subtitle */}
+            <p className="text-slate-700 mb-8 text-center" style={{ fontSize: '14px' }}>
+              Help us personalize your Copado experience
+            </p>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-              className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-[15px] font-roboto placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-              required
-              autoFocus
-            />
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+                style={{ fontSize: '14px' }}
+                required
+                autoFocus
+              />
 
-            <button
-              type="submit"
-              disabled={!name.trim()}
-              className="w-full px-8 py-3 bg-blue-600 text-white rounded text-[15px] font-roboto font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Continue
-            </button>
-
-            {onBack && (
               <button
-                type="button"
-                onClick={onBack}
-                className="text-sm text-blue-600 hover:underline"
+                type="submit"
+                disabled={!name.trim()}
+                className="w-full px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ fontSize: '14px', fontFamily: 'Roboto, sans-serif', letterSpacing: '-0.01em' }}
               >
-                ← Back
+                Continue
               </button>
-            )}
-          </form>
+
+              {onBack && (
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  ← Back
+                </button>
+              )}
+            </form>
+          </div>
         </DialogPanel>
       </div>
     </Dialog>

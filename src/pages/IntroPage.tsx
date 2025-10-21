@@ -89,19 +89,25 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
     setUserName(name);
     setShowNameModal(false);
     
-    // Show building animation
-    setShowBuildingModal(true);
+    if (authMode === 'signin') {
+      // Sign in: Show building animation then go to home
+      setShowBuildingModal(true);
+    } else {
+      // Sign up: Go to pricing page
+      setPendingSSOProvider(null);
+      if (onViewPricing) {
+        onViewPricing();
+      }
+    }
   };
 
   const handleBuildingComplete = () => {
     setShowBuildingModal(false);
     setPendingSSOProvider(null);
     
-    // Complete login/signup
-    if (authMode === 'signin' && onLogin) {
+    // Complete sign-in (sign-up already went to pricing)
+    if (onLogin) {
       onLogin();
-    } else if (authMode === 'signup' && onSignUp) {
-      onSignUp();
     }
   };
 

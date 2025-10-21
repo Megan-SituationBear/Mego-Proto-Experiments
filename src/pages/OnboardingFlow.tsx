@@ -33,7 +33,11 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
     // Simulate SSO login
     setTimeout(() => {
       setIsLoading(false);
-      setStep('terms');
+      if (isSignUp) {
+        setStep('terms'); // Sign up: go to terms
+      } else {
+        onComplete(); // Login: complete immediately
+      }
     }, 1500);
   };
 

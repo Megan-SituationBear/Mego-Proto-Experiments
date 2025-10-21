@@ -197,43 +197,38 @@ const HomePage: React.FC<HomePageProps> = ({
               </button>
             </div>
 
-            {/* Menu Items */}
-            <div className="px-6 mb-6">
-              <div className="space-y-2">
-                {/* Recent */}
-                <button
-                  onClick={() => {
-                    setShowMenu(false);
-                    setActiveTab('work');
-                  }}
-                  className="w-full text-left py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
-                >
-                  Recent
-                </button>
-                
-                {/* Favorite */}
-                <button
-                  onClick={() => {
-                    setShowMenu(false);
-                    setActiveTab('work');
-                  }}
-                  className="w-full text-left py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
-                >
-                  Favorite
-                </button>
-                
-                {/* Templates */}
-                <button
-                  onClick={() => {
-                    setShowMenu(false);
-                    setActiveTab('templates');
-                  }}
-                  className="w-full text-left py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
-                >
-                  Templates
-                </button>
-              </div>
-            </div>
+            {/* Recent */}
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                setActiveTab('work');
+              }}
+              className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
+            >
+              Recent
+            </button>
+            
+            {/* Favorite */}
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                setActiveTab('work');
+              }}
+              className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
+            >
+              Favorite
+            </button>
+            
+            {/* Templates */}
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                setActiveTab('templates');
+              }}
+              className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
+            >
+              Templates
+            </button>
 
             {/* Divider */}
             <div className="border-t border-slate-200 my-4"></div>

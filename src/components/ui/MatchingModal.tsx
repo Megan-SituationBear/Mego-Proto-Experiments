@@ -5,9 +5,10 @@ interface MatchingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: () => void;
+  onBrowseTemplates?: (selectedGoals: string[]) => void;
 }
 
-const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComplete }) => {
+const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComplete, onBrowseTemplates }) => {
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
 
@@ -170,13 +171,18 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
                 onClick={handleTryCopado}
                 className="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all"
               >
-                Try Copado
+                Start with Copado AI
               </button>
               <button
-                onClick={resetAndClose}
+                onClick={() => {
+                  if (onBrowseTemplates) {
+                    onBrowseTemplates(selectedGoals);
+                  }
+                  resetAndClose();
+                }}
                 className="w-full py-3 rounded-lg border-2 border-slate-300 text-slate-900 font-medium hover:bg-slate-50 transition-all"
               >
-                Browse Templates
+                Browse Matched Templates
               </button>
             </div>
           </div>

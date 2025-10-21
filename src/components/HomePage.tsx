@@ -197,64 +197,42 @@ const HomePage: React.FC<HomePageProps> = ({
               </button>
             </div>
 
-            {/* Recent Section */}
+            {/* Menu Items */}
             <div className="px-6 mb-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">Recent</h3>
-              <div className="space-y-3">
-                {/* Recent Templates and Projects */}
-                {favoritedTemplates.slice(0, 2).map((template, index) => (
-                  <button
-                    key={`fav-${index}`}
-                    onClick={() => {
-                      setShowMenu(false);
-                      onViewTemplate?.(template);
-                    }}
-                    className="w-full text-left py-2 text-base text-slate-900 hover:text-blue-600 transition-colors"
-                  >
-                    Template: {template.title.substring(0, 30)}...
-                  </button>
-                ))}
-                
-                {activeProjects.slice(0, 2).map((project, index) => (
-                  <button
-                    key={`proj-${index}`}
-                    onClick={() => {
-                      setShowMenu(false);
-                      onViewTemplate?.(project);
-                    }}
-                    className="w-full text-left py-2 text-base text-slate-900 hover:text-blue-600 transition-colors"
-                  >
-                    Project: {project.title.substring(0, 30)}...
-                  </button>
-                ))}
-
-                {favoritedTemplates.length === 0 && activeProjects.length === 0 && (
-                  <p className="text-slate-500 text-sm py-2">No recent items</p>
-                )}
-                
+              <div className="space-y-2">
+                {/* Recent */}
                 <button
                   onClick={() => {
                     setShowMenu(false);
                     setActiveTab('work');
                   }}
-                  className="w-full text-left py-2 text-base text-slate-900 hover:text-blue-600 transition-colors font-medium"
+                  className="w-full text-left py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
-                  View All
+                  Recent
+                </button>
+                
+                {/* Favorite */}
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setActiveTab('work');
+                  }}
+                  className="w-full text-left py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
+                >
+                  Favorite
+                </button>
+                
+                {/* Templates */}
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setActiveTab('templates');
+                  }}
+                  className="w-full text-left py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
+                >
+                  Templates
                 </button>
               </div>
-            </div>
-
-            {/* Template Library */}
-            <div className="px-6 mb-6">
-              <button
-                onClick={() => {
-                  setShowMenu(false);
-                  setActiveTab('templates');
-                }}
-                className="w-full text-left py-2 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
-              >
-                Template Library
-              </button>
             </div>
 
             {/* Divider */}

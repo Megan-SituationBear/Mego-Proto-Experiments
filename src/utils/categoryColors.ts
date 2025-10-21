@@ -51,9 +51,9 @@ export const categoryColors: Record<string, { bg: string; text: string; badge: s
     badge: 'bg-slate-100 text-slate-700'
   },
   'Admins': {
-    bg: 'bg-green-50',
-    text: 'text-green-700',
-    badge: 'bg-green-100 text-green-700'
+    bg: 'bg-orange-50',
+    text: 'text-orange-700',
+    badge: 'bg-orange-100 text-orange-700'
   },
 };
 
@@ -66,12 +66,13 @@ export const getCategoryColor = (category: string) => {
 };
 
 // Get TopNav badge color variant based on category
-export const getCategoryBadgeColor = (category: string): 'green' | 'blue' | 'purple' | 'amber' | 'slate' => {
+export const getCategoryBadgeColor = (category: string): 'green' | 'blue' | 'purple' | 'amber' | 'slate' | 'orange' => {
   const lowerCategory = category.toLowerCase();
   if (lowerCategory.includes('strateg')) return 'amber';
   if (lowerCategory.includes('support') || lowerCategory.includes('satisfaction')) return 'purple';
   if (lowerCategory.includes('manager') || lowerCategory.includes('edge')) return 'blue';
-  if (lowerCategory.includes('develop') || lowerCategory.includes('launch') || lowerCategory.includes('admin')) return 'green';
-  if (lowerCategory.includes('plan')) return 'indigo' as any;
+  if (lowerCategory.includes('develop') || lowerCategory.includes('launch')) return 'green';
+  if (lowerCategory.includes('admin')) return 'orange';
+  if (lowerCategory.includes('plan')) return 'amber'; // Changed from indigo to amber for consistency
   return 'slate';
 };

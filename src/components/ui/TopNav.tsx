@@ -10,7 +10,7 @@ interface TopNavProps {
   subtitle?: string; // e.g., "Project | Last Modified" or "Code | Last Modified"
   categoryBadge?: {
     text: string;
-    color?: 'green' | 'blue' | 'purple' | 'amber' | 'slate';
+    color?: 'green' | 'blue' | 'purple' | 'amber' | 'slate' | 'orange';
   };
   
   // Right side
@@ -62,6 +62,7 @@ const TopNav: React.FC<TopNavProps> = ({
     purple: 'bg-purple-100 text-purple-700',
     amber: 'bg-amber-100 text-amber-700',
     slate: 'bg-slate-100 text-slate-700',
+    orange: 'bg-orange-100 text-orange-700',
   };
 
   return (

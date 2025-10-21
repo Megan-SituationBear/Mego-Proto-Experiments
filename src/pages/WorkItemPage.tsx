@@ -11,7 +11,7 @@ interface WorkItemTemplateProps {
   isNewProject?: boolean;
   isDuplicatedTemplate?: boolean;
   onBack?: () => void;
-  onUseTemplate?: () => void;
+  onUseTemplate?: (customName?: string) => void;
   onSignIn?: () => void;
   onToggleFavorite?: (isFavorited: boolean) => void;
   onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
@@ -634,7 +634,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                     Sign up to use this template and access all features of Copado AI.
                   </p>
                   <button
-                    onClick={onUseTemplate}
+                    onClick={() => onUseTemplate?.()}
                     className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors mb-2"
                   >
                     View Pricing Plans
@@ -721,7 +721,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && templateName.trim()) {
                       setShowRenameModal(false);
-                      onUseTemplate?.();
+                      onUseTemplate?.(templateName.trim());
                     }
                   }}
                 />
@@ -739,7 +739,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                   onClick={() => {
                     if (templateName.trim()) {
                       setShowRenameModal(false);
-                      onUseTemplate?.();
+                      onUseTemplate?.(templateName.trim());
                     }
                   }}
                   disabled={!templateName.trim()}

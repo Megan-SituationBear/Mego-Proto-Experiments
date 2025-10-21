@@ -227,18 +227,22 @@ function App() {
     }
   };
 
-  const handleUseTemplate = () => {
+  const handleUseTemplate = (customName?: string) => {
     if (isLoggedIn || workItemType === 'artifact') {
-      // Add to active projects and show in "My Work"
+      // Create new work item with custom name
       const newProject = {
         ...selectedTemplate,
+        title: customName || selectedTemplate?.title || 'My Project',
         id: Date.now().toString(),
         startedAt: new Date(),
+        isWorkingOn: true, // Mark as "Working On" status
       };
+      
+      // Add to active projects (shows in "My Work")
       setActiveProjects(prev => [...prev, newProject]);
       setHasProjects(true);
       
-      // Set project and create new project view
+      // Set as current template and mark as duplicated
       setSelectedTemplate(newProject);
       setIsDuplicatedTemplate(true);
       

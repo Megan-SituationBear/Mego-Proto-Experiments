@@ -17,7 +17,7 @@ interface IntroPageProps {
  * IntroPage - Landing page for logged-out users
  * Manages its own conversation state
  */
-const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate }) => {
+const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate, onViewPricing }) => {
   // UI state
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);

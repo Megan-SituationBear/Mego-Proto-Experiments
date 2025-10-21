@@ -198,12 +198,12 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
               Select all that apply
             </p>
 
-            <div className="grid grid-cols-2 gap-3 mb-8">
+            <div className="grid grid-cols-3 gap-3 mb-8">
               {goals.map((goal) => (
                 <button
                   key={goal.id}
                   onClick={() => handleToggleGoal(goal.id)}
-                  className={`relative p-5 rounded-lg border-2 transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[140px] ${
+                  className={`relative p-4 rounded-lg border-2 transition-all text-center flex flex-col items-center justify-center gap-2 min-h-[130px] ${
                     selectedGoals.includes(goal.id)
                       ? 'border-green-500 bg-green-50 shadow-md'
                       : 'border-slate-200 bg-white hover:bg-indigo-50 hover:shadow-sm hover:border-indigo-300'

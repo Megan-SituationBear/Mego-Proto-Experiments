@@ -249,8 +249,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
         title=""
         showBackButton={false}
         showAuthButtons={true}
-        onLogin={openSignInModal}
-        onSignUp={openSignUpModal}
+        onLogin={onLogin}
+        onSignUp={onSignUp}
       />
 
       {/* Hero Section with Templates - Dark Background */}

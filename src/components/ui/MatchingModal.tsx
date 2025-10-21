@@ -13,11 +13,11 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
   const [showResults, setShowResults] = useState(false);
 
   const goals = [
-    { id: 'plan', label: 'Plan with data', icon: '📊' },
-    { id: 'deploy', label: 'Deploy without errors', icon: '🚀' },
-    { id: 'build', label: 'Build quicker', icon: '⚡' },
-    { id: 'support', label: 'Solve support issues proactively', icon: '🛟' },
-    { id: 'optimize', label: 'Optimize Salesforce orgs', icon: '⚙️' },
+    { id: 'plan', label: 'Plan with data', icon: '📊', description: 'Make informed decisions' },
+    { id: 'deploy', label: 'Deploy without errors', icon: '🚀', description: 'Ship with confidence' },
+    { id: 'build', label: 'Build quicker', icon: '⚡', description: 'Accelerate development' },
+    { id: 'support', label: 'Solve support issues proactively', icon: '🛟', description: 'Prevent problems early' },
+    { id: 'optimize', label: 'Optimize Salesforce orgs', icon: '⚙️', description: 'Improve performance' },
   ];
 
   const handleToggleGoal = (goalId: string) => {
@@ -66,7 +66,7 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
       onClick={handleBackdropClick}
     >
       <div
-        className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -81,41 +81,55 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
         {!showResults ? (
           /* Questions Flow */
           <div className="p-8 sm:p-12">
-            <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">
+            <h2 className="text-4xl font-bold text-slate-900 mb-3 text-center">
               What do you want to accomplish?
             </h2>
-            <p className="text-slate-600 mb-8 text-center">
+            <p className="text-lg text-slate-600 mb-10 text-center">
               Select all that apply
             </p>
 
-            <div className="space-y-3 mb-8">
+            <div className="grid grid-cols-2 gap-4 mb-10">
               {goals.map((goal) => (
                 <button
                   key={goal.id}
                   onClick={() => handleToggleGoal(goal.id)}
-                  className={`w-full p-4 rounded-lg border-2 transition-all text-left flex items-center gap-4 ${
+                  className={`relative p-6 rounded-xl border-2 transition-all text-center flex flex-col items-center justify-center gap-3 min-h-[180px] ${
                     selectedGoals.includes(goal.id)
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-slate-200 hover:border-slate-300 bg-white'
+                      ? 'border-green-500 bg-green-50 shadow-md'
+                      : 'border-slate-200 bg-white hover:bg-indigo-50 hover:shadow-sm hover:border-indigo-300'
                   }`}
                 >
-                  <span className="text-2xl">{goal.icon}</span>
-                  <span className="text-lg font-medium text-slate-900">
-                    {goal.label}
-                  </span>
+                  {/* Check Mark Badge */}
                   {selectedGoals.includes(goal.id) && (
-                    <svg
-                      className="w-6 h-6 text-blue-600 ml-auto"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <div className="absolute top-3 right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
                   )}
+                  
+                  {/* Icon */}
+                  <div className="text-6xl mb-2">
+                    {goal.icon}
+                  </div>
+                  
+                  {/* Label */}
+                  <div className="text-lg font-bold text-slate-900 leading-tight">
+                    {goal.label}
+                  </div>
+                  
+                  {/* Description */}
+                  <div className="text-sm text-slate-600">
+                    {goal.description}
+                  </div>
                 </button>
               ))}
             </div>
@@ -123,43 +137,51 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
             <button
               onClick={handleContinue}
               disabled={selectedGoals.length === 0}
-              className={`w-full py-3 rounded-lg font-semibold transition-all ${
+              className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
                 selectedGoals.length > 0
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
-              Continue
+              Continue →
             </button>
           </div>
         ) : (
           /* Results */
           <div className="p-8 sm:p-12">
-            <h2 className="text-3xl font-bold text-slate-900 mb-3 text-center">
-              Perfect Match! 🎯
-            </h2>
-            <p className="text-slate-600 mb-8 text-center">
-              Based on your goals, we've found{' '}
-              <span className="font-semibold text-blue-600">
-                {12 + selectedGoals.length * 3} templates
-              </span>{' '}
-              that can help you
-            </p>
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
+                <span className="text-5xl">🎯</span>
+              </div>
+              <h2 className="text-4xl font-bold text-slate-900 mb-3">
+                Perfect Match!
+              </h2>
+              <p className="text-lg text-slate-600">
+                Based on your goals, we've found{' '}
+                <span className="font-bold text-green-600">
+                  {12 + selectedGoals.length * 3} templates
+                </span>{' '}
+                that can help you
+              </p>
+            </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
-              <h3 className="font-semibold text-slate-900 mb-4">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 mb-8 border-2 border-green-200">
+              <h3 className="font-bold text-slate-900 mb-4 text-lg">
                 Your selected goals:
               </h3>
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 gap-3">
                 {selectedGoals.map((goalId) => {
                   const goal = goals.find((g) => g.id === goalId);
                   return (
                     <div
                       key={goalId}
-                      className="flex items-center gap-3 text-slate-700"
+                      className="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm"
                     >
-                      <span className="text-xl">{goal?.icon}</span>
-                      <span>{goal?.label}</span>
+                      <span className="text-3xl">{goal?.icon}</span>
+                      <div>
+                        <div className="font-semibold text-slate-900">{goal?.label}</div>
+                        <div className="text-sm text-slate-600">{goal?.description}</div>
+                      </div>
                     </div>
                   );
                 })}
@@ -169,9 +191,9 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
             <div className="space-y-3">
               <button
                 onClick={handleTryCopado}
-                className="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all"
+                className="w-full py-4 rounded-xl bg-green-600 text-white font-bold text-lg hover:bg-green-700 transition-all shadow-lg hover:shadow-xl"
               >
-                Start with Copado AI
+                Start with Copado AI →
               </button>
               <button
                 onClick={() => {
@@ -180,7 +202,7 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
                   }
                   resetAndClose();
                 }}
-                className="w-full py-3 rounded-lg border-2 border-slate-300 text-slate-900 font-medium hover:bg-slate-50 transition-all"
+                className="w-full py-4 rounded-xl border-2 border-slate-300 text-slate-900 font-bold text-lg hover:bg-indigo-50 hover:border-indigo-400 transition-all"
               >
                 Browse Matched Templates
               </button>

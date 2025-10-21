@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import './slider-styles.css';
 
 interface MatchingModalProps {
@@ -76,12 +77,6 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
   const handleTryCopado = () => {
     onComplete();
     onClose();
-  };
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      resetAndClose();
-    }
   };
 
   const resetAndClose = () => {
@@ -170,27 +165,28 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
     return icons[name] || null;
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-      onClick={handleBackdropClick}
-    >
-      <div
-        className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-        style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-      >
-        {/* Close Button */}
-        <button
-          onClick={resetAndClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors z-10"
-          aria-label="Close"
-        >
-          <X className="w-6 h-6" />
-        </button>
+    <Dialog open={isOpen} onClose={resetAndClose} className="relative z-50">
+      <DialogBackdrop
+        transition
+        className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+      />
+
+      <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center p-4">
+          <DialogPanel
+            transition
+            className="relative transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in w-full max-w-2xl max-h-[90vh] overflow-y-auto data-closed:sm:scale-95"
+            style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+          >
+            {/* Close Button */}
+            <button
+              onClick={resetAndClose}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors z-10"
+              aria-label="Close"
+            >
+              <XMarkIcon className="w-6 h-6" />
+            </button>
 
         {currentStep === 'goals' ? (
           /* Questions Flow */
@@ -445,8 +441,10 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
             </div>
           </div>
         )}
+          </DialogPanel>
+        </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 

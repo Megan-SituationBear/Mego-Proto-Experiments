@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 interface FindTemplatesModalProps {
   isOpen: boolean;
@@ -17,8 +19,6 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'popular' | 'hours' | 'newest'>('popular');
   const [selectedTags, setSelectedTags] = useState<string[]>(initialGoals);
-
-  if (!isOpen) return null;
 
   const categories = [
     { id: 'all', name: 'All Templates', count: 24 },
@@ -377,54 +377,41 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
       }
     });
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-      onClick={handleBackdropClick}
-    >
-      <div 
-        className="w-full max-w-6xl h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col m-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">Find Templates</h2>
-            <p className="text-sm text-slate-600">Discover time-saving templates for your projects</p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
-            aria-label="Close"
+    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+      <DialogBackdrop
+        transition
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+      />
+
+      <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center p-4">
+          <DialogPanel
+            transition
+            className="relative transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in w-full max-w-6xl h-[85vh] flex flex-col data-closed:sm:scale-95"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+              <div>
+                <DialogTitle className="text-2xl font-bold text-slate-900">
+                  Find Templates
+                </DialogTitle>
+                <p className="text-sm text-slate-600">Discover time-saving templates for your projects</p>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                aria-label="Close"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
 
         {/* Search and Filters Bar */}
         <div className="px-6 py-4 border-b border-slate-200 space-y-4">
           {/* Search Bar */}
           <div className="relative">
-            <svg 
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" 
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2"
-            >
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.35-4.35"/>
-            </svg>
+            <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input
               type="text"
               value={searchQuery}
@@ -516,10 +503,7 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
             {filteredTemplates.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.35-4.35"/>
-                  </svg>
+                  <MagnifyingGlassIcon className="w-8 h-8 text-slate-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">No templates found</h3>
                 <p className="text-slate-600">Try adjusting your search or filters</p>
@@ -594,8 +578,10 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
             )}
           </div>
         </div>
+          </DialogPanel>
+        </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 

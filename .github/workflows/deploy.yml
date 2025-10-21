@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - App-Concept
+      - experimental-features
   workflow_dispatch:
 
 permissions:

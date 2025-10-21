@@ -418,27 +418,13 @@ const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComple
               </div>
             </div>
 
-            <div className="space-y-2">
-              <button
-                onClick={handleTryCopado}
-                className="w-full py-3 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition-all shadow-lg hover:shadow-xl"
-                style={{ fontSize: '14px', fontFamily: 'Roboto, sans-serif', letterSpacing: '-0.01em' }}
-              >
-                Start with Copado AI →
-              </button>
-              <button
-                onClick={() => {
-                  if (onBrowseTemplates) {
-                    onBrowseTemplates(selectedGoals);
-                  }
-                  resetAndClose();
-                }}
-                className="w-full py-3 rounded-lg border-2 border-slate-300 text-slate-700 font-semibold hover:bg-indigo-50 hover:border-indigo-400 transition-all"
-                style={{ fontSize: '14px', fontFamily: 'Roboto, sans-serif', letterSpacing: '-0.01em' }}
-              >
-                Browse Matched Templates
-              </button>
-            </div>
+            <button
+              onClick={handleTryCopado}
+              className="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-indigo-600 transition-all shadow-lg hover:shadow-xl"
+              style={{ fontSize: '14px', fontFamily: 'Roboto, sans-serif', letterSpacing: '-0.01em' }}
+            >
+              Start with Copado AI →
+            </button>
           </div>
         )}
           </DialogPanel>

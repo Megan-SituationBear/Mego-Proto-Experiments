@@ -20,9 +20,9 @@ interface HomePageProps {
  */
 const HomePage: React.FC<HomePageProps> = ({
   userName = 'User',
-  hasProjects = false,
+  hasProjects: _hasProjects = false,
   favoritedTemplates = [],
-  activeProjects = [],
+  activeProjects: _activeProjects = [],
   recentItems = [],
   onCreateProject,
   onLogout,
@@ -31,8 +31,8 @@ const HomePage: React.FC<HomePageProps> = ({
   // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
   const [selectedGoalsForTemplates, setSelectedGoalsForTemplates] = useState<string[]>([]);
-  const hasWork = recentItems.length > 0 || favoritedTemplates.length > 0;
-  const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'suggested'>(
+  const _hasWork = recentItems.length > 0 || favoritedTemplates.length > 0;
+  const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'suggested' | 'work' | 'templates'>(
     recentItems.length > 0 ? 'recent' : 
     favoritedTemplates.length > 0 ? 'favorites' : 
     'suggested'

@@ -75,8 +75,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   const [showAllSteps, setShowAllSteps] = useState(false);
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [selectedContent, setSelectedContent] = useState<{type: 'output' | 'highlight', title: string, content: string} | null>(null);
-  const [showRenameModal, setShowRenameModal] = useState(false);
-  const [templateName, setTemplateName] = useState('');
+  const [_showRenameModal, _setShowRenameModal] = useState(false);
+  const [_templateName, _setTemplateName] = useState('');
   const [activeTab, setActiveTab] = useState<'steps' | 'highlights' | 'output'>('steps');
   const [showSalesforceAuthModal, setShowSalesforceAuthModal] = useState(false);
 
@@ -117,7 +117,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   // Determine which of the 6 states we're in
   
   // For artifacts, isLoggedIn is always true
-  const actualIsLoggedIn = type === 'artifact' ? true : isLoggedIn;
+  // const actualIsLoggedIn = type === 'artifact' ? true : isLoggedIn;
   
   // State 1: Template - Not Logged In
   const isTemplateNotLoggedIn = type === 'project' && !isDuplicatedTemplate && !isNewProject && !isLoggedIn;
@@ -152,7 +152,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   };
 
   // Progress steps
-  const steps = [
+  const _steps = [
     { label: 'Started', status: 'completed' },
     { label: 'Set Up\nEnvironment', status: 'completed' },
     { label: 'Creating\nAutomation', status: 'current' },

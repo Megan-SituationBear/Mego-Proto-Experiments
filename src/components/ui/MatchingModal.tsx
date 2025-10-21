@@ -10,7 +10,7 @@ interface MatchingModalProps {
   onBrowseTemplates?: (selectedGoals: string[]) => void;
 }
 
-const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComplete, onBrowseTemplates }) => {
+const MatchingModal: React.FC<MatchingModalProps> = ({ isOpen, onClose, onComplete, onBrowseTemplates: _onBrowseTemplates }) => {
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [expertiseLevel, setExpertiseLevel] = useState<number>(2); // 0-4 scale
   const [currentStep, setCurrentStep] = useState<'goals' | 'expertise' | 'results'>('goals');

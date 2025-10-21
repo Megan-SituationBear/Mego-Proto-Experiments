@@ -126,7 +126,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   const isTemplateLoggedIn = type === 'project' && !isDuplicatedTemplate && !isNewProject && isLoggedIn;
   
   // State 3: Project from Template - Not Logged In (viewing shared project)
-  const isProjectFromTemplateNotLoggedIn = type === 'project' && isDuplicatedTemplate && !isLoggedIn;
+  // const isProjectFromTemplateNotLoggedIn = type === 'project' && isDuplicatedTemplate && !isLoggedIn;
   
   // State 4: Project from Template - Logged In (active workspace from template)
   const isProjectFromTemplateLoggedIn = type === 'project' && isDuplicatedTemplate && isLoggedIn;
@@ -967,13 +967,29 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     );
   }
 
+  // Fallback - should never reach here if all states are properly handled
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-slate-900 mb-4">Unknown State</h1>
+        <p className="text-slate-600 mb-4">This work item is in an unexpected state.</p>
+        <button 
+          onClick={onBack}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Go Back
+        </button>
+      </div>
+    </div>
+  );
+  
+  /* OLD FALLBACK CODE - Kept for reference but should never be reached
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
       <TopNav
         title={templateData.title}
-        subtitle={`${type === 'artifact' ? 'Artifact' : 'Project'} | Last Modified: ${getRelativeTime()}`}
-        categoryBadge={type !== 'artifact' ? {
+        subtitle={`Project | Last Modified: ${getRelativeTime()}`}
+        categoryBadge={{
           text: templateData.category,
           color: templateData.category.toLowerCase().includes('deploy') ? 'blue' 
             : templateData.category.toLowerCase().includes('plan') ? 'purple'
@@ -1214,6 +1230,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           </div>
         )}
       </div>
+      */}
       
       {/* Rename Template Modal */}
       <Dialog open={showRenameModal} onClose={() => setShowRenameModal(false)} className="relative z-50">

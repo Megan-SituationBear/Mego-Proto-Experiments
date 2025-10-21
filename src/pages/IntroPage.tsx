@@ -155,16 +155,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
     }, 1200);
   };
 
-  const openSignInModal = () => {
-    setAuthMode('signin');
-    setShowAuthModal(true);
-  };
-
-  const openSignUpModal = () => {
-    setAuthMode('signup');
-    setShowAuthModal(true);
-  };
-
   const switchAuthMode = () => {
     setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
   };

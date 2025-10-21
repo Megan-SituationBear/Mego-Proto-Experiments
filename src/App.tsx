@@ -5,6 +5,7 @@ import OnboardingFlow from './pages/OnboardingFlow';
 import TemplatePage from './pages/TemplatePage';
 import PricingPage from './pages/PricingPage';
 import WorkItemPage from './pages/WorkItemPage';
+import type { ConversationMessage } from './components/Conversation';
 import './App.css';
 
 /**
@@ -12,10 +13,11 @@ import './App.css';
  * 
  * Pages manage their own internal state (UI, forms, etc.)
  * App manages cross-page state (auth, navigation, selected items)
+ * Work Item pages need conversation state passed from App for continuity
  */
 function App() {
   // Navigation state
-  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'project'>('intro');
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'work-item'>('intro');
   
   // Auth state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -28,6 +30,145 @@ function App() {
   
   // Selected item state
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [workItemType, setWorkItemType] = useState<'project' | 'artifact'>('project');
+  const [isDuplicatedTemplate, setIsDuplicatedTemplate] = useState(false);
+  
+  // Conversation state (for work items)
+  const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [userMessageCount, setUserMessageCount] = useState(0);
+
+  // ============ AI Message Generation ============
+  
+  const generateAIResponse = (userText: string, currentUserMessageCount: number): ConversationMessage => {
+    const lowerText = userText.toLowerCase();
+
+    // Create message for Conversation component
+    const newMessage: ConversationMessage = {
+      id: (Date.now() + 1).toString(),
+      content: { type: 'text', content: "" },
+      isUser: false,
+      timestamp: new Date()
+    };
+
+    // First message: Ask about the business case
+    if (currentUserMessageCount === 1) {
+      newMessage.content = {
+        type: 'text',
+        content: "Tell me about the business case, please. Is it for a customer? Internal? What do you want it to do?"
+      };
+      return newMessage;
+    }
+
+    // Second message: Show "Creating workspace..." message
+    if (currentUserMessageCount === 2) {
+      newMessage.content = {
+        type: 'text',
+        content: "Perfect! Let me create a workspace for you to dive deeper into this..."
+      };
+      return newMessage;
+    }
+
+    // Default responses for workspace (after transition)
+    if (lowerText.includes('deploy') || lowerText.includes('deployment')) {
+      newMessage.content = {
+        type: 'step-by-step',
+        content: "Deployment Plan",
+        metadata: {
+          steps: [
+            "Review current org configuration",
+            "Run dependency analysis",
+            "Create deployment package",
+            "Execute pre-deployment tests",
+            "Deploy to staging environment"
+          ]
+        }
+      };
+    } else if (lowerText.includes('artifact') || lowerText.includes('create')) {
+      newMessage.content = {
+        type: 'artifact',
+        content: "This artifact includes all the necessary components for your deployment with proper dependency management and metadata.",
+        metadata: {
+          artifactName: "deployment-artifact-v1.2.zip"
+        }
+      };
+    } else if (lowerText.includes('question') || lowerText.includes('help')) {
+      newMessage.content = {
+        type: 'question',
+        content: "I can help you with several things. What would you like to know more about?",
+        metadata: {
+          steps: [
+            "Deployment planning",
+            "Org analysis",
+            "Best practices",
+            "Troubleshooting"
+          ]
+        }
+      };
+    } else {
+      newMessage.content = {
+        type: 'text',
+        content: "I understand you want to create a plan for your customer. Let me help you build a comprehensive strategy. What's your customer's current Salesforce situation?"
+      };
+    }
+
+    return newMessage;
+  };
+
+  const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void, fromWorkItem: boolean = false) => {
+    if (!hasStarted) {
+      setHasStarted(true);
+    }
+
+    // Increment user message count
+    const newUserMessageCount = userMessageCount + 1;
+    setUserMessageCount(newUserMessageCount);
+
+    // User message
+    const userConversationMessage: ConversationMessage = {
+      id: Date.now().toString(),
+      content: { type: 'text', content: text },
+      isUser: true,
+      timestamp: new Date()
+    };
+
+    setConversationMessages(prev => [...prev, userConversationMessage]);
+    
+    // Show typing indicator
+    if (setTypingIndicator) {
+      setTypingIndicator(true);
+    }
+
+    // Simulate AI response based on input and message count
+    setTimeout(() => {
+      const response = generateAIResponse(text, newUserMessageCount);
+      setConversationMessages(prev => [...prev, response]);
+      
+      // Hide typing indicator
+      if (setTypingIndicator) {
+        setTypingIndicator(false);
+      }
+
+      // Auto-transition to workspace after second user message (only from home page, not from work item)
+      if (newUserMessageCount === 2 && !fromWorkItem && currentView === 'home') {
+        setTimeout(() => {
+          // Create new project work item
+          const newProject = {
+            title: text,
+            category: 'New Project',
+            savedHours: 0,
+            id: Date.now().toString(),
+            startedAt: new Date(),
+          };
+          setSelectedTemplate(newProject);
+          setActiveProjects(prev => [...prev, newProject]);
+          setHasProjects(true);
+          setWorkItemType('project');
+          setCurrentView('work-item');
+        }, 1500); // Wait 1.5s to show the "creating workspace" message
+      }
+    }, 1200);
+  };
 
   // ============ Navigation Handlers ============
   
@@ -50,6 +191,9 @@ function App() {
     setHasProjects(false);
     setFavoritedTemplates([]);
     setActiveProjects([]);
+    setConversationMessages([]);
+    setUserMessageCount(0);
+    setHasStarted(false);
     setCurrentView('intro');
   };
 
@@ -57,26 +201,35 @@ function App() {
     setCurrentView('intro');
   };
 
-  const handleBackToHome = () => {
-    setCurrentView('home');
-  };
-
   // ============ Template & Project Handlers ============
   
   const handleViewTemplate = (template: any) => {
     setSelectedTemplate(template);
-    if (isLoggedIn) {
-      // Logged in users: go directly to project page
-      setCurrentView('project');
+    setWorkItemType('project'); // Templates are always 'project' type
+    setIsDuplicatedTemplate(false); // Reset duplicated state when viewing a template
+    setCurrentView('work-item'); // Navigate to work item template page
+  };
+
+  const handleToggleFavorite = (template: any, isFavorited: boolean) => {
+    if (isFavorited) {
+      // Add to favorites
+      setFavoritedTemplates(prev => [...prev, template]);
+      setHasProjects(true);
     } else {
-      // Logged out users: show template preview with CTA
-      setCurrentView('template');
+      // Remove from favorites
+      setFavoritedTemplates(prev => 
+        prev.filter(t => t.title !== template.title)
+      );
+      // If no more favorites, hide "Your Work" tab
+      if (favoritedTemplates.length === 1) {
+        setHasProjects(false);
+      }
     }
   };
 
   const handleUseTemplate = () => {
-    if (isLoggedIn) {
-      // Add to active projects
+    if (isLoggedIn || workItemType === 'artifact') {
+      // Add to active projects and show in "My Work"
       const newProject = {
         ...selectedTemplate,
         id: Date.now().toString(),
@@ -84,7 +237,15 @@ function App() {
       };
       setActiveProjects(prev => [...prev, newProject]);
       setHasProjects(true);
-      setCurrentView('project');
+      
+      // Set project and create new project view
+      setSelectedTemplate(newProject);
+      setIsDuplicatedTemplate(true);
+      
+      // Reset conversation for new project
+      setConversationMessages([]);
+      setUserMessageCount(0);
+      setHasStarted(false);
     } else {
       // Show pricing for logged out users
       setCurrentView('pricing');
@@ -102,9 +263,9 @@ function App() {
     setActiveProjects(prev => [...prev, newProject]);
     setHasProjects(true);
     setSelectedTemplate(newProject);
-    setCurrentView('project');
+    setWorkItemType('project');
+    setCurrentView('work-item');
   };
-
 
   const handleSelectPlan = (plan: string) => {
     if (plan === 'Free') {
@@ -136,7 +297,7 @@ function App() {
       <TemplatePage
         template={selectedTemplate}
         onBack={handleBackToIntro}
-        onUseTemplate={handleUseTemplate}
+        onUseTemplate={() => setCurrentView('pricing')}
       />
     );
   }
@@ -164,27 +325,34 @@ function App() {
     );
   }
 
-  if (currentView === 'project') {
+  if (currentView === 'work-item') {
+    // Check if current template is favorited
     const isFavorited = favoritedTemplates.some(t => t.title === selectedTemplate?.title);
+    // Check if this is a new project created from conversation
+    const isNewProject = hasStarted && conversationMessages.length >= 2;
     
     return (
       <WorkItemPage
-        type="project"
+        type={workItemType}
         isLoggedIn={isLoggedIn}
         templateData={selectedTemplate}
         initialIsFavorite={isFavorited}
-        onBack={handleBackToHome}
-        onUseTemplate={handleUseTemplate}
-        onToggleFavorite={(isFavorited) => {
-          if (isFavorited) {
-            setFavoritedTemplates(prev => [...prev, selectedTemplate]);
-            setHasProjects(true);
-          } else {
-            setFavoritedTemplates(prev => 
-              prev.filter(t => t.title !== selectedTemplate.title)
-            );
-          }
+        isNewProject={isNewProject}
+        isDuplicatedTemplate={isDuplicatedTemplate}
+        onBack={() => {
+          // Always reset conversation when going back to home
+          setConversationMessages([]);
+          setUserMessageCount(0);
+          setHasStarted(false);
+          setIsDuplicatedTemplate(false);
+          setCurrentView(isLoggedIn ? 'home' : 'intro');
         }}
+        onUseTemplate={handleUseTemplate}
+        onToggleFavorite={(isFavorited) => handleToggleFavorite(selectedTemplate, isFavorited)}
+        onSignIn={handleLogin}
+        conversationMessages={conversationMessages}
+        onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator, true)}
+        userMessageCount={userMessageCount}
       />
     );
   }

@@ -81,8 +81,26 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     }
   };
 
+  // ============ STATE DETERMINATION ============
+  // Determine which of the 5 states we're in
+  
   // For artifacts, isLoggedIn is always true
   const actualIsLoggedIn = type === 'artifact' ? true : isLoggedIn;
+  
+  // State 1: Template - Not Logged In
+  const isTemplateNotLoggedIn = type === 'project' && !isDuplicatedTemplate && !isNewProject && !isLoggedIn;
+  
+  // State 2: Template - Logged In
+  const isTemplateLoggedIn = type === 'project' && !isDuplicatedTemplate && !isNewProject && isLoggedIn;
+  
+  // State 3: Project - Not Logged In (viewing shared project)
+  const isProjectNotLoggedIn = type === 'project' && (isDuplicatedTemplate || isNewProject) && !isLoggedIn;
+  
+  // State 4: Project - Logged In (active workspace)
+  const isProjectLoggedIn = type === 'project' && (isDuplicatedTemplate || isNewProject) && isLoggedIn;
+  
+  // State 5: Artifact - Logged In (always logged in)
+  const isArtifactLoggedIn = type === 'artifact';
   
   // Format relative time for projects
   const getRelativeTime = () => {

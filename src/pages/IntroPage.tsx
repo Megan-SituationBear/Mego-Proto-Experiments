@@ -246,7 +246,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
                 description={template.description}
                 remixCount={template.views || 0}
                 favoriteCount={template.favorites || 0}
-                variant="customizable"
+                variant={index === 1 ? "standard" : "customizable"}
                 onClick={() => handleTemplateClick(template)}
               />
             ))}

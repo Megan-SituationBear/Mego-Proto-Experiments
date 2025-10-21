@@ -49,7 +49,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
         {/* Star Icon - Top Right */}
         <div className="flex-shrink-0">
           {variant === 'customizable' ? (
-            <Sparkles className="w-5 h-5 text-amber-400" />
+            <Sparkles className="w-5 h-5 text-slate-400" />
           ) : (
             <button
               onClick={handleFavoriteClick}

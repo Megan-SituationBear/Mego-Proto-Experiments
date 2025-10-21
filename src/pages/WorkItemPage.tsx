@@ -72,6 +72,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   const [selectedContent, setSelectedContent] = useState<{type: 'output' | 'highlight', title: string, content: string} | null>(null);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [templateName, setTemplateName] = useState('');
+  const [activeTab, setActiveTab] = useState<'steps' | 'highlights' | 'output'>('steps');
 
   const handleToggleFavorite = () => {
     const newFavoriteState = !isFavorite;
@@ -406,6 +407,220 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           {/* Conversation Label */}
           <div className="text-sm text-slate-600">
             Conv
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ============ TEMPLATE: NOT LOGGED IN ============
+  if (isTemplateNotLoggedIn) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        {/* Header */}
+        <TopNav
+          title={templateData.title}
+          categoryBadge={{
+            text: templateData.category,
+            color: templateData.category.toLowerCase().includes('deploy') ? 'blue' 
+              : templateData.category.toLowerCase().includes('plan') ? 'purple'
+              : templateData.category.toLowerCase().includes('support') ? 'green'
+              : templateData.category.toLowerCase().includes('optim') ? 'amber'
+              : 'slate'
+          }}
+          onBack={onBack}
+          showFavorite={true}
+          isFavorited={isFavorite}
+          onFavorite={handleToggleFavorite}
+          primaryAction={{
+            label: 'Remix',
+            onClick: () => onUseTemplate?.(),
+            variant: 'blue'
+          }}
+        />
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Main Content */}
+            <div className="lg:col-span-2">
+              {/* Tabs */}
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+                <div className="border-b border-slate-200">
+                  <div className="flex">
+                    <button 
+                      onClick={() => setActiveTab('steps')}
+                      className={`px-6 py-4 text-sm font-medium ${
+                        activeTab === 'steps'
+                          ? 'text-blue-600 border-b-2 border-blue-600'
+                          : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      Steps
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('highlights')}
+                      className={`px-6 py-4 text-sm font-medium ${
+                        activeTab === 'highlights'
+                          ? 'text-blue-600 border-b-2 border-blue-600'
+                          : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      Highlights
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('output')}
+                      className={`px-6 py-4 text-sm font-medium ${
+                        activeTab === 'output'
+                          ? 'text-blue-600 border-b-2 border-blue-600'
+                          : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      Output
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tab Content */}
+                <div className="p-6">
+                  {/* Steps Tab */}
+                  {activeTab === 'steps' && (
+                    <>
+                      {/* Stats */}
+                      <div className="flex items-center gap-4 text-sm text-slate-600 mb-6">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4" />
+                          <span>{templateData.favorites.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Eye className="w-4 h-4" />
+                          <span>{templateData.views} views</span>
+                        </div>
+                      </div>
+
+                      {/* Subtitle */}
+                      <p className="text-slate-600 mb-6">{templateData.subtitle}</p>
+
+                      {/* Time Savings */}
+                      <div className="flex items-center gap-2 text-blue-600 mb-8">
+                        <Clock className="w-5 h-5" />
+                        <span className="text-lg font-medium">
+                          Saves an estimated {templateData.savedHours} hours
+                        </span>
+                      </div>
+
+                      {/* How This Template Works */}
+                      {templateData.sections.map((section: any, idx: number) => (
+                        <div key={idx} className="mb-8">
+                          <div className="bg-slate-50 border border-slate-200 rounded-lg p-6">
+                            <h3 className="text-xl font-bold text-slate-900 mb-4">
+                              {section.title}
+                            </h3>
+                            <p className="text-slate-600 mb-6">{section.description}</p>
+
+                            {/* Steps */}
+                            <div className="space-y-4">
+                              {section.steps.map((step: any) => (
+                                <div key={step.number} className="flex gap-4">
+                                  <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
+                                    {step.number}
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold text-slate-900 mb-1">
+                                      {step.title}
+                                    </h4>
+                                    <p className="text-sm text-slate-600">{step.description}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {/* Highlights Tab */}
+                  {activeTab === 'highlights' && (
+                    <div className="space-y-3">
+                      {templateData.whatsIncluded.map((item: string, idx: number) => (
+                        <div key={idx} className="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-lg transition-colors">
+                          <svg
+                            className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span className="text-slate-700">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Output Tab */}
+                  {activeTab === 'output' && (
+                    <div className="text-center py-12 text-slate-500">
+                      <p>Output examples will be available after you remix this template</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - CTA Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-6">
+                <h3 className="text-xl font-bold text-slate-900 mb-4">
+                  Ready to Get Started?
+                </h3>
+
+                <p className="text-slate-600 mb-6">
+                  Sign up to use this template and access all features of Copado AI.
+                </p>
+                
+                <button
+                  onClick={() => onUseTemplate?.()}
+                  className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors mb-2"
+                >
+                  View Pricing Plans
+                </button>
+                
+                <div className="text-center text-sm text-slate-600">
+                  Already have an account?{' '}
+                  <button onClick={onSignIn} className="text-blue-600 hover:text-blue-700 font-medium">
+                    Sign in
+                  </button>
+                </div>
+
+                {/* What's Included */}
+                <div className="mt-8 pt-6 border-t border-slate-200">
+                  <h4 className="font-semibold text-slate-900 mb-4">What's Included:</h4>
+                  <ul className="space-y-3">
+                    {templateData.whatsIncluded.map((item: string, idx: number) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
+                        <svg
+                          className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -75,8 +75,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   const [showAllSteps, setShowAllSteps] = useState(false);
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [selectedContent, setSelectedContent] = useState<{type: 'output' | 'highlight', title: string, content: string} | null>(null);
-  const [_showRenameModal, _setShowRenameModal] = useState(false);
-  const [_templateName, _setTemplateName] = useState('');
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [templateName, setTemplateName] = useState('');
   const [activeTab, setActiveTab] = useState<'steps' | 'highlights' | 'output'>('steps');
   const [showSalesforceAuthModal, setShowSalesforceAuthModal] = useState(false);
 
@@ -150,18 +150,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     if (diffHours < 24) return `${diffHours}hr ago`;
     return `${diffDays}d ago`;
   };
-
-  // Progress steps
-  const _steps = [
-    { label: 'Started', status: 'completed' },
-    { label: 'Set Up\nEnvironment', status: 'completed' },
-    { label: 'Creating\nAutomation', status: 'current' },
-    { label: 'Creating\nAutomation', status: 'upcoming' },
-    { label: 'Testing in\nSandbox', status: 'upcoming' },
-    { label: 'Apply in Real\nWorld', status: 'upcoming' },
-    { label: 'Saved', status: 'upcoming' },
-  ];
-
 
   // Default template data - can be overridden via props
   const defaultTemplateData = {

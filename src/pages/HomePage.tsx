@@ -31,7 +31,6 @@ const HomePage: React.FC<HomePageProps> = ({
   // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
   const [selectedGoalsForTemplates, setSelectedGoalsForTemplates] = useState<string[]>([]);
-  const _hasWork = recentItems.length > 0 || favoritedTemplates.length > 0;
   const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'suggested' | 'work' | 'templates'>(
     recentItems.length > 0 ? 'recent' : 
     favoritedTemplates.length > 0 ? 'favorites' : 

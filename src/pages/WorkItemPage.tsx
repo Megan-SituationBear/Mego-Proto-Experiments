@@ -4,6 +4,38 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { AIInput, TopNav } from '../components/ui';
 
+/**
+ * WorkItemPage Component - Handles multiple states for templates, projects, and artifacts
+ * 
+ * COMPONENT STATES:
+ * 
+ * 1. TEMPLATE: NOT LOGGED IN
+ *    - User viewing a pre-built template from gallery without being signed in
+ *    - Shows: Template details, "View Pricing Plans" CTA, "Sign in" link
+ *    - Cannot: Favorite, use template, start conversation
+ * 
+ * 2. TEMPLATE: LOGGED IN
+ *    - User viewing a pre-built template from gallery while signed in
+ *    - Shows: Template details, "Use This Template" button, favorite button
+ *    - Can: Favorite template, duplicate to create new project
+ * 
+ * 3. PROJECT: NOT LOGGED IN
+ *    - User viewing a shared project without being signed in
+ *    - Shows: Project details (read-only), "Sign up" CTA
+ *    - Cannot: Edit, favorite, or interact with project
+ * 
+ * 4. PROJECT: LOGGED IN
+ *    - User working on their own active project (created from template or scratch)
+ *    - Shows: Full workspace with AI input, conversation history, outputs
+ *    - Can: Edit project, chat with AI, generate artifacts, manage project
+ * 
+ * 5. ARTIFACT: LOGGED IN
+ *    - User viewing/editing a generated artifact
+ *    - Shows: Artifact content, modification input
+ *    - Can: Modify artifact, download, share
+ *    - Note: Artifacts are always in logged-in state (no public artifacts)
+ */
+
 interface WorkItemTemplateProps {
   type: 'project' | 'artifact';
   isLoggedIn?: boolean;

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { AIInput, TemplateCard } from './ui';
 import FindTemplatesModal from './ui/FindTemplatesModal';
-import MatchingModal from './ui/MatchingModal';
 
 interface HomePageProps {
   userName?: string;
@@ -30,7 +29,6 @@ const HomePage: React.FC<HomePageProps> = ({
   userMessageCount = 0,
 }) => {
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
-  const [showMatchingModal, setShowMatchingModal] = useState(false);
   const [selectedGoalsForTemplates, setSelectedGoalsForTemplates] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'work' | 'templates'>(hasProjects ? 'work' : 'templates');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
@@ -374,20 +372,12 @@ const HomePage: React.FC<HomePageProps> = ({
                 Templates For You
               </button>
             </h2>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowFindTemplatesModal(true)}
-                className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors"
-              >
-                Browse All Templates
-              </button>
-              <button
-                onClick={() => setShowMatchingModal(true)}
-                className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
-              >
-                Match with Templates
-              </button>
-            </div>
+            <button
+              onClick={() => setShowFindTemplatesModal(true)}
+              className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+            >
+              Find Templates
+            </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {activeTab === 'templates' ? (
@@ -447,7 +437,7 @@ const HomePage: React.FC<HomePageProps> = ({
 
       </main>
 
-      {/* Find Templates Modal */}
+      {/* Find Templates Modal - Logged in users get direct access */}
       <FindTemplatesModal
         isOpen={showFindTemplatesModal}
         onClose={() => {
@@ -460,20 +450,6 @@ const HomePage: React.FC<HomePageProps> = ({
           onViewTemplate?.(template);
         }}
         initialGoals={selectedGoalsForTemplates}
-      />
-
-      {/* Matching Modal */}
-      <MatchingModal
-        isOpen={showMatchingModal}
-        onClose={() => setShowMatchingModal(false)}
-        onComplete={() => {
-          setShowMatchingModal(false);
-          // Could trigger onboarding or pricing flow here
-        }}
-        onBrowseTemplates={(goals) => {
-          setSelectedGoalsForTemplates(goals);
-          setShowFindTemplatesModal(true);
-        }}
       />
     </div>
   );

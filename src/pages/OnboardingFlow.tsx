@@ -33,11 +33,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
     // Simulate SSO login
     setTimeout(() => {
       setIsLoading(false);
-      if (isSignUp) {
-        setStep('terms'); // Sign up: go to terms
-      } else {
-        onComplete(); // Login: complete immediately
-      }
+      setStep('terms'); // Both login and signup go to terms
     }, 1500);
   };
 
@@ -46,7 +42,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
       if (isSignUp) {
         setStep('name'); // Sign up: go to name question
       } else {
-        onComplete(); // Login: skip questions and complete
+        onComplete(); // Login: complete after accepting terms
       }
     }
   };

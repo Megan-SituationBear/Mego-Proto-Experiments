@@ -16,20 +16,25 @@ import { AIInput, TopNav } from '../components/ui';
  * 
  * 2. TEMPLATE: LOGGED IN
  *    - User viewing a pre-built template from gallery while signed in
- *    - Shows: Template details, "Use This Template" button, favorite button
- *    - Can: Favorite template, duplicate to create new project
+ *    - Shows: Template details, "Remix" button (opens rename modal), favorite button
+ *    - Can: Favorite template, remix to create new project from template
  * 
- * 3. PROJECT: NOT LOGGED IN
- *    - User viewing a shared project without being signed in
+ * 3. PROJECT FROM TEMPLATE: NOT LOGGED IN
+ *    - User viewing a shared project (that was created from a template) without being signed in
  *    - Shows: Project details (read-only), "Sign up" CTA
  *    - Cannot: Edit, favorite, or interact with project
  * 
- * 4. PROJECT: LOGGED IN
- *    - User working on their own active project (created from template or scratch)
- *    - Shows: Full workspace with AI input, conversation history, outputs
+ * 4. PROJECT FROM TEMPLATE: LOGGED IN (isDuplicatedTemplate = true)
+ *    - User working on their own project created from a template
+ *    - Shows: Full workspace with AI input, conversation, outputs, highlights
  *    - Can: Edit project, chat with AI, generate artifacts, manage project
  * 
- * 5. ARTIFACT: LOGGED IN
+ * 5. PROJECT FROM SCRATCH: LOGGED IN (isNewProject = true)
+ *    - User working on a new project created from conversation on home page
+ *    - Shows: Simplified workspace view with conversation continuation
+ *    - Can: Continue conversation, build project from scratch
+ * 
+ * 6. ARTIFACT: LOGGED IN
  *    - User viewing/editing a generated artifact
  *    - Shows: Artifact content, modification input
  *    - Can: Modify artifact, download, share
@@ -83,7 +88,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   };
 
   // ============ STATE DETERMINATION ============
-  // Determine which of the 5 states we're in
+  // Determine which of the 6 states we're in
   
   // For artifacts, isLoggedIn is always true
   const actualIsLoggedIn = type === 'artifact' ? true : isLoggedIn;
@@ -94,13 +99,16 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   // State 2: Template - Logged In
   const isTemplateLoggedIn = type === 'project' && !isDuplicatedTemplate && !isNewProject && isLoggedIn;
   
-  // State 3: Project - Not Logged In (viewing shared project)
-  const isProjectNotLoggedIn = type === 'project' && (isDuplicatedTemplate || isNewProject) && !isLoggedIn;
+  // State 3: Project from Template - Not Logged In (viewing shared project)
+  const isProjectFromTemplateNotLoggedIn = type === 'project' && isDuplicatedTemplate && !isLoggedIn;
   
-  // State 4: Project - Logged In (active workspace)
-  const isProjectLoggedIn = type === 'project' && (isDuplicatedTemplate || isNewProject) && isLoggedIn;
+  // State 4: Project from Template - Logged In (active workspace from template)
+  const isProjectFromTemplateLoggedIn = type === 'project' && isDuplicatedTemplate && isLoggedIn;
   
-  // State 5: Artifact - Logged In (always logged in)
+  // State 5: Project from Scratch - Logged In (created from conversation)
+  const isProjectFromScratchLoggedIn = type === 'project' && isNewProject && isLoggedIn;
+  
+  // State 6: Artifact - Logged In (always logged in)
   const isArtifactLoggedIn = type === 'artifact';
   
   // Format relative time for projects
@@ -434,7 +442,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           onFavorite={handleToggleFavorite}
           primaryAction={{
             label: 'Remix',
-            onClick: () => onUseTemplate?.(),
+            onClick: () => onUseTemplate?.(), // Opens pricing page when not logged in
             variant: 'blue'
           }}
         />
@@ -596,6 +604,219 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                     Sign in
                   </button>
                 </div>
+
+                {/* What's Included */}
+                <div className="mt-8 pt-6 border-t border-slate-200">
+                  <h4 className="font-semibold text-slate-900 mb-4">What's Included:</h4>
+                  <ul className="space-y-3">
+                    {templateData.whatsIncluded.map((item: string, idx: number) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
+                        <svg
+                          className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ============ TEMPLATE: LOGGED IN ============
+  if (isTemplateLoggedIn) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        {/* Header */}
+        <TopNav
+          title={templateData.title}
+          categoryBadge={{
+            text: templateData.category,
+            color: templateData.category.toLowerCase().includes('deploy') ? 'blue' 
+              : templateData.category.toLowerCase().includes('plan') ? 'purple'
+              : templateData.category.toLowerCase().includes('support') ? 'green'
+              : templateData.category.toLowerCase().includes('optim') ? 'amber'
+              : 'slate'
+          }}
+          onBack={onBack}
+          showFavorite={true}
+          isFavorited={isFavorite}
+          onFavorite={handleToggleFavorite}
+          primaryAction={{
+            label: 'Remix',
+            onClick: () => {
+              setTemplateName(templateData.title || 'My Project');
+              setShowRenameModal(true);
+            },
+            variant: 'blue'
+          }}
+        />
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Main Content */}
+            <div className="lg:col-span-2">
+              {/* Tabs */}
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+                <div className="border-b border-slate-200">
+                  <div className="flex">
+                    <button 
+                      onClick={() => setActiveTab('steps')}
+                      className={`px-6 py-4 text-sm font-medium ${
+                        activeTab === 'steps'
+                          ? 'text-blue-600 border-b-2 border-blue-600'
+                          : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      Steps
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('highlights')}
+                      className={`px-6 py-4 text-sm font-medium ${
+                        activeTab === 'highlights'
+                          ? 'text-blue-600 border-b-2 border-blue-600'
+                          : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      Highlights
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('output')}
+                      className={`px-6 py-4 text-sm font-medium ${
+                        activeTab === 'output'
+                          ? 'text-blue-600 border-b-2 border-blue-600'
+                          : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      Output
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tab Content */}
+                <div className="p-6">
+                  {/* Steps Tab */}
+                  {activeTab === 'steps' && (
+                    <>
+                      {/* Stats */}
+                      <div className="flex items-center gap-4 text-sm text-slate-600 mb-6">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4" />
+                          <span>{templateData.favorites.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Eye className="w-4 h-4" />
+                          <span>{templateData.views} views</span>
+                        </div>
+                      </div>
+
+                      {/* Subtitle */}
+                      <p className="text-slate-600 mb-6">{templateData.subtitle}</p>
+
+                      {/* Time Savings */}
+                      <div className="flex items-center gap-2 text-blue-600 mb-8">
+                        <Clock className="w-5 h-5" />
+                        <span className="text-lg font-medium">
+                          Saves an estimated {templateData.savedHours} hours
+                        </span>
+                      </div>
+
+                      {/* How This Template Works */}
+                      {templateData.sections.map((section: any, idx: number) => (
+                        <div key={idx} className="mb-8">
+                          <div className="bg-slate-50 border border-slate-200 rounded-lg p-6">
+                            <h3 className="text-xl font-bold text-slate-900 mb-4">
+                              {section.title}
+                            </h3>
+                            <p className="text-slate-600 mb-6">{section.description}</p>
+
+                            {/* Steps */}
+                            <div className="space-y-4">
+                              {section.steps.map((step: any) => (
+                                <div key={step.number} className="flex gap-4">
+                                  <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
+                                    {step.number}
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold text-slate-900 mb-1">
+                                      {step.title}
+                                    </h4>
+                                    <p className="text-sm text-slate-600">{step.description}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {/* Highlights Tab */}
+                  {activeTab === 'highlights' && (
+                    <div className="space-y-3">
+                      {templateData.whatsIncluded.map((item: string, idx: number) => (
+                        <div key={idx} className="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-lg transition-colors">
+                          <svg
+                            className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span className="text-slate-700">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Output Tab */}
+                  {activeTab === 'output' && (
+                    <div className="text-center py-12 text-slate-500">
+                      <p>Output examples will be available after you remix this template</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - CTA Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-6">
+                <h3 className="text-xl font-bold text-slate-900 mb-4">
+                  Ready to Get Started?
+                </h3>
+
+                <p className="text-slate-600 mb-6">
+                  Use this template to start your project.
+                </p>
+                
+                <button
+                  onClick={() => {
+                    setTemplateName(templateData.title || 'My Project');
+                    setShowRenameModal(true);
+                  }}
+                  className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors mb-4"
+                >
+                  Use This Template
+                </button>
 
                 {/* What's Included */}
                 <div className="mt-8 pt-6 border-t border-slate-200">

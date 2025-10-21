@@ -4,13 +4,11 @@ import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 interface NameCollectionModalProps {
   isOpen: boolean;
   onSubmit: (name: string) => void;
-  onBack?: () => void;
 }
 
 const NameCollectionModal: React.FC<NameCollectionModalProps> = ({
   isOpen,
   onSubmit,
-  onBack,
 }) => {
   const [name, setName] = useState('');
 

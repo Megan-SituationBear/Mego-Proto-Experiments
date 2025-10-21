@@ -380,10 +380,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       <NameCollectionModal
         isOpen={showNameModal}
         onSubmit={handleNameSubmit}
-        onBack={() => {
-          setShowNameModal(false);
-          setShowMatchingModal(true);
-        }}
       />
 
       <BuildingModal

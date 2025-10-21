@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, Star, Eye, Clock, Share2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { AIInput } from '../components/ui';
 
 interface WorkItemTemplateProps {
@@ -36,6 +38,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   const [showAllSteps, setShowAllSteps] = useState(false);
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [selectedContent, setSelectedContent] = useState<{type: 'output' | 'highlight', title: string, content: string} | null>(null);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [templateName, setTemplateName] = useState('');
 
   const handleToggleFavorite = () => {
     const newFavoriteState = !isFavorite;
@@ -615,7 +619,10 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                     Use this template to start your {type === 'project' ? 'project' : 'artifact'}.
                   </p>
                   <button
-                    onClick={onUseTemplate}
+                    onClick={() => {
+                      setTemplateName(templateData.title || 'My Project');
+                      setShowRenameModal(true);
+                    }}
                     className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors mb-4"
                   >
                     Use This Template
@@ -668,6 +675,83 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           </div>
         )}
       </div>
+      
+      {/* Rename Template Modal */}
+      <Dialog open={showRenameModal} onClose={() => setShowRenameModal(false)} className="relative z-50">
+        <DialogBackdrop
+          transition
+          className="fixed inset-0 bg-black/50 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+        />
+
+        <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <DialogPanel
+              transition
+              className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-2xl transition-all data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setShowRenameModal(false)}
+                className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+
+              <DialogTitle className="text-2xl font-bold text-slate-900 mb-2">
+                Name Your {type === 'project' ? 'Project' : 'Artifact'}
+              </DialogTitle>
+              
+              <p className="text-sm text-slate-600 mb-6">
+                Give your {type === 'project' ? 'project' : 'artifact'} a name to get started.
+              </p>
+
+              {/* Input field */}
+              <div className="mb-6">
+                <label htmlFor="template-name" className="block text-sm font-medium text-slate-700 mb-2">
+                  {type === 'project' ? 'Project' : 'Artifact'} Name
+                </label>
+                <input
+                  id="template-name"
+                  type="text"
+                  value={templateName}
+                  onChange={(e) => setTemplateName(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
+                  placeholder="Enter a name..."
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && templateName.trim()) {
+                      setShowRenameModal(false);
+                      onUseTemplate?.();
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowRenameModal(false)}
+                  className="flex-1 px-4 py-3 border border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (templateName.trim()) {
+                      setShowRenameModal(false);
+                      onUseTemplate?.();
+                    }
+                  }}
+                  disabled={!templateName.trim()}
+                  className="flex-1 px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Save
+                </button>
+              </div>
+            </DialogPanel>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };

@@ -179,31 +179,31 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
 
   const allTemplates = [
     {
-      category: "Strategists",
-      categoryColor: "purple" as const,
-      savedHours: 35,
-      title: "Strategy Title Here About Using Real Data",
-      description: "Working On: Saved Est | Hrs | By Analyzing | What | To Avoid | Risk | By | Using Integrations | To Save | # Hours |",
-      favorites: 1234,
-      views: 154
+      category: "Effective Planners",
+      categoryColor: "amber" as const,
+      savedHours: 28,
+      title: "Plan Projects with Precision Using Predictive Analytics",
+      description: "Working on: Saved est 28hrs by analyzing project data to avoid timeline issues by using planning tools",
+      favorites: 823,
+      views: 1156
     },
     {
-      category: "Strategists",
-      categoryColor: "purple" as const,
-      savedHours: 35,
-      title: "Strategy Title Here About Using Real Data",
-      description: "Working On: Saved Est | Hrs | By Analyzing | What | To Avoid | Risk | By | Using Integrations | To Save | # Hours |",
-      favorites: 1234,
-      views: 154
+      category: "Developers & Launchers",
+      categoryColor: "green" as const,
+      savedHours: 51,
+      title: "Build and Launch Features Faster with Automation",
+      description: "Working on: Saved est 51hrs by analyzing code patterns to avoid launch delays by using CI/CD pipelines",
+      favorites: 1456,
+      views: 2198
     },
     {
-      category: "Strategists",
-      categoryColor: "purple" as const,
-      savedHours: 35,
-      title: "Strategy Title Here About Using Real Data",
-      description: "Working On: Saved Est | Hrs | By Analyzing | What | To Avoid | Risk | By | Using Integrations | To Save | # Hours |",
-      favorites: 1234,
-      views: 154
+      category: "Admins",
+      categoryColor: "green" as const,
+      savedHours: 34,
+      title: "Streamline User Management and Permissions",
+      description: "Working on: Saved est 34hrs by automating user provisioning to avoid security gaps by using admin tools",
+      favorites: 967,
+      views: 1542
     },
     {
       category: "Customer Satisfaction Heroes",

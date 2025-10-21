@@ -417,7 +417,8 @@ const HomePage: React.FC<HomePageProps> = ({
                   description={template.description}
                   remixCount={template.views || 0}
                   favoriteCount={template.favorites || 0}
-                  variant="customizable"
+                  variant="standard"
+                  isFavorited={false}
                   onClick={() => onViewTemplate?.(template)}
                 />
               ))
@@ -433,7 +434,8 @@ const HomePage: React.FC<HomePageProps> = ({
                       description={project.description || 'Work in progress'}
                       remixCount={project.views || 0}
                       favoriteCount={project.favorites || 0}
-                      variant="customizable"
+                      variant="standard"
+                      isFavorited={false}
                       onClick={() => onViewTemplate?.(project)}
                     />
                   ))}
@@ -446,7 +448,8 @@ const HomePage: React.FC<HomePageProps> = ({
                       description={template.description}
                       remixCount={template.views || 0}
                       favoriteCount={template.favorites || 0}
-                      variant="customizable"
+                      variant="standard"
+                      isFavorited={true}
                       onClick={() => onViewTemplate?.(template)}
                     />
                   ))}

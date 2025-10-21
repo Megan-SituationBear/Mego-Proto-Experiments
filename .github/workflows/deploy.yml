@@ -5,6 +5,7 @@ on:
     branches:
       - App-Concept
       - feature/complete-signin-flow
+      - feature/home-page-updates
   workflow_dispatch:
 
 permissions:

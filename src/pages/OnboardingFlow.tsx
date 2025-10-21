@@ -64,10 +64,10 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 animate-fadeIn">
       <div className="w-full max-w-md px-4">
         {/* Content Card */}
-        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 md:p-12">
+        <div key={step} className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 md:p-12 animate-slideUp">
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">

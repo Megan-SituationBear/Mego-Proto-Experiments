@@ -151,7 +151,7 @@ const HomePage: React.FC<HomePageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 animate-fadeIn">
       {/* Top Navigation Bar */}
       <TopNav
         title=""

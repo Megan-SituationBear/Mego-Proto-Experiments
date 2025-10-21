@@ -212,7 +212,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   // ============ ARTIFACT: LOGGED IN ============
   if (isArtifactLoggedIn) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 animate-fadeIn">
         {/* Header */}
         <TopNav
           title={templateData.title || 'Appointment Handler Class'}
@@ -330,7 +330,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     ];
 
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 animate-fadeIn">
         {/* Header */}
         <TopNav
           title={templateData.title}
@@ -456,7 +456,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   // ============ PROJECT FROM SCRATCH: LOGGED IN ============
   if (isProjectFromScratchLoggedIn) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 animate-fadeIn">
         {/* Header */}
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-4xl mx-auto px-6 py-4">
@@ -542,7 +542,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   // ============ TEMPLATE: NOT LOGGED IN ============
   if (isTemplateNotLoggedIn) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 animate-fadeIn">
         {/* Header */}
         <TopNav
           title={templateData.title}
@@ -756,7 +756,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   // ============ TEMPLATE: LOGGED IN ============
   if (isTemplateLoggedIn) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 animate-fadeIn">
         {/* Header */}
         <TopNav
           title={templateData.title}

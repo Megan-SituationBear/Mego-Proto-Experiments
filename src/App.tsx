@@ -21,6 +21,7 @@ function App() {
   
   // Auth state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSignUpFlow, setIsSignUpFlow] = useState(true); // Track if user is signing up vs logging in
   
   // User data (could be moved to context in future)
   const [userName] = useState('Jill');
@@ -174,11 +175,12 @@ function App() {
   // ============ Navigation Handlers ============
   
   const handleLogin = () => {
-    // Both login and signup go through SSO + terms flow
+    setIsSignUpFlow(false); // Login: skip questions
     setCurrentView('onboarding');
   };
 
   const handleSignUp = () => {
+    setIsSignUpFlow(true); // Sign up: include questions
     setCurrentView('onboarding');
   };
 
@@ -306,7 +308,7 @@ function App() {
   }
 
   if (currentView === 'onboarding') {
-    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
+    return <OnboardingFlow onComplete={handleOnboardingComplete} isSignUp={isSignUpFlow} />;
   }
 
   if (currentView === 'template') {

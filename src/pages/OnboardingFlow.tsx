@@ -3,12 +3,30 @@ import PrimaryButton from '../components/ui/PrimaryButton';
 
 interface OnboardingFlowProps {
   onComplete: () => void;
+  isSignUp?: boolean; // true for sign up flow, false for login flow
 }
 
-const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
-  const [step, setStep] = useState<'sso' | 'terms'>('sso');
+const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = true }) => {
+  const [step, setStep] = useState<'sso' | 'terms' | 'name' | 'interests'>('sso');
   const [isLoading, setIsLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [name, setName] = useState('');
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+
+  const interests = [
+    { title: 'Fix Issues Faster', description: 'Resolve bugs and issues quickly', icon: '🔧' },
+    { title: 'Deploy More Often', description: 'Streamline deployment process', icon: '🚀' },
+    { title: 'Manage Teams', description: 'Collaborate effectively', icon: '👥' },
+    { title: 'Automate Workflows', description: 'Save time with automation', icon: '⚡' },
+  ];
+
+  const toggleInterest = (title: string) => {
+    if (selectedInterests.includes(title)) {
+      setSelectedInterests(selectedInterests.filter(i => i !== title));
+    } else {
+      setSelectedInterests([...selectedInterests, title]);
+    }
+  };
 
   const handleSSOLogin = () => {
     setIsLoading(true);
@@ -21,6 +39,22 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
 
   const handleAcceptTerms = () => {
     if (termsAccepted) {
+      if (isSignUp) {
+        setStep('name'); // Sign up: go to name question
+      } else {
+        onComplete(); // Login: skip questions and complete
+      }
+    }
+  };
+
+  const handleNameNext = () => {
+    if (name.trim()) {
+      setStep('interests');
+    }
+  };
+
+  const handleInterestsNext = () => {
+    if (selectedInterests.length > 0) {
       onComplete();
     }
   };
@@ -143,6 +177,84 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
                 className="w-full"
               >
                 Accept & Continue
+              </PrimaryButton>
+            </>
+          )}
+
+          {step === 'name' && (
+            <>
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
+                Let's Get Started!
+              </h2>
+              <p className="text-center text-slate-600 mb-8">
+                What's your name?
+              </p>
+
+              {/* Name Input */}
+              <div className="space-y-4 mb-6">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your name"
+                  className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none text-lg transition-all"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && name.trim()) {
+                      handleNameNext();
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Continue Button */}
+              <PrimaryButton
+                onClick={handleNameNext}
+                disabled={!name.trim()}
+                className="w-full"
+              >
+                Continue
+              </PrimaryButton>
+            </>
+          )}
+
+          {step === 'interests' && (
+            <>
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
+                What Would You Like To Fix?
+              </h2>
+              <p className="text-center text-slate-600 mb-8">
+                Select all that apply
+              </p>
+
+              {/* Interests Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {interests.map((interest) => (
+                  <button
+                    key={interest.title}
+                    onClick={() => toggleInterest(interest.title)}
+                    className={`p-6 rounded-xl border-2 transition-all text-left ${
+                      selectedInterests.includes(interest.title)
+                        ? 'border-blue-600 bg-blue-50'
+                        : 'border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="text-3xl mb-2">{interest.icon}</div>
+                    <h3 className="font-semibold text-slate-900 mb-1">{interest.title}</h3>
+                    <p className="text-sm text-slate-600">{interest.description}</p>
+                  </button>
+                ))}
+              </div>
+
+              {/* Continue Button */}
+              <PrimaryButton
+                onClick={handleInterestsNext}
+                disabled={selectedInterests.length === 0}
+                className="w-full"
+              >
+                Get Started
               </PrimaryButton>
             </>
           )}

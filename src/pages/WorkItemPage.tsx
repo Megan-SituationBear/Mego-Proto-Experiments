@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ArrowLeft, Star, Eye, Clock, Share2, ChevronDown, ChevronUp } from 'lucide-react';
-import { AIInput } from './ui';
+import { AIInput } from '../components/ui';
 
 interface WorkItemTemplateProps {
   type: 'project' | 'artifact';

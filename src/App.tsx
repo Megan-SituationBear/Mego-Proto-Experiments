@@ -4,7 +4,7 @@ import HomePage from './pages/HomePage';
 import OnboardingFlow from './pages/OnboardingFlow';
 import TemplatePage from './pages/TemplatePage';
 import PricingPage from './pages/PricingPage';
-import ProjectPage from './pages/ProjectPage';
+import WorkItemPage from './pages/WorkItemPage';
 import './App.css';
 
 /**
@@ -28,7 +28,6 @@ function App() {
   
   // Selected item state
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
-  const [projectTitle, setProjectTitle] = useState('Landing Page Redesign');
 
   // ============ Navigation Handlers ============
   
@@ -68,7 +67,6 @@ function App() {
     setSelectedTemplate(template);
     if (isLoggedIn) {
       // Logged in users: go directly to project page
-      setProjectTitle(template.title);
       setCurrentView('project');
     } else {
       // Logged out users: show template preview with CTA
@@ -86,7 +84,6 @@ function App() {
       };
       setActiveProjects(prev => [...prev, newProject]);
       setHasProjects(true);
-      setProjectTitle(selectedTemplate?.title || 'New Project');
       setCurrentView('project');
     } else {
       // Show pricing for logged out users
@@ -104,7 +101,6 @@ function App() {
     };
     setActiveProjects(prev => [...prev, newProject]);
     setHasProjects(true);
-    setProjectTitle(newProject.title);
     setSelectedTemplate(newProject);
     setCurrentView('project');
   };
@@ -169,11 +165,26 @@ function App() {
   }
 
   if (currentView === 'project') {
+    const isFavorited = favoritedTemplates.some(t => t.title === selectedTemplate?.title);
+    
     return (
-      <ProjectPage
-        projectTitle={projectTitle}
-        projectDate={new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+      <WorkItemPage
+        type="project"
+        isLoggedIn={isLoggedIn}
+        templateData={selectedTemplate}
+        initialIsFavorite={isFavorited}
         onBack={handleBackToHome}
+        onUseTemplate={handleUseTemplate}
+        onToggleFavorite={(isFavorited) => {
+          if (isFavorited) {
+            setFavoritedTemplates(prev => [...prev, selectedTemplate]);
+            setHasProjects(true);
+          } else {
+            setFavoritedTemplates(prev => 
+              prev.filter(t => t.title !== selectedTemplate.title)
+            );
+          }
+        }}
       />
     );
   }

@@ -114,7 +114,7 @@ const Conversation: React.FC<ConversationProps> = ({
               className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
                 message.isUser
                   ? 'bg-copado-blue text-white rounded-br-md'
-                  : 'bg-gray-100 text-gray-800 rounded-bl-md'
+                  : 'bg-slate-100 text-slate-800 rounded-bl-md'
               }`}
             >
               {message.isUser ? (
@@ -123,7 +123,7 @@ const Conversation: React.FC<ConversationProps> = ({
                 renderMessageContent(message.content)
               )}
               <p className={`text-xs mt-2 ${
-                message.isUser ? 'text-blue-100' : 'text-gray-500'
+                message.isUser ? 'text-blue-100' : 'text-slate-500'
               }`}>
                 {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </p>
@@ -134,12 +134,12 @@ const Conversation: React.FC<ConversationProps> = ({
         {/* Typing Indicator */}
         {showTypingIndicator && !messages.some(m => !m.isUser) && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 text-gray-800 rounded-2xl rounded-bl-md px-4 py-3">
+            <div className="bg-slate-100 text-slate-800 rounded-2xl rounded-bl-md px-4 py-3">
               <div className="flex items-center space-x-2">
                 <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.1s]"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.1s]"></div>
+                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
                 </div>
                 <span className="message-text text-sm">Copado is typing...</span>
               </div>

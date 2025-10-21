@@ -5,6 +5,7 @@ import OnboardingFlow from './components/OnboardingFlow';
 import TemplatePage from './components/TemplatePage';
 import PricingPage from './components/PricingPage';
 import ProjectPage from './components/ProjectPage';
+import WorkItemTemplate from './components/WorkItemTemplate';
 import type { ConversationMessage } from './components/Conversation';
 import './App.css';
 
@@ -17,15 +18,20 @@ interface Message {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'proto2'>('intro');
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'proto2' | 'work-item'>('intro');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hasProjects, setHasProjects] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [workItemType, setWorkItemType] = useState<'project' | 'artifact'>('project');
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
   const [userMessageCount, setUserMessageCount] = useState(0);
   const [projectTitle, setProjectTitle] = useState('Landing Page Redesign');
+  const userName = 'Jill'; // Could be set from auth in future
+  const [favoritedTemplates, setFavoritedTemplates] = useState<any[]>([]);
+  const [activeProjects, setActiveProjects] = useState<any[]>([]);
+  const [isDuplicatedTemplate, setIsDuplicatedTemplate] = useState(false);
 
   const generateAIResponse = (userText: string, currentUserMessageCount: number): { message: Message; conversationMessage: ConversationMessage } => {
     const lowerText = userText.toLowerCase();
@@ -116,7 +122,7 @@ function App() {
     return { message: oldMessage, conversationMessage: newMessage };
   };
 
-  const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void) => {
+  const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void, fromWorkItem: boolean = false) => {
     if (!hasStarted) {
       setHasStarted(true);
     }
@@ -159,19 +165,27 @@ function App() {
         setTypingIndicator(false);
       }
 
-      // Auto-transition to workspace after second user message
-      if (newUserMessageCount === 2) {
+      // Auto-transition to workspace after second user message (only from home page, not from work item)
+      if (newUserMessageCount === 2 && !fromWorkItem && currentView === 'home') {
         // Set the project title to the user's second message
         setProjectTitle(text);
         setTimeout(() => {
-          setCurrentView('proto2');
+          // Create new project work item
+          const newProject = {
+            title: text,
+            category: 'New Project',
+            savedHours: 0,
+            id: Date.now().toString(),
+            startedAt: new Date(),
+          };
+          setSelectedTemplate(newProject);
+          setActiveProjects(prev => [...prev, newProject]);
+          setHasProjects(true);
+          setWorkItemType('project');
+          setCurrentView('work-item');
         }, 1500); // Wait 1.5s to show the "creating workspace" message
       }
     }, 1200);
-  };
-
-  const handleViewProto2 = () => {
-    setCurrentView('proto2');
   };
 
   const handleLogin = () => {
@@ -180,7 +194,8 @@ function App() {
   };
 
   const handleSignUp = () => {
-    setCurrentView('onboarding');
+    setIsLoggedIn(true);
+    setCurrentView('home');
   };
 
   const handleOnboardingComplete = () => {
@@ -191,6 +206,10 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setHasProjects(false);
+    setMessages([]);
+    setConversationMessages([]);
+    setUserMessageCount(0);
+    setHasStarted(false);
     setCurrentView('intro');
   };
 
@@ -205,22 +224,38 @@ function App() {
     setHasStarted(true);
   };
 
-  const handleToggleProjects = () => {
-    setHasProjects(!hasProjects);
-  };
-
   const handleViewTemplate = (template: any) => {
     setSelectedTemplate(template);
-    if (isLoggedIn) {
-      // Logged in users: go directly to project creation
-      setProjectTitle(template.title);
-      setCurrentView('proto2');
-      setHasStarted(true);
+    setWorkItemType('project'); // Templates are always 'project' type
+    setIsDuplicatedTemplate(false); // Reset duplicated state when viewing a template
+    setCurrentView('work-item'); // Navigate to work item template page
+  };
+
+  const handleToggleFavorite = (template: any, isFavorited: boolean) => {
+    if (isFavorited) {
+      // Add to favorites
+      setFavoritedTemplates(prev => [...prev, template]);
+      setHasProjects(true); // Show "Your Work" tab
     } else {
-      // Logged out users: show full template page with CTA
-      setCurrentView('template');
+      // Remove from favorites
+      setFavoritedTemplates(prev => 
+        prev.filter(t => t.title !== template.title)
+      );
+      // If no more favorites, hide "Your Work" tab
+      if (favoritedTemplates.length === 1) {
+        setHasProjects(false);
+      }
     }
   };
+
+  // Available for future use - view work item directly
+  // const handleViewWorkItem = (type: 'project' | 'artifact', template?: any) => {
+  //   setWorkItemType(type);
+  //   if (template) {
+  //     setSelectedTemplate(template);
+  //   }
+  //   setCurrentView('work-item');
+  // };
 
   const handleUseTemplate = () => {
     // This is only called from TemplatePage (logged out users)
@@ -233,16 +268,23 @@ function App() {
 
   const handleSelectPlan = (plan: string) => {
     console.log('Selected plan:', plan);
-    setCurrentView('onboarding');
+    if (plan === 'Free') {
+      // Free plan: log in and go directly to home
+      setIsLoggedIn(true);
+      setCurrentView('home');
+    } else {
+      // Other plans: go to onboarding
+      setCurrentView('onboarding');
+    }
   };
 
   if (currentView === 'intro') {
     return (
       <IntroPage 
-        onViewProto2={handleViewProto2}
         onLogin={handleLogin}
         onSignUp={handleSignUp}
         onViewTemplate={handleViewTemplate}
+        onViewPricing={() => setCurrentView('pricing')}
         onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator)}
         messages={messages}
         conversationMessages={conversationMessages}
@@ -274,30 +316,78 @@ function App() {
     );
   }
 
+  if (currentView === 'work-item') {
+    // Check if current template is favorited
+    const isFavorited = favoritedTemplates.some(t => t.title === selectedTemplate?.title);
+    // Check if this is a new project created from conversation
+    const isNewProject = hasStarted && conversationMessages.length >= 2;
+    
+    return (
+      <WorkItemTemplate
+        type={workItemType}
+        isLoggedIn={isLoggedIn}
+        templateData={selectedTemplate}
+        initialIsFavorite={isFavorited}
+        isNewProject={isNewProject}
+        isDuplicatedTemplate={isDuplicatedTemplate}
+        onBack={() => {
+          // Always reset conversation when going back to home
+          setMessages([]);
+          setConversationMessages([]);
+          setUserMessageCount(0);
+          setHasStarted(false);
+          setIsDuplicatedTemplate(false);
+          setCurrentView(isLoggedIn ? 'home' : 'intro');
+        }}
+        onUseTemplate={() => {
+          if (isLoggedIn || workItemType === 'artifact') {
+            // Add to active projects and show in "My Work"
+            const newProject = {
+              ...selectedTemplate,
+              id: Date.now().toString(),
+              startedAt: new Date(),
+            };
+            setActiveProjects(prev => [...prev, newProject]);
+            setHasProjects(true);
+            
+            // Set project title and create new project view
+            setProjectTitle(selectedTemplate?.title || 'New Project');
+            setSelectedTemplate(newProject);
+            setIsDuplicatedTemplate(true);
+            
+            // Reset conversation for new project
+            setConversationMessages([]);
+            setMessages([]);
+            setUserMessageCount(0);
+            setHasStarted(false);
+          } else {
+            setCurrentView('pricing');
+          }
+        }}
+        onToggleFavorite={(isFavorited) => handleToggleFavorite(selectedTemplate, isFavorited)}
+        onSignIn={handleLogin}
+        conversationMessages={conversationMessages}
+        onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator, true)}
+        userMessageCount={userMessageCount}
+      />
+    );
+  }
+
   if (currentView === 'home') {
     return (
-      <div>
-        <HomePage 
-          hasProjects={hasProjects}
-          onCreateProject={handleCreateProject}
-          onOpenProject={handleOpenProject}
-          onLogout={handleLogout}
-          onViewTemplate={handleViewTemplate}
-          onSendMessage={(text) => {
-            console.log('Creating project from message:', text);
-            handleCreateProject();
-          }}
-        />
-        {/* Debug button for testing */}
-        <div className="fixed bottom-4 right-4 flex gap-2">
-          <button
-            onClick={handleToggleProjects}
-            className="px-4 py-2 rounded bg-gray-600 text-white text-sm font-medium hover:bg-gray-700 transition-colors"
-          >
-            Toggle Projects
-          </button>
-        </div>
-      </div>
+      <HomePage 
+        userName={userName}
+        hasProjects={hasProjects}
+        favoritedTemplates={favoritedTemplates}
+        activeProjects={activeProjects}
+        onCreateProject={handleCreateProject}
+        onOpenProject={handleOpenProject}
+        onLogout={handleLogout}
+        onViewTemplate={handleViewTemplate}
+        onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator)}
+        conversationMessages={conversationMessages}
+        userMessageCount={userMessageCount}
+      />
     );
   }
 

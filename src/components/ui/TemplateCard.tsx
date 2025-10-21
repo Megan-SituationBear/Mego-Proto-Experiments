@@ -3,7 +3,7 @@ import { Heart, Eye, Sparkles } from 'lucide-react';
 
 export interface TemplateCardProps {
   category: string;
-  categoryColor?: 'purple' | 'amber' | 'blue' | 'green';
+  categoryColor?: 'purple' | 'amber' | 'blue' | 'green' | 'slate';
   savedHours?: number;
   title: string;
   description: string;
@@ -18,6 +18,7 @@ const categoryColorMap = {
   amber: 'bg-amber-100 text-amber-700',
   blue: 'bg-blue-100 text-blue-700',
   green: 'bg-green-100 text-green-700',
+  slate: 'bg-slate-100 text-slate-700',
 };
 
 const TemplateCard: React.FC<TemplateCardProps> = ({
@@ -33,7 +34,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
 }) => {
   return (
     <div
-      className="group relative bg-white rounded border border-gray-300 p-4 flex flex-col gap-3 hover:shadow-md hover:border-indigo-600 transition-all duration-300 cursor-pointer"
+      className="group relative bg-white rounded border border-slate-300 p-4 flex flex-col gap-3 hover:shadow-md hover:border-indigo-600 transition-all duration-300 cursor-pointer"
       onClick={onClick}
     >
       {/* Top Section */}
@@ -53,7 +54,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
           
           {/* Icon */}
           <div className="ml-auto">
-            {icon || <Sparkles className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />}
+            {icon || <Sparkles className="w-5 h-5 text-slate-400 group-hover:text-indigo-600 transition-colors" />}
           </div>
         </div>
       </div>

@@ -86,12 +86,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, hasStart
               className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
                 message.isUser
                   ? 'bg-copado-blue text-white rounded-br-md'
-                  : 'bg-gray-100 text-gray-800 rounded-bl-md'
+                  : 'bg-slate-100 text-slate-800 rounded-bl-md'
               }`}
             >
               <p className={message.isUser ? 'text-sm text-white' : 'message-text'}>{message.text}</p>
               <p className={`text-xs mt-1 ${
-                message.isUser ? 'text-blue-100' : 'text-gray-500'
+                message.isUser ? 'text-blue-100' : 'text-slate-500'
               }`}>
                 {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </p>

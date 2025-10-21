@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Copado Prototype</title>
+  <title>Copado AI Prototype</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,14 @@
     
     <!-- Header -->
     <div class="text-center mb-12">
-      <h1 class="text-5xl font-bold text-slate-900 mb-4">Copado Prototype</h1>
+      <div class="flex justify-center mb-6">
+        <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <h1 class="text-5xl font-bold text-slate-900 mb-4">Copado AI Prototype</h1>
       <p class="text-lg text-slate-600">Interactive design prototypes & components</p>
     </div>
 
@@ -31,28 +38,15 @@
       <div class="block bg-white rounded-xl p-6 shadow-lg border-2 border-slate-200">
         <div class="mb-4">
           <h2 class="text-2xl font-semibold text-slate-900 mb-2">Full Prototype</h2>
-          <p class="text-slate-600 mb-4">Complete React app</p>
+          <p class="text-slate-600 mb-4">Complete interactive Copado AI application</p>
           
-          <div class="flex items-center gap-2 mb-4">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-sm text-green-700 font-medium">Server Running</span>
-          </div>
-          
-          <!-- Direct Link -->
-          <a href="http://localhost:4173" target="_blank" 
+          <a href="./app.html" 
              class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all">
-            <span>Open Prototype</span>
+            <span>Launch Prototype</span>
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
             </svg>
           </a>
-          
-          <!-- URL Info -->
-          <div class="mt-3 p-3 bg-gray-50 rounded border border-gray-200">
-            <p class="text-xs font-mono text-gray-700">
-              <strong>URL:</strong> <a href="http://localhost:4173" target="_blank" class="text-blue-600 hover:underline">http://localhost:4173</a>
-            </p>
-          </div>
         </div>
       </div>
 
@@ -131,8 +125,12 @@
 
     </div>
 
+    <!-- Footer -->
+    <div class="mt-12 text-center text-sm text-slate-500">
+      <p>Copado AI Prototype © 2025</p>
+    </div>
+
   </div>
 
 </body>
 </html>
-

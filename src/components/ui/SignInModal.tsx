@@ -93,7 +93,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
           {/* X Close Button */}
           <button
             onClick={resetAndClose}
-            className="absolute right-0 text-white hover:text-gray-300 transition-colors"
+            className="absolute right-0 text-white hover:text-slate-300 transition-colors"
             aria-label="Close"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -104,7 +104,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
 
         {/* White Modal Card */}
         <div 
-          className="w-full bg-white rounded-2xl p-8 border border-gray-100 shadow-sm"
+          className="w-full bg-white rounded-2xl p-8 border border-slate-100 shadow-sm"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Login Title */}
@@ -122,7 +122,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
               <button
                 onClick={() => handleSSOClick('salesforce')}
                 disabled={isLoading}
-                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Salesforce
@@ -132,7 +132,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
               <button
                 onClick={() => handleSSOClick('google')}
                 disabled={isLoading}
-                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Google
@@ -142,7 +142,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
               <button
                 onClick={() => handleSSOClick('github')}
                 disabled={isLoading}
-                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Github
@@ -152,7 +152,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
               <button
                 onClick={() => handleSSOClick('saml')}
                 disabled={isLoading}
-                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 SAML
@@ -169,7 +169,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
               <button
                 onClick={() => setStep('email')}
                 disabled={isLoading}
-                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full px-8 py-2 rounded border border-[#62748e] bg-[#f8fafc] text-[#020618] text-[15px] font-roboto hover:bg-slate-100 transition-colors disabled:opacity-50"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Use Email
@@ -179,7 +179,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             /* SSO Terms Acceptance Screen */
             <div className="flex flex-col gap-6">
               {/* Terms Content */}
-              <div className="bg-gray-50 rounded-lg p-6 max-h-80 overflow-y-auto border border-gray-200">
+              <div className="bg-slate-50 rounded-lg p-6 max-h-80 overflow-y-auto border border-slate-200">
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">
                   Single Sign-On Terms and Conditions
                 </h3>
@@ -240,7 +240,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
-                className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-[15px] font-roboto placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-[15px] font-roboto placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 required
                 disabled={isLoading}
               />
@@ -250,7 +250,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-[15px] font-roboto placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-[15px] font-roboto placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 required
                 disabled={isLoading}
               />

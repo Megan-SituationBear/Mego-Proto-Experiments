@@ -1,11 +1,61 @@
-# React + TypeScript + Vite
+# Copado AI Prototype
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React prototype for Copado AI featuring template management, AI-powered conversations, and project workflows.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Landing Page** with AI input and template showcase
+- **User Authentication** with modal-based login/signup
+- **Home Dashboard** with "Your Work" and "Templates For You" tabs
+- **Template System** with categories and favorites
+- **AI Conversations** with automatic workspace creation
+- **Project Management** with duplicated templates and outputs
+- **Hamburger Menu** with recent items and navigation
+
+## 🛠️ Tech Stack
+
+- **React 19** + **TypeScript**
+- **Vite** for blazing-fast development
+- **Tailwind CSS** for styling
+- **Lucide React** for icons
+
+## 📦 Installation
+
+```bash
+npm install
+```
+
+## 🏃 Development
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) to view the app.
+
+## 🏗️ Build
+
+```bash
+npm run build
+```
+
+## 👀 Preview Build
+
+```bash
+npm run preview
+```
+
+## 🌐 GitHub Pages Deployment
+
+This project is configured for automatic deployment to GitHub Pages.
+
+**See [GITHUB_PAGES_SETUP.md](./GITHUB_PAGES_SETUP.md) for detailed setup instructions.**
+
+### Quick Deploy
+
+1. Push to GitHub
+2. Enable GitHub Pages in repository Settings → Pages → Source: **GitHub Actions**
+3. Your site will be live at `https://<username>.github.io/<repository>/`
 
 ## React Compiler
 

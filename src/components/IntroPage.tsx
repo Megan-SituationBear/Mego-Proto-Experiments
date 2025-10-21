@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, Button, TemplateCard } from './ui';
+import { AIInput, IntegrationsModal, TemplateCard } from './ui';
 import AuthModal from './ui/AuthModal';
+import MatchingModal from './ui/MatchingModal';
 import type { ConversationMessage } from './Conversation';
 
 interface Message {
@@ -11,19 +12,20 @@ interface Message {
 }
 
 interface IntroPageProps {
-  onViewProto2: () => void;
   onLogin?: () => void;
   onSignUp?: () => void;
   onViewTemplate?: (template: any) => void;
+  onViewPricing?: () => void;
   onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
   messages?: Message[];
   conversationMessages?: ConversationMessage[];
   userMessageCount?: number;
 }
 
-const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, onViewTemplate, onSendMessage }) => {
+const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate, onViewPricing, onSendMessage }) => {
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showMatchingModal, setShowMatchingModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
 
@@ -147,12 +149,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
     }
   ];
 
-  const [templates, setTemplates] = useState(allTemplates.slice(0, 3));
-
-  const shuffleTemplates = () => {
-    const shuffled = [...allTemplates].sort(() => Math.random() - 0.5);
-    setTemplates(shuffled.slice(0, 3));
-  };
+  const templates = allTemplates.slice(0, 3);
 
   const handleTemplateClick = (template: typeof allTemplates[0]) => {
     if (onViewTemplate) {
@@ -163,12 +160,12 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation Bar */}
-      <nav className="bg-white border-b border-gray-200">
+      <nav className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-end items-center h-16 gap-3">
             <button
               onClick={openSignInModal}
-              className="px-6 py-2 rounded border border-gray-300 text-slate-900 text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors"
             >
               Login
             </button>
@@ -183,7 +180,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
       </nav>
 
       {/* Hero Section with Templates - Dark Background */}
-      <section className="bg-slate-800 py-12 px-4">
+      <section className="bg-[#1a2b4a] py-12 px-4">
         <div className="max-w-6xl mx-auto">
           {/* Logo */}
           <div className="flex justify-center mb-4">
@@ -195,19 +192,19 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl font-bold text-white text-center mb-2">
+          <h1 className="text-5xl font-bold text-center mb-2" style={{ color: 'white' }}>
             Copado AI
           </h1>
 
           {/* Subtitle */}
-          <p className="text-2xl text-white text-center mb-8">
+          <p className="text-2xl text-center mb-8" style={{ color: 'white' }}>
             Streamline & Supercharge Salesforce
           </p>
 
           {/* Section Label */}
           <div className="text-center mb-6">
             <p className="text-blue-400 uppercase tracking-wider text-sm font-medium">
-              SAMPLES OF POPULAR TIME SAVERS
+              THIS WEEK'S POPULAR TIME SAVERS
             </p>
           </div>
 
@@ -228,13 +225,13 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
             ))}
           </div>
 
-          {/* Shuffle Button */}
+          {/* Find My Matches Button */}
           <div className="text-center">
             <button
-              onClick={shuffleTemplates}
-              className="px-8 py-2 rounded border border-white bg-transparent text-white text-sm font-medium hover:bg-white/10 transition-colors"
+              onClick={() => setShowMatchingModal(true)}
+              className="px-8 py-2 rounded border border-white bg-white text-slate-900 text-sm font-medium hover:bg-slate-100 transition-colors"
             >
-              Shuffle These
+              Find My Matches
             </button>
           </div>
         </div>
@@ -245,13 +242,13 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
         <div className="max-w-4xl mx-auto">
           {/* Heading */}
           <h2 className="text-4xl font-bold text-slate-900 text-center mb-8">
-            What Are Your Time Savers?
+            Start Something New
           </h2>
 
           {/* AI Input Component */}
           <div className="mb-6">
             <AIInput
-              placeholder="You want to .... make what ... for whom?"
+              placeholder="Describe how I can help ...."
               onSendMessage={(text) => handleSendMessageWithConversation(text, setShowCopadoTyping)}
               onIntegrationsClick={handleIntegrationsClick}
               autoFocus={false}
@@ -263,19 +260,13 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
             />
           </div>
 
-          {/* Find Templates Button */}
-          <div className="text-center">
-            <button className="px-8 py-2 rounded border border-gray-300 text-slate-900 text-sm font-medium hover:bg-gray-50 transition-colors">
-              Find Templates
-            </button>
-          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-50 border-t border-gray-200 py-6 px-4">
+      <footer className="bg-slate-50 border-t border-slate-200 py-6 px-4">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-gray-600 text-sm mb-2">
+          <p className="text-slate-600 text-sm mb-2">
             Copyright Copaco 2025-2029{' '}
             <a href="#" className="text-blue-600 hover:underline">View Documentation</a>
           </p>
@@ -303,17 +294,15 @@ const IntroPage: React.FC<IntroPageProps> = ({ onViewProto2, onLogin, onSignUp, 
         onSwitchMode={switchAuthMode}
       />
 
-
-      {/* Debug button for testing */}
-      <div className="fixed bottom-4 right-4">
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={onViewProto2}
-        >
-          View Proto 2
-        </Button>
-      </div>
+      <MatchingModal
+        isOpen={showMatchingModal}
+        onClose={() => setShowMatchingModal(false)}
+        onComplete={() => {
+          if (onViewPricing) {
+            onViewPricing();
+          }
+        }}
+      />
     </div>
   );
 };

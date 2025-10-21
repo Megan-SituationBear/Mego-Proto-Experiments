@@ -5,9 +5,7 @@ import { generateAIResponse } from '../utils/aiMessageGenerator';
 
 interface HomePageProps {
   userName?: string;
-  hasProjects?: boolean;
   favoritedTemplates?: any[];
-  activeProjects?: any[];
   recentItems?: any[];
   onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
@@ -20,9 +18,7 @@ interface HomePageProps {
  */
 const HomePage: React.FC<HomePageProps> = ({
   userName = 'User',
-  hasProjects = false,
   favoritedTemplates = [],
-  activeProjects = [],
   recentItems = [],
   onCreateProject,
   onLogout,
@@ -31,7 +27,6 @@ const HomePage: React.FC<HomePageProps> = ({
   // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
   const [selectedGoalsForTemplates, setSelectedGoalsForTemplates] = useState<string[]>([]);
-  const hasWork = recentItems.length > 0 || favoritedTemplates.length > 0;
   const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'suggested'>(
     recentItems.length > 0 ? 'recent' : 
     favoritedTemplates.length > 0 ? 'favorites' : 
@@ -205,7 +200,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 <button
                   onClick={() => {
                     setShowMenu(false);
-                    setActiveTab('work');
+                    setActiveTab('recent');
                   }}
                   className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
@@ -236,7 +231,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     <button
                       onClick={() => {
                         setShowMenu(false);
-                        setActiveTab('work');
+                        setActiveTab('recent');
                       }}
                       className="w-full text-left py-2 px-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
                     >
@@ -253,7 +248,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 <button
                   onClick={() => {
                     setShowMenu(false);
-                    setActiveTab('work');
+                    setActiveTab('favorites');
                   }}
                   className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
@@ -271,7 +266,7 @@ const HomePage: React.FC<HomePageProps> = ({
             <button
               onClick={() => {
                 setShowMenu(false);
-                setActiveTab('templates');
+                setActiveTab('suggested');
               }}
               className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
             >

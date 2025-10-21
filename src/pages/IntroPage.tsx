@@ -371,10 +371,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
         isOpen={showMatchingModal}
         onClose={() => setShowMatchingModal(false)}
         onComplete={handleQuestionsComplete}
-        onBrowseTemplates={(selectedGoals) => {
-          console.log('Browse templates with goals:', selectedGoals);
-          handleQuestionsComplete();
-        }}
       />
 
       <NameCollectionModal

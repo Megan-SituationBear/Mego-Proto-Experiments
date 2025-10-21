@@ -24,9 +24,9 @@ function App() {
   
   // User data (could be moved to context in future)
   const [userName] = useState('Jill');
-  const [hasProjects, setHasProjects] = useState(false);
+  const [_hasProjects, setHasProjects] = useState(false);
   const [favoritedTemplates, setFavoritedTemplates] = useState<any[]>([]);
-  const [activeProjects, setActiveProjects] = useState<any[]>([]);
+  const [_activeProjects, setActiveProjects] = useState<any[]>([]);
   const [recentItems, setRecentItems] = useState<any[]>([]); // Track recent work items
   
   // Selected item state
@@ -332,9 +332,7 @@ function App() {
     return (
       <HomePage 
         userName={userName}
-        hasProjects={hasProjects}
         favoritedTemplates={favoritedTemplates}
-        activeProjects={activeProjects}
         recentItems={recentItems}
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}

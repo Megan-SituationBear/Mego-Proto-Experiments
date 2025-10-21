@@ -174,8 +174,8 @@ function App() {
   // ============ Navigation Handlers ============
   
   const handleLogin = () => {
-    setIsLoggedIn(true);
-    setCurrentView('home');
+    // Both login and signup go through SSO + terms flow
+    setCurrentView('onboarding');
   };
 
   const handleSignUp = () => {

@@ -6,96 +6,28 @@ interface OnboardingFlowProps {
 }
 
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
-  const [step, setStep] = useState(1);
-  const [name, setName] = useState('');
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [selectedPlan, setSelectedPlan] = useState<string>('');
+  const [step, setStep] = useState<'sso' | 'terms'>('sso');
+  const [isLoading, setIsLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
-  const interests = [
-    {
-      title: 'Fix Issues Faster',
-      description: 'Resolve bugs and issues quickly',
-      icon: '🔧',
-    },
-    {
-      title: 'Deploy More Often',
-      description: 'Streamline deployment process',
-      icon: '🚀',
-    },
-    {
-      title: 'Manage Teams',
-      description: 'Collaborate effectively',
-      icon: '👥',
-    },
-    {
-      title: 'Automate Workflows',
-      description: 'Save time with automation',
-      icon: '⚡',
-    },
-  ];
-
-  const plans = [
-    {
-      name: 'Starter Pack',
-      price: 'Free',
-      description: 'Perfect for individuals',
-      features: ['5 projects', 'Basic templates', 'Community support'],
-    },
-    {
-      name: 'Copado for Teams',
-      price: '$79/mo',
-      description: 'Best for teams',
-      popular: true,
-      features: ['Unlimited projects', 'All templates', 'Priority support', 'Team collaboration'],
-    },
-    {
-      name: 'Enterprise',
-      price: 'Custom',
-      description: 'For large organizations',
-      features: ['Custom solutions', 'Dedicated support', 'SSO & security', 'Onboarding'],
-    },
-  ];
-
-  const toggleInterest = (title: string) => {
-    if (selectedInterests.includes(title)) {
-      setSelectedInterests(selectedInterests.filter(i => i !== title));
-    } else {
-      setSelectedInterests([...selectedInterests, title]);
-    }
+  const handleSSOLogin = () => {
+    setIsLoading(true);
+    // Simulate SSO login
+    setTimeout(() => {
+      setIsLoading(false);
+      setStep('terms');
+    }, 1500);
   };
 
-  const handleNext = () => {
-    if (step === 1 && name.trim()) {
-      setStep(2);
-    } else if (step === 2 && selectedInterests.length > 0) {
-      setStep(3);
-    } else if (step === 3 && selectedPlan) {
+  const handleAcceptTerms = () => {
+    if (termsAccepted) {
       onComplete();
     }
   };
 
-  const canProceed = () => {
-    if (step === 1) return name.trim().length > 0;
-    if (step === 2) return selectedInterests.length > 0;
-    if (step === 3) return selectedPlan !== '';
-    return false;
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
-      <div className="w-full max-w-2xl px-4">
-        {/* Progress Indicator */}
-        <div className="flex justify-center gap-2 mb-8">
-          {[1, 2, 3].map((s) => (
-            <div
-              key={s}
-              className={`h-2 rounded-full transition-all ${
-                s === step ? 'w-12 bg-blue-600' : s < step ? 'w-8 bg-blue-400' : 'w-8 bg-slate-300'
-              }`}
-            />
-          ))}
-        </div>
-
+      <div className="w-full max-w-md px-4">
         {/* Content Card */}
         <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 md:p-12">
           {/* Logo */}
@@ -107,122 +39,112 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
             </div>
           </div>
 
-          {/* Title */}
-          <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
-            {step === 1 && "Let's Go!"}
-            {step === 2 && "What Would You Like To Spend Time Fixing?"}
-            {step === 3 && "Choose Your Plan"}
-          </h2>
+          {step === 'sso' && (
+            <>
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
+                Welcome to Copado AI
+              </h2>
+              <p className="text-center text-slate-600 mb-8">
+                Sign in to get started
+              </p>
 
-          {/* Subtitle */}
-          <p className="text-center text-slate-600 mb-8">
-            {step === 1 && "What's Your Name?"}
-            {step === 2 && "Select all that apply"}
-            {step === 3 && "Start with a 14-day free trial"}
-          </p>
-
-          {/* Step Content */}
-          {step === 1 && (
-            <div className="space-y-4">
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-                className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none text-lg transition-all"
-                autoFocus
-              />
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {interests.map((interest) => (
+              {/* SSO Button */}
+              <div className="space-y-3">
                 <button
-                  key={interest.title}
-                  onClick={() => toggleInterest(interest.title)}
-                  className={`p-6 rounded-xl border-2 transition-all text-left ${
-                    selectedInterests.includes(interest.title)
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
+                  onClick={handleSSOLogin}
+                  disabled={isLoading}
+                  className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-lg font-semibold text-slate-900 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <div className="text-3xl mb-2">{interest.icon}</div>
-                  <h3 className="font-semibold text-slate-900 mb-1">{interest.title}</h3>
-                  <p className="text-sm text-slate-600">{interest.description}</p>
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                  {isLoading ? 'Signing in...' : 'Continue with SSO'}
                 </button>
-              ))}
-            </div>
-          )}
 
-          {step === 3 && (
-            <div className="space-y-4">
-              {plans.map((plan) => (
+                <div className="relative py-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-4 bg-white text-slate-500">or</span>
+                  </div>
+                </div>
+
                 <button
-                  key={plan.name}
-                  onClick={() => setSelectedPlan(plan.name)}
-                  className={`w-full p-6 rounded-xl border-2 transition-all text-left relative ${
-                    selectedPlan === plan.name
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
+                  onClick={handleSSOLogin}
+                  disabled={isLoading}
+                  className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-lg font-semibold text-slate-900 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {plan.popular && (
-                    <div className="absolute top-4 right-4 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                      Popular
-                    </div>
-                  )}
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-900">{plan.name}</h3>
-                      <p className="text-sm text-slate-600">{plan.description}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-blue-600">{plan.price}</div>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {plan.features.map((feature, idx) => (
-                      <span
-                        key={idx}
-                        className="text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full"
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#0052CC"/>
+                  </svg>
+                  {isLoading ? 'Signing in...' : 'Continue with Salesforce'}
                 </button>
-              ))}
-            </div>
+              </div>
+            </>
           )}
 
-          {/* Navigation Buttons */}
-          <div className="flex gap-4 mt-8">
-            {step > 1 && (
-              <button
-                onClick={() => setStep(step - 1)}
-                className="px-6 py-3 rounded-xl border-2 border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-all"
+          {step === 'terms' && (
+            <>
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
+                Terms & Conditions
+              </h2>
+              <p className="text-center text-slate-600 mb-8">
+                Please review and accept to continue
+              </p>
+
+              {/* Terms Content */}
+              <div className="bg-slate-50 rounded-xl p-6 mb-6 max-h-64 overflow-y-auto border border-slate-200">
+                <h3 className="font-semibold text-slate-900 mb-3">Copado AI Terms of Service</h3>
+                <div className="text-sm text-slate-600 space-y-3">
+                  <p>
+                    By using Copado AI, you agree to our terms of service and privacy policy.
+                  </p>
+                  <p>
+                    <strong>1. Service Usage:</strong> You may use Copado AI for legitimate business purposes in accordance with Salesforce platform guidelines.
+                  </p>
+                  <p>
+                    <strong>2. Data & Privacy:</strong> We collect and process data in accordance with our privacy policy and applicable data protection laws.
+                  </p>
+                  <p>
+                    <strong>3. AI-Generated Content:</strong> AI-generated content should be reviewed before deployment. You are responsible for validating all outputs.
+                  </p>
+                  <p>
+                    <strong>4. Account Security:</strong> You are responsible for maintaining the security of your account credentials.
+                  </p>
+                  <p>
+                    <strong>5. Acceptable Use:</strong> Do not use the service for any unlawful purpose or in violation of Salesforce terms.
+                  </p>
+                </div>
+              </div>
+
+              {/* Accept Checkbox */}
+              <label className="flex items-start gap-3 mb-6 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="mt-1 w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                />
+                <span className="text-sm text-slate-700 group-hover:text-slate-900">
+                  I have read and agree to the Terms of Service and Privacy Policy
+                </span>
+              </label>
+
+              {/* Continue Button */}
+              <PrimaryButton
+                onClick={handleAcceptTerms}
+                disabled={!termsAccepted}
+                className="w-full"
               >
-                Back
-              </button>
-            )}
-            <PrimaryButton
-              onClick={handleNext}
-              disabled={!canProceed()}
-              className="flex-1"
-            >
-              {step === 3 ? 'Start Free Trial' : 'Continue'}
-            </PrimaryButton>
-          </div>
-
-          {/* Skip Option */}
-          {step < 3 && (
-            <button
-              onClick={onComplete}
-              className="w-full text-center text-sm text-slate-500 hover:text-slate-700 mt-4 transition-colors"
-            >
-              Skip for now
-            </button>
+                Accept & Continue
+              </PrimaryButton>
+            </>
           )}
         </div>
       </div>

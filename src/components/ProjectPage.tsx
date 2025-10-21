@@ -53,7 +53,6 @@ const ProjectPage: React.FC<ProjectPageProps> = ({
 
   const [inputValue, setInputValue] = useState('');
   const [isFavorite, setIsFavorite] = useState(false);
-  const [showTabs, setShowTabs] = useState(false);
   const [activeTab, setActiveTab] = useState('Steps');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -183,8 +182,8 @@ const ProjectPage: React.FC<ProjectPageProps> = ({
           />
         </div>
 
-        {/* Tabs (show when needed) */}
-        {showTabs && (
+        {/* Tabs (hidden for now, but can be enabled later) */}
+        {false && (
           <div className="bg-white border-b border-gray-200">
             <div className="flex px-6">
               {tabs.map((tab) => (

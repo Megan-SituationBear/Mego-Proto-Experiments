@@ -151,7 +151,7 @@ const HomePage: React.FC<HomePageProps> = ({
     <div className="min-h-screen bg-slate-50">
       {/* Top Navigation Bar */}
       <TopNav
-        title={`Welcome, ${userName}`}
+        title=""
         showBackButton={false}
         showLogo={true}
         logoText="+ COPADO AI"

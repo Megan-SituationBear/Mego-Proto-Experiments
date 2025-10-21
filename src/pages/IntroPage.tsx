@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { AIInput, IntegrationsModal, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
 import AuthModal from '../components/ui/AuthModal';
 import MatchingModal from '../components/ui/MatchingModal';
+import NameCollectionModal from '../components/ui/NameCollectionModal';
+import BuildingModal from '../components/ui/BuildingModal';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
 
 interface IntroPageProps {
@@ -15,13 +17,19 @@ interface IntroPageProps {
  * IntroPage - Landing page for logged-out users
  * Manages its own conversation state
  */
-const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate, onViewPricing }) => {
+const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate }) => {
   // UI state
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showMatchingModal, setShowMatchingModal] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [showBuildingModal, setShowBuildingModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
+  
+  // Onboarding state (for future use)
+  const [_pendingSSOProvider, setPendingSSOProvider] = useState<string | null>(null);
+  const [_userName, setUserName] = useState<string>('');
   
   // Conversation state - managed internally
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
@@ -52,16 +60,47 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
 
   const handleSSOSignIn = async (provider: string) => {
     console.log('SSO sign in with provider:', provider);
+    // Store provider and close auth modal
+    setPendingSSOProvider(provider);
     setShowAuthModal(false);
-    if (onLogin) {
-      onLogin();
-    }
+    
+    // Start onboarding flow: Questions → Name → Building → Login
+    setShowMatchingModal(true);
   };
 
   const handleSSOSignUp = async (provider: string) => {
     console.log('SSO sign up with provider:', provider);
+    // Store provider and close auth modal
+    setPendingSSOProvider(provider);
     setShowAuthModal(false);
-    if (onSignUp) {
+    
+    // Start onboarding flow: Questions → Name → Building → Onboarding
+    setShowMatchingModal(true);
+  };
+
+  const handleQuestionsComplete = () => {
+    // After questions, ask for name
+    setShowMatchingModal(false);
+    setShowNameModal(true);
+  };
+
+  const handleNameSubmit = (name: string) => {
+    console.log('User name:', name);
+    setUserName(name);
+    setShowNameModal(false);
+    
+    // Show building animation
+    setShowBuildingModal(true);
+  };
+
+  const handleBuildingComplete = () => {
+    setShowBuildingModal(false);
+    setPendingSSOProvider(null);
+    
+    // Complete login/signup
+    if (authMode === 'signin' && onLogin) {
+      onLogin();
+    } else if (authMode === 'signup' && onSignUp) {
       onSignUp();
     }
   };
@@ -324,11 +363,25 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       <MatchingModal
         isOpen={showMatchingModal}
         onClose={() => setShowMatchingModal(false)}
-        onComplete={() => {
-          if (onViewPricing) {
-            onViewPricing();
-          }
+        onComplete={handleQuestionsComplete}
+        onBrowseTemplates={(selectedGoals) => {
+          console.log('Browse templates with goals:', selectedGoals);
+          handleQuestionsComplete();
         }}
+      />
+
+      <NameCollectionModal
+        isOpen={showNameModal}
+        onSubmit={handleNameSubmit}
+        onBack={() => {
+          setShowNameModal(false);
+          setShowMatchingModal(true);
+        }}
+      />
+
+      <BuildingModal
+        isOpen={showBuildingModal}
+        onComplete={handleBuildingComplete}
       />
     </div>
   );

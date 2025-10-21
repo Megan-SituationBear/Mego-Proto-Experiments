@@ -88,6 +88,31 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     }
   };
 
+  // Sample code for artifact display
+  const sampleCode = `public class AppointmentHandler {
+    public static void handleAppointment(Id appointmentId) {
+        // Query the appointment
+        Appointment__c appt = [
+            SELECT Id, Status__c, Patient__c, Provider__c
+            FROM Appointment__c
+            WHERE Id = :appointmentId
+            LIMIT 1
+        ];
+        
+        // Update appointment status
+        appt.Status__c = 'Confirmed';
+        update appt;
+        
+        // Send confirmation email
+        sendConfirmationEmail(appt);
+    }
+    
+    private static void sendConfirmationEmail(Appointment__c appt) {
+        // Email logic here
+        System.debug('Sending email for: ' + appt.Id);
+    }
+}`;
+
   // ============ STATE DETERMINATION ============
   // Determine which of the 6 states we're in
   
@@ -195,6 +220,110 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
         subtitle: customTemplateData.subtitle || customTemplateData.description || defaultTemplateData.subtitle,
       }
     : defaultTemplateData;
+
+  // ============ ARTIFACT: LOGGED IN ============
+  if (isArtifactLoggedIn) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        {/* Header */}
+        <TopNav
+          title={templateData.title || 'Appointment Handler Class'}
+          subtitle="Code | Last Modified"
+          onBack={onBack}
+          showFavorite={true}
+          isFavorited={isFavorite}
+          onFavorite={handleToggleFavorite}
+          primaryAction={{
+            label: 'Download',
+            onClick: () => {
+              console.log('Download artifact');
+              // TODO: Implement download functionality
+            },
+            variant: 'blue'
+          }}
+        />
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Code/Artifact Content */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+                {/* Code Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    {templateData.title || 'Appointment Handler Class'}
+                  </h3>
+                  <button
+                    onClick={() => {
+                      // Copy code to clipboard
+                      navigator.clipboard.writeText(sampleCode);
+                      console.log('Code copied!');
+                    }}
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+
+                {/* Code Block */}
+                <div className="p-6">
+                  <pre className="bg-slate-900 text-slate-100 p-6 rounded-lg overflow-x-auto text-sm font-mono">
+                    <code>{sampleCode}</code>
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Sidebar - Instructions */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-6">
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Instructions</h3>
+                
+                <div className="space-y-4 text-sm text-slate-700">
+                  <div>
+                    <h4 className="font-semibold text-slate-900 mb-2">Where to put this code:</h4>
+                    <ol className="list-decimal list-inside space-y-2 ml-2">
+                      <li>Navigate to Setup in Salesforce</li>
+                      <li>Go to Apex Classes</li>
+                      <li>Click "New" to create a new class</li>
+                      <li>Paste the code into the editor</li>
+                      <li>Click "Save"</li>
+                    </ol>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200">
+                    <h4 className="font-semibold text-slate-900 mb-2">Requirements:</h4>
+                    <ul className="list-disc list-inside space-y-1 ml-2">
+                      <li>Salesforce Developer Edition or higher</li>
+                      <li>System Administrator permissions</li>
+                      <li>API v58.0 or later</li>
+                    </ul>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200">
+                    <h4 className="font-semibold text-slate-900 mb-2">Next Steps:</h4>
+                    <ul className="list-disc list-inside space-y-1 ml-2">
+                      <li>Test the class in a sandbox first</li>
+                      <li>Create test methods with 75%+ coverage</li>
+                      <li>Deploy to production when ready</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <button className="w-full mt-6 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+                  View in Salesforce
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Duplicated Template View - when user clicks "Use This Template"
   if (isDuplicatedTemplate) {

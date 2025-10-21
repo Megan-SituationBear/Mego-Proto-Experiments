@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import PrimaryButton from './ui/PrimaryButton';
+import PrimaryButton from '../components/ui/PrimaryButton';
 
 interface TemplatePageProps {
   template: {

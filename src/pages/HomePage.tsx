@@ -1,21 +1,22 @@
 import { useState } from 'react';
-import { AIInput, TemplateCard } from './ui';
-import FindTemplatesModal from './ui/FindTemplatesModal';
+import { AIInput, TemplateCard, type ConversationMessage } from '../components/ui';
+import FindTemplatesModal from '../components/ui/FindTemplatesModal';
+import { generateAIResponse } from '../utils/aiMessageGenerator';
 
 interface HomePageProps {
   userName?: string;
   hasProjects?: boolean;
   favoritedTemplates?: any[];
   activeProjects?: any[];
-  onCreateProject?: () => void;
-  onOpenProject?: (projectId: string) => void;
+  onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
-  onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
   onViewTemplate?: (template: any) => void;
-  conversationMessages?: any[];
-  userMessageCount?: number;
 }
 
+/**
+ * HomePage - Dashboard for logged-in users
+ * Manages its own conversation and UI state
+ */
 const HomePage: React.FC<HomePageProps> = ({
   userName = 'User',
   hasProjects = false,
@@ -23,18 +24,19 @@ const HomePage: React.FC<HomePageProps> = ({
   activeProjects = [],
   onCreateProject,
   onLogout,
-  onSendMessage,
   onViewTemplate,
-  conversationMessages = [],
-  userMessageCount = 0,
 }) => {
+  // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
   const [selectedGoalsForTemplates, setSelectedGoalsForTemplates] = useState<string[]>([]);
-  // Default to 'work' if user has projects or favorited templates
   const hasWork = hasProjects || favoritedTemplates.length > 0 || activeProjects.length > 0;
   const [activeTab, setActiveTab] = useState<'work' | 'templates'>(hasWork ? 'work' : 'templates');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  
+  // Conversation state - managed internally
+  const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
+  const [userMessageCount, setUserMessageCount] = useState(0);
 
   const recommendedTemplates = [
     {
@@ -93,41 +95,55 @@ const HomePage: React.FC<HomePageProps> = ({
     },
   ];
 
-  // const _handleSendMessage = (text: string) => {
-  //   if (!text.trim()) return;
+  const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void) => {
+    if (!text.trim()) return;
 
-  //   // Add user message
-  //   const newMessages = [...conversationMessages, { text, isUser: true }];
-  //   setConversationMessages(newMessages);
-  //   setShowConversation(true);
-  //   setIsAITyping(true);
+    // Increment user message count
+    const newUserMessageCount = userMessageCount + 1;
+    setUserMessageCount(newUserMessageCount);
 
-  //   const newCount = userMessageCount + 1;
-  //   setUserMessageCount(newCount);
+    // Create user conversation message
+    const userConversationMessage: ConversationMessage = {
+      id: Date.now().toString(),
+      content: text,
+      isUser: true,
+      timestamp: new Date()
+    };
 
-  //   // Simulate AI response
-  //   setTimeout(() => {
-  //     let aiResponse = '';
+    setConversationMessages(prev => [...prev, userConversationMessage]);
+    
+    // Show typing indicator
+    if (setTypingIndicator) {
+      setTypingIndicator(true);
+    }
+
+    // Simulate AI response
+    setTimeout(() => {
+      const response = generateAIResponse(text, newUserMessageCount);
+      // Convert complex message format to simple string content
+      const aiMessage: ConversationMessage = {
+        id: response.conversationMessage.id,
+        content: typeof response.conversationMessage.content === 'string' 
+          ? response.conversationMessage.content 
+          : response.conversationMessage.content.content,
+        isUser: false,
+        timestamp: response.conversationMessage.timestamp
+      };
+      setConversationMessages(prev => [...prev, aiMessage]);
       
-  //     if (newCount === 1) {
-  //       aiResponse = "Great! Tell me more about what you're trying to build. What's the main goal of this project?";
-  //     } else if (newCount === 2) {
-  //       aiResponse = "Perfect! I have enough information to get started. Let me create your project workspace...";
-  //     }
+      // Hide typing indicator
+      if (setTypingIndicator) {
+        setTypingIndicator(false);
+      }
 
-  //     setConversationMessages([...newMessages, { text: aiResponse, isUser: false }]);
-  //     setIsAITyping(false);
-
-  //     // After second exchange, create project
-  //     if (newCount === 2) {
-  //       setTimeout(() => {
-  //         if (onSendMessage) {
-  //           onSendMessage(text);
-  //         }
-  //       }, 1500);
-  //     }
-  //   }, 1000);
-  // };
+      // After second exchange, create project
+      if (newUserMessageCount === 2 && onCreateProject) {
+        setTimeout(() => {
+          onCreateProject(text);
+        }, 1500);
+      }
+    }, 1200);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -298,13 +314,7 @@ const HomePage: React.FC<HomePageProps> = ({
         <div className="mb-12 max-w-4xl mx-auto">
           <AIInput
             placeholder="What action do you want to start?"
-            onSendMessage={(text) => {
-              if (onSendMessage) {
-                onSendMessage(text, setShowCopadoTyping);
-              } else if (onCreateProject) {
-                onCreateProject();
-              }
-            }}
+            onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
             onIntegrationsClick={() => console.log('Integrations clicked')}
             autoFocus={false}
             isLoggedIn={true}

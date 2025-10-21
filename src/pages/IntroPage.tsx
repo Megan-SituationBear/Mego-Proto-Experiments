@@ -1,33 +1,31 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, TemplateCard } from './ui';
-import AuthModal from './ui/AuthModal';
-import MatchingModal from './ui/MatchingModal';
-import type { ConversationMessage } from './Conversation';
-
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-}
+import { AIInput, IntegrationsModal, TemplateCard, type ConversationMessage } from '../components/ui';
+import AuthModal from '../components/ui/AuthModal';
+import MatchingModal from '../components/ui/MatchingModal';
+import { generateAIResponse } from '../utils/aiMessageGenerator';
 
 interface IntroPageProps {
   onLogin?: () => void;
   onSignUp?: () => void;
   onViewTemplate?: (template: any) => void;
   onViewPricing?: () => void;
-  onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
-  messages?: Message[];
-  conversationMessages?: ConversationMessage[];
-  userMessageCount?: number;
 }
 
-const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate, onViewPricing, onSendMessage }) => {
+/**
+ * IntroPage - Landing page for logged-out users
+ * Manages its own conversation state
+ */
+const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate, onViewPricing }) => {
+  // UI state
   const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showMatchingModal, setShowMatchingModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
+  
+  // Conversation state - managed internally
+  const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
+  const [userMessageCount, setUserMessageCount] = useState(0);
 
   const integrations = [
     { name: 'Slack', icon: '💬', description: 'Connect your Slack workspace' },
@@ -68,6 +66,49 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
     }
   };
 
+  const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void) => {
+    if (!text.trim()) return;
+
+    // Increment user message count
+    const newUserMessageCount = userMessageCount + 1;
+    setUserMessageCount(newUserMessageCount);
+
+    // Create user conversation message
+    const userConversationMessage: ConversationMessage = {
+      id: Date.now().toString(),
+      content: text,
+      isUser: true,
+      timestamp: new Date()
+    };
+
+    setConversationMessages(prev => [...prev, userConversationMessage]);
+    
+    // Show typing indicator
+    if (setTypingIndicator) {
+      setTypingIndicator(true);
+    }
+
+    // Simulate AI response
+    setTimeout(() => {
+      const response = generateAIResponse(text, newUserMessageCount);
+      // Convert complex message format to simple string content
+      const aiMessage: ConversationMessage = {
+        id: response.conversationMessage.id,
+        content: typeof response.conversationMessage.content === 'string' 
+          ? response.conversationMessage.content 
+          : response.conversationMessage.content.content,
+        isUser: false,
+        timestamp: response.conversationMessage.timestamp
+      };
+      setConversationMessages(prev => [...prev, aiMessage]);
+      
+      // Hide typing indicator
+      if (setTypingIndicator) {
+        setTypingIndicator(false);
+      }
+    }, 1200);
+  };
+
   const openSignInModal = () => {
     setAuthMode('signin');
     setShowAuthModal(true);
@@ -87,9 +128,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
   };
 
   const handleSendMessageWithConversation = (text: string, setTypingIndicator?: (show: boolean) => void) => {
-    if (onSendMessage) {
-      onSendMessage(text, setTypingIndicator);
-    }
+    handleSendMessage(text, setTypingIndicator);
   };
 
   const allTemplates = [
@@ -254,8 +293,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
               autoFocus={false}
               isLoggedIn={false}
               pageContext="home"
-              hasConversation={false}
-              messages={[]}
+              hasConversation={conversationMessages.length > 0}
+              messages={conversationMessages}
               showTypingIndicator={showCopadoTyping}
             />
           </div>

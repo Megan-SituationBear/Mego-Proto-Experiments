@@ -78,6 +78,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [templateName, setTemplateName] = useState('');
   const [activeTab, setActiveTab] = useState<'steps' | 'highlights' | 'output'>('steps');
+  const [showSalesforceAuthModal, setShowSalesforceAuthModal] = useState(false);
 
   const handleToggleFavorite = () => {
     const newFavoriteState = !isFavorite;
@@ -655,11 +656,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           isFavorited={isFavorite}
           onFavorite={handleToggleFavorite}
           primaryAction={{
-            label: 'Run',
-            onClick: () => {
-              setTemplateName(templateData.title || 'My Project');
-              setShowRenameModal(true);
-            },
+            label: 'Set up sandboxes to run',
+            onClick: () => setShowSalesforceAuthModal(true),
             variant: 'blue'
           }}
         />
@@ -844,6 +842,78 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Salesforce Authentication Modal */}
+        <Dialog open={showSalesforceAuthModal} onClose={() => setShowSalesforceAuthModal(false)} className="relative z-50">
+          <DialogBackdrop
+            transition
+            className="fixed inset-0 bg-black/50 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+          />
+
+          <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <DialogPanel
+                transition
+                className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-2xl transition-all data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+              >
+                {/* Close button */}
+                <button
+                  onClick={() => setShowSalesforceAuthModal(false)}
+                  className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
+
+                <DialogTitle className="text-2xl font-bold text-slate-900 mb-2">
+                  Connect Salesforce
+                </DialogTitle>
+                
+                <p className="text-sm text-slate-600 mb-6">
+                  Authenticate with Salesforce to set up sandboxes and run this template.
+                </p>
+
+                {/* Salesforce Logo */}
+                <div className="flex justify-center mb-6">
+                  <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Info */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-slate-700">
+                    You'll be redirected to Salesforce to authorize access to your sandbox environments.
+                  </p>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowSalesforceAuthModal(false)}
+                    className="flex-1 px-4 py-3 border border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      // TODO: Implement Salesforce OAuth flow
+                      console.log('Authenticate with Salesforce');
+                      setShowSalesforceAuthModal(false);
+                      // After auth, could open rename modal or directly create project
+                      setTemplateName(templateData.title || 'My Project');
+                      setShowRenameModal(true);
+                    }}
+                    className="flex-1 px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Connect Salesforce
+                  </button>
+                </div>
+              </DialogPanel>
+            </div>
+          </div>
+        </Dialog>
       </div>
     );
   }

@@ -325,8 +325,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     );
   }
 
-  // Duplicated Template View - when user clicks "Use This Template"
-  if (isDuplicatedTemplate) {
+  // ============ PROJECT FROM TEMPLATE: LOGGED IN ============
+  if (isProjectFromTemplateLoggedIn) {
     const outputItems = [
       { title: 'Code', subtitle: 'asdlfsdf', content: 'Code implementation details here. You can modify and customize this code to fit your specific needs.' },
       { title: 'Artifact', subtitle: 'asdkfjasdfj', content: 'Artifact documentation and resources. Update this section with your specific artifact details.' }
@@ -465,8 +465,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     );
   }
 
-  // New Project View - simplified layout with conversation
-  if (isNewProject) {
+  // ============ PROJECT FROM SCRATCH: LOGGED IN ============
+  if (isProjectFromScratchLoggedIn) {
     return (
       <div className="min-h-screen bg-slate-50">
         {/* Header */}

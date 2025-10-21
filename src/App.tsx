@@ -27,6 +27,7 @@ function App() {
   const [hasProjects, setHasProjects] = useState(false);
   const [favoritedTemplates, setFavoritedTemplates] = useState<any[]>([]);
   const [activeProjects, setActiveProjects] = useState<any[]>([]);
+  const [recentItems, setRecentItems] = useState<any[]>([]); // Track recent work items
   
   // Selected item state
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
@@ -207,6 +208,14 @@ function App() {
     setSelectedTemplate(template);
     setWorkItemType('project'); // Templates are always 'project' type
     setIsDuplicatedTemplate(false); // Reset duplicated state when viewing a template
+    
+    // Add to recent items when viewing
+    const templateWithTimestamp = {
+      ...template,
+      lastAccessed: new Date(),
+    };
+    setRecentItems(prev => [templateWithTimestamp, ...prev.filter(item => item.id !== template.id)].slice(0, 10));
+    
     setCurrentView('work-item'); // Navigate to work item template page
   };
 
@@ -236,11 +245,15 @@ function App() {
         id: Date.now().toString(),
         startedAt: new Date(),
         isWorkingOn: true, // Mark as "Working On" status
+        lastAccessed: new Date(),
       };
       
       // Add to active projects (shows in "My Work")
       setActiveProjects(prev => [...prev, newProject]);
       setHasProjects(true);
+      
+      // Add to recent items (shows in hamburger menu)
+      setRecentItems(prev => [newProject, ...prev.filter(item => item.id !== newProject.id)].slice(0, 10)); // Keep last 10
       
       // Set as current template and mark as duplicated
       setSelectedTemplate(newProject);
@@ -322,6 +335,7 @@ function App() {
         hasProjects={hasProjects}
         favoritedTemplates={favoritedTemplates}
         activeProjects={activeProjects}
+        recentItems={recentItems}
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}
         onViewTemplate={handleViewTemplate}

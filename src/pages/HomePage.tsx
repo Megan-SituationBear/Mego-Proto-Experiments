@@ -8,6 +8,7 @@ interface HomePageProps {
   hasProjects?: boolean;
   favoritedTemplates?: any[];
   activeProjects?: any[];
+  recentItems?: any[];
   onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
   onViewTemplate?: (template: any) => void;
@@ -22,6 +23,7 @@ const HomePage: React.FC<HomePageProps> = ({
   hasProjects = false,
   favoritedTemplates = [],
   activeProjects = [],
+  recentItems = [],
   onCreateProject,
   onLogout,
   onViewTemplate,
@@ -214,26 +216,72 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             {/* Recent */}
-            <button
-              onClick={() => {
-                setShowMenu(false);
-                setActiveTab('work');
-              }}
-              className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
-            >
-              Recent
-            </button>
+            <div className="px-6 py-3">
+              <div className="flex items-center justify-between mb-2">
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setActiveTab('work');
+                  }}
+                  className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
+                >
+                  Recent
+                </button>
+                {recentItems.length > 0 && (
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
+                    {recentItems.length}
+                  </span>
+                )}
+              </div>
+              {recentItems.length > 0 && (
+                <div className="ml-2 mt-2 space-y-1">
+                  {recentItems.slice(0, 5).map((item, index) => (
+                    <button
+                      key={item.id || index}
+                      onClick={() => {
+                        setShowMenu(false);
+                        onViewTemplate?.(item);
+                      }}
+                      className="w-full text-left py-2 px-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded transition-colors"
+                    >
+                      {item.isWorkingOn && <span className="text-green-600 mr-1">●</span>}
+                      {item.title.substring(0, 35)}{item.title.length > 35 ? '...' : ''}
+                    </button>
+                  ))}
+                  {recentItems.length > 5 && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        setActiveTab('work');
+                      }}
+                      className="w-full text-left py-2 px-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      View all {recentItems.length} items →
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             
             {/* Favorite */}
-            <button
-              onClick={() => {
-                setShowMenu(false);
-                setActiveTab('work');
-              }}
-              className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
-            >
-              Favorite
-            </button>
+            <div className="px-6 py-3">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setActiveTab('work');
+                  }}
+                  className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
+                >
+                  Favorite
+                </button>
+                {favoritedTemplates.length > 0 && (
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
+                    {favoritedTemplates.length}
+                  </span>
+                )}
+              </div>
+            </div>
             
             {/* Templates */}
             <button

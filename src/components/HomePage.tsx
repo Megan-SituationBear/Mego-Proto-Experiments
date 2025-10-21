@@ -30,7 +30,9 @@ const HomePage: React.FC<HomePageProps> = ({
 }) => {
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
   const [selectedGoalsForTemplates, setSelectedGoalsForTemplates] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<'work' | 'templates'>(hasProjects ? 'work' : 'templates');
+  // Default to 'work' if user has projects or favorited templates
+  const hasWork = hasProjects || favoritedTemplates.length > 0 || activeProjects.length > 0;
+  const [activeTab, setActiveTab] = useState<'work' | 'templates'>(hasWork ? 'work' : 'templates');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -357,27 +359,42 @@ const HomePage: React.FC<HomePageProps> = ({
         {/* Your Work | Templates For You Section */}
         <div className="mb-12">
           <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">
-              <button 
-                onClick={() => setActiveTab('work')}
-                className={`${activeTab === 'work' ? 'text-slate-900' : 'text-slate-400'} hover:text-slate-900 transition-colors`}
-              >
-                Your Work
-              </button>
-              <span className="text-slate-400 mx-2">|</span>
-              <button 
-                onClick={() => setActiveTab('templates')}
-                className={`${activeTab === 'templates' ? 'text-slate-900' : 'text-slate-400'} hover:text-slate-900 transition-colors`}
-              >
-                Templates For You
-              </button>
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">
+              {activeTab === 'work' ? 'My Work' : 'Templates For You'}
             </h2>
-            <button
-              onClick={() => setShowFindTemplatesModal(true)}
-              className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
-            >
-              Find Templates
-            </button>
+            
+            {/* Toggle Button */}
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
+                <button
+                  onClick={() => setActiveTab('work')}
+                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                    activeTab === 'work'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  My Work
+                </button>
+                <button
+                  onClick={() => setActiveTab('templates')}
+                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                    activeTab === 'templates'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  Templates
+                </button>
+              </div>
+              
+              <button
+                onClick={() => setShowFindTemplatesModal(true)}
+                className="px-6 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+              >
+                Find Templates
+              </button>
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {activeTab === 'templates' ? (

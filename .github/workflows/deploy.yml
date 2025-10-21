@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - App-Concept
+      - feature/complete-signin-flow
   workflow_dispatch:
 
 permissions:

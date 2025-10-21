@@ -364,7 +364,7 @@ const HomePage: React.FC<HomePageProps> = ({
             </h2>
             
             {/* Toggle Button */}
-            <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="flex flex-col items-center gap-3 mb-6">
               <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
                 <button
                   onClick={() => setActiveTab('work')}
@@ -390,7 +390,7 @@ const HomePage: React.FC<HomePageProps> = ({
               
               <button
                 onClick={() => setShowFindTemplatesModal(true)}
-                className="px-6 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
               >
                 Find Templates
               </button>

@@ -79,9 +79,18 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
   };
 
   const handleQuestionsComplete = () => {
-    // After questions, ask for name
     setShowMatchingModal(false);
-    setShowNameModal(true);
+    
+    if (authMode === 'signin') {
+      // Sign in: Ask for name, then building animation
+      setShowNameModal(true);
+    } else {
+      // Sign up: Go directly to pricing page
+      setPendingSSOProvider(null);
+      if (onViewPricing) {
+        onViewPricing();
+      }
+    }
   };
 
   const handleNameSubmit = (name: string) => {
@@ -89,16 +98,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
     setUserName(name);
     setShowNameModal(false);
     
-    if (authMode === 'signin') {
-      // Sign in: Show building animation then go to home
-      setShowBuildingModal(true);
-    } else {
-      // Sign up: Go to pricing page
-      setPendingSSOProvider(null);
-      if (onViewPricing) {
-        onViewPricing();
-      }
-    }
+    // Show building animation then go to home (sign-in only)
+    setShowBuildingModal(true);
   };
 
   const handleBuildingComplete = () => {

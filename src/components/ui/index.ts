@@ -11,3 +11,4 @@ export { default as SecondaryButton } from './SecondaryButton';
 export { default as TemplateCard } from './TemplateCard';
 export type { TemplateCardProps } from './TemplateCard';
 export { default as TemplateDetailModal } from './TemplateDetailModal';
+export { default as TopNav } from './TopNav';

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, Star, Eye, Clock, Share2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { AIInput } from '../components/ui';
+import { AIInput, TopNav } from '../components/ui';
 
 interface WorkItemTemplateProps {
   type: 'project' | 'artifact';
@@ -77,18 +77,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     { label: 'Saved', status: 'upcoming' },
   ];
 
-  // Category color mapping - standardized across all pages
-  const categoryColors: Record<string, string> = {
-    'Strategists With Data': 'bg-indigo-100 text-indigo-700',
-    'Customer Satisfaction Heroes': 'bg-blue-100 text-blue-700',
-    'Managers With An Edge': 'bg-amber-100 text-amber-700',
-    'Developers & Launchers': 'bg-green-100 text-green-700',
-    'Effective Planners': 'bg-amber-100 text-amber-700',
-    'Strategists': 'bg-indigo-100 text-indigo-700',
-    'Deployment Artifacts': 'bg-blue-100 text-blue-700',
-    'Deployment Fixes': 'bg-slate-100 text-slate-700',
-    'New Project': 'bg-indigo-100 text-indigo-700',
-  };
 
   // Default template data - can be overridden via props
   const defaultTemplateData = {
@@ -148,9 +136,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
       }
     : defaultTemplateData;
 
-
-  const categoryColorClass = categoryColors[templateData.category] || 'bg-purple-100 text-purple-700';
-
   // Duplicated Template View - when user clicks "Use This Template"
   if (isDuplicatedTemplate) {
     const outputItems = [
@@ -170,45 +155,20 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
     return (
       <div className="min-h-screen bg-slate-50">
         {/* Header */}
-        <div className="bg-white border-b border-slate-300 shadow-md">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              {/* Back Button */}
-              <button
-                onClick={onBack}
-                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-                title="Back"
-              >
-                <ArrowLeft className="w-6 h-6 text-slate-700" />
-              </button>
-
-              {/* Center: Title */}
-              <div className="flex-1 text-center">
-                <p className="text-xs text-slate-500 mb-1">Template Duplicate | {getRelativeTime()}</p>
-                <h1 className="text-lg font-bold text-slate-900">{templateData.title}</h1>
-              </div>
-
-              {/* Right: Share and Favorite */}
-              <div className="flex items-center gap-2">
-                <button
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-                  title="Share"
-                >
-                  <Share2 className="w-5 h-5 text-slate-700" />
-                </button>
-                <button
-                  onClick={handleToggleFavorite}
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-                  title={isFavorite ? 'Unfavorite' : 'Favorite'}
-                >
-                  <Star
-                    className={`w-5 h-5 ${isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-slate-700'}`}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TopNav
+          title={templateData.title}
+          subtitle={`Template Duplicate | ${getRelativeTime()}`}
+          onBack={onBack}
+          showFavorite={true}
+          isFavorited={isFavorite}
+          onFavorite={handleToggleFavorite}
+          primaryAction={{
+            label: 'Share',
+            onClick: () => console.log('Share clicked'),
+            icon: <Share2 className="w-4 h-4" />,
+            variant: 'white'
+          }}
+        />
 
         {/* Progress Steps */}
         <div className="bg-gradient-to-r from-indigo-400 to-indigo-600">
@@ -404,55 +364,29 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header - New Design with centered title */}
-      <div className="bg-white border-b border-slate-300 shadow-md">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Left: Back Button */}
-            <button
-              onClick={onBack}
-              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 text-slate-600" />
-            </button>
-
-            {/* Center: Title */}
-            <div className="flex-1 flex flex-col items-center justify-center">
-              {/* Last Modified Date */}
-              <div className="text-xs text-slate-500 mb-1">
-                {type === 'artifact' ? 'Artifact' : 'Project'} - Last Modified: {getRelativeTime()}
-              </div>
-              {/* Category Pill (only for templates/projects) */}
-              {type !== 'artifact' && (
-                <span className={`px-3 py-1 text-xs font-medium rounded-full mb-2 ${categoryColorClass}`}>
-                  {templateData.category}
-                </span>
-              )}
-              {/* Title */}
-              <h1 className="text-xl font-semibold text-slate-900 text-center">
-                {templateData.title}
-              </h1>
-            </div>
-
-            {/* Right: Share and Favorite Buttons */}
-            <div className="flex items-center gap-2">
-              <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                <Share2 className="w-5 h-5 text-slate-600" />
-              </button>
-              <button
-                onClick={handleToggleFavorite}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                <Star
-                  className={`w-5 h-5 ${
-                    isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-slate-600'
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Header */}
+      <TopNav
+        title={templateData.title}
+        subtitle={`${type === 'artifact' ? 'Artifact' : 'Project'} | Last Modified: ${getRelativeTime()}`}
+        categoryBadge={type !== 'artifact' ? {
+          text: templateData.category,
+          color: templateData.category.toLowerCase().includes('deploy') ? 'blue' 
+            : templateData.category.toLowerCase().includes('plan') ? 'purple'
+            : templateData.category.toLowerCase().includes('support') ? 'green'
+            : templateData.category.toLowerCase().includes('optim') ? 'amber'
+            : 'slate'
+        } : undefined}
+        onBack={onBack}
+        showFavorite={true}
+        isFavorited={isFavorite}
+        onFavorite={handleToggleFavorite}
+        primaryAction={{
+          label: 'Share',
+          onClick: () => console.log('Share clicked'),
+          icon: <Share2 className="w-4 h-4" />,
+          variant: 'white'
+        }}
+      />
 
       {/* Next Step Section - Only for projects */}
       {type === 'project' && (

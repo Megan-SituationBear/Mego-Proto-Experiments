@@ -413,12 +413,11 @@ const HomePage: React.FC<HomePageProps> = ({
                 <TemplateCard
                   key={index}
                   category={template.category}
-                  categoryColor={template.categoryColor}
-                  savedHours={template.savedHours}
                   title={template.title}
                   description={template.description}
-                  favorites={template.favorites}
-                  views={template.views}
+                  remixCount={template.views || 0}
+                  favoriteCount={template.favorites || 0}
+                  variant="customizable"
                   onClick={() => onViewTemplate?.(template)}
                 />
               ))
@@ -430,12 +429,11 @@ const HomePage: React.FC<HomePageProps> = ({
                     <TemplateCard
                       key={`project-${index}`}
                       category={project.category || 'Active Project'}
-                      categoryColor={project.categoryColor || 'blue'}
-                      savedHours={project.savedHours}
                       title={project.title}
                       description={project.description || 'Work in progress'}
-                      favorites={project.favorites}
-                      views={project.views}
+                      remixCount={project.views || 0}
+                      favoriteCount={project.favorites || 0}
+                      variant="customizable"
                       onClick={() => onViewTemplate?.(project)}
                     />
                   ))}
@@ -444,12 +442,11 @@ const HomePage: React.FC<HomePageProps> = ({
                     <TemplateCard
                       key={`favorite-${index}`}
                       category={template.category}
-                      categoryColor={template.categoryColor}
-                      savedHours={template.savedHours}
                       title={template.title}
                       description={template.description}
-                      favorites={template.favorites}
-                      views={template.views}
+                      remixCount={template.views || 0}
+                      favoriteCount={template.favorites || 0}
+                      variant="customizable"
                       onClick={() => onViewTemplate?.(template)}
                     />
                   ))}

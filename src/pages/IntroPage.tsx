@@ -242,12 +242,11 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
               <TemplateCard
                 key={index}
                 category={template.category}
-                categoryColor={template.categoryColor}
-                savedHours={template.savedHours}
                 title={template.title}
                 description={template.description}
-                favorites={template.favorites}
-                views={template.views}
+                remixCount={template.views || 0}
+                favoriteCount={template.favorites || 0}
+                variant="customizable"
                 onClick={() => handleTemplateClick(template)}
               />
             ))}

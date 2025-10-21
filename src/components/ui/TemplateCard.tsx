@@ -1,98 +1,97 @@
 import React from 'react';
-import { Heart, Eye, Sparkles } from 'lucide-react';
+import { Star, Sparkles } from 'lucide-react';
+import { getCategoryColor } from '../../utils/categoryColors';
 
 export interface TemplateCardProps {
   category: string;
-  categoryColor?: 'purple' | 'amber' | 'blue' | 'green' | 'slate';
-  savedHours?: number;
   title: string;
   description: string;
-  favorites?: number;
-  views?: number;
-  icon?: React.ReactNode;
+  remixCount?: number;
+  favoriteCount?: number;
+  variant?: 'customizable' | 'standard'; // customizable = magic star, standard = favorite star
+  isFavorited?: boolean;
+  onFavoriteClick?: (e: React.MouseEvent) => void;
   onClick?: () => void;
 }
 
-const categoryColorMap = {
-  purple: 'bg-indigo-100 text-indigo-700',
-  amber: 'bg-amber-100 text-amber-700',
-  blue: 'bg-blue-100 text-blue-700',
-  green: 'bg-green-100 text-green-700',
-  slate: 'bg-slate-100 text-slate-700',
-};
-
 const TemplateCard: React.FC<TemplateCardProps> = ({
   category,
-  categoryColor = 'purple',
-  savedHours,
   title,
   description,
-  favorites = 0,
-  views = 0,
-  icon,
+  remixCount = 0,
+  favoriteCount = 0,
+  variant = 'customizable',
+  isFavorited = false,
+  onFavoriteClick,
   onClick,
 }) => {
+  const colors = getCategoryColor(category);
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onFavoriteClick) {
+      onFavoriteClick(e);
+    }
+  };
+
   return (
     <div
-      className="group relative bg-white rounded border border-slate-300 p-4 flex flex-col gap-3 hover:shadow-md hover:border-indigo-600 transition-all duration-300 cursor-pointer"
+      className="group relative bg-white rounded-lg border border-slate-200 p-4 flex flex-col gap-3 hover:shadow-md hover:border-indigo-400 transition-all duration-200 cursor-pointer"
       onClick={onClick}
     >
-      {/* Top Section */}
-      <div className="flex flex-col gap-0.5">
-        <div className="flex items-center gap-3">
-          {/* Category Pill */}
-          <div className={`inline-flex items-center px-3 py-0.5 rounded-xl text-[11px] font-roboto tracking-tight leading-5 ${categoryColorMap[categoryColor]}`}>
-            {category}
-          </div>
-          
-          {/* Saved Hours */}
-          {savedHours && (
-            <span className="text-[13px] font-roboto leading-5 text-purple-600">
-              Saved: {savedHours}hrs
-            </span>
+      {/* Top Section - Category and Icon */}
+      <div className="flex items-start justify-between gap-2">
+        {/* Category Pill */}
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${colors.badge}`}>
+          {category}
+        </span>
+        
+        {/* Star Icon - Top Right */}
+        <div className="flex-shrink-0">
+          {variant === 'customizable' ? (
+            <Sparkles className="w-5 h-5 text-amber-400" />
+          ) : (
+            <button
+              onClick={handleFavoriteClick}
+              className="p-0.5 hover:bg-slate-100 rounded transition-colors"
+            >
+              <Star
+                className={`w-5 h-5 ${
+                  isFavorited
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : 'text-slate-300 hover:text-yellow-400'
+                } transition-colors`}
+              />
+            </button>
           )}
-          
-          {/* Icon */}
-          <div className="ml-auto">
-            {icon || <Sparkles className="w-5 h-5 text-slate-400 group-hover:text-indigo-600 transition-colors" />}
-          </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="flex flex-col gap-2">
         {/* Title */}
-        <h3 className="text-base font-roboto tracking-[-0.03em] leading-6 text-slate-950">
+        <h3 className="text-base font-semibold text-slate-900 line-clamp-2">
           {title}
         </h3>
         
         {/* Description */}
-        <p className="text-[11px] font-inter tracking-tight leading-5 text-slate-600">
+        <p className="text-sm text-slate-600 line-clamp-2">
           {description}
         </p>
       </div>
 
-      {/* Stats - Others Did */}
-      {(favorites > 0 || views > 0) && (
-        <div className="flex gap-3 items-center">
-          {/* Favorites */}
-          {favorites > 0 && (
-            <div className="flex items-center gap-1 hover:text-indigo-600 transition-colors">
-              <Heart className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
-              <span className="text-[11px] font-roboto tracking-tight leading-5 text-slate-600">
-                {favorites}
-              </span>
-            </div>
+      {/* Stats at Bottom - Remixed and Favorited */}
+      {(remixCount > 0 || favoriteCount > 0) && (
+        <div className="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+          {remixCount > 0 && (
+            <span>
+              <span className="font-medium text-slate-700">{remixCount.toLocaleString()}</span> remixed
+            </span>
           )}
-          
-          {/* Views */}
-          {views > 0 && (
-            <div className="flex items-center gap-1 hover:text-indigo-600 transition-colors">
-              <Eye className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
-              <span className="text-[11px] font-roboto tracking-tight leading-5 text-slate-600">
-                {views}
-              </span>
-            </div>
+          {favoriteCount > 0 && (
+            <span>
+              <span className="font-medium text-slate-700">{favoriteCount.toLocaleString()}</span> favorited
+            </span>
           )}
         </div>
       )}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import TemplateCard from './TemplateCard';
 
 interface FindTemplatesModalProps {
   isOpen: boolean;
@@ -41,43 +42,40 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     // Deployment & CI/CD
     {
       id: 1,
-      category: "Deployment & CI/CD",
-      categoryColor: "blue" as const,
+      category: "Developers & Launchers",
       savedHours: 45,
       title: "Automated Deployment Validation",
       description: "Automatically validate deployments before they go live. Catches errors early and reduces rollbacks by 80%.",
-      favorites: 2156,
-      views: 3421,
+      remixCount: 1234,
+      favoriteCount: 2156,
       tags: ['deploy'],
       dateAdded: '2025-10-15',
     },
     {
       id: 2,
-      category: "Deployment & CI/CD",
-      categoryColor: "blue" as const,
+      category: "Strategists",
       savedHours: 35,
       title: "Pre-Deployment Health Check",
       description: "Schedule comprehensive org analysis before each deployment to identify potential conflicts and dependencies.",
-      favorites: 1834,
-      views: 2876,
+      remixCount: 987,
+      favoriteCount: 1834,
       tags: ['deploy', 'plan'],
       dateAdded: '2025-10-10',
     },
     {
       id: 3,
-      category: "Deployment & CI/CD",
-      categoryColor: "blue" as const,
+      category: "Developers & Launchers",
       savedHours: 52,
       title: "CI/CD Pipeline Optimization",
       description: "Streamline your deployment pipeline with automated testing, validation, and rollback capabilities.",
-      favorites: 1987,
-      views: 3156,
+      remixCount: 2543,
+      favoriteCount: 1987,
       tags: ['deploy', 'build'],
       dateAdded: '2025-10-18',
     },
     {
       id: 4,
-      category: "Deployment & CI/CD",
+      category: "Admins",
       categoryColor: "blue" as const,
       savedHours: 28,
       title: "Deployment Window Scheduler",
@@ -337,15 +335,6 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     },
   ];
 
-  const categoryColors = {
-    purple: 'bg-purple-100 text-purple-700',
-    blue: 'bg-blue-100 text-blue-700',
-    green: 'bg-green-100 text-green-700',
-    amber: 'bg-amber-100 text-amber-700',
-    slate: 'bg-slate-100 text-slate-700',
-    indigo: 'bg-indigo-100 text-indigo-700',
-  };
-
   const toggleTag = (tagId: string) => {
     setSelectedTags(prev =>
       prev.includes(tagId)
@@ -367,9 +356,9 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     .sort((a, b) => {
       switch (sortBy) {
         case 'popular':
-          return b.favorites - a.favorites;
+          return (b.favoriteCount || 0) - (a.favoriteCount || 0);
         case 'hours':
-          return b.savedHours - a.savedHours;
+          return (b.savedHours || 0) - (a.savedHours || 0);
         case 'newest':
           return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime();
         default:
@@ -511,68 +500,16 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredTemplates.map((template) => (
-                  <button
+                  <TemplateCard
                     key={template.id}
+                    category={template.category}
+                    title={template.title}
+                    description={template.description}
+                    remixCount={template.remixCount}
+                    favoriteCount={template.favoriteCount}
+                    variant="standard"
                     onClick={() => onSelectTemplate(template)}
-                    className="bg-white rounded-lg border border-slate-200 p-5 hover:shadow-lg hover:border-blue-300 transition-all text-left group"
-                  >
-                    {/* Category Badge and Hours */}
-                    <div className="flex items-center justify-between mb-3">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${categoryColors[template.categoryColor]}`}>
-                        {template.category}
-                      </span>
-                      <span className="text-sm font-bold text-blue-600">
-                        {template.savedHours}h saved
-                      </span>
-                    </div>
-
-                    {/* Template Title */}
-                    <h3 className="text-base font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {template.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-sm text-slate-600 mb-4 line-clamp-2">
-                      {template.description}
-                    </p>
-
-                    {/* Tags */}
-                    {template.tags.length > 0 && (
-                      <div className="flex items-center gap-2 mb-3">
-                        {template.tags.map((tagId) => {
-                          const tag = tags.find(t => t.id === tagId);
-                          return tag ? (
-                            <span
-                              key={tagId}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-slate-100 text-slate-600"
-                            >
-                              <span>{tag.icon}</span>
-                              <span>{tag.label}</span>
-                            </span>
-                          ) : null;
-                        })}
-                      </div>
-                    )}
-
-                    {/* Stats */}
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <div className="flex items-center gap-4">
-                        <span className="flex items-center gap-1">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                          </svg>
-                          {template.favorites.toLocaleString()}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                          </svg>
-                          {template.views.toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  </button>
+                  />
                 ))}
               </div>
             )}

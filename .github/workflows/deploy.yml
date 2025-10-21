@@ -5,6 +5,7 @@ on:
     branches:
       - App-Concept
       - feature/complete-signin-flow
+      - prototype/morning-greeting-continuation
   workflow_dispatch:
 
 permissions:

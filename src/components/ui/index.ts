@@ -16,3 +16,4 @@ export { default as TopNav } from './TopNav';
 export { default as NameCollectionModal } from './NameCollectionModal';
 export { default as BuildingModal } from './BuildingModal';
 export { default as ThinkingModal } from './ThinkingModal';
+export { default as WorkItemCard } from './WorkItemCard';

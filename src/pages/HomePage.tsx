@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, ConversationDisplay, TemplateCard, TopNav, ThinkingModal, type ConversationMessage } from '../components/ui';
+import { AIInput, ConversationDisplay, TemplateCard, TopNav, ThinkingModal, WorkItemCard, type ConversationMessage } from '../components/ui';
 import FindTemplatesModal from '../components/ui/FindTemplatesModal';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
 import { TEMPLATE_CATEGORIES } from '../utils/templateCategories';
@@ -40,6 +40,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showThinkingModal, setShowThinkingModal] = useState(false);
+  const [createdWorkspace, setCreatedWorkspace] = useState<{title: string; description: string} | null>(null);
   
   // Conversation state - managed internally
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
@@ -157,17 +158,20 @@ const HomePage: React.FC<HomePageProps> = ({
   const handleThinkingComplete = () => {
     setShowThinkingModal(false);
     
+    // Get the user's original request (second message)
+    const userRequests = conversationMessages.filter(msg => msg.isUser);
+    const projectTitle = userRequests.length >= 2 
+      ? typeof userRequests[1].content === 'string' 
+        ? userRequests[1].content 
+        : userRequests[1].content.content
+      : 'New Project';
+    
     // Add workspace created confirmation message
     const workspaceCreatedMessage: ConversationMessage = {
       id: (Date.now() + 2).toString(),
       content: {
-        type: 'artifact',
-        content: `Your workspace has been created! Transitioning to your new project space where you can continue working with full access to all tools and features.`,
-        metadata: {
-          itemId: `workspace-${Date.now()}`,
-          artifactName: 'Project Workspace',
-          artifactType: 'deployment'
-        }
+        type: 'text',
+        content: `Perfect! I've created your workspace. You can now continue working on your project with full access to all tools and features. Click the workspace card below to get started!`
       },
       isUser: false,
       timestamp: new Date()
@@ -175,12 +179,17 @@ const HomePage: React.FC<HomePageProps> = ({
     
     setConversationMessages(prev => [...prev, workspaceCreatedMessage]);
     
-    // Transition to project workspace
-    if (onCreateProject) {
-      setTimeout(() => {
-        onCreateProject('New Project Workspace');
-      }, 1500);
-    }
+    // Show the workspace card below conversation
+    setCreatedWorkspace({
+      title: projectTitle.substring(0, 60) + (projectTitle.length > 60 ? '...' : ''),
+      description: 'Your dedicated workspace with AI assistance, collaboration tools, and project management features.'
+    });
+    
+    // Don't auto-transition - let user click the card
+    // If they want to transition immediately, uncomment below:
+    // setTimeout(() => {
+    //   if (onCreateProject) onCreateProject(projectTitle);
+    // }, 2000);
   };
 
   return (
@@ -422,8 +431,28 @@ const HomePage: React.FC<HomePageProps> = ({
             }}
           />
 
+          {/* Created Workspace Card (appears BELOW conversation after creation) */}
+          {createdWorkspace && (
+            <WorkItemCard
+              title={createdWorkspace.title}
+              description={createdWorkspace.description}
+              category="Project Workspace"
+              categoryColor="blue"
+              createdAt={new Date()}
+              onClick={() => {
+                if (onCreateProject) {
+                  onCreateProject(createdWorkspace.title);
+                }
+              }}
+              onFavorite={() => {
+                console.log('Favorited workspace');
+              }}
+              isFavorited={false}
+            />
+          )}
+
           {/* Help text for new users */}
-          {conversationMessages.length === 0 && (
+          {conversationMessages.length === 0 && !createdWorkspace && (
             <div className="mt-6 text-center">
               <p className="text-sm text-slate-500">
                 💡 <strong>Get started:</strong> Describe what you'd like to work on, and I'll help you create a project workspace after a quick conversation.

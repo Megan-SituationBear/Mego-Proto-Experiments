@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, ConversationDisplay, IntegrationsModal, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
+import { AIInput, ConversationDisplay, IntegrationsModal, TemplateCard, TopNav, ThinkingModal, type ConversationMessage } from '../components/ui';
 import AuthModal from '../components/ui/AuthModal';
 import MatchingModal from '../components/ui/MatchingModal';
 import NameCollectionModal from '../components/ui/NameCollectionModal';
@@ -24,6 +24,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
   const [showMatchingModal, setShowMatchingModal] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
   const [showBuildingModal, setShowBuildingModal] = useState(false);
+  const [showThinkingModal, setShowThinkingModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   
@@ -137,22 +138,71 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
     // Simulate AI response
     setTimeout(() => {
       const response = generateAIResponse(text, newUserMessageCount);
-      // Convert complex message format to simple string content
+      
+      // Use the rich message content from the generator
       const aiMessage: ConversationMessage = {
         id: response.conversationMessage.id,
-        content: typeof response.conversationMessage.content === 'string' 
-          ? response.conversationMessage.content 
-          : response.conversationMessage.content.content,
+        content: response.conversationMessage.content,
         isUser: false,
         timestamp: response.conversationMessage.timestamp
       };
+      
       setConversationMessages(prev => [...prev, aiMessage]);
       
       // Hide typing indicator
       if (setTypingIndicator) {
         setTypingIndicator(false);
       }
+
+      // After second user message (3rd message in conversation), show workspace creation
+      if (newUserMessageCount === 2) {
+        setTimeout(() => {
+          // Show thinking modal
+          setShowThinkingModal(true);
+        }, 2500);
+      }
     }, 1200);
+  };
+
+  const handleThinkingComplete = () => {
+    setShowThinkingModal(false);
+    
+    // Add workspace created message
+    const workspaceCreatedMessage: ConversationMessage = {
+      id: (Date.now() + 2).toString(),
+      content: {
+        type: 'artifact',
+        content: `Your workspace preview has been created! To access your workspace and continue working with all features, please sign up or log in.`,
+        metadata: {
+          itemId: `workspace-preview-${Date.now()}`,
+          artifactName: 'Project Workspace (Preview)',
+          artifactType: 'deployment'
+        }
+      },
+      isUser: false,
+      timestamp: new Date()
+    };
+    
+    setConversationMessages(prev => [...prev, workspaceCreatedMessage]);
+    
+    // Show blocker to prompt sign up
+    setTimeout(() => {
+      const signupBlocker: ConversationMessage = {
+        id: (Date.now() + 3).toString(),
+        content: {
+          type: 'blocker',
+          content: 'To continue working on your project, access your workspace, and use all Copado AI features, you need to create an account. It only takes a minute!',
+          metadata: {
+            blockerType: 'authentication',
+            actionLabel: 'Sign Up Free'
+          }
+        },
+        isUser: false,
+        timestamp: new Date()
+      };
+      
+      setConversationMessages(prev => [...prev, signupBlocker]);
+    }, 1500);
   };
 
   const switchAuthMode = () => {
@@ -311,7 +361,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
           {/* AI Input Component */}
           <div className="mb-6">
             <AIInput
-              placeholder="Describe how I can help ...."
+              placeholder="Describe what you'd like to work on..."
               onSendMessage={(text) => handleSendMessageWithConversation(text, setShowCopadoTyping)}
               onIntegrationsClick={handleIntegrationsClick}
               autoFocus={false}
@@ -320,6 +370,15 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
               hasConversation={conversationMessages.length > 0}
             />
           </div>
+
+          {/* Help text for new users */}
+          {conversationMessages.length === 0 && (
+            <div className="text-center mb-6">
+              <p className="text-sm text-slate-600">
+                💡 <strong>Try it now:</strong> Tell me what you want to build, and I'll create a workspace for you after a quick chat.
+              </p>
+            </div>
+          )}
 
           {/* Conversation Display (appears BELOW input) */}
           <ConversationDisplay
@@ -343,7 +402,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
             }}
             onBlockerAction={(messageId, actionType) => {
               console.log('Blocker action:', messageId, actionType);
-              // Prompt to sign up for integrations
+              // Open sign up modal when user clicks the blocker action
               if (onSignUp) onSignUp();
             }}
           />
@@ -400,6 +459,21 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       <BuildingModal
         isOpen={showBuildingModal}
         onComplete={handleBuildingComplete}
+      />
+
+      {/* Thinking Modal - Shows AI processing before workspace preview */}
+      <ThinkingModal
+        isOpen={showThinkingModal}
+        onComplete={handleThinkingComplete}
+        duration={3500}
+        title="Creating workspace preview..."
+        steps={[
+          "Analyzing your project requirements",
+          "Designing workspace structure",
+          "Configuring initial settings",
+          "Preparing preview environment",
+          "Almost ready..."
+        ]}
       />
     </div>
   );

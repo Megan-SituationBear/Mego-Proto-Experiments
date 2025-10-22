@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, ConversationDisplay, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
+import { AIInput, ConversationDisplay, TemplateCard, TopNav, ThinkingModal, type ConversationMessage } from '../components/ui';
 import FindTemplatesModal from '../components/ui/FindTemplatesModal';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
 
@@ -38,6 +38,7 @@ const HomePage: React.FC<HomePageProps> = ({
   );
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showThinkingModal, setShowThinkingModal] = useState(false);
   
   // Conversation state - managed internally
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
@@ -145,29 +146,40 @@ const HomePage: React.FC<HomePageProps> = ({
       if (newUserMessageCount === 2 && onCreateProject) {
         // Wait for the workspace creation steps to be visible
         setTimeout(() => {
-          // Add workspace created confirmation message
-          const workspaceCreatedMessage: ConversationMessage = {
-            id: (Date.now() + 2).toString(),
-            content: {
-              type: 'artifact',
-              content: `Your workspace "${text.substring(0, 30)}${text.length > 30 ? '...' : ''}" has been created! You can now continue working on your project with full access to all tools and features.`,
-              metadata: {
-                itemId: `workspace-${Date.now()}`,
-                artifactName: 'Project Workspace',
-                artifactType: 'deployment'
-              }
-            },
-            isUser: false,
-            timestamp: new Date()
-          };
-          
-          setConversationMessages(prev => [...prev, workspaceCreatedMessage]);
-          
-          // Actually create the project
-          onCreateProject(text);
+          // Show thinking modal
+          setShowThinkingModal(true);
         }, 2500);
       }
     }, 1200);
+  };
+
+  const handleThinkingComplete = () => {
+    setShowThinkingModal(false);
+    
+    // Add workspace created confirmation message
+    const workspaceCreatedMessage: ConversationMessage = {
+      id: (Date.now() + 2).toString(),
+      content: {
+        type: 'artifact',
+        content: `Your workspace has been created! Transitioning to your new project space where you can continue working with full access to all tools and features.`,
+        metadata: {
+          itemId: `workspace-${Date.now()}`,
+          artifactName: 'Project Workspace',
+          artifactType: 'deployment'
+        }
+      },
+      isUser: false,
+      timestamp: new Date()
+    };
+    
+    setConversationMessages(prev => [...prev, workspaceCreatedMessage]);
+    
+    // Transition to project workspace
+    if (onCreateProject) {
+      setTimeout(() => {
+        onCreateProject('New Project Workspace');
+      }, 1500);
+    }
   };
 
   return (
@@ -544,6 +556,21 @@ const HomePage: React.FC<HomePageProps> = ({
           onViewTemplate?.(template);
         }}
         initialGoals={selectedGoalsForTemplates}
+      />
+
+      {/* Thinking Modal - Shows AI processing before workspace creation */}
+      <ThinkingModal
+        isOpen={showThinkingModal}
+        onComplete={handleThinkingComplete}
+        duration={3500}
+        title="Creating your workspace..."
+        steps={[
+          "Analyzing your project requirements",
+          "Designing optimal workspace structure",
+          "Configuring collaboration settings",
+          "Setting up development environment",
+          "Preparing project dashboard"
+        ]}
       />
     </div>
   );

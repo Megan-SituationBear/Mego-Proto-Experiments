@@ -1,6 +1,7 @@
 export { default as AIInput } from './AIInput';
-export type { ConversationMessage } from './AIInput';
 export { default as Conversation } from '../Conversation';
+export { default as ConversationDisplay } from './ConversationDisplay';
+export type { ConversationMessage, MessageContent } from './ConversationDisplay';
 export { default as IntegrationsModal } from './IntegrationsModal';
 export { default as SignInModal } from './SignInModal';
 export { default as SignUpModal } from './SignUpModal';

@@ -42,13 +42,6 @@ import { Send, Plus, Settings, Paperclip, MessageSquare, Building2, Ticket, Grid
 type PageContext = 'home' | 'workspace' | 'context';
 type ViewState = 'default' | 'focused' | 'focused-with-conversation';
 
-export interface ConversationMessage {
-  id: string;
-  content: string;
-  isUser: boolean;
-  timestamp?: Date;
-}
-
 interface AIInputProps {
   placeholder?: string;
   onSendMessage?: (text: string) => void;
@@ -65,9 +58,6 @@ interface AIInputProps {
   isLoggedIn?: boolean;
   pageContext?: PageContext;
   hasConversation?: boolean;
-  // Conversation props
-  messages?: ConversationMessage[];
-  showTypingIndicator?: boolean;
 }
 
 interface CodeSnippet {
@@ -96,8 +86,6 @@ const AIInput: React.FC<AIInputProps> = ({
   isLoggedIn = false,
   pageContext = 'home',
   hasConversation = false,
-  messages = [],
-  showTypingIndicator = false,
 }) => {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -122,12 +110,6 @@ const AIInput: React.FC<AIInputProps> = ({
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
 
   // Detect if pasted content is code
   const isCodeSnippet = (text: string): boolean => {
@@ -479,47 +461,6 @@ const AIInput: React.FC<AIInputProps> = ({
 
   return (
     <div className={`w-full ${className}`}>
-      {/* Conversation Display - Above the input */}
-      {(messages.length > 0 || showTypingIndicator) && (
-        <div 
-          className="mb-4 space-y-3 max-h-[320px] overflow-y-auto px-3 py-4 rounded-2xl border border-slate-200/50 animate-in fade-in slide-in-from-top-2 duration-500" 
-          style={{ 
-            background: 'rgba(255, 255, 255, 0.3)', 
-            backdropFilter: 'blur(10px)' 
-          }}
-        >
-          {messages.map((msg) => (
-            <div key={msg.id} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
-              <div 
-                className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-left ${
-                  msg.isUser 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-white/90 border border-slate-200 text-slate-800 shadow-sm'
-                } transition-all duration-500 ease-out`}
-              >
-                <p className="font-body text-sm leading-relaxed" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '15px', lineHeight: '24px' }}>
-                  {msg.content}
-                </p>
-              </div>
-            </div>
-          ))}
-
-          {/* AI Thinking Indicator */}
-          {showTypingIndicator && (
-            <div className="flex justify-start">
-              <div className="bg-white/90 border border-slate-200 shadow-sm px-4 py-2.5 rounded-2xl">
-                <div className="flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      )}
-
       {/* AI Input Field */}
       <div 
         className={`relative ${stateStyles.bgColor} rounded-2xl border-2 transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring} hover:shadow-2xl`}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
+import { AIInput, ConversationDisplay, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
 import FindTemplatesModal from '../components/ui/FindTemplatesModal';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
 
@@ -343,6 +343,14 @@ const HomePage: React.FC<HomePageProps> = ({
 
         {/* AI Input Section */}
         <div className="mb-12 max-w-4xl mx-auto">
+          {/* Conversation Display (appears above input when there are messages) */}
+          <ConversationDisplay
+            messages={conversationMessages}
+            showTypingIndicator={showCopadoTyping}
+            variant="floating"
+          />
+
+          {/* AI Input Component (without built-in conversation) */}
           <AIInput
             placeholder="What action do you want to start?"
             onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
@@ -351,8 +359,6 @@ const HomePage: React.FC<HomePageProps> = ({
             isLoggedIn={true}
             pageContext="home"
             hasConversation={conversationMessages.length > 0}
-            messages={conversationMessages}
-            showTypingIndicator={showCopadoTyping}
           />
 
           {/* Show "Creating workspace..." message after second user message */}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
+import { AIInput, ConversationDisplay, IntegrationsModal, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
 import AuthModal from '../components/ui/AuthModal';
 import MatchingModal from '../components/ui/MatchingModal';
 import NameCollectionModal from '../components/ui/NameCollectionModal';
@@ -308,7 +308,15 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
             Start Something New
           </h2>
 
-          {/* AI Input Component */}
+          {/* Conversation Display (appears above input when there are messages) */}
+          <ConversationDisplay
+            messages={conversationMessages}
+            showTypingIndicator={showCopadoTyping}
+            variant="floating"
+            className="mb-6"
+          />
+
+          {/* AI Input Component (without built-in conversation) */}
           <div className="mb-6">
             <AIInput
               placeholder="Describe how I can help ...."
@@ -318,8 +326,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
               isLoggedIn={false}
               pageContext="home"
               hasConversation={conversationMessages.length > 0}
-              messages={conversationMessages}
-              showTypingIndicator={showCopadoTyping}
             />
           </div>
 

@@ -14,6 +14,7 @@ interface HomePageProps {
   onLogout?: () => void;
   onViewTemplate?: (template: any) => void;
   onViewAllWork?: () => void;
+  onViewTemplateLibrary?: () => void;
 }
 
 /**
@@ -30,6 +31,7 @@ const HomePage: React.FC<HomePageProps> = ({
   onLogout,
   onViewTemplate,
   onViewAllWork,
+  onViewTemplateLibrary,
 }) => {
   // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
@@ -292,7 +294,7 @@ const HomePage: React.FC<HomePageProps> = ({
             <button
               onClick={() => {
                 setShowMenu(false);
-                setActiveTab('templates');
+                onViewTemplateLibrary?.();
               }}
               className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
             >

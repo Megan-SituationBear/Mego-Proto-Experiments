@@ -343,14 +343,7 @@ const HomePage: React.FC<HomePageProps> = ({
 
         {/* AI Input Section */}
         <div className="mb-12 max-w-4xl mx-auto">
-          {/* Conversation Display (appears above input when there are messages) */}
-          <ConversationDisplay
-            messages={conversationMessages}
-            showTypingIndicator={showCopadoTyping}
-            variant="floating"
-          />
-
-          {/* AI Input Component (without built-in conversation) */}
+          {/* AI Input Component */}
           <AIInput
             placeholder="What action do you want to start?"
             onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
@@ -359,6 +352,41 @@ const HomePage: React.FC<HomePageProps> = ({
             isLoggedIn={true}
             pageContext="home"
             hasConversation={conversationMessages.length > 0}
+          />
+
+          {/* Conversation Display (appears BELOW input) */}
+          <ConversationDisplay
+            messages={conversationMessages}
+            showTypingIndicator={showCopadoTyping}
+            variant="default"
+            onDownloadArtifact={(itemId, name, content) => {
+              console.log('Download artifact:', itemId, name);
+              // Create download
+              const blob = new Blob([content], { type: 'text/plain' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = name;
+              a.click();
+            }}
+            onViewArtifact={(itemId, name) => {
+              console.log('View artifact:', itemId, name);
+              // Navigate to artifact detail view
+            }}
+            onDownloadCode={(itemId, fileName, content) => {
+              console.log('Download code:', itemId, fileName);
+              // Create download
+              const blob = new Blob([content], { type: 'text/plain' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = fileName;
+              a.click();
+            }}
+            onBlockerAction={(messageId, actionType) => {
+              console.log('Blocker action:', messageId, actionType);
+              // Handle blocker actions (e.g., open Salesforce connection modal)
+            }}
           />
 
           {/* Show "Creating workspace..." message after second user message */}

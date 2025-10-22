@@ -106,10 +106,10 @@ const ConversationDisplay: React.FC<ConversationDisplayProps> = ({
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  // Extract text from MessageContent
-  const getTextContent = (content: MessageContent): string => {
-    return typeof content === 'string' ? content : content.content;
-  };
+  // Extract text from MessageContent (unused but kept for potential future use)
+  // const getTextContent = (content: MessageContent): string => {
+  //   return typeof content === 'string' ? content : content.content;
+  // };
 
   // Render message content based on type
   const renderMessageContent = (message: ConversationMessage) => {

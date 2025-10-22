@@ -11,33 +11,11 @@ import { AIInput } from '../index';
 import type { ConversationMessage } from '../index';
 
 export function AIInputLoggedOutExample() {
-  const [messages, setMessages] = useState<ConversationMessage[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [messageCount, setMessageCount] = useState(0);
 
   const handleSendMessage = (text: string) => {
-    // Add user message
-    const userMsg: ConversationMessage = {
-      id: Date.now().toString(),
-      content: text,
-      isUser: true,
-      timestamp: new Date()
-    };
-    setMessages([...messages, userMsg]);
-
-    // Simulate AI typing
-    setIsTyping(true);
-    
-    // Simulate AI response after 1.2 seconds
-    setTimeout(() => {
-      const aiMsg: ConversationMessage = {
-        id: (Date.now() + 1).toString(),
-        content: `I see you mentioned "${text}". That sounds interesting! Can you tell me more about what you're trying to accomplish?`,
-        isUser: false,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, aiMsg]);
-      setIsTyping(false);
-    }, 1200);
+    console.log('Message sent:', text);
+    setMessageCount(prev => prev + 1);
   };
 
   return (
@@ -45,11 +23,9 @@ export function AIInputLoggedOutExample() {
       <AIInput
         placeholder="Try: @Copado what do you do? Or, @project Let's Go!"
         onSendMessage={handleSendMessage}
-        messages={messages}
-        showTypingIndicator={isTyping}
         isLoggedIn={false}
         pageContext="home"
-        hasConversation={messages.length > 0}
+        hasConversation={messageCount > 0}
       />
     </div>
   );

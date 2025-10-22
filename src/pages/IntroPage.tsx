@@ -386,7 +386,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
             messages={conversationMessages}
             showTypingIndicator={showCopadoTyping}
             variant="default"
-            onDownloadArtifact={(itemId, name, content) => {
+            onDownloadArtifact={(itemId, name) => {
               console.log('Download artifact:', itemId, name);
               // Prompt to sign up before downloading
               if (onSignUp) onSignUp();
@@ -396,7 +396,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
               // Prompt to sign up
               if (onSignUp) onSignUp();
             }}
-            onDownloadCode={(itemId, fileName, content) => {
+            onDownloadCode={(itemId, fileName) => {
               console.log('Download code:', itemId, fileName);
               // Prompt to sign up before downloading
               if (onSignUp) onSignUp();

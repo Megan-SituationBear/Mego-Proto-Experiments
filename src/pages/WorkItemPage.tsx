@@ -385,8 +385,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                   isLoggedIn={true}
                   pageContext="workspace"
                   hasConversation={conversationMessages.length > 0}
-                  messages={conversationMessages}
-                  showTypingIndicator={showCopadoTyping}
                 />
               </div>
 
@@ -525,8 +523,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               isLoggedIn={true}
               pageContext="workspace"
               hasConversation={conversationMessages.length > 0}
-              messages={conversationMessages}
-              showTypingIndicator={showCopadoTyping}
             />
           </div>
 
@@ -797,8 +793,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               isLoggedIn={true}
               pageContext="workspace"
               hasConversation={false}
-              messages={[]}
-              showTypingIndicator={false}
             />
           </div>
 

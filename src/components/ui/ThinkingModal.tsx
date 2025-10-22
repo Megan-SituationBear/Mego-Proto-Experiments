@@ -104,7 +104,6 @@ const ThinkingModal: React.FC<ThinkingModalProps> = ({
           {steps.map((step, index) => {
             const isCompleted = completedSteps.includes(index);
             const isCurrent = currentStep === index;
-            const isPending = index > currentStep;
 
             return (
               <div 

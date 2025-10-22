@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { ArrowLeft, Search, Star, Clock, Folder, FileText, Sparkles, Filter } from 'lucide-react';
+import { Search, Star, Clock, Folder, FileText, Sparkles } from 'lucide-react';
 import { TopNav } from '../components/ui';
-import { TEMPLATE_CATEGORIES, type CategoryColor } from '../utils/templateCategories';
+import { type CategoryColor } from '../utils/templateCategories';
 
 interface WorkItem {
   id: string;

@@ -7,10 +7,12 @@ interface OnboardingFlowProps {
 }
 
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = true }) => {
-  const [step, setStep] = useState<'sso' | 'terms' | 'name' | 'interests'>('sso');
+  const [step, setStep] = useState<'sso' | 'email' | 'terms' | 'name' | 'interests'>('sso');
   const [isLoading, setIsLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
   const interests = [
@@ -35,6 +37,17 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
       setIsLoading(false);
       setStep('terms'); // Both login and signup go to terms
     }, 1500);
+  };
+
+  const handleEmailLogin = () => {
+    if (email && password) {
+      setIsLoading(true);
+      // Simulate email login
+      setTimeout(() => {
+        setIsLoading(false);
+        setStep('terms');
+      }, 1000);
+    }
   };
 
   const handleAcceptTerms = () => {
@@ -137,6 +150,101 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
                   {isLoading ? 'Signing in...' : 'Continue with Salesforce'}
                 </button>
               </div>
+
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-slate-500">or</span>
+                </div>
+              </div>
+
+              {/* Email Button */}
+              <button
+                onClick={() => setStep('email')}
+                disabled={isLoading}
+                className="w-full px-6 py-3.5 rounded-xl border-2 border-blue-600 bg-blue-600 hover:bg-blue-700 transition-all font-semibold text-white flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                Continue with Email
+              </button>
+            </>
+          )}
+
+          {step === 'email' && (
+            <>
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
+                {isSignUp ? 'Sign up with email' : 'Sign in with email'}
+              </h2>
+              <p className="text-center text-slate-600 mb-8">
+                {isSignUp ? 'Create your account' : 'Enter your credentials'}
+              </p>
+
+              {/* Email/Password Form */}
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-all"
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={isSignUp ? 'Create a password' : 'Enter your password'}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-all"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && email && password) {
+                        handleEmailLogin();
+                      }
+                    }}
+                  />
+                </div>
+
+                {!isSignUp && (
+                  <div className="text-right">
+                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                      Forgot password?
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Continue Button */}
+              <PrimaryButton
+                onClick={handleEmailLogin}
+                disabled={!email || !password || isLoading}
+                className="w-full mb-4"
+              >
+                {isLoading ? 'Please wait...' : isSignUp ? 'Create Account' : 'Sign In'}
+              </PrimaryButton>
+
+              {/* Back to SSO */}
+              <button
+                onClick={() => setStep('sso')}
+                className="w-full text-sm text-slate-600 hover:text-slate-900 font-medium"
+              >
+                ← Back to other options
+              </button>
             </>
           )}
 

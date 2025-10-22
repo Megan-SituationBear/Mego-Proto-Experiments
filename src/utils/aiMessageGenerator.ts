@@ -39,12 +39,20 @@ export const generateAIResponse = (
     return { message: oldMessage, conversationMessage: newMessage };
   }
 
-  // Second message: Show "Creating workspace..." message
+  // Second message: Create workspace
   if (currentUserMessageCount === 2) {
-    oldMessage.text = "Perfect! Let me create a workspace for you to dive deeper into this...";
+    oldMessage.text = "Perfect! Let me create a dedicated workspace for this project...";
     newMessage.content = {
-      type: 'text',
-      content: "Perfect! Let me create a workspace for you to dive deeper into this..."
+      type: 'step-by-step',
+      content: "Creating your project workspace:",
+      metadata: {
+        steps: [
+          "✓ Analyzing your requirements",
+          "✓ Setting up project structure",
+          "✓ Configuring workspace settings",
+          "⏳ Preparing workspace environment..."
+        ]
+      }
     };
     return { message: oldMessage, conversationMessage: newMessage };
   }

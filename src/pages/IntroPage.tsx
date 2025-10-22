@@ -308,15 +308,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
             Start Something New
           </h2>
 
-          {/* Conversation Display (appears above input when there are messages) */}
-          <ConversationDisplay
-            messages={conversationMessages}
-            showTypingIndicator={showCopadoTyping}
-            variant="floating"
-            className="mb-6"
-          />
-
-          {/* AI Input Component (without built-in conversation) */}
+          {/* AI Input Component */}
           <div className="mb-6">
             <AIInput
               placeholder="Describe how I can help ...."
@@ -328,6 +320,33 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
               hasConversation={conversationMessages.length > 0}
             />
           </div>
+
+          {/* Conversation Display (appears BELOW input) */}
+          <ConversationDisplay
+            messages={conversationMessages}
+            showTypingIndicator={showCopadoTyping}
+            variant="default"
+            onDownloadArtifact={(itemId, name, content) => {
+              console.log('Download artifact:', itemId, name);
+              // Prompt to sign up before downloading
+              if (onSignUp) onSignUp();
+            }}
+            onViewArtifact={(itemId, name) => {
+              console.log('View artifact:', itemId, name);
+              // Prompt to sign up
+              if (onSignUp) onSignUp();
+            }}
+            onDownloadCode={(itemId, fileName, content) => {
+              console.log('Download code:', itemId, fileName);
+              // Prompt to sign up before downloading
+              if (onSignUp) onSignUp();
+            }}
+            onBlockerAction={(messageId, actionType) => {
+              console.log('Blocker action:', messageId, actionType);
+              // Prompt to sign up for integrations
+              if (onSignUp) onSignUp();
+            }}
+          />
 
         </div>
       </section>

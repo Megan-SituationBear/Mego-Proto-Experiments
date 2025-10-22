@@ -73,7 +73,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 }) => {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [showAllSteps, setShowAllSteps] = useState(false);
-  const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [selectedContent, setSelectedContent] = useState<{type: 'output' | 'highlight', title: string, content: string} | null>(null);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [templateName, setTemplateName] = useState('');
@@ -377,7 +376,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                   placeholder="Describe modifications..."
                   onSendMessage={(text) => {
                     if (onSendMessage) {
-                      onSendMessage(text, setShowCopadoTyping);
+                      onSendMessage(text);
                     }
                   }}
                   onIntegrationsClick={() => console.log('Integrations clicked')}
@@ -385,8 +384,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                   isLoggedIn={true}
                   pageContext="workspace"
                   hasConversation={conversationMessages.length > 0}
-                  messages={conversationMessages}
-                  showTypingIndicator={showCopadoTyping}
                 />
               </div>
 
@@ -517,7 +514,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               placeholder=""
               onSendMessage={(text) => {
                 if (onSendMessage) {
-                  onSendMessage(text, setShowCopadoTyping);
+                  onSendMessage(text);
                 }
               }}
               onIntegrationsClick={() => console.log('Integrations clicked')}
@@ -525,8 +522,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               isLoggedIn={true}
               pageContext="workspace"
               hasConversation={conversationMessages.length > 0}
-              messages={conversationMessages}
-              showTypingIndicator={showCopadoTyping}
             />
           </div>
 
@@ -797,8 +792,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               isLoggedIn={true}
               pageContext="workspace"
               hasConversation={false}
-              messages={[]}
-              showTypingIndicator={false}
             />
           </div>
 

@@ -8,36 +8,13 @@
 
 import { useState } from 'react';
 import { AIInput } from '../index';
-import type { ConversationMessage } from '../index';
 
 export function AIInputContextPageExample() {
-  const [messages, setMessages] = useState<ConversationMessage[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [messageCount, setMessageCount] = useState(0);
 
   const handleSendMessage = (text: string) => {
-    // Add user message
-    const userMsg: ConversationMessage = {
-      id: Date.now().toString(),
-      content: text,
-      isUser: true,
-      timestamp: new Date()
-    };
-    setMessages([...messages, userMsg]);
-
-    // Simulate AI typing
-    setIsTyping(true);
-    
-    // Simulate AI response after 1.2 seconds
-    setTimeout(() => {
-      const aiMsg: ConversationMessage = {
-        id: (Date.now() + 1).toString(),
-        content: "I understand. I'll help you build that out. Let me create the necessary components and configuration.",
-        isUser: false,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, aiMsg]);
-      setIsTyping(false);
-    }, 1200);
+    console.log('Message sent:', text);
+    setMessageCount(prev => prev + 1);
   };
 
   const handleIntegrationsClick = () => {
@@ -51,11 +28,9 @@ export function AIInputContextPageExample() {
         placeholder="Continue the conversation..."
         onSendMessage={handleSendMessage}
         onIntegrationsClick={handleIntegrationsClick}
-        messages={messages}
-        showTypingIndicator={isTyping}
         isLoggedIn={true}
         pageContext="workspace"
-        hasConversation={messages.length > 0}
+        hasConversation={messageCount > 0}
       />
     </div>
   );

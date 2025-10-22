@@ -1,19 +1,16 @@
 import { useState } from 'react';
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
-import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import TemplateCard from './TemplateCard';
-import { TEMPLATE_CATEGORIES } from '../../utils/templateCategories';
+import { Search } from 'lucide-react';
+import { TopNav, TemplateCard } from '../components/ui';
+import { TEMPLATE_CATEGORIES } from '../utils/templateCategories';
 
-interface FindTemplatesModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface TemplateLibraryPageProps {
+  onBack: () => void;
   onSelectTemplate: (template: any) => void;
-  initialGoals?: string[]; // Pre-selected goals from MatchingModal
+  initialGoals?: string[];
 }
 
-const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
-  isOpen,
-  onClose,
+const TemplateLibraryPage: React.FC<TemplateLibraryPageProps> = ({
+  onBack,
   onSelectTemplate,
   initialGoals = [],
 }) => {
@@ -371,40 +368,22 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     });
 
   return (
-    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-      <DialogBackdrop
-        transition
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+    <div className="min-h-screen bg-slate-50">
+      {/* Top Navigation */}
+      <TopNav
+        title="Template Library"
+        subtitle="Discover time-saving templates for your projects"
+        onBack={onBack}
+        showBackButton={true}
       />
 
-      <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center p-4">
-          <DialogPanel
-            transition
-            className="relative transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in w-full max-w-6xl h-[85vh] flex flex-col data-closed:sm:scale-95"
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-              <div>
-                <DialogTitle className="text-2xl font-bold text-slate-900">
-                  Find Templates
-                </DialogTitle>
-                <p className="text-sm text-slate-600">Discover time-saving templates for your projects</p>
-              </div>
-              <button
-                onClick={onClose}
-                className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
-                aria-label="Close"
-              >
-                <XMarkIcon className="w-6 h-6" />
-              </button>
-            </div>
-
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search and Filters Bar */}
-        <div className="px-6 py-4 border-b border-slate-200 space-y-4">
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6 space-y-4">
           {/* Search Bar */}
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input
               type="text"
               value={searchQuery}
@@ -461,48 +440,50 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex gap-6">
           {/* Sidebar - Categories */}
-          <div className="w-64 border-r border-slate-200 p-4 overflow-y-auto">
-            <h3 className="text-sm font-semibold text-slate-500 uppercase mb-3">Categories</h3>
-            <div className="space-y-1">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`w-full text-left px-4 py-2 rounded-lg transition-all ${
-                    selectedCategory === category.id
-                      ? 'bg-blue-50 text-blue-700 font-medium'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">{category.name}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+          <div className="w-64 flex-shrink-0">
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+              <h3 className="text-sm font-semibold text-slate-500 uppercase mb-3">Categories</h3>
+              <div className="space-y-1">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setSelectedCategory(category.id)}
+                    className={`w-full text-left px-4 py-2 rounded-lg transition-all ${
                       selectedCategory === category.id
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-slate-100 text-slate-600'
-                    }`}>
-                      {category.count}
-                    </span>
-                  </div>
-                </button>
-              ))}
+                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        : 'text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">{category.name}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        selectedCategory === category.id
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {category.count}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Main Content - Templates Grid */}
-          <div className="flex-1 p-6 overflow-y-auto">
+          <div className="flex-1">
             {filteredTemplates.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center">
+              <div className="flex flex-col items-center justify-center bg-white rounded-lg shadow-sm border border-slate-200 p-12 text-center">
                 <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                  <MagnifyingGlassIcon className="w-8 h-8 text-slate-400" />
+                  <Search className="w-8 h-8 text-slate-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">No templates found</h3>
                 <p className="text-slate-600">Try adjusting your search or filters</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredTemplates.map((template) => (
                   <TemplateCard
                     key={template.id}
@@ -519,11 +500,9 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
             )}
           </div>
         </div>
-          </DialogPanel>
-        </div>
-      </div>
-    </Dialog>
+      </main>
+    </div>
   );
 };
 
-export default FindTemplatesModal;
+export default TemplateLibraryPage;

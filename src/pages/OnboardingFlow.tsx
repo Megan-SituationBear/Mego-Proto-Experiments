@@ -7,24 +7,43 @@ interface OnboardingFlowProps {
 }
 
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = true }) => {
-  const [step, setStep] = useState<'sso' | 'terms' | 'name' | 'interests'>('sso');
+  const [step, setStep] = useState<'sso' | 'email' | 'terms' | 'goals' | 'expertise' | 'name' | 'pricing'>('sso');
   const [isLoading, setIsLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [name, setName] = useState('');
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
+  const [expertiseLevel, setExpertiseLevel] = useState<number>(2);
 
-  const interests = [
-    { title: 'Fix Issues Faster', description: 'Resolve bugs and issues quickly', icon: '🔧' },
-    { title: 'Deploy More Often', description: 'Streamline deployment process', icon: '🚀' },
-    { title: 'Manage Teams', description: 'Collaborate effectively', icon: '👥' },
-    { title: 'Automate Workflows', description: 'Save time with automation', icon: '⚡' },
+  const goals = [
+    { id: 'plan', label: 'Plan with data', description: 'Make informed decisions' },
+    { id: 'deploy', label: 'Deploy without errors', description: 'Ship with confidence' },
+    { id: 'build', label: 'Build quicker', description: 'Accelerate development' },
+    { id: 'support', label: 'Solve support issues proactively', description: 'Prevent problems early' },
+    { id: 'optimize', label: 'Optimize Salesforce orgs', description: 'Improve performance' },
+    { id: 'exploring', label: 'Just checking it out', description: 'Exploring options' },
   ];
 
-  const toggleInterest = (title: string) => {
-    if (selectedInterests.includes(title)) {
-      setSelectedInterests(selectedInterests.filter(i => i !== title));
+  const expertiseLabels = [
+    { value: 0, label: 'Do the work for me, Copado', description: 'Full automation & guidance' },
+    { value: 1, label: 'Learning the ropes', description: 'Guided workflows' },
+    { value: 2, label: 'Getting comfortable', description: 'Balanced approach' },
+    { value: 3, label: 'Pretty confident', description: 'Advanced features' },
+    { value: 4, label: 'Expert at Salesforce DevOps', description: 'Full control & customization' },
+  ];
+
+  const pricingPlans = [
+    { name: 'Free', price: '$0', period: '/month', description: 'Perfect for trying out Copado AI', features: ['5 AI conversations', 'Basic templates', 'Community support'] },
+    { name: 'Pro', price: '$29', period: '/month', description: 'Best for individual users', features: ['Unlimited AI conversations', 'All templates', 'Priority support', 'Advanced features'], recommended: true },
+    { name: 'Enterprise', price: 'Custom', period: '', description: 'For teams and organizations', features: ['Everything in Pro', 'Custom templates', 'Dedicated support', 'SSO & security', 'Volume pricing'] },
+  ];
+
+  const toggleGoal = (goalId: string) => {
+    if (selectedGoals.includes(goalId)) {
+      setSelectedGoals(selectedGoals.filter(id => id !== goalId));
     } else {
-      setSelectedInterests([...selectedInterests, title]);
+      setSelectedGoals([...selectedGoals, goalId]);
     }
   };
 
@@ -37,26 +56,46 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
     }, 1500);
   };
 
+  const handleEmailLogin = () => {
+    if (email && password) {
+      setIsLoading(true);
+      // Simulate email login
+      setTimeout(() => {
+        setIsLoading(false);
+        setStep('terms');
+      }, 1000);
+    }
+  };
+
   const handleAcceptTerms = () => {
     if (termsAccepted) {
       if (isSignUp) {
-        setStep('name'); // Sign up: go to name question
+        setStep('goals'); // Sign up: go to goals question
       } else {
         onComplete(); // Login: complete after accepting terms
       }
     }
   };
 
-  const handleNameNext = () => {
-    if (name.trim()) {
-      setStep('interests');
+  const handleGoalsNext = () => {
+    if (selectedGoals.length > 0) {
+      setStep('expertise');
     }
   };
 
-  const handleInterestsNext = () => {
-    if (selectedInterests.length > 0) {
-      onComplete();
+  const handleExpertiseNext = () => {
+    setStep('name');
+  };
+
+  const handleNameNext = () => {
+    if (name.trim()) {
+      setStep('pricing');
     }
+  };
+
+  const handlePricingSelect = (plan: string) => {
+    console.log('Selected plan:', plan);
+    onComplete();
   };
 
   return (
@@ -137,6 +176,101 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
                   {isLoading ? 'Signing in...' : 'Continue with Salesforce'}
                 </button>
               </div>
+
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-slate-500">or</span>
+                </div>
+              </div>
+
+              {/* Email Button */}
+              <button
+                onClick={() => setStep('email')}
+                disabled={isLoading}
+                className="w-full px-6 py-3.5 rounded-xl border-2 border-blue-600 bg-blue-600 hover:bg-blue-700 transition-all font-semibold text-white flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                Continue with Email
+              </button>
+            </>
+          )}
+
+          {step === 'email' && (
+            <>
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
+                {isSignUp ? 'Sign up with email' : 'Sign in with email'}
+              </h2>
+              <p className="text-center text-slate-600 mb-8">
+                {isSignUp ? 'Create your account' : 'Enter your credentials'}
+              </p>
+
+              {/* Email/Password Form */}
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-all"
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={isSignUp ? 'Create a password' : 'Enter your password'}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-all"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && email && password) {
+                        handleEmailLogin();
+                      }
+                    }}
+                  />
+                </div>
+
+                {!isSignUp && (
+                  <div className="text-right">
+                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                      Forgot password?
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Continue Button */}
+              <PrimaryButton
+                onClick={handleEmailLogin}
+                disabled={!email || !password || isLoading}
+                className="w-full mb-4"
+              >
+                {isLoading ? 'Please wait...' : isSignUp ? 'Create Account' : 'Sign In'}
+              </PrimaryButton>
+
+              {/* Back to SSO */}
+              <button
+                onClick={() => setStep('sso')}
+                className="w-full text-sm text-slate-600 hover:text-slate-900 font-medium"
+              >
+                ← Back to other options
+              </button>
             </>
           )}
 
@@ -199,6 +333,120 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
             </>
           )}
 
+          {step === 'goals' && (
+            <>
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
+                What do you want to accomplish?
+              </h2>
+              <p className="text-center text-slate-600 mb-8">
+                Select all that apply
+              </p>
+
+              {/* Goals Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                {goals.map((goal) => (
+                  <button
+                    key={goal.id}
+                    onClick={() => toggleGoal(goal.id)}
+                    className={`relative p-6 rounded-xl border-2 transition-all text-center flex flex-col items-center gap-2 ${
+                      selectedGoals.includes(goal.id)
+                        ? 'border-green-500 bg-green-50 shadow-md'
+                        : 'border-slate-200 bg-white hover:bg-indigo-50 hover:shadow-sm hover:border-indigo-300'
+                    }`}
+                  >
+                    {selectedGoals.includes(goal.id) && (
+                      <div className="absolute top-2 right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+                    <div className="text-sm font-semibold text-slate-700">{goal.label}</div>
+                    <div className="text-xs text-slate-600">{goal.description}</div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Continue Button */}
+              <PrimaryButton
+                onClick={handleGoalsNext}
+                disabled={selectedGoals.length === 0}
+                className="w-full"
+              >
+                Continue →
+              </PrimaryButton>
+            </>
+          )}
+
+          {step === 'expertise' && (
+            <>
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
+                How much experience do you have?
+              </h2>
+              <p className="text-center text-slate-600 mb-8">
+                Help us recommend the right templates for your skill level
+              </p>
+
+              {/* Expertise Display */}
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 mb-6 border-2 border-indigo-200">
+                <div className="text-center mb-4">
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">
+                    {expertiseLabels[expertiseLevel].label}
+                  </h3>
+                  <p className="text-sm text-slate-600">
+                    {expertiseLabels[expertiseLevel].description}
+                  </p>
+                </div>
+
+                {/* Slider */}
+                <input
+                  type="range"
+                  min="0"
+                  max="4"
+                  value={expertiseLevel}
+                  onChange={(e) => setExpertiseLevel(parseInt(e.target.value))}
+                  className="w-full h-2 bg-white rounded-full appearance-none cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, #10b981 0%, #10b981 ${(expertiseLevel / 4) * 100}%, #e2e8f0 ${(expertiseLevel / 4) * 100}%, #e2e8f0 100%)`
+                  }}
+                />
+                <div className="flex justify-between mt-2 text-xs text-slate-600">
+                  <span>Beginner</span>
+                  <span>Expert</span>
+                </div>
+              </div>
+
+              {/* Expertise Pills */}
+              <div className="grid grid-cols-5 gap-2 mb-6">
+                {expertiseLabels.map((level) => (
+                  <button
+                    key={level.value}
+                    onClick={() => setExpertiseLevel(level.value)}
+                    className={`p-3 rounded-lg border-2 transition-all text-center ${
+                      expertiseLevel === level.value
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-slate-200 bg-white hover:bg-indigo-50 hover:border-indigo-300'
+                    }`}
+                  >
+                    <div className="text-xs font-semibold text-slate-700">
+                      {level.value === 0 ? 'Beginner' : level.value === 4 ? 'Expert' : `Level ${level.value + 1}`}
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Continue Button */}
+              <PrimaryButton
+                onClick={handleExpertiseNext}
+                className="w-full"
+              >
+                Continue →
+              </PrimaryButton>
+            </>
+          )}
+
           {step === 'name' && (
             <>
               {/* Title */}
@@ -237,43 +485,62 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
             </>
           )}
 
-          {step === 'interests' && (
+          {step === 'pricing' && (
             <>
               {/* Title */}
               <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
-                What Would You Like To Fix?
+                Choose Your Plan
               </h2>
               <p className="text-center text-slate-600 mb-8">
-                Select all that apply
+                Start for free, upgrade anytime
               </p>
 
-              {/* Interests Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                {interests.map((interest) => (
+              {/* Pricing Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {pricingPlans.map((plan) => (
                   <button
-                    key={interest.title}
-                    onClick={() => toggleInterest(interest.title)}
-                    className={`p-6 rounded-xl border-2 transition-all text-left ${
-                      selectedInterests.includes(interest.title)
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-slate-200 hover:border-slate-300'
+                    key={plan.name}
+                    onClick={() => handlePricingSelect(plan.name)}
+                    className={`relative p-6 rounded-xl border-2 transition-all text-left ${
+                      plan.recommended
+                        ? 'border-blue-600 bg-blue-50 shadow-lg'
+                        : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
                     }`}
                   >
-                    <div className="text-3xl mb-2">{interest.icon}</div>
-                    <h3 className="font-semibold text-slate-900 mb-1">{interest.title}</h3>
-                    <p className="text-sm text-slate-600">{interest.description}</p>
+                    {plan.recommended && (
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                        Recommended
+                      </div>
+                    )}
+                    <div className="text-center mb-4">
+                      <h3 className="text-xl font-bold text-slate-900 mb-1">{plan.name}</h3>
+                      <div className="text-3xl font-bold text-blue-600 mb-1">
+                        {plan.price}
+                        <span className="text-sm text-slate-600">{plan.period}</span>
+                      </div>
+                      <p className="text-xs text-slate-600">{plan.description}</p>
+                    </div>
+                    <ul className="space-y-2">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-slate-700">
+                          <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </button>
                 ))}
               </div>
 
-              {/* Continue Button */}
-              <PrimaryButton
-                onClick={handleInterestsNext}
-                disabled={selectedInterests.length === 0}
-                className="w-full"
+              {/* Skip for Now */}
+              <button
+                onClick={() => handlePricingSelect('Free')}
+                className="w-full text-sm text-slate-600 hover:text-slate-900 font-medium"
               >
-                Get Started
-              </PrimaryButton>
+                Start with Free plan →
+              </button>
             </>
           )}
         </div>

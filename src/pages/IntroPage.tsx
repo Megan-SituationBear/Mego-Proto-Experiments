@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { AIInput, IntegrationsModal, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
+import { AIInput, ConversationDisplay, IntegrationsModal, TemplateCard, TopNav, ThinkingModal, type ConversationMessage } from '../components/ui';
 import AuthModal from '../components/ui/AuthModal';
 import MatchingModal from '../components/ui/MatchingModal';
 import NameCollectionModal from '../components/ui/NameCollectionModal';
 import BuildingModal from '../components/ui/BuildingModal';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
+import { TEMPLATE_CATEGORIES } from '../utils/templateCategories';
 
 interface IntroPageProps {
   onLogin?: () => void;
@@ -24,6 +25,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
   const [showMatchingModal, setShowMatchingModal] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
   const [showBuildingModal, setShowBuildingModal] = useState(false);
+  const [showThinkingModal, setShowThinkingModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   
@@ -137,22 +139,71 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
     // Simulate AI response
     setTimeout(() => {
       const response = generateAIResponse(text, newUserMessageCount);
-      // Convert complex message format to simple string content
+      
+      // Use the rich message content from the generator
       const aiMessage: ConversationMessage = {
         id: response.conversationMessage.id,
-        content: typeof response.conversationMessage.content === 'string' 
-          ? response.conversationMessage.content 
-          : response.conversationMessage.content.content,
+        content: response.conversationMessage.content,
         isUser: false,
         timestamp: response.conversationMessage.timestamp
       };
+      
       setConversationMessages(prev => [...prev, aiMessage]);
       
       // Hide typing indicator
       if (setTypingIndicator) {
         setTypingIndicator(false);
       }
+
+      // After second user message (3rd message in conversation), show workspace creation
+      if (newUserMessageCount === 2) {
+        setTimeout(() => {
+          // Show thinking modal
+          setShowThinkingModal(true);
+        }, 2500);
+      }
     }, 1200);
+  };
+
+  const handleThinkingComplete = () => {
+    setShowThinkingModal(false);
+    
+    // Add workspace created message
+    const workspaceCreatedMessage: ConversationMessage = {
+      id: (Date.now() + 2).toString(),
+      content: {
+        type: 'artifact',
+        content: `Your workspace preview has been created! To access your workspace and continue working with all features, please sign up or log in.`,
+        metadata: {
+          itemId: `workspace-preview-${Date.now()}`,
+          artifactName: 'Project Workspace (Preview)',
+          artifactType: 'deployment'
+        }
+      },
+      isUser: false,
+      timestamp: new Date()
+    };
+    
+    setConversationMessages(prev => [...prev, workspaceCreatedMessage]);
+    
+    // Show blocker to prompt sign up
+    setTimeout(() => {
+      const signupBlocker: ConversationMessage = {
+        id: (Date.now() + 3).toString(),
+        content: {
+          type: 'blocker',
+          content: 'To continue working on your project, access your workspace, and use all Copado AI features, you need to create an account. It only takes a minute!',
+          metadata: {
+            blockerType: 'authentication',
+            actionLabel: 'Sign Up Free'
+          }
+        },
+        isUser: false,
+        timestamp: new Date()
+      };
+      
+      setConversationMessages(prev => [...prev, signupBlocker]);
+    }, 1500);
   };
 
   const switchAuthMode = () => {
@@ -169,8 +220,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
 
   const allTemplates = [
     {
-      category: "Effective Planners",
-      categoryColor: "amber" as const,
+      category: TEMPLATE_CATEGORIES.PLANNERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.PLANNERS.color,
       savedHours: 28,
       title: "Plan Projects with Precision Using Predictive Analytics",
       description: "Working on: Saved est 28hrs by analyzing project data to avoid timeline issues by using planning tools",
@@ -178,8 +229,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       views: 1156
     },
     {
-      category: "Developers & Launchers",
-      categoryColor: "green" as const,
+      category: TEMPLATE_CATEGORIES.DEVELOPERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.DEVELOPERS.color,
       savedHours: 51,
       title: "Build and Launch Features Faster with Automation",
       description: "Working on: Saved est 51hrs by analyzing code patterns to avoid launch delays by using CI/CD pipelines",
@@ -187,8 +238,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       views: 2198
     },
     {
-      category: "Admins",
-      categoryColor: "green" as const,
+      category: TEMPLATE_CATEGORIES.ADMINS.name,
+      categoryColor: TEMPLATE_CATEGORIES.ADMINS.color,
       savedHours: 34,
       title: "Streamline User Management and Permissions",
       description: "Working on: Saved est 34hrs by automating user provisioning to avoid security gaps by using admin tools",
@@ -196,8 +247,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       views: 1542
     },
     {
-      category: "Customer Satisfaction Heroes",
-      categoryColor: "blue" as const,
+      category: TEMPLATE_CATEGORIES.CUSTOMER_SUPPORT.name,
+      categoryColor: TEMPLATE_CATEGORIES.CUSTOMER_SUPPORT.color,
       savedHours: 42,
       title: "Optimize User Experience with Customer Feedback Analysis",
       description: "Working on: Saved est 42hrs by analyzing customer data to avoid satisfaction issues by using feedback loops",
@@ -205,20 +256,20 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       views: 203
     },
     {
-      category: "Developers & Launchers",
-      categoryColor: "green" as const,
-      savedHours: 51,
-      title: "Build and Launch Features Faster with Automation",
-      description: "Working on: Saved est 51hrs by analyzing code patterns to avoid launch delays by using CI/CD pipelines",
+      category: TEMPLATE_CATEGORIES.STRATEGISTS.name,
+      categoryColor: TEMPLATE_CATEGORIES.STRATEGISTS.color,
+      savedHours: 45,
+      title: "Strategic Planning with Data-Driven Insights",
+      description: "Working on: Saved est 45hrs by leveraging analytics to drive strategic decisions and roadmap planning",
       favorites: 1456,
       views: 298
     },
     {
-      category: "Effective Planners",
-      categoryColor: "amber" as const,
+      category: TEMPLATE_CATEGORIES.MANAGERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.MANAGERS.color,
       savedHours: 19,
-      title: "Plan Projects with Precision Using Predictive Analytics",
-      description: "Working on: Saved est 19hrs by analyzing project data to avoid timeline issues by using planning tools",
+      title: "Coordinate Teams with Automated Workflows",
+      description: "Working on: Saved est 19hrs by streamlining team coordination with automated task management",
       favorites: 623,
       views: 142
     }
@@ -311,17 +362,51 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
           {/* AI Input Component */}
           <div className="mb-6">
             <AIInput
-              placeholder="Describe how I can help ...."
+              placeholder="Describe what you'd like to work on..."
               onSendMessage={(text) => handleSendMessageWithConversation(text, setShowCopadoTyping)}
               onIntegrationsClick={handleIntegrationsClick}
               autoFocus={false}
               isLoggedIn={false}
               pageContext="home"
               hasConversation={conversationMessages.length > 0}
-              messages={conversationMessages}
-              showTypingIndicator={showCopadoTyping}
             />
           </div>
+
+          {/* Help text for new users */}
+          {conversationMessages.length === 0 && (
+            <div className="text-center mb-6">
+              <p className="text-sm text-slate-600">
+                💡 <strong>Try it now:</strong> Tell me what you want to build, and I'll create a workspace for you after a quick chat.
+              </p>
+            </div>
+          )}
+
+          {/* Conversation Display (appears BELOW input) */}
+          <ConversationDisplay
+            messages={conversationMessages}
+            showTypingIndicator={showCopadoTyping}
+            variant="default"
+            onDownloadArtifact={(itemId, name) => {
+              console.log('Download artifact:', itemId, name);
+              // Prompt to sign up before downloading
+              if (onSignUp) onSignUp();
+            }}
+            onViewArtifact={(itemId, name) => {
+              console.log('View artifact:', itemId, name);
+              // Prompt to sign up
+              if (onSignUp) onSignUp();
+            }}
+            onDownloadCode={(itemId, fileName) => {
+              console.log('Download code:', itemId, fileName);
+              // Prompt to sign up before downloading
+              if (onSignUp) onSignUp();
+            }}
+            onBlockerAction={(messageId, actionType) => {
+              console.log('Blocker action:', messageId, actionType);
+              // Open sign up modal when user clicks the blocker action
+              if (onSignUp) onSignUp();
+            }}
+          />
 
         </div>
       </section>
@@ -375,6 +460,21 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       <BuildingModal
         isOpen={showBuildingModal}
         onComplete={handleBuildingComplete}
+      />
+
+      {/* Thinking Modal - Shows AI processing before workspace preview */}
+      <ThinkingModal
+        isOpen={showThinkingModal}
+        onComplete={handleThinkingComplete}
+        duration={3500}
+        title="Creating workspace preview..."
+        steps={[
+          "Analyzing your project requirements",
+          "Designing workspace structure",
+          "Configuring initial settings",
+          "Preparing preview environment",
+          "Almost ready..."
+        ]}
       />
     </div>
   );

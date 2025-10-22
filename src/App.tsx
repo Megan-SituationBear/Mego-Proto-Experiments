@@ -5,6 +5,7 @@ import OnboardingFlow from './pages/OnboardingFlow';
 import TemplatePage from './pages/TemplatePage';
 import PricingPage from './pages/PricingPage';
 import WorkItemPage from './pages/WorkItemPage';
+import MyWorkPage from './pages/MyWorkPage';
 import type { ConversationMessage } from './components/Conversation';
 import './App.css';
 
@@ -17,7 +18,7 @@ import './App.css';
  */
 function App() {
   // Navigation state
-  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'work-item'>('intro');
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'work-item' | 'my-work'>('intro');
   
   // Auth state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -341,6 +342,20 @@ function App() {
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}
         onViewTemplate={handleViewTemplate}
+        onViewAllWork={() => setCurrentView('my-work')}
+      />
+    );
+  }
+
+  if (currentView === 'my-work') {
+    return (
+      <MyWorkPage
+        recentItems={recentItems}
+        favoritedTemplates={favoritedTemplates}
+        activeProjects={activeProjects}
+        onBack={() => setCurrentView('home')}
+        onViewItem={handleViewTemplate}
+        onToggleFavorite={handleToggleFavorite}
       />
     );
   }

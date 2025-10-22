@@ -13,6 +13,7 @@ interface HomePageProps {
   onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
   onViewTemplate?: (template: any) => void;
+  onViewAllWork?: () => void;
 }
 
 /**
@@ -28,6 +29,7 @@ const HomePage: React.FC<HomePageProps> = ({
   onCreateProject,
   onLogout,
   onViewTemplate,
+  onViewAllWork,
 }) => {
   // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
@@ -514,19 +516,31 @@ const HomePage: React.FC<HomePageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {activeTab === 'recent' ? (
               recentItems.length > 0 ? (
-                recentItems.map((item, index) => (
-                  <TemplateCard
-                    key={`recent-${index}`}
-                    category={item.category || 'Recent Item'}
-                    title={item.title}
-                    description={item.description || 'Recently accessed'}
-                    remixCount={item.views || 0}
-                    favoriteCount={item.favorites || 0}
-                    variant="standard"
-                    isFavorited={favoritedTemplates.some(t => t.title === item.title)}
-                    onClick={() => onViewTemplate?.(item)}
-                  />
-                ))
+                <>
+                  {recentItems.slice(0, 6).map((item, index) => (
+                    <TemplateCard
+                      key={`recent-${index}`}
+                      category={item.category || 'Recent Item'}
+                      title={item.title}
+                      description={item.description || 'Recently accessed'}
+                      remixCount={item.views || 0}
+                      favoriteCount={item.favorites || 0}
+                      variant="standard"
+                      isFavorited={favoritedTemplates.some(t => t.title === item.title)}
+                      onClick={() => onViewTemplate?.(item)}
+                    />
+                  ))}
+                  {recentItems.length > 6 && (
+                    <div className="col-span-full text-center mt-4">
+                      <button
+                        onClick={onViewAllWork}
+                        className="text-blue-600 hover:text-blue-700 font-medium text-sm hover:underline"
+                      >
+                        View all {recentItems.length} items →
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="col-span-full text-center py-12">
                   <p className="text-slate-500">No recent items yet. Start working on templates to see them here!</p>

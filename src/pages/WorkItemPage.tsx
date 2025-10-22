@@ -514,7 +514,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               placeholder=""
               onSendMessage={(text) => {
                 if (onSendMessage) {
-                  onSendMessage(text, setShowCopadoTyping);
+                  onSendMessage(text);
                 }
               }}
               onIntegrationsClick={() => console.log('Integrations clicked')}

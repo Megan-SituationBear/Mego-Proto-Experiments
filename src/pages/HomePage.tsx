@@ -479,7 +479,7 @@ const HomePage: React.FC<HomePageProps> = ({
                       : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  Recent
+                  My Work
                 </button>
                 <button
                   onClick={() => setActiveTab('favorites')}

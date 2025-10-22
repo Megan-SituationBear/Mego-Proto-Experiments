@@ -125,15 +125,15 @@ const HomePage: React.FC<HomePageProps> = ({
     // Simulate AI response
     setTimeout(() => {
       const response = generateAIResponse(text, newUserMessageCount);
-      // Convert complex message format to simple string content
+      
+      // Use the rich message content from the generator
       const aiMessage: ConversationMessage = {
         id: response.conversationMessage.id,
-        content: typeof response.conversationMessage.content === 'string' 
-          ? response.conversationMessage.content 
-          : response.conversationMessage.content.content,
+        content: response.conversationMessage.content,
         isUser: false,
         timestamp: response.conversationMessage.timestamp
       };
+      
       setConversationMessages(prev => [...prev, aiMessage]);
       
       // Hide typing indicator
@@ -141,11 +141,31 @@ const HomePage: React.FC<HomePageProps> = ({
         setTypingIndicator(false);
       }
 
-      // After second exchange, create project
+      // After second user message (3rd message in conversation), create project workspace
       if (newUserMessageCount === 2 && onCreateProject) {
+        // Wait for the workspace creation steps to be visible
         setTimeout(() => {
+          // Add workspace created confirmation message
+          const workspaceCreatedMessage: ConversationMessage = {
+            id: (Date.now() + 2).toString(),
+            content: {
+              type: 'artifact',
+              content: `Your workspace "${text.substring(0, 30)}${text.length > 30 ? '...' : ''}" has been created! You can now continue working on your project with full access to all tools and features.`,
+              metadata: {
+                itemId: `workspace-${Date.now()}`,
+                artifactName: 'Project Workspace',
+                artifactType: 'deployment'
+              }
+            },
+            isUser: false,
+            timestamp: new Date()
+          };
+          
+          setConversationMessages(prev => [...prev, workspaceCreatedMessage]);
+          
+          // Actually create the project
           onCreateProject(text);
-        }, 1500);
+        }, 2500);
       }
     }, 1200);
   };
@@ -389,17 +409,12 @@ const HomePage: React.FC<HomePageProps> = ({
             }}
           />
 
-          {/* Show "Creating workspace..." message after second user message */}
-          {userMessageCount === 2 && (
-            <div className="mt-4 text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                </div>
-                <span className="font-medium">Creating workspace...</span>
-              </div>
+          {/* Help text for new users */}
+          {conversationMessages.length === 0 && (
+            <div className="mt-6 text-center">
+              <p className="text-sm text-slate-500">
+                💡 <strong>Get started:</strong> Describe what you'd like to work on, and I'll help you create a project workspace after a quick conversation.
+              </p>
             </div>
           )}
         </div>

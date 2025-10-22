@@ -36,13 +36,16 @@ import { Copy, Check } from 'lucide-react';
 
 // Support both simple string content and rich content types
 export type MessageContent = string | {
-  type: 'text' | 'question' | 'artifact' | 'step-by-step' | 'code';
+  type: 'text' | 'question' | 'artifact' | 'step-by-step' | 'code' | 'blocker';
   content: string;
   metadata?: {
     artifactName?: string;
     steps?: string[];
     options?: string[];
     language?: string;
+    blockerType?: 'salesforce' | 'integration' | 'authentication' | 'permission';
+    actionLabel?: string;
+    onAction?: () => void;
   };
 };
 
@@ -58,6 +61,7 @@ interface ConversationDisplayProps {
   showTypingIndicator?: boolean;
   onQuestionClick?: (question: string) => void;
   onCopyMessage?: (messageId: string, content: string) => void;
+  onBlockerAction?: (messageId: string, actionType: string) => void;
   className?: string;
   variant?: 'default' | 'compact' | 'floating';
   maxHeight?: string;
@@ -68,9 +72,10 @@ const ConversationDisplay: React.FC<ConversationDisplayProps> = ({
   showTypingIndicator = false,
   onQuestionClick,
   onCopyMessage,
+  onBlockerAction,
   className = '',
   variant = 'default',
-  maxHeight = '320px',
+  maxHeight = '600px',
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [copiedId, setCopiedId] = React.useState<string | null>(null);

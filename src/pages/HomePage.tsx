@@ -46,58 +46,58 @@ const HomePage: React.FC<HomePageProps> = ({
 
   const recommendedTemplates = [
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Effective Planners",
+      categoryColor: "amber" as const,
+      savedHours: 28,
+      title: "Plan Projects with Precision Using Predictive Analytics",
+      description: "Analyze project data to avoid timeline issues by using advanced planning tools and predictive models.",
+      favorites: 823,
+      views: 1156
+    },
+    {
+      category: "Developers & Launchers",
+      categoryColor: "green" as const,
+      savedHours: 51,
+      title: "Build and Launch Features Faster with Automation",
+      description: "Analyze code patterns to avoid launch delays by using CI/CD pipelines and automation workflows.",
+      favorites: 1456,
+      views: 2198
+    },
+    {
+      category: "Customer Satisfaction Heroes",
+      categoryColor: "blue" as const,
+      savedHours: 42,
+      title: "Optimize User Experience with Customer Feedback Analysis",
+      description: "Analyze customer data to avoid satisfaction issues by using feedback loops and sentiment analysis.",
+      favorites: 987,
+      views: 1542
     },
     {
       category: "Deployment Fixes",
       categoryColor: "slate" as const,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
+      description: "Identify and resolve deployment issues before they impact production using automated analysis.",
       favorites: 1234,
-      views: 154
+      views: 2043
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Admins",
+      categoryColor: "purple" as const,
+      savedHours: 34,
+      title: "Streamline User Management and Permissions",
+      description: "Automate user provisioning to avoid security gaps by using intelligent admin tools.",
+      favorites: 967,
+      views: 1789
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
-    },
-    {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
-    },
-    {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Data Migration Masters",
+      categoryColor: "orange" as const,
+      savedHours: 48,
+      title: "Migrate Data Safely with Automated Validation",
+      description: "Ensure data integrity during migrations with automated validation and rollback capabilities.",
+      favorites: 1102,
+      views: 1623
     },
   ];
 

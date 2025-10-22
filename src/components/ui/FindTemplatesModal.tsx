@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import TemplateCard from './TemplateCard';
+import { TEMPLATE_CATEGORIES } from '../../utils/templateCategories';
 
 interface FindTemplatesModalProps {
   isOpen: boolean;
@@ -39,10 +40,11 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
   ];
 
   const allTemplates = [
-    // Deployment & CI/CD
+    // Developers & Launchers
     {
       id: 1,
-      category: "Developers & Launchers",
+      category: TEMPLATE_CATEGORIES.DEVELOPERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.DEVELOPERS.color,
       savedHours: 45,
       title: "Automated Deployment Validation",
       description: "Automatically validate deployments before they go live. Catches errors early and reduces rollbacks by 80%.",
@@ -53,7 +55,8 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     },
     {
       id: 2,
-      category: "Strategists",
+      category: TEMPLATE_CATEGORIES.STRATEGISTS.name,
+      categoryColor: TEMPLATE_CATEGORIES.STRATEGISTS.color,
       savedHours: 35,
       title: "Pre-Deployment Health Check",
       description: "Schedule comprehensive org analysis before each deployment to identify potential conflicts and dependencies.",
@@ -64,7 +67,8 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     },
     {
       id: 3,
-      category: "Developers & Launchers",
+      category: TEMPLATE_CATEGORIES.DEVELOPERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.DEVELOPERS.color,
       savedHours: 52,
       title: "CI/CD Pipeline Optimization",
       description: "Streamline your deployment pipeline with automated testing, validation, and rollback capabilities.",
@@ -75,8 +79,8 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     },
     {
       id: 4,
-      category: "Admins",
-      categoryColor: "blue" as const,
+      category: TEMPLATE_CATEGORIES.ADMINS.name,
+      categoryColor: TEMPLATE_CATEGORIES.ADMINS.color,
       savedHours: 28,
       title: "Deployment Window Scheduler",
       description: "Automatically schedule deployments during optimal windows based on historical data and team availability.",
@@ -87,8 +91,8 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     },
     {
       id: 5,
-      category: "Deployment & CI/CD",
-      categoryColor: "blue" as const,
+      category: TEMPLATE_CATEGORIES.DEVELOPERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.DEVELOPERS.color,
       savedHours: 38,
       title: "Rollback Strategy Template",
       description: "Pre-configured rollback procedures with automated testing to ensure safe recovery from failed deployments.",
@@ -99,8 +103,8 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     },
     {
       id: 6,
-      category: "Deployment & CI/CD",
-      categoryColor: "blue" as const,
+      category: TEMPLATE_CATEGORIES.MANAGERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.MANAGERS.color,
       savedHours: 41,
       title: "Multi-Org Deployment Coordinator",
       description: "Coordinate deployments across multiple Salesforce orgs with dependency tracking and sequencing.",

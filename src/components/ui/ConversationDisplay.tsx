@@ -175,16 +175,24 @@ const ConversationDisplay: React.FC<ConversationDisplayProps> = ({
       case 'artifact':
         return (
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-semibold text-green-700">
-                Created {content.metadata?.artifactName || 'artifact'}
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-bold text-green-700">
+                ✓ Created {content.metadata?.artifactName || 'artifact'}
               </span>
             </div>
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <p className="text-sm text-green-900 whitespace-pre-wrap">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl p-5 shadow-md">
+              <p className="text-sm text-green-900 whitespace-pre-wrap font-medium leading-relaxed">
                 {content.content}
               </p>
+              <div className="mt-4 flex gap-2">
+                <button className="px-4 py-2 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 transition-colors shadow-sm">
+                  Download
+                </button>
+                <button className="px-4 py-2 bg-white text-green-700 border border-green-300 rounded-lg text-xs font-semibold hover:bg-green-50 transition-colors">
+                  View Details
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -192,19 +200,19 @@ const ConversationDisplay: React.FC<ConversationDisplayProps> = ({
       case 'step-by-step':
         return (
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span className="text-sm font-semibold text-blue-700">
-                Step-by-step guide:
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+              <span className="text-sm font-bold text-blue-700">
+                📋 Step-by-step guide
               </span>
             </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-5 shadow-md space-y-4">
               {content.metadata?.steps?.map((step, index) => (
-                <div key={index} className="flex gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-semibold">
+                <div key={index} className="flex gap-4 items-start">
+                  <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-sm">
                     {index + 1}
                   </div>
-                  <p className="text-sm text-blue-900 leading-relaxed flex-1">
+                  <p className="text-sm text-blue-900 leading-relaxed flex-1 pt-1 font-medium">
                     {step}
                   </p>
                 </div>

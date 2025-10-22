@@ -5,6 +5,7 @@ import MatchingModal from '../components/ui/MatchingModal';
 import NameCollectionModal from '../components/ui/NameCollectionModal';
 import BuildingModal from '../components/ui/BuildingModal';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
+import { TEMPLATE_CATEGORIES } from '../utils/templateCategories';
 
 interface IntroPageProps {
   onLogin?: () => void;
@@ -219,8 +220,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
 
   const allTemplates = [
     {
-      category: "Effective Planners",
-      categoryColor: "amber" as const,
+      category: TEMPLATE_CATEGORIES.PLANNERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.PLANNERS.color,
       savedHours: 28,
       title: "Plan Projects with Precision Using Predictive Analytics",
       description: "Working on: Saved est 28hrs by analyzing project data to avoid timeline issues by using planning tools",
@@ -228,8 +229,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       views: 1156
     },
     {
-      category: "Developers & Launchers",
-      categoryColor: "green" as const,
+      category: TEMPLATE_CATEGORIES.DEVELOPERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.DEVELOPERS.color,
       savedHours: 51,
       title: "Build and Launch Features Faster with Automation",
       description: "Working on: Saved est 51hrs by analyzing code patterns to avoid launch delays by using CI/CD pipelines",
@@ -237,8 +238,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       views: 2198
     },
     {
-      category: "Admins",
-      categoryColor: "green" as const,
+      category: TEMPLATE_CATEGORIES.ADMINS.name,
+      categoryColor: TEMPLATE_CATEGORIES.ADMINS.color,
       savedHours: 34,
       title: "Streamline User Management and Permissions",
       description: "Working on: Saved est 34hrs by automating user provisioning to avoid security gaps by using admin tools",
@@ -246,8 +247,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       views: 1542
     },
     {
-      category: "Customer Satisfaction Heroes",
-      categoryColor: "blue" as const,
+      category: TEMPLATE_CATEGORIES.CUSTOMER_SUPPORT.name,
+      categoryColor: TEMPLATE_CATEGORIES.CUSTOMER_SUPPORT.color,
       savedHours: 42,
       title: "Optimize User Experience with Customer Feedback Analysis",
       description: "Working on: Saved est 42hrs by analyzing customer data to avoid satisfaction issues by using feedback loops",
@@ -255,20 +256,20 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
       views: 203
     },
     {
-      category: "Developers & Launchers",
-      categoryColor: "green" as const,
-      savedHours: 51,
-      title: "Build and Launch Features Faster with Automation",
-      description: "Working on: Saved est 51hrs by analyzing code patterns to avoid launch delays by using CI/CD pipelines",
+      category: TEMPLATE_CATEGORIES.STRATEGISTS.name,
+      categoryColor: TEMPLATE_CATEGORIES.STRATEGISTS.color,
+      savedHours: 45,
+      title: "Strategic Planning with Data-Driven Insights",
+      description: "Working on: Saved est 45hrs by leveraging analytics to drive strategic decisions and roadmap planning",
       favorites: 1456,
       views: 298
     },
     {
-      category: "Effective Planners",
-      categoryColor: "amber" as const,
+      category: TEMPLATE_CATEGORIES.MANAGERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.MANAGERS.color,
       savedHours: 19,
-      title: "Plan Projects with Precision Using Predictive Analytics",
-      description: "Working on: Saved est 19hrs by analyzing project data to avoid timeline issues by using planning tools",
+      title: "Coordinate Teams with Automated Workflows",
+      description: "Working on: Saved est 19hrs by streamlining team coordination with automated task management",
       favorites: 623,
       views: 142
     }

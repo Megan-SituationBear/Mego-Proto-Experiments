@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AIInput, ConversationDisplay, TemplateCard, TopNav, ThinkingModal, type ConversationMessage } from '../components/ui';
 import FindTemplatesModal from '../components/ui/FindTemplatesModal';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
+import { TEMPLATE_CATEGORIES } from '../utils/templateCategories';
 
 interface HomePageProps {
   userName?: string;
@@ -46,8 +47,8 @@ const HomePage: React.FC<HomePageProps> = ({
 
   const recommendedTemplates = [
     {
-      category: "Effective Planners",
-      categoryColor: "amber" as const,
+      category: TEMPLATE_CATEGORIES.PLANNERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.PLANNERS.color,
       savedHours: 28,
       title: "Plan Projects with Precision Using Predictive Analytics",
       description: "Analyze project data to avoid timeline issues by using advanced planning tools and predictive models.",
@@ -55,8 +56,8 @@ const HomePage: React.FC<HomePageProps> = ({
       views: 1156
     },
     {
-      category: "Developers & Launchers",
-      categoryColor: "green" as const,
+      category: TEMPLATE_CATEGORIES.DEVELOPERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.DEVELOPERS.color,
       savedHours: 51,
       title: "Build and Launch Features Faster with Automation",
       description: "Analyze code patterns to avoid launch delays by using CI/CD pipelines and automation workflows.",
@@ -64,8 +65,8 @@ const HomePage: React.FC<HomePageProps> = ({
       views: 2198
     },
     {
-      category: "Customer Satisfaction Heroes",
-      categoryColor: "blue" as const,
+      category: TEMPLATE_CATEGORIES.CUSTOMER_SUPPORT.name,
+      categoryColor: TEMPLATE_CATEGORIES.CUSTOMER_SUPPORT.color,
       savedHours: 42,
       title: "Optimize User Experience with Customer Feedback Analysis",
       description: "Analyze customer data to avoid satisfaction issues by using feedback loops and sentiment analysis.",
@@ -73,8 +74,8 @@ const HomePage: React.FC<HomePageProps> = ({
       views: 1542
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
+      category: TEMPLATE_CATEGORIES.STRATEGISTS.name,
+      categoryColor: TEMPLATE_CATEGORIES.STRATEGISTS.color,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
       description: "Identify and resolve deployment issues before they impact production using automated analysis.",
@@ -82,8 +83,8 @@ const HomePage: React.FC<HomePageProps> = ({
       views: 2043
     },
     {
-      category: "Admins",
-      categoryColor: "purple" as const,
+      category: TEMPLATE_CATEGORIES.ADMINS.name,
+      categoryColor: TEMPLATE_CATEGORIES.ADMINS.color,
       savedHours: 34,
       title: "Streamline User Management and Permissions",
       description: "Automate user provisioning to avoid security gaps by using intelligent admin tools.",
@@ -91,11 +92,11 @@ const HomePage: React.FC<HomePageProps> = ({
       views: 1789
     },
     {
-      category: "Data Migration Masters",
-      categoryColor: "orange" as const,
+      category: TEMPLATE_CATEGORIES.MANAGERS.name,
+      categoryColor: TEMPLATE_CATEGORIES.MANAGERS.color,
       savedHours: 48,
-      title: "Migrate Data Safely with Automated Validation",
-      description: "Ensure data integrity during migrations with automated validation and rollback capabilities.",
+      title: "Coordinate Teams with Automated Workflows",
+      description: "Streamline team coordination with automated task management and progress tracking.",
       favorites: 1102,
       views: 1623
     },

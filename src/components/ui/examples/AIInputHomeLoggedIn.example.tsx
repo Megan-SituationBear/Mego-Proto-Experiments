@@ -8,7 +8,6 @@
 
 import { useState } from 'react';
 import { AIInput } from '../index';
-import type { ConversationMessage } from '../index';
 
 export function AIInputHomeLoggedInExample() {
   const [messageCount, setMessageCount] = useState(0);

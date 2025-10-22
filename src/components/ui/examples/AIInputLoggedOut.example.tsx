@@ -8,7 +8,6 @@
 
 import { useState } from 'react';
 import { AIInput } from '../index';
-import type { ConversationMessage } from '../index';
 
 export function AIInputLoggedOutExample() {
   const [messageCount, setMessageCount] = useState(0);

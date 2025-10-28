@@ -24,7 +24,7 @@ function App() {
   const [isSignUpFlow, setIsSignUpFlow] = useState(true); // Track if user is signing up vs logging in
   
   // User data (could be moved to context in future)
-  const [userName] = useState('Jill');
+  const [userName, setUserName] = useState('Jill');
   const [hasProjects, setHasProjects] = useState(false);
   const [favoritedTemplates, setFavoritedTemplates] = useState<any[]>([]);
   const [activeProjects, setActiveProjects] = useState<any[]>([]);
@@ -184,7 +184,10 @@ function App() {
     setCurrentView('onboarding');
   };
 
-  const handleOnboardingComplete = () => {
+  const handleOnboardingComplete = (name?: string) => {
+    if (name && name.trim()) {
+      setUserName(name.trim());
+    }
     setIsLoggedIn(true);
     setCurrentView('home');
   };

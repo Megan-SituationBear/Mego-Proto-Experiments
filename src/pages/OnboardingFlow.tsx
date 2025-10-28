@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PrimaryButton from '../components/ui/PrimaryButton';
 
 interface OnboardingFlowProps {
-  onComplete: () => void;
+  onComplete: (name?: string) => void;
   isSignUp?: boolean; // true for sign up flow, false for login flow
 }
 
@@ -55,7 +55,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
 
   const handleInterestsNext = () => {
     if (selectedInterests.length > 0) {
-      onComplete();
+      onComplete(name);
     }
   };
 

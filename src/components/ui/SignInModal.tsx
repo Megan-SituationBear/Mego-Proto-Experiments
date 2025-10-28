@@ -14,10 +14,9 @@ const SignInModal: React.FC<SignInModalProps> = ({
   onSignIn,
   onSSOSignIn,
 }) => {
-  const [step, setStep] = useState<'sso' | 'email' | 'sso-terms'>('sso');
+  const [step, setStep] = useState<'sso' | 'email' | 'sso-terms' | 'email-terms'>('sso');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [repeatPassword, setRepeatPassword] = useState('');
   const [selectedSSOProvider, setSelectedSSOProvider] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,12 +43,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !password.trim() || !repeatPassword.trim()) return;
-    
-    if (password !== repeatPassword) {
-      alert('Passwords do not match');
-      return;
-    }
+    if (!email.trim() || !password.trim()) return;
     
     setIsLoading(true);
     try {
@@ -68,7 +62,6 @@ const SignInModal: React.FC<SignInModalProps> = ({
     setStep('sso');
     setEmail('');
     setPassword('');
-    setRepeatPassword('');
     setSelectedSSOProvider('');
     onClose();
   };
@@ -268,17 +261,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Set Password"
-                className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-[15px] font-roboto placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                required
-                disabled={isLoading}
-              />
-
-              <input
-                type="password"
-                value={repeatPassword}
-                onChange={(e) => setRepeatPassword(e.target.value)}
-                placeholder="Repeat Password"
+                placeholder="Password"
                 className="w-full px-4 py-3 rounded border border-[#62748e] bg-[#f8fafc] text-[15px] font-roboto placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 required
                 disabled={isLoading}
@@ -286,10 +269,10 @@ const SignInModal: React.FC<SignInModalProps> = ({
 
               <button
                 type="submit"
-                disabled={!email.trim() || !password.trim() || !repeatPassword.trim() || isLoading}
+                disabled={!email.trim() || !password.trim() || isLoading}
                 className="w-full px-8 py-2 bg-blue-600 text-white rounded text-[15px] font-roboto font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'Processing...' : 'Next'}
+                {isLoading ? 'Signing In...' : 'Sign In'}
               </button>
 
               <button

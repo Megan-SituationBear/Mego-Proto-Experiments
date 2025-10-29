@@ -2,16 +2,19 @@ import { useState } from 'react';
 import PrimaryButton from '../components/ui/PrimaryButton';
 
 interface OnboardingFlowProps {
-  onComplete: () => void;
+  onComplete: (name?: string) => void;
   isSignUp?: boolean; // true for sign up flow, false for login flow
 }
 
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = true }) => {
-  const [step, setStep] = useState<'sso' | 'terms' | 'name' | 'interests'>('sso');
+  const [step, setStep] = useState<'sso' | 'email' | 'terms' | 'name' | 'interests'>('sso');
   const [isLoading, setIsLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [name, setName] = useState('');
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const interests = [
     { title: 'Fix Issues Faster', description: 'Resolve bugs and issues quickly', icon: '🔧' },
@@ -55,7 +58,24 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
 
   const handleInterestsNext = () => {
     if (selectedInterests.length > 0) {
-      onComplete();
+      onComplete(name);
+    }
+  };
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSignUp) {
+      // Sign up: require password confirmation and go to terms
+      if (email.trim() && password.trim() && confirmPassword.trim() && password === confirmPassword) {
+        setStep('terms');
+      } else if (password !== confirmPassword) {
+        alert('Passwords do not match');
+      }
+    } else {
+      // Login: just email and password, go to terms
+      if (email.trim() && password.trim()) {
+        setStep('terms');
+      }
     }
   };
 
@@ -136,7 +156,91 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, isSignUp = 
                   </svg>
                   {isLoading ? 'Signing in...' : 'Continue with Salesforce'}
                 </button>
+
+                {/* OR Divider */}
+                <div className="flex items-center gap-3 py-2">
+                  <div className="flex-1 border-t border-slate-300"></div>
+                  <span className="text-sm text-slate-500">OR</span>
+                  <div className="flex-1 border-t border-slate-300"></div>
+                </div>
+
+                {/* Email Button */}
+                <button
+                  onClick={() => setStep('email')}
+                  disabled={isLoading}
+                  className="w-full px-6 py-3.5 rounded-xl border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all font-semibold text-slate-900 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="2" y="4" width="20" height="16" rx="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="m2 7 10 6 10-6" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Continue with Email
+                </button>
               </div>
+            </>
+          )}
+
+          {step === 'email' && (
+            <>
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-center text-slate-900 mb-2">
+                {isSignUp ? 'Create an account' : 'Welcome Back'}
+              </h2>
+              <p className="text-center text-slate-600 mb-8">
+                {isSignUp ? 'Enter your email and password' : 'Sign in with your email'}
+              </p>
+
+              {/* Email Form */}
+              <form onSubmit={handleEmailSubmit} className="space-y-4">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none text-lg transition-all"
+                  required
+                  autoFocus
+                />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={isSignUp ? "Password" : "Password"}
+                  className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none text-lg transition-all"
+                  required
+                />
+                {isSignUp && (
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm Password"
+                    className="w-full px-6 py-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none text-lg transition-all"
+                    required
+                  />
+                )}
+
+                {/* Continue Button */}
+                <PrimaryButton
+                  type="submit"
+                  disabled={
+                    !email.trim() || 
+                    !password.trim() || 
+                    (isSignUp && !confirmPassword.trim())
+                  }
+                  className="w-full mt-6"
+                >
+                  Continue
+                </PrimaryButton>
+
+                <button
+                  type="button"
+                  onClick={() => setStep('sso')}
+                  className="w-full text-sm text-slate-600 hover:text-slate-900 transition-colors mt-4"
+                >
+                  ← Back to SSO options
+                </button>
+              </form>
             </>
           )}
 

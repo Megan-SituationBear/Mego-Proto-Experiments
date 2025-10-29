@@ -245,7 +245,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
                 <button
                   onClick={handleSSOTermsAgree}
                   disabled={isLoading}
-                  className="flex-1 px-6 py-2.5 bg-blue-600 text-white rounded text-[15px] font-roboto font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-2.5 bg-blue-600 text-white rounded text-[15px] font-roboto font-medium shadow-sm hover:bg-indigo-600 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isLoading ? 'Processing...' : 'Continue'}
                 </button>
@@ -287,7 +287,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
               <button
                 type="submit"
                 disabled={!email.trim() || !password.trim() || !confirmPassword.trim() || isLoading}
-                className="w-full px-8 py-2 bg-blue-600 text-white rounded text-[15px] font-roboto font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-8 py-2 bg-blue-600 text-white rounded text-[15px] font-roboto font-medium shadow-sm hover:bg-indigo-600 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isLoading ? 'Creating Account...' : 'Sign Up'}
               </button>

@@ -115,9 +115,9 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
         <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
           <button
             onClick={() => setBillingCycle('monthly')}
-            className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`px-6 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
               billingCycle === 'monthly'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-blue-600 text-white shadow-sm hover:bg-indigo-600 hover:shadow-md'
                 : 'text-slate-700 hover:bg-slate-50'
             }`}
           >
@@ -125,9 +125,9 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
           </button>
           <button
             onClick={() => setBillingCycle('annual')}
-            className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`px-6 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
               billingCycle === 'annual'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-blue-600 text-white shadow-sm hover:bg-indigo-600 hover:shadow-md'
                 : 'text-slate-700 hover:bg-slate-50'
             }`}
           >
@@ -196,9 +196,9 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
                 {/* CTA Button */}
                 <button
                   onClick={() => onSelectPlan(plan.name)}
-                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-all mb-6 ${
+                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-all mb-6 cursor-pointer ${
                     plan.highlighted
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
+                      ? 'bg-blue-600 text-white shadow-sm hover:bg-indigo-600 hover:shadow-md'
                       : 'bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50'
                   }`}
                 >
@@ -286,10 +286,10 @@ const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
             Our team is here to help you find the perfect plan for your needs.
           </p>
           <div className="flex justify-center gap-4">
-            <button className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors">
+            <button className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors cursor-pointer">
               Contact Sales
             </button>
-            <button className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors">
+            <button className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-600 hover:shadow-md transition-all cursor-pointer">
               Schedule a Demo
             </button>
           </div>

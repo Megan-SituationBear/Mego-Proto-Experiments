@@ -32,7 +32,14 @@
 .card-library-pill {
   border-radius: 0.75rem;
   @apply flex flex-col justify-center items-center px-3 py-1 gap-1;
+  @apply cursor-pointer transition-all duration-150;
   background-color: #b9f8cf;
+  border: none;
+}
+
+.card-library-pill:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .card-library-pill-text {

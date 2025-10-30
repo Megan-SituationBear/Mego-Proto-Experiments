@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Library - Component States</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', system-ui, sans-serif;
+    }
+    .demo-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .state-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .state-description {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen py-12 px-6">
+  
+  <div class="demo-container">
+    <h1 class="text-4xl font-bold text-slate-900 mb-3">Card Library - Public</h1>
+    <p class="text-slate-600 mb-3">Visual reference for all card component states</p>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-12">
+      <p class="text-blue-800 text-sm font-medium">💡 <strong>Tip:</strong> Hover over cards to see interactive states</p>
+    </div>
+
+    <!-- PUBLIC CARD STATES -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-slate-800 mb-6 pb-2 border-b-2 border-slate-200">📚 Card-Library-Public</h2>
+      
+      <!-- State 1: Default -->
+      <div class="mb-10">
+        <div class="state-label">State 1: Default</div>
+        <div class="state-description">Card at rest, no interaction</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="group relative bg-white rounded-lg border border-slate-200 p-4 flex flex-col gap-3 transition-all duration-200 cursor-pointer">
+            <!-- Top Section - Category and Icon -->
+            <div class="flex items-start justify-between gap-2">
+              <!-- Category Pill -->
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                Deployment Fixes
+              </span>
+              
+              <!-- Star Icon - Top Right -->
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex flex-col gap-2">
+              <!-- Title -->
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-2">
+                Schedule Work Analyze & Fix Before Each Deployment
+              </h3>
+              
+              <!-- Description -->
+              <p class="text-sm text-slate-600 line-clamp-2">
+                Body text body text body text Body text body text body text Body text body text Body text body text.
+              </p>
+            </div>
+
+            <!-- Stats at Bottom -->
+            <div class="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <span>
+                <span class="font-medium text-slate-700">1,234</span> remixed
+              </span>
+              <span>
+                <span class="font-medium text-slate-700">154</span> favorited
+              </span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="group relative bg-white rounded-lg border border-slate-200 p-4 flex flex-col gap-3 transition-all duration-200 cursor-pointer">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                Testing
+              </span>
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-2">
+                Automated Test Suite Generator
+              </h3>
+              <p class="text-sm text-slate-600 line-clamp-2">
+                Generate comprehensive test suites for your Salesforce code automatically.
+              </p>
+            </div>
+            <div class="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <span><span class="font-medium text-slate-700">892</span> remixed</span>
+              <span><span class="font-medium text-slate-700">203</span> favorited</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="group relative bg-white rounded-lg border border-slate-200 p-4 flex flex-col gap-3 transition-all duration-200 cursor-pointer">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">
+                Data Migration
+              </span>
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-2">
+                Safe Data Transfer Between Orgs
+              </h3>
+              <p class="text-sm text-slate-600 line-clamp-2">
+                Migrate data safely with validation and rollback capabilities built in.
+              </p>
+            </div>
+            <div class="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <span><span class="font-medium text-slate-700">2,156</span> remixed</span>
+              <span><span class="font-medium text-slate-700">412</span> favorited</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- State 2: Hover -->
+      <div class="mb-10">
+        <div class="state-label">State 2: Hover</div>
+        <div class="state-description">Card with hover state (shadow and border color change)</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Hovered Card -->
+          <div class="group relative bg-white rounded-lg border border-indigo-400 p-4 flex flex-col gap-3 shadow-md transition-all duration-200 cursor-pointer">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                Deployment Fixes
+              </span>
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-2">
+                Schedule Work Analyze & Fix Before Each Deployment
+              </h3>
+              <p class="text-sm text-slate-600 line-clamp-2">
+                Body text body text body text Body text body text body text Body text body text Body text body text.
+              </p>
+            </div>
+            <div class="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <span><span class="font-medium text-slate-700">1,234</span> remixed</span>
+              <span><span class="font-medium text-slate-700">154</span> favorited</span>
+            </div>
+          </div>
+
+          <!-- Normal cards for comparison -->
+          <div class="group relative bg-white rounded-lg border border-slate-200 p-4 flex flex-col gap-3 transition-all duration-200 cursor-pointer opacity-50">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                Testing
+              </span>
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-2">
+                Automated Test Suite Generator
+              </h3>
+              <p class="text-sm text-slate-600 line-clamp-2">
+                Generate comprehensive test suites for your Salesforce code automatically.
+              </p>
+            </div>
+            <div class="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <span><span class="font-medium text-slate-700">892</span> remixed</span>
+              <span><span class="font-medium text-slate-700">203</span> favorited</span>
+            </div>
+          </div>
+
+          <div class="group relative bg-white rounded-lg border border-slate-200 p-4 flex flex-col gap-3 transition-all duration-200 cursor-pointer opacity-50">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">
+                Data Migration
+              </span>
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-2">
+                Safe Data Transfer Between Orgs
+              </h3>
+              <p class="text-sm text-slate-600 line-clamp-2">
+                Migrate data safely with validation and rollback capabilities built in.
+              </p>
+            </div>
+            <div class="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <span><span class="font-medium text-slate-700">2,156</span> remixed</span>
+              <span><span class="font-medium text-slate-700">412</span> favorited</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Demo -->
+      <div class="mb-10">
+        <div class="state-label">Interactive Demo</div>
+        <div class="state-description">Hover over these cards to see the transitions</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="group relative bg-white rounded-lg border border-slate-200 p-4 flex flex-col gap-3 hover:shadow-md hover:border-indigo-400 transition-all duration-200 cursor-pointer">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-800">
+                Code Quality
+              </span>
+              <div class="flex-shrink-0">
+                <button class="p-0.5 hover:bg-slate-100 rounded transition-colors">
+                  <svg class="w-5 h-5 text-slate-300 hover:text-yellow-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-2">
+                Code Review Assistant
+              </h3>
+              <p class="text-sm text-slate-600 line-clamp-2">
+                AI-powered code reviews that catch bugs and suggest improvements.
+              </p>
+            </div>
+            <div class="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <span><span class="font-medium text-slate-700">567</span> remixed</span>
+              <span><span class="font-medium text-slate-700">89</span> favorited</span>
+            </div>
+          </div>
+
+          <div class="group relative bg-white rounded-lg border border-slate-200 p-4 flex flex-col gap-3 hover:shadow-md hover:border-indigo-400 transition-all duration-200 cursor-pointer">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                Security
+              </span>
+              <div class="flex-shrink-0">
+                <button class="p-0.5 hover:bg-slate-100 rounded transition-colors">
+                  <svg class="w-5 h-5 text-slate-300 hover:text-yellow-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-2">
+                Security Audit Automation
+              </h3>
+              <p class="text-sm text-slate-600 line-clamp-2">
+                Automatically scan and identify security vulnerabilities in your org.
+              </p>
+            </div>
+            <div class="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <span><span class="font-medium text-slate-700">1,891</span> remixed</span>
+              <span><span class="font-medium text-slate-700">342</span> favorited</span>
+            </div>
+          </div>
+
+          <div class="group relative bg-white rounded-lg border border-slate-200 p-4 flex flex-col gap-3 hover:shadow-md hover:border-indigo-400 transition-all duration-200 cursor-pointer">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-teal-100 text-teal-800">
+                Documentation
+              </span>
+              <div class="flex-shrink-0">
+                <button class="p-0.5 hover:bg-slate-100 rounded transition-colors">
+                  <svg class="w-5 h-5 text-slate-300 hover:text-yellow-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-base font-semibold text-slate-900 line-clamp-2">
+                Auto-Generate Documentation
+              </h3>
+              <p class="text-sm text-slate-600 line-clamp-2">
+                Create comprehensive documentation from your code automatically.
+              </p>
+            </div>
+            <div class="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <span><span class="font-medium text-slate-700">723</span> remixed</span>
+              <span><span class="font-medium text-slate-700">156</span> favorited</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+</body>
+</html>
+

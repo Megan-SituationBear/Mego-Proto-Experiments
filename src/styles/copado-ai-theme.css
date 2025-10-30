@@ -7,13 +7,15 @@
   border-radius: 0.25rem;
   @apply flex flex-col justify-start items-start p-4 gap-2;
   @apply cursor-pointer transition-all duration-200;
+  @apply w-full;
   background-color: #ffffff;
   border: 1px solid #cad5e2;
+  min-width: 340px;
 }
 
 .card-library-public:hover {
   background-color: #eef2ff; /* indigo-50 */
-  border: 1px solid #4f46e5; /* indigo-600, 1px inside */
+  border: 1px solid #4f46e5; /* indigo-600 */
   @apply shadow-md;
 }
 
@@ -32,14 +34,9 @@
 .card-library-pill {
   border-radius: 0.75rem;
   @apply flex flex-col justify-center items-center px-3 py-1 gap-1;
-  @apply cursor-pointer transition-all duration-150;
   background-color: #b9f8cf;
   border: none;
-}
-
-.card-library-pill:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: default;
 }
 
 .card-library-pill-text {

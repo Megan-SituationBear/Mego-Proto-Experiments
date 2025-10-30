@@ -13,6 +13,32 @@
       font-family: 'Roboto', system-ui, sans-serif;
     }
     
+    /* Secondary Button Style */
+    .btn-secondary {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #f1f5f9;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .code-block-header {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
     /* ============================================
        PURE CSS VERSION (No Tailwind Dependencies)
        ============================================ */
@@ -29,6 +55,8 @@
       cursor: pointer;
       transition: all 0.2s ease;
       text-decoration: none;
+      min-width: 340px;
+      width: 100%;
     }
     
     .card-css:hover {
@@ -62,18 +90,12 @@
       padding: 0.25rem 0.75rem;
       background-color: #b9f8cf;
       border: none;
-      cursor: pointer;
-      transition: all 0.15s ease;
+      cursor: default;
       font-size: 11px;
       font-family: Roboto, sans-serif;
       letter-spacing: -0.01em;
       line-height: 1.6;
       color: #62748e;
-    }
-    
-    .pill-css:hover {
-      transform: scale(1.05);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
     .card-css-title {
@@ -109,6 +131,8 @@
       cursor: pointer;
       transition: all 0.2s ease;
       text-decoration: none;
+      min-width: 340px;
+      width: 100%;
     }
     
     .card-library-public:hover {
@@ -150,18 +174,12 @@
       padding: 0.25rem 0.75rem;
       background-color: #b9f8cf;
       border: none;
-      cursor: pointer;
-      transition: all 0.15s ease;
+      cursor: default;
       font-size: 11px;
       font-family: Roboto, sans-serif;
       letter-spacing: -0.01em;
       line-height: 1.6;
       color: #62748e;
-    }
-    
-    .card-library-pill:hover {
-      transform: scale(1.05);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
     .card-library-title {
@@ -181,6 +199,53 @@
       color: #62748e;
     }
   </style>
+  <script>
+    function copyCode(elementId) {
+      const codeElement = document.getElementById(elementId);
+      const code = codeElement.textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        btn.style.backgroundColor = '#dcfce7';
+        btn.style.borderColor = '#86efac';
+        btn.style.color = '#166534';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.backgroundColor = '#ffffff';
+          btn.style.borderColor = '#cbd5e1';
+          btn.style.color = '#475569';
+        }, 2000);
+      });
+    }
+    
+    function saveCode(elementId, filename) {
+      const codeElement = document.getElementById(elementId);
+      const code = codeElement.textContent;
+      const blob = new Blob([code], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = '✓ Saved!';
+      btn.style.backgroundColor = '#dcfce7';
+      btn.style.borderColor = '#86efac';
+      btn.style.color = '#166534';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.backgroundColor = '#ffffff';
+        btn.style.borderColor = '#cbd5e1';
+        btn.style.color = '#475569';
+      }, 2000);
+    }
+  </script>
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen py-12 px-6">
   
@@ -196,35 +261,39 @@
     <!-- PILLS SUB-COMPONENT -->
     <section class="mb-16">
       <h2 class="text-2xl font-bold text-slate-800 mb-6 pb-2 border-b-2 border-slate-200">
-        Sub-Component: Category Pills (6 Buttons)
+        Sub-Component: Category Pills (4 Buttons)
       </h2>
       <div class="grid grid-cols-2 gap-12">
         <!-- Tailwind Version -->
         <div>
           <h3 class="text-lg font-semibold text-slate-700 mb-4">React + Tailwind</h3>
           <div class="flex flex-wrap gap-3 mb-4">
-            <button class="card-library-pill">Deployment</button>
-            <button class="card-library-pill">Testing</button>
-            <button class="card-library-pill">Security</button>
-            <button class="card-library-pill">Code Quality</button>
-            <button class="card-library-pill">Data Migration</button>
-            <button class="card-library-pill">Documentation</button>
+            <button class="card-library-pill">Plan</button>
+            <button class="card-library-pill">Build</button>
+            <button class="card-library-pill">Test</button>
+            <button class="card-library-pill">Deploy</button>
           </div>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code>&lt;button className="card-library-pill"&gt;Category&lt;/button&gt;</code></pre>
+          <div class="code-block-header">
+            <button class="btn-secondary" onclick="copyCode('pill-tailwind-code')">Copy Code</button>
+            <button class="btn-secondary" onclick="saveCode('pill-tailwind-code', 'pill-tailwind.jsx')">Save</button>
+          </div>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code id="pill-tailwind-code">&lt;button className="card-library-pill"&gt;Category&lt;/button&gt;</code></pre>
         </div>
 
         <!-- Pure CSS Version -->
         <div>
           <h3 class="text-lg font-semibold text-slate-700 mb-4">Pure CSS</h3>
           <div class="flex flex-wrap gap-3 mb-4">
-            <button class="pill-css">Deployment</button>
-            <button class="pill-css">Testing</button>
-            <button class="pill-css">Security</button>
-            <button class="pill-css">Code Quality</button>
-            <button class="pill-css">Data Migration</button>
-            <button class="pill-css">Documentation</button>
+            <button class="pill-css">Plan</button>
+            <button class="pill-css">Build</button>
+            <button class="pill-css">Test</button>
+            <button class="pill-css">Deploy</button>
           </div>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code>&lt;button class="pill-css"&gt;Category&lt;/button&gt;</code></pre>
+          <div class="code-block-header">
+            <button class="btn-secondary" onclick="copyCode('pill-css-code')">Copy Code</button>
+            <button class="btn-secondary" onclick="saveCode('pill-css-code', 'pill.html')">Save</button>
+          </div>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code id="pill-css-code">&lt;button class="pill-css"&gt;Category&lt;/button&gt;</code></pre>
         </div>
       </div>
     </section>
@@ -242,7 +311,7 @@
             <div class="card-library-content">
               <div class="card-library-row-header">
                 <div class="card-library-left">
-                  <button class="card-library-pill">Deployment</button>
+                  <button class="card-library-pill">Plan</button>
                 </div>
               </div>
               <div class="card-library-title">
@@ -253,7 +322,11 @@
               Identify security vulnerabilities and provide actionable recommendations for improvement.
             </div>
           </a>
-          <pre class="mt-4 bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code>&lt;a href="#" className="card-library-public"&gt;
+          <div class="code-block-header mt-4">
+            <button class="btn-secondary" onclick="copyCode('card-tailwind-default')">Copy Code</button>
+            <button class="btn-secondary" onclick="saveCode('card-tailwind-default', 'card-tailwind.jsx')">Save</button>
+          </div>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code id="card-tailwind-default">&lt;a href="#" className="card-library-public"&gt;
   &lt;div className="card-library-content"&gt;
     &lt;div className="card-library-row-header"&gt;
       &lt;button className="card-library-pill"&gt;Category&lt;/button&gt;
@@ -270,7 +343,7 @@
           <a href="#" class="card-css">
             <div class="card-css-content">
               <div class="card-css-header">
-                <button class="pill-css">Deployment</button>
+                <button class="pill-css">Plan</button>
               </div>
               <div class="card-css-title">
                 Strategy title here about using real data
@@ -280,7 +353,11 @@
               Identify security vulnerabilities and provide actionable recommendations for improvement.
             </div>
           </a>
-          <pre class="mt-4 bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code>&lt;a href="#" class="card-css"&gt;
+          <div class="code-block-header mt-4">
+            <button class="btn-secondary" onclick="copyCode('card-css-default')">Copy Code</button>
+            <button class="btn-secondary" onclick="saveCode('card-css-default', 'card.html')">Save</button>
+          </div>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code id="card-css-default">&lt;a href="#" class="card-css"&gt;
   &lt;div class="card-css-content"&gt;
     &lt;div class="card-css-header"&gt;
       &lt;button class="pill-css"&gt;Category&lt;/button&gt;
@@ -306,7 +383,7 @@
             <div class="card-library-content">
               <div class="card-library-row-header">
                 <div class="card-library-left">
-                  <button class="card-library-pill" onclick="event.stopPropagation(); alert('Category clicked!');">Security</button>
+                  <button class="card-library-pill" onclick="event.stopPropagation(); alert('Category clicked!');">Build</button>
                 </div>
               </div>
               <div class="card-library-title">
@@ -325,7 +402,7 @@
           <a href="#" class="card-css">
             <div class="card-css-content">
               <div class="card-css-header">
-                <button class="pill-css" onclick="event.stopPropagation(); alert('Category clicked!');">Security</button>
+                <button class="pill-css" onclick="event.stopPropagation(); alert('Category clicked!');">Build</button>
               </div>
               <div class="card-css-title">
                 Security Audit Automation
@@ -347,7 +424,11 @@
       
       <div class="bg-white rounded-lg border border-slate-200 p-6">
         <h3 class="text-lg font-semibold text-slate-900 mb-4">Pure CSS (Copy & Paste)</h3>
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code>/* Card Component */
+        <div class="code-block-header">
+          <button class="btn-secondary" onclick="copyCode('css-reference')">Copy Code</button>
+          <button class="btn-secondary" onclick="saveCode('css-reference', 'card-styles.css')">Save</button>
+        </div>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto"><code id="css-reference">/* Card Component */
 .card-css {
   border-radius: 0.25rem;
   display: flex;
@@ -358,6 +439,8 @@
   border: 1px solid #cad5e2;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 340px;
+  width: 100%;
 }
 
 .card-css:hover {
@@ -366,22 +449,16 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Pill/Button Component */
+/* Pill Component (Not interactive) */
 .pill-css {
   border-radius: 0.75rem;
   padding: 0.25rem 0.75rem;
   background-color: #b9f8cf;
   border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  cursor: default;
   font-size: 11px;
   font-family: Roboto, sans-serif;
   color: #62748e;
-}
-
-.pill-css:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Typography */

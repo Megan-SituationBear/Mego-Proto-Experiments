@@ -36,7 +36,7 @@
       <!-- Page Label -->
       <div class="pb-3 border-b border-slate-200">
         <h1 class="text-2xl font-bold text-slate-900">MVP Onboarding: Contextual Chat</h1>
-        <p class="text-sm text-slate-600 mt-1">Q4 Priority #1 • AI Input Component</p>
+        <p class="text-sm text-slate-600 mt-1">Q4 Priority #1 • Help new users start conversations and connect integrations</p>
       </div>
     </div>
   </header>
@@ -65,7 +65,7 @@
   <section class="bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column - Components -->
+        <!-- Left Column - Content -->
         <div class="lg:col-span-2">
           <!-- Requirements Card -->
           <div class="bg-white rounded-xl border border-orange-200 p-6 mb-8">
@@ -79,10 +79,10 @@
             </ul>
           </div>
 
-          <!-- Component Demo Link -->
+          <!-- Demo Link -->
           <div class="mb-8">
-            <a href="./ai-input-interactive-demo.html" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-              <span>View Interactive Component Demo</span>
+            <a href="./ai-input-interactive-demo.html" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" id="demo-link">
+              <span>Try It Out - Interactive Demo</span>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
               </svg>
@@ -116,11 +116,18 @@
   </section>
 
   <script>
-    // Auto-focus the first focusable element when page loads
+    // Auto-focus the first focusable input element when page loads
     window.addEventListener('DOMContentLoaded', () => {
-      const firstFocusable = document.querySelector('a[href="./index.html"], a[href="./ai-input-interactive-demo.html"], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
-      if (firstFocusable) {
-        firstFocusable.focus();
+      // Try to focus the demo link (main CTA)
+      const demoLink = document.getElementById('demo-link');
+      if (demoLink) {
+        demoLink.focus();
+      } else {
+        // Fallback to first focusable element
+        const firstFocusable = document.querySelector('a[href="./index.html"], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+        if (firstFocusable) {
+          firstFocusable.focus();
+        }
       }
     });
   </script>

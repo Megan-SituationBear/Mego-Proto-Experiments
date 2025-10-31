@@ -37,7 +37,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Plus, Settings, Paperclip, MessageSquare, Building2, Ticket, Grid, Cloud } from 'lucide-react';
+import { Send, Plus, Settings, Paperclip, MessageSquare, Ticket, Grid, Cloud } from 'lucide-react';
 
 type PageContext = 'home' | 'workspace' | 'context';
 type ViewState = 'default' | 'focused' | 'focused-with-conversation';
@@ -104,7 +104,7 @@ const AIInput: React.FC<AIInputProps> = ({
   messages = [],
   showTypingIndicator = false,
   isSalesforceConnected = false,
-  connectedSandbox = null,
+  connectedSandbox: _connectedSandbox = null,
   onConnectSalesforce,
   onChangeSandbox,
 }) => {
@@ -766,6 +766,7 @@ const AIInput: React.FC<AIInputProps> = ({
             >
               <Send className="w-5 h-5" />
             </button>
+          </div>
           </div>
         </div>
 

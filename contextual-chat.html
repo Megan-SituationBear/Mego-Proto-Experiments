@@ -10,201 +10,195 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    .chat-scrollbar::-webkit-scrollbar {
-      width: 6px;
+    
+    /* Grey out effect for non-focus areas */
+    .greyed-out {
+      opacity: 0.4;
+      pointer-events: none;
+      filter: grayscale(0.3);
     }
-    .chat-scrollbar::-webkit-scrollbar-track {
-      background: transparent;
+    
+    /* Numbered annotation badges */
+    .annotation-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      z-index: 10;
+      border: 2px solid white;
     }
-    .chat-scrollbar::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 3px;
-    }
-    .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+    
+    .annotation-wrapper {
+      position: relative;
     }
   </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
-  <!-- Top Bar -->
-  <header class="border-b border-slate-200 sticky top-0 bg-white z-50 shadow-sm">
+  <!-- Top Navigation Bar -->
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="h-16 flex items-center justify-between">
-        <div class="flex items-center gap-3">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <div class="flex items-center">
           <a href="./index.html" class="p-2 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" aria-label="Back to Q4 Priorities">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </a>
-          <div class="leading-tight">
+          <div class="ml-3 leading-tight">
             <div class="text-sm text-slate-600">Megan for</div>
             <div class="text-base font-semibold text-slate-900">Copado</div>
           </div>
         </div>
-        <nav class="flex items-center gap-3">
-          <a href="./app.html" class="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Whole Proto</a>
-          <a href="./card-library-public.html" class="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Component Library</a>
-        </nav>
-      </div>
-      <!-- Page Label -->
-      <div class="pb-4 border-b border-slate-200">
-        <h1 class="text-2xl font-bold text-slate-900">MVP Onboarding: Contextual Chat</h1>
-        <p class="text-sm text-slate-600 mt-1">Q4 Priority #1 • Help new users start conversations and connect integrations</p>
+        
+        <!-- Right side - Hamburger menu -->
+        <div class="greyed-out">
+          <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors" aria-label="Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="3" y1="6" x2="21" y2="6" strokeLinecap="round"/>
+              <line x1="3" y1="12" x2="21" y2="12" strokeLinecap="round"/>
+              <line x1="3" y1="18" x2="21" y2="18" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
-  </header>
+  </nav>
 
-  <!-- User Story - Compact Orange Section -->
-  <section class="bg-orange-50 border-b border-orange-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <p class="text-sm text-slate-900 leading-relaxed">
-        <span class="font-semibold">User Story:</span> As a new user, when I log into Copado, I want to know how to get started with a conversation and what possibilities are for connecting integrations.
-      </p>
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Welcome Section - GREYED OUT -->
+    <div class="mb-8 text-center greyed-out">
+      <h1 class="text-5xl font-bold text-slate-900 mb-8">
+        Welcome, <span class="text-blue-600">Jill</span>.
+      </h1>
     </div>
-  </section>
 
-  <!-- Main Content - Centered Chat Component -->
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Chat Component -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden" style="height: calc(100vh - 280px); min-height: 600px; max-height: 900px;">
-      <div class="flex flex-col h-full">
-        <!-- Chat Header -->
-        <div class="p-4 sm:p-6 border-b border-slate-200 bg-gradient-to-r from-blue-600 to-blue-700">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-              </div>
-              <div>
-                <h2 class="text-white font-semibold text-lg">Copado AI</h2>
-                <p class="text-blue-100 text-sm">Customer planning assistant</p>
-              </div>
-            </div>
-            <!-- Salesforce Connection Status -->
-            <div id="salesforce-status" class="hidden items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur rounded-lg">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
-              </svg>
-              <span class="text-white text-sm font-medium" id="salesforce-status-text"></span>
-            </div>
-          </div>
-        </div>
+    <!-- Focus Area 1: AI Input Section - ANNOTATED -->
+    <div class="mb-12 max-w-4xl mx-auto annotation-wrapper">
+      <div class="annotation-badge">1</div>
+      <!-- Placeholder for where AI Input component would be -->
+      <div class="bg-white rounded-xl border-2 border-orange-500 border-dashed p-8 text-center">
+        <p class="text-slate-600 text-sm mb-2">AI Input Component Area</p>
+        <p class="text-xs text-slate-500">This is where the contextual chat AI input would appear</p>
+        <p class="text-xs text-slate-400 mt-2">(Component removed per request)</p>
+      </div>
+    </div>
 
-        <!-- Messages Area -->
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-slate-50 chat-scrollbar">
-          <!-- Messages will be inserted here by JavaScript -->
-          <div class="flex items-center justify-center h-full text-slate-400 text-sm" id="empty-state">
-            Start a conversation or choose a quick action below
-          </div>
-        </div>
-
-        <!-- Quick Actions (only shown when no messages) -->
-        <div id="quick-actions" class="p-4 sm:p-6 border-t border-slate-200 bg-white">
-          <p class="text-slate-600 mb-3 text-sm font-medium">Quick start:</p>
-          <div class="flex flex-wrap gap-2">
-            <button onclick="sendQuickAction('Show me my Salesforce projects')" class="px-4 py-2 bg-white text-slate-700 border border-slate-300 rounded-full hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-              Show me my Salesforce projects
+    <!-- Pick up these Section - GREYED OUT -->
+    <div class="mb-12 greyed-out">
+      <div class="text-center mb-6">
+        <h2 class="text-3xl font-bold text-slate-900 mb-6">
+          Pick up these
+        </h2>
+        
+        <!-- Toggle Button -->
+        <div class="flex flex-col items-center gap-3 mb-6">
+          <div class="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
+            <button class="px-6 py-2 rounded-md text-sm font-medium bg-blue-600 text-white transition-all">
+              Recent
             </button>
-            <button onclick="sendQuickAction('Create a deployment plan')" class="px-4 py-2 bg-white text-slate-700 border border-slate-300 rounded-full hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-              Create a deployment plan
+            <button class="px-6 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all">
+              Favorites
             </button>
-            <button onclick="sendQuickAction('Analyze my org health')" class="px-4 py-2 bg-white text-slate-700 border border-slate-300 rounded-full hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-              Analyze my org health
-            </button>
-            <button onclick="sendQuickAction('Help with user management')" class="px-4 py-2 bg-white text-slate-700 border border-slate-300 rounded-full hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-              Help with user management
-            </button>
-            <button onclick="sendQuickAction('Review recent changes')" class="px-4 py-2 bg-white text-slate-700 border border-slate-300 rounded-full hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-              Review recent changes
+            <button class="px-6 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all">
+              Suggested Templates
             </button>
           </div>
+          
+          <button class="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors">
+            Find Templates
+          </button>
         </div>
-
-        <!-- Input Area -->
-        <div class="p-4 sm:p-6 border-t border-slate-200 bg-white">
-          <!-- AIInput Component -->
-          <div class="relative">
-            <!-- Button Row (Top) -->
-            <div class="flex items-center gap-2 mb-2">
-              <!-- Plus Button -->
-              <div class="relative">
-                <button 
-                  onclick="toggleContextMenu()" 
-                  class="w-12 h-12 bg-white border border-slate-300 rounded-md flex items-center justify-center hover:bg-slate-50 hover:border-slate-400 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  aria-label="Open context menu"
-                  aria-expanded="false"
-                  id="plus-btn"
-                >
-                  <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                  </svg>
-                </button>
-                <!-- Context Menu -->
-                <div id="context-menu" class="hidden absolute left-0 bottom-full mb-2 bg-white border border-slate-200 rounded-lg shadow-xl z-50 min-w-[200px] overflow-hidden">
-                  <div class="py-1">
-                    <button onclick="handleUploadImage()" class="w-full px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors focus:outline-none focus:bg-slate-50">
-                      <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                      Upload Image
-                    </button>
-                    <button onclick="handleUploadDoc()" class="w-full px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors focus:outline-none focus:bg-slate-50">
-                      <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                      Upload Document
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Salesforce Cloud Button -->
-              <button 
-                onclick="handleSalesforceConnect()" 
-                class="w-12 h-12 bg-white border border-slate-300 rounded-md flex items-center justify-center hover:bg-slate-50 hover:border-slate-400 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                aria-label="Connect Salesforce"
-                id="salesforce-btn"
-              >
-                <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
-                </svg>
-              </button>
-              
-              <!-- Settings Button -->
-              <button 
-                onclick="handleSettings()" 
-                class="w-12 h-12 bg-white border border-slate-300 rounded-md flex items-center justify-center hover:bg-slate-50 hover:border-slate-400 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                aria-label="Settings"
-              >
-                <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-              </button>
-            </div>
-            
-            <!-- Textarea -->
-            <div class="relative">
-              <textarea 
-                id="chat-input" 
-                rows="1" 
-                placeholder="Describe your customer's needs..."
-                class="w-full px-4 py-3 pr-12 border border-slate-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                onkeydown="handleInputKeydown(event)"
-                oninput="handleInputResize(this)"
-              ></textarea>
-              
-              <!-- Send Button -->
-              <button 
-                onclick="handleSendMessage()" 
-                id="send-btn"
-                disabled
-                class="absolute right-2 bottom-2 p-2 bg-gray-100 text-gray-400 rounded-lg hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                aria-label="Send message"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                </svg>
-              </button>
-            </div>
+      </div>
+      
+      <!-- Template Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Template Card 1 -->
+        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between mb-3">
+            <span class="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">Deployment Fixes</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Schedule Work Analyze & Fix Before Each Deployment</h3>
+          <p class="text-sm text-slate-600 mb-4">Body text body text body text Body text body text body text Body text body text Body text body text.</p>
+          <div class="flex items-center gap-4 text-xs text-slate-500">
+            <span>154 views</span>
+            <span>1,234 favorites</span>
+          </div>
+        </div>
+        
+        <!-- Template Card 2 -->
+        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between mb-3">
+            <span class="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">Deployment Fixes</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Schedule Work Analyze & Fix Before Each Deployment</h3>
+          <p class="text-sm text-slate-600 mb-4">Body text body text body text Body text body text body text Body text body text Body text body text.</p>
+          <div class="flex items-center gap-4 text-xs text-slate-500">
+            <span>154 views</span>
+            <span>1,234 favorites</span>
+          </div>
+        </div>
+        
+        <!-- Template Card 3 -->
+        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between mb-3">
+            <span class="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">Deployment Fixes</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Schedule Work Analyze & Fix Before Each Deployment</h3>
+          <p class="text-sm text-slate-600 mb-4">Body text body text body text Body text body text body text Body text body text Body text body text.</p>
+          <div class="flex items-center gap-4 text-xs text-slate-500">
+            <span>154 views</span>
+            <span>1,234 favorites</span>
+          </div>
+        </div>
+        
+        <!-- Template Card 4 -->
+        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between mb-3">
+            <span class="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">Deployment Fixes</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Schedule Work Analyze & Fix Before Each Deployment</h3>
+          <p class="text-sm text-slate-600 mb-4">Body text body text body text Body text body text body text Body text body text Body text body text.</p>
+          <div class="flex items-center gap-4 text-xs text-slate-500">
+            <span>154 views</span>
+            <span>1,234 favorites</span>
+          </div>
+        </div>
+        
+        <!-- Template Card 5 -->
+        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between mb-3">
+            <span class="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">Deployment Fixes</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Schedule Work Analyze & Fix Before Each Deployment</h3>
+          <p class="text-sm text-slate-600 mb-4">Body text body text body text Body text body text body text Body text body text Body text body text.</p>
+          <div class="flex items-center gap-4 text-xs text-slate-500">
+            <span>154 views</span>
+            <span>1,234 favorites</span>
+          </div>
+        </div>
+        
+        <!-- Template Card 6 -->
+        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between mb-3">
+            <span class="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">Deployment Fixes</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Schedule Work Analyze & Fix Before Each Deployment</h3>
+          <p class="text-sm text-slate-600 mb-4">Body text body text body text Body text body text body text Body text body text Body text body text.</p>
+          <div class="flex items-center gap-4 text-xs text-slate-500">
+            <span>154 views</span>
+            <span>1,234 favorites</span>
           </div>
         </div>
       </div>
@@ -212,7 +206,7 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-slate-200 mt-8 bg-white">
+  <footer class="border-t border-slate-200 mt-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-sm text-slate-600 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
       <div>© Megan — Client: Copado</div>
       <div class="flex gap-4">
@@ -223,226 +217,9 @@
     </div>
   </footer>
 
-  <script>
-    // Chat state
-    let messages = [];
-    let isSalesforceConnected = false;
-    let connectedSandbox = null;
-    let hasStarted = false;
-
-    // Auto-focus chat input when page loads
-    window.addEventListener('DOMContentLoaded', () => {
-      const chatInput = document.getElementById('chat-input');
-      if (chatInput) {
-        chatInput.focus();
-      }
-      updateSendButton();
-    });
-
-    // Handle input resize
-    function handleInputResize(textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
-      updateSendButton();
-    }
-
-    // Update send button state
-    function updateSendButton() {
-      const input = document.getElementById('chat-input');
-      const sendBtn = document.getElementById('send-btn');
-      if (input && sendBtn) {
-        const hasText = input.value.trim().length > 0;
-        sendBtn.disabled = !hasText;
-        if (hasText) {
-          sendBtn.classList.remove('bg-gray-100', 'text-gray-400');
-          sendBtn.classList.add('bg-blue-600', 'text-white');
-        } else {
-          sendBtn.classList.remove('bg-blue-600', 'text-white');
-          sendBtn.classList.add('bg-gray-100', 'text-gray-400');
-        }
-      }
-    }
-
-    // Handle input keydown
-    function handleInputKeydown(event) {
-      if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        handleSendMessage();
-      }
-    }
-
-    // Send message
-    function handleSendMessage() {
-      const input = document.getElementById('chat-input');
-      const message = input?.value.trim();
-      if (!message) return;
-
-      // Hide empty state
-      const emptyState = document.getElementById('empty-state');
-      if (emptyState) emptyState.style.display = 'none';
-
-      // Add user message
-      addMessage(message, true);
-      input.value = '';
-      input.style.height = 'auto';
-      updateSendButton();
-      
-      // Hide quick actions
-      hasStarted = true;
-      const quickActions = document.getElementById('quick-actions');
-      if (quickActions) quickActions.style.display = 'none';
-
-      // Simulate AI response
-      setTimeout(() => {
-        addMessage('I can help you with that! Let me get started on your request.', false);
-      }, 1000);
-    }
-
-    // Send quick action
-    function sendQuickAction(action) {
-      // Hide empty state
-      const emptyState = document.getElementById('empty-state');
-      if (emptyState) emptyState.style.display = 'none';
-
-      addMessage(action, true);
-      hasStarted = true;
-      const quickActions = document.getElementById('quick-actions');
-      if (quickActions) quickActions.style.display = 'none';
-
-      // Simulate AI response
-      setTimeout(() => {
-        addMessage('I\'ll help you with ' + action.toLowerCase() + '. Let me gather the information you need.', false);
-      }, 1000);
-    }
-
-    // Add message to chat
-    function addMessage(text, isUser) {
-      const messagesDiv = document.getElementById('chat-messages');
-      if (!messagesDiv) return;
-
-      const messageId = Date.now().toString();
-      const timestamp = new Date();
-      
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in`;
-      
-      const bubbleDiv = document.createElement('div');
-      bubbleDiv.className = `max-w-xs lg:max-w-md px-4 py-2.5 rounded-2xl ${
-        isUser
-          ? 'bg-blue-600 text-white rounded-br-md'
-          : 'bg-white text-slate-800 rounded-bl-md border border-slate-200'
-      }`;
-      
-      const textP = document.createElement('p');
-      textP.className = isUser ? 'text-sm text-white leading-relaxed' : 'text-sm text-slate-800 leading-relaxed';
-      textP.textContent = text;
-      
-      const timeP = document.createElement('p');
-      timeP.className = `text-xs mt-1.5 ${isUser ? 'text-blue-100' : 'text-slate-500'}`;
-      timeP.textContent = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      
-      bubbleDiv.appendChild(textP);
-      bubbleDiv.appendChild(timeP);
-      messageDiv.appendChild(bubbleDiv);
-      messagesDiv.appendChild(messageDiv);
-      
-      // Scroll to bottom
-      setTimeout(() => {
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }, 100);
-      
-      messages.push({ id: messageId, text, isUser, timestamp });
-    }
-
-    // Toggle context menu
-    function toggleContextMenu() {
-      const menu = document.getElementById('context-menu');
-      const btn = document.getElementById('plus-btn');
-      if (menu && btn) {
-        const isHidden = menu.classList.contains('hidden');
-        menu.classList.toggle('hidden');
-        btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
-      }
-    }
-
-    // Close context menu when clicking outside
-    document.addEventListener('click', (e) => {
-      const menu = document.getElementById('context-menu');
-      const plusBtn = document.getElementById('plus-btn');
-      if (menu && !menu.contains(e.target) && e.target !== plusBtn && !plusBtn.contains(e.target)) {
-        menu.classList.add('hidden');
-        plusBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    // Handle Salesforce connect
-    function handleSalesforceConnect() {
-      if (!isSalesforceConnected) {
-        // Simulate connection
-        isSalesforceConnected = true;
-        connectedSandbox = 'Production';
-        
-        const btn = document.getElementById('salesforce-btn');
-        const statusDiv = document.getElementById('salesforce-status');
-        const statusText = document.getElementById('salesforce-status-text');
-        
-        if (btn) {
-          btn.classList.add('bg-blue-50', 'border-blue-300');
-          btn.querySelector('svg').classList.add('text-blue-600');
-          btn.setAttribute('aria-label', 'Change Salesforce sandbox');
-        }
-        
-        if (statusDiv && statusText) {
-          statusDiv.classList.remove('hidden');
-          statusDiv.classList.add('flex');
-          statusText.textContent = 'Production';
-        }
-        
-        // Show notification in chat
-        const emptyState = document.getElementById('empty-state');
-        if (emptyState) emptyState.style.display = 'none';
-        addMessage('Connected to Salesforce: Production sandbox', false);
-      } else {
-        // Show sandbox selector (placeholder)
-        const sandboxes = ['Production', 'Dev Sandbox', 'QA Sandbox', 'Staging'];
-        const currentIndex = sandboxes.indexOf(connectedSandbox);
-        const nextIndex = (currentIndex + 1) % sandboxes.length;
-        connectedSandbox = sandboxes[nextIndex];
-        
-        const statusText = document.getElementById('salesforce-status-text');
-        if (statusText) {
-          statusText.textContent = connectedSandbox;
-        }
-        
-        addMessage('Switched to ' + connectedSandbox, false);
-      }
-    }
-
-    // Handle settings
-    function handleSettings() {
-      // Placeholder for settings modal
-      alert('Settings modal - coming soon!');
-    }
-
-    // Handle upload image
-    function handleUploadImage() {
-      const menu = document.getElementById('context-menu');
-      const btn = document.getElementById('plus-btn');
-      if (menu) menu.classList.add('hidden');
-      if (btn) btn.setAttribute('aria-expanded', 'false');
-      // Placeholder for upload functionality
-      alert('Upload image functionality - coming soon!');
-    }
-
-    // Handle upload document
-    function handleUploadDoc() {
-      const menu = document.getElementById('context-menu');
-      const btn = document.getElementById('plus-btn');
-      if (menu) menu.classList.add('hidden');
-      if (btn) btn.setAttribute('aria-expanded', 'false');
-      // Placeholder for upload functionality
-      alert('Upload document functionality - coming soon!');
-    }
-  </script>
+  <!-- Info Banner at Top -->
+  <div class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-orange-500 text-white px-6 py-3 rounded-lg shadow-lg">
+    <p class="text-sm font-semibold">Q4 Priority #1: MVP Onboarding - Contextual Chat • Focus areas marked with numbers</p>
+  </div>
 </body>
 </html>

@@ -37,7 +37,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Plus, Settings, Paperclip, MessageSquare, Building2, Ticket, Grid } from 'lucide-react';
+import { Send, Plus, Settings, Paperclip, MessageSquare, Building2, Ticket, Grid, Cloud } from 'lucide-react';
 
 type PageContext = 'home' | 'workspace' | 'context';
 type ViewState = 'default' | 'focused' | 'focused-with-conversation';
@@ -68,6 +68,11 @@ interface AIInputProps {
   // Conversation props
   messages?: ConversationMessage[];
   showTypingIndicator?: boolean;
+  // Salesforce connection state props
+  isSalesforceConnected?: boolean;
+  connectedSandbox?: string | null; // e.g., "Production", "Dev Sandbox", "QA Sandbox"
+  onConnectSalesforce?: () => void;
+  onChangeSandbox?: () => void;
 }
 
 interface CodeSnippet {
@@ -98,6 +103,10 @@ const AIInput: React.FC<AIInputProps> = ({
   hasConversation = false,
   messages = [],
   showTypingIndicator = false,
+  isSalesforceConnected = false,
+  connectedSandbox = null,
+  onConnectSalesforce,
+  onChangeSandbox,
 }) => {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -461,11 +470,6 @@ const AIInput: React.FC<AIInputProps> = ({
       action: () => handleOpenIntegrationModal('confluence')
     },
     { 
-      icon: Building2, 
-      label: 'Connect Org',
-      action: () => handleOpenIntegrationModal('org')
-    },
-    { 
       icon: Grid, 
       label: 'All Integrations',
       action: () => {
@@ -476,6 +480,10 @@ const AIInput: React.FC<AIInputProps> = ({
       }
     }
   ];
+
+  // Determine Salesforce connection state
+  const isMainInput = pageContext === 'home';
+  const isContextInput = pageContext === 'workspace' || pageContext === 'context';
 
   return (
     <div className={`w-full ${className}`}>
@@ -520,11 +528,145 @@ const AIInput: React.FC<AIInputProps> = ({
         </div>
       )}
 
+      {/* Salesforce Connection States */}
+      
+      {/* MAIN INPUT - No Salesforce Connection (logged out or logged in) */}
+      {isMainInput && !isSalesforceConnected && (
+        <div className="mb-4">
+          {/* TODO: Design - Main input when no Salesforce connected */}
+          {/* State: Main (home) - No Salesforce connection */}
+          {/* Applies to: Logged out users AND logged in users without Salesforce */}
+          {/* Show: Prompt to connect Salesforce */}
+          {/* isLoggedIn: {isLoggedIn ? 'true' : 'false'} */}
+        </div>
+      )}
+
+      {/* MAIN INPUT - Salesforce Connected (logged in only) */}
+      {isMainInput && isSalesforceConnected && (
+        <div className="mb-4">
+          {/* TODO: Design - Main input when Salesforce connected */}
+          {/* State: Main (home) - Salesforce connected */}
+          {/* Applies to: Logged in users with Salesforce connection */}
+          {/* Show: Connected sandbox name, allow change sandbox */}
+          {/* connectedSandbox: {connectedSandbox || 'Not specified'} */}
+        </div>
+      )}
+
+      {/* CONTEXT INPUT - No Salesforce Connection (logged out or logged in) */}
+      {isContextInput && !isSalesforceConnected && (
+        <div className="mb-4">
+          {/* TODO: Design - Context input when no Salesforce connected */}
+          {/* State: Context (workspace/context) - No Salesforce connection */}
+          {/* Applies to: Logged out users AND logged in users without Salesforce */}
+          {/* Show: Prompt to connect Salesforce (context-aware message) */}
+          {/* Keep context-aware setting: "Context For This Work:" */}
+          {/* isLoggedIn: {isLoggedIn ? 'true' : 'false'} */}
+        </div>
+      )}
+
+      {/* CONTEXT INPUT - Salesforce Connected (logged in only) */}
+      {isContextInput && isSalesforceConnected && (
+        <div className="mb-4">
+          {/* TODO: Design - Context input when Salesforce connected */}
+          {/* State: Context (workspace/context) - Salesforce connected */}
+          {/* Applies to: Logged in users with Salesforce connection */}
+          {/* Show: Connected sandbox name, allow change sandbox */}
+          {/* Keep context-aware setting: "Context For This Work:" */}
+          {/* connectedSandbox: {connectedSandbox || 'Not specified'} */}
+        </div>
+      )}
+
       {/* AI Input Field */}
       <div 
         className={`relative ${stateStyles.bgColor} rounded-2xl border-2 transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring} hover:shadow-2xl`}
       >
-        <div className="flex flex-col p-3">
+        <div className="flex flex-col">
+          {/* Plus and Salesforce Buttons Row */}
+          <div className="flex flex-row justify-between items-start px-6 py-6 bg-white border-b border-slate-200 relative">
+            {/* Plus Button with Context Menu */}
+            <div className="relative">
+              <button
+                type="button"
+                onMouseEnter={() => setShowContextMenu(true)}
+                onMouseLeave={() => setShowContextMenu(false)}
+                onClick={() => setShowContextMenu(!showContextMenu)}
+                className="w-12 h-12 bg-white border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition-colors flex items-center justify-center"
+                title="Add context"
+              >
+                <Plus className="w-5 h-5 text-slate-600" />
+              </button>
+
+              {/* Context Menu Dropdown */}
+              {showContextMenu && (
+                <div 
+                  ref={menuRef}
+                  className="absolute left-0 top-full mt-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-top-2 duration-200"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(12px)',
+                  }}
+                  onMouseEnter={() => setShowContextMenu(true)}
+                  onMouseLeave={() => setShowContextMenu(false)}
+                >
+                  {/* Menu Header */}
+                  <div className="px-3 py-1.5 border-b border-slate-100">
+                    <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                      {pageContext === 'workspace' ? 'Context For This Work:' : 'Conversation Context:'}
+                    </p>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-0.5">
+                    {contextMenuItems.map((item, index) => {
+                      const IconComponent = item.icon;
+                      return (
+                        <button
+                          key={index}
+                          onClick={item.action}
+                          className="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group"
+                        >
+                          <IconComponent className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
+                          <span className="text-xs text-slate-700 group-hover:text-blue-600 font-medium">
+                            {item.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Salesforce Cloud Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (isSalesforceConnected && onChangeSandbox) {
+                  onChangeSandbox();
+                } else if (onConnectSalesforce) {
+                  onConnectSalesforce();
+                }
+              }}
+              className="w-12 h-12 bg-white border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition-colors flex items-center justify-center"
+              title={isSalesforceConnected ? "Change sandbox" : "Connect Salesforce"}
+            >
+              <Cloud className="w-5 h-5 text-slate-600" />
+            </button>
+
+            {/* Settings Button */}
+            {isLoggedIn && (
+              <button
+                type="button"
+                onClick={() => setShowSettingsModal(true)}
+                className="w-12 h-12 bg-white border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition-colors flex items-center justify-center"
+                title="Settings"
+              >
+                <Settings className="w-5 h-5 text-slate-600" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-col p-3">
           {/* Textarea that grows */}
           <textarea
             ref={textareaRef}
@@ -608,75 +750,7 @@ const AIInput: React.FC<AIInputProps> = ({
           )}
 
           {/* Action buttons row - below textarea */}
-          <div className="flex items-center justify-between mt-3">
-            {/* Left action buttons */}
-            <div className="flex items-center gap-2 relative">
-            {/* Plus button with context menu */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setShowContextMenu(true)}
-              onMouseLeave={() => setShowContextMenu(false)}
-            >
-                <button 
-                  type="button"
-                  className="p-2.5 hover:bg-slate-100 rounded-lg transition-colors"
-                  title="Add context"
-                >
-                  <Plus className="w-5 h-5 text-slate-600" />
-                </button>
-
-                {/* Context Menu Dropdown */}
-                {showContextMenu && (
-                  <div 
-                    ref={menuRef}
-                    className="absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-bottom-2 duration-200"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      backdropFilter: 'blur(12px)',
-                    }}
-                  onMouseEnter={() => setShowContextMenu(true)}
-                  onMouseLeave={() => setShowContextMenu(false)}
-                  >
-                    {/* Menu Header */}
-                    <div className="px-3 py-1.5 border-b border-slate-100">
-                      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                        {pageContext === 'workspace' ? 'Context For This Work:' : 'Conversation Context:'}
-                      </p>
-                    </div>
-
-                    {/* Menu Items */}
-                    <div className="py-0.5">
-                      {contextMenuItems.map((item, index) => {
-                        const IconComponent = item.icon;
-                        return (
-                          <button
-                            key={index}
-                            onClick={item.action}
-                            className="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group"
-                          >
-                            <IconComponent className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
-                            <span className="text-xs text-slate-700 group-hover:text-blue-600 font-medium">
-                              {item.label}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-            {isLoggedIn && (
-              <button 
-                type="button"
-                onClick={() => setShowSettingsModal(true)}
-                className="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group"
-                title="Settings"
-              >
-                <Settings className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors" />
-              </button>
-            )}
-            </div>
+          <div className="flex items-center justify-end mt-3">
 
             {/* Send button */}
             <button 

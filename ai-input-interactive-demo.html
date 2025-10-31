@@ -1217,6 +1217,17 @@
     document.getElementById('integrationModal').addEventListener('click', function(e) {
       if (e.target === this) closeIntegrationModal();
     });
+
+    // Auto-focus first input when page loads
+    window.addEventListener('DOMContentLoaded', function() {
+      const firstInput = document.getElementById('input1');
+      if (firstInput) {
+        // Small delay to ensure page is fully rendered
+        setTimeout(() => {
+          firstInput.focus();
+        }, 100);
+      }
+    });
   </script>
 
 </body>

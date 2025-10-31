@@ -79,14 +79,133 @@
             </ul>
           </div>
 
-          <!-- Demo Link -->
-          <div class="mb-8">
-            <a href="./ai-input-interactive-demo.html" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" id="demo-link">
-              <span>Try It Out - Interactive Demo</span>
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-              </svg>
-            </a>
+          <!-- Interactive Chat Component Demo -->
+          <div class="mb-8 bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden">
+            <div class="flex flex-col" style="height: 600px;">
+              <!-- Chat Header -->
+              <div class="p-6 border-b border-slate-200/60 bg-gradient-to-r from-blue-600 to-blue-700">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-white font-semibold text-lg">Copado AI</h2>
+                    <p class="text-blue-100 text-sm">Customer planning assistant</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Messages Area -->
+              <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50" style="max-height: 400px;">
+                <!-- Messages will be inserted here by JavaScript -->
+              </div>
+
+              <!-- Quick Actions (only shown when no messages) -->
+              <div id="quick-actions" class="p-6 border-t border-slate-200/60 bg-white">
+                <p class="text-slate-600 mb-4 text-sm">Start planning for your customer:</p>
+                <div class="flex flex-wrap gap-2">
+                  <button onclick="sendQuickAction('Show me my Salesforce projects')" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Show me my Salesforce projects
+                  </button>
+                  <button onclick="sendQuickAction('Create a deployment plan')" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Create a deployment plan
+                  </button>
+                  <button onclick="sendQuickAction('Analyze my org health')" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Analyze my org health
+                  </button>
+                  <button onclick="sendQuickAction('Help with user management')" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Help with user management
+                  </button>
+                  <button onclick="sendQuickAction('Review recent changes')" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Review recent changes
+                  </button>
+                </div>
+              </div>
+
+              <!-- Input Area -->
+              <div class="p-4 border-t border-slate-200/60 bg-white">
+                <!-- AIInput Component -->
+                <div class="relative">
+                  <!-- Button Row (Top) -->
+                  <div class="flex items-center gap-2 mb-2">
+                    <!-- Plus Button -->
+                    <button 
+                      onclick="toggleContextMenu()" 
+                      class="w-12 h-12 bg-white border border-slate-300 rounded-md flex items-center justify-center hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      aria-label="Open context menu"
+                    >
+                      <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                      </svg>
+                    </button>
+                    <!-- Context Menu -->
+                    <div id="context-menu" class="hidden absolute left-0 bottom-full mb-2 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-[200px]">
+                      <div class="py-2">
+                        <button onclick="handleUploadImage()" class="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                          Upload Image
+                        </button>
+                        <button onclick="handleUploadDoc()" class="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                          Upload Document
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <!-- Salesforce Cloud Button -->
+                    <button 
+                      onclick="handleSalesforceConnect()" 
+                      class="w-12 h-12 bg-white border border-slate-300 rounded-md flex items-center justify-center hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      aria-label="Connect Salesforce"
+                      id="salesforce-btn"
+                    >
+                      <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                      </svg>
+                    </button>
+                    
+                    <!-- Settings Button -->
+                    <button 
+                      onclick="handleSettings()" 
+                      class="w-12 h-12 bg-white border border-slate-300 rounded-md flex items-center justify-center hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      aria-label="Settings"
+                    >
+                      <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <!-- Textarea -->
+                  <div class="relative">
+                    <textarea 
+                      id="chat-input" 
+                      rows="1" 
+                      placeholder="Describe your customer's needs..."
+                      class="w-full px-4 py-3 border border-slate-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      onkeydown="handleInputKeydown(event)"
+                      oninput="handleInputResize(this)"
+                    ></textarea>
+                    
+                    <!-- Send Button -->
+                    <button 
+                      onclick="handleSendMessage()" 
+                      id="send-btn"
+                      disabled
+                      class="absolute right-2 bottom-2 p-2 bg-gray-100 text-gray-400 rounded-lg hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      aria-label="Send message"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -116,20 +235,186 @@
   </section>
 
   <script>
-    // Auto-focus the first focusable input element when page loads
+    // Chat state
+    let messages = [];
+    let isSalesforceConnected = false;
+    let connectedSandbox = null;
+    let hasStarted = false;
+
+    // Auto-focus chat input when page loads
     window.addEventListener('DOMContentLoaded', () => {
-      // Try to focus the demo link (main CTA)
-      const demoLink = document.getElementById('demo-link');
-      if (demoLink) {
-        demoLink.focus();
-      } else {
-        // Fallback to first focusable element
-        const firstFocusable = document.querySelector('a[href="./index.html"], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
-        if (firstFocusable) {
-          firstFocusable.focus();
-        }
+      const chatInput = document.getElementById('chat-input');
+      if (chatInput) {
+        chatInput.focus();
+      }
+      
+      // Update send button state
+      updateSendButton();
+    });
+
+    // Handle input resize
+    function handleInputResize(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+      updateSendButton();
+    }
+
+    // Update send button state
+    function updateSendButton() {
+      const input = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('send-btn');
+      if (input && sendBtn) {
+        const hasText = input.value.trim().length > 0;
+        sendBtn.disabled = !hasText;
+        sendBtn.classList.toggle('bg-blue-600', hasText);
+        sendBtn.classList.toggle('text-white', hasText);
+        sendBtn.classList.toggle('bg-gray-100', !hasText);
+        sendBtn.classList.toggle('text-gray-400', !hasText);
+      }
+    }
+
+    // Handle input keydown
+    function handleInputKeydown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        handleSendMessage();
+      }
+      updateSendButton();
+    }
+
+    // Add input listener for send button state
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('chat-input');
+      if (input) {
+        input.addEventListener('input', updateSendButton);
       }
     });
+
+    // Send message
+    function handleSendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input?.value.trim();
+      if (!message) return;
+
+      // Add user message
+      addMessage(message, true);
+      input.value = '';
+      input.style.height = 'auto';
+      updateSendButton();
+      
+      // Hide quick actions
+      hasStarted = true;
+      document.getElementById('quick-actions').style.display = 'none';
+
+      // Simulate AI response
+      setTimeout(() => {
+        addMessage('I can help you with that! Let me get started on your request.', false);
+      }, 1000);
+    }
+
+    // Send quick action
+    function sendQuickAction(action) {
+      addMessage(action, true);
+      hasStarted = true;
+      document.getElementById('quick-actions').style.display = 'none';
+
+      // Simulate AI response
+      setTimeout(() => {
+        addMessage('I\'ll help you with ' + action.toLowerCase() + '. Let me gather the information you need.', false);
+      }, 1000);
+    }
+
+    // Add message to chat
+    function addMessage(text, isUser) {
+      const messagesDiv = document.getElementById('chat-messages');
+      if (!messagesDiv) return;
+
+      const messageId = Date.now().toString();
+      const timestamp = new Date();
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+      
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.className = `max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+        isUser
+          ? 'bg-blue-600 text-white rounded-br-md'
+          : 'bg-slate-100 text-slate-800 rounded-bl-md'
+      }`;
+      
+      const textP = document.createElement('p');
+      textP.className = isUser ? 'text-sm text-white' : 'text-sm text-slate-800';
+      textP.textContent = text;
+      
+      const timeP = document.createElement('p');
+      timeP.className = `text-xs mt-1 ${isUser ? 'text-blue-100' : 'text-slate-500'}`;
+      timeP.textContent = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      bubbleDiv.appendChild(textP);
+      bubbleDiv.appendChild(timeP);
+      messageDiv.appendChild(bubbleDiv);
+      messagesDiv.appendChild(messageDiv);
+      
+      // Scroll to bottom
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      
+      messages.push({ id: messageId, text, isUser, timestamp });
+    }
+
+    // Toggle context menu
+    function toggleContextMenu() {
+      const menu = document.getElementById('context-menu');
+      if (menu) {
+        menu.classList.toggle('hidden');
+      }
+    }
+
+    // Close context menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('context-menu');
+      const plusBtn = e.target.closest('button[onclick="toggleContextMenu()"]');
+      if (menu && !menu.contains(e.target) && !plusBtn) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    // Handle Salesforce connect
+    function handleSalesforceConnect() {
+      if (!isSalesforceConnected) {
+        // Simulate connection
+        isSalesforceConnected = true;
+        connectedSandbox = 'Production';
+        
+        const btn = document.getElementById('salesforce-btn');
+        if (btn) {
+          btn.classList.add('bg-blue-50', 'border-blue-300');
+          btn.setAttribute('aria-label', 'Change Salesforce sandbox');
+        }
+        
+        // Show notification
+        addMessage('Connected to Salesforce: Production sandbox', false);
+      } else {
+        // Show sandbox selector (placeholder)
+        alert('Change sandbox functionality - coming soon!');
+      }
+    }
+
+    // Handle settings
+    function handleSettings() {
+      alert('Settings modal - coming soon!');
+    }
+
+    // Handle upload image
+    function handleUploadImage() {
+      document.getElementById('context-menu').classList.add('hidden');
+      alert('Upload image functionality - coming soon!');
+    }
+
+    // Handle upload document
+    function handleUploadDoc() {
+      document.getElementById('context-menu').classList.add('hidden');
+      alert('Upload document functionality - coming soon!');
+    }
   </script>
 
   <!-- Footer -->

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:pages": "npm run build && mv dist/index.html dist/app.html && cp public/launcher.html dist/index.html",
+    "build:pages": "npm run build && mv dist/index.html dist/app.html && cp index.html dist/index.html",
     "lint": "eslint .",
     "preview": "vite preview"
   },

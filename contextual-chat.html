@@ -89,20 +89,6 @@
             </a>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    // Auto-focus the first focusable element when page loads
-    window.addEventListener('DOMContentLoaded', () => {
-      const firstFocusable = document.querySelector('a[href="./index.html"], button, input, textarea, [tabindex]:not([tabindex="-1"])');
-      if (firstFocusable) {
-        firstFocusable.focus();
-      }
-    });
-  </script>
-        </div>
 
         <!-- Right Column - Thinking/Notes -->
         <div class="lg:col-span-1">
@@ -128,6 +114,16 @@
       </div>
     </div>
   </section>
+
+  <script>
+    // Auto-focus the first focusable element when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      const firstFocusable = document.querySelector('a[href="./index.html"], a[href="./ai-input-interactive-demo.html"], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (firstFocusable) {
+        firstFocusable.focus();
+      }
+    });
+  </script>
 
   <!-- Footer -->
   <footer class="border-t border-slate-200 mt-12">

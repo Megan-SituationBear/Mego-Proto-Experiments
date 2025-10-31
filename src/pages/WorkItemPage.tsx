@@ -405,6 +405,17 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
 
             {/* Right Sidebar - Output & Highlights */}
             <div className="w-80 space-y-6">
+              {/* Placeholder: What You Need To Do (future) */}
+              <div className="bg-white rounded-lg border border-slate-200 p-4">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">What you need to do</h3>
+                <p className="text-sm text-slate-600">Reserved for the next-step checklist. We’ll surface key actions here.</p>
+                <button
+                  disabled
+                  className="mt-4 w-full py-2.5 rounded-lg bg-slate-200 text-slate-500 font-semibold cursor-not-allowed"
+                >
+                  Continue
+                </button>
+              </div>
               {/* Output Section */}
               <div className="bg-white rounded-lg border border-slate-200 p-4">
                 <h3 className="text-lg font-bold text-slate-900 mb-4">Output</h3>
@@ -533,6 +544,18 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           {/* Conversation Label */}
           <div className="text-sm text-slate-600">
             Conv
+          </div>
+
+          {/* Placeholder: What You Need To Do (future) */}
+          <div className="mt-6 bg-white rounded-lg border border-slate-200 p-6">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">What you need to do</h3>
+            <p className="text-sm text-slate-600">Reserved for the next-step checklist for this project.</p>
+            <button
+              disabled
+              className="mt-4 w-full py-2.5 rounded-lg bg-slate-200 text-slate-500 font-semibold cursor-not-allowed"
+            >
+              Continue
+            </button>
           </div>
         </div>
       </div>

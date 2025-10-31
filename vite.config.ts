@@ -5,5 +5,6 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/Mego-Proto-Experiments/',
+  // Use relative base so the app works under any GitHub Pages repo path
+  base: './',
 })

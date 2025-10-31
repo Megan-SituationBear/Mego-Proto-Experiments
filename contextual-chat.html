@@ -34,6 +34,25 @@
     </div>
   </header>
 
+  <!-- User Story - Orange Section -->
+  <section class="bg-orange-100 border-b border-orange-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h2 class="text-lg font-semibold text-slate-900 mb-2">User Story</h2>
+      <p class="text-base text-slate-900 leading-relaxed">
+        As a new user, when I log into Copado, I want to know how to get started with a conversation and what possibilities are for connecting integrations.
+      </p>
+      <div class="mt-4 pt-4 border-t border-orange-200">
+        <h3 class="text-sm font-semibold text-slate-900 mb-2">Accessibility Requirements:</h3>
+        <ul class="text-sm text-slate-800 space-y-1 list-disc ml-5">
+          <li>Use proper semantics for tab order</li>
+          <li>Make focus state clear</li>
+          <li>Label buttons with button tag</li>
+          <li>Use dark enough text for contrast check</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <!-- Hero -->
   <section class="bg-slate-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -45,28 +64,56 @@
     </div>
   </section>
 
-  <!-- Requirements Section -->
+  <!-- Main Content - Two Column Layout -->
   <section class="bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="bg-white rounded-xl border border-orange-200 p-6 mb-8">
-        <h2 class="text-xl font-bold text-slate-900 mb-3">MVP Requirements</h2>
-        <p class="text-sm text-slate-700 mb-4">Design not yet applied - requirements captured.</p>
-        <ul class="text-sm text-slate-700 list-disc ml-5 space-y-2">
-          <li>Self-contained, context-aware; large paste; add/delete docs & images</li>
-          <li>Integrations clarity; contextual learning links; clear Salesforce + sandbox connection</li>
-          <li>Accessible tab order; Tailwind + React; buildable scope</li>
-          <li>Nice to have: conversation design adapts to user + location (incl. extension/MCP)</li>
-        </ul>
-      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column - Components -->
+        <div class="lg:col-span-2">
+          <!-- Requirements Card -->
+          <div class="bg-white rounded-xl border border-orange-200 p-6 mb-8">
+            <h2 class="text-xl font-bold text-slate-900 mb-3">MVP Requirements</h2>
+            <p class="text-sm text-slate-700 mb-4">Design not yet applied - requirements captured.</p>
+            <ul class="text-sm text-slate-700 list-disc ml-5 space-y-2">
+              <li>Self-contained, context-aware; large paste; add/delete docs & images</li>
+              <li>Integrations clarity; contextual learning links; clear Salesforce + sandbox connection</li>
+              <li>Accessible tab order; Tailwind + React; buildable scope</li>
+              <li>Nice to have: conversation design adapts to user + location (incl. extension/MCP)</li>
+            </ul>
+          </div>
 
-      <!-- Component Demo Link -->
-      <div class="mb-8">
-        <a href="./ai-input-interactive-demo.html" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-          <span>View Interactive Component Demo</span>
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-          </svg>
-        </a>
+          <!-- Component Demo Link -->
+          <div class="mb-8">
+            <a href="./ai-input-interactive-demo.html" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              <span>View Interactive Component Demo</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Column - Thinking/Notes -->
+        <div class="lg:col-span-1">
+          <div class="bg-slate-50 rounded-xl border border-slate-200 p-6 sticky top-24">
+            <h3 class="text-lg font-bold text-slate-900 mb-4">Thinking & Notes</h3>
+            <div class="space-y-4 text-sm text-slate-700">
+              <div>
+                <h4 class="font-semibold text-slate-900 mb-2">Design Considerations</h4>
+                <p class="leading-relaxed">Use this space to document design decisions, constraints, and rationale as we build the component.</p>
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-900 mb-2">Accessibility Notes</h4>
+                <ul class="list-disc ml-4 space-y-1 text-slate-700">
+                  <li>Ensure proper tab order throughout</li>
+                  <li>Clear focus indicators on all interactive elements</li>
+                  <li>Use semantic HTML (button, nav, etc.)</li>
+                  <li>Maintain WCAG AA contrast ratios</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>

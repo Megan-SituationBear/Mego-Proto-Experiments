@@ -103,6 +103,13 @@ const HomePage: React.FC<HomePageProps> = ({
 
   // Auto-scroll to bottom of conversation
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Scroll to top on page load/refresh
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
+  // Scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [conversationMessages]);

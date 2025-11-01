@@ -151,7 +151,31 @@ const HomePage: React.FC<HomePageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 animate-fadeIn">
+    <div className="min-h-screen bg-slate-50 animate-fadeIn relative">
+      <style>{`
+        .annotation-badge {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          width: 28px;
+          height: 28px;
+          background: linear-gradient(135deg, #f59e0b, #d97706);
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 14px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          z-index: 10;
+          border: 2px solid white;
+        }
+        
+        .annotation-wrapper {
+          position: relative;
+        }
+      `}</style>
       {/* Top Navigation Bar */}
       <TopNav
         title=""
@@ -344,8 +368,9 @@ const HomePage: React.FC<HomePageProps> = ({
           </p>
         </div>
 
-        {/* AI Input Section */}
-        <div className="mb-12 max-w-4xl mx-auto">
+        {/* AI Input Section - ANNOTATED */}
+        <div className="mb-12 max-w-4xl mx-auto annotation-wrapper">
+          <div className="annotation-badge">1</div>
           <AIInput
             placeholder="What action do you want to start?"
             onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}

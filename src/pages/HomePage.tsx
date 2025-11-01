@@ -13,6 +13,7 @@ interface HomePageProps {
   onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
   onViewTemplate?: (template: any) => void;
+  onNavigateToDashboard?: () => void;
 }
 
 /**
@@ -28,6 +29,7 @@ const HomePage: React.FC<HomePageProps> = ({
   onCreateProject,
   onLogout,
   onViewTemplate,
+  onNavigateToDashboard,
 }) => {
   // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
@@ -218,11 +220,15 @@ const HomePage: React.FC<HomePageProps> = ({
         onPricingClick={() => console.log('Pricing clicked')}
         onSearchClick={() => console.log('Search clicked')}
         onDashboardClick={() => {
-          // Navigate to dashboard - would use proper router in production
-          const url = window.location.pathname.includes('copado-home-page') 
-            ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
-            : '/Mego-Proto-Experiments/app.html?view=dashboard';
-          window.location.href = url;
+          if (onNavigateToDashboard) {
+            onNavigateToDashboard();
+          } else {
+            // Fallback navigation
+            const url = window.location.pathname.includes('copado-home-page') 
+              ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
+              : '/Mego-Proto-Experiments/app.html?view=dashboard';
+            window.location.href = url;
+          }
         }}
         onAvatarClick={() => setShowMenu(!showMenu)}
         userName={userName}

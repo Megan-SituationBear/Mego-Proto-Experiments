@@ -201,8 +201,35 @@ const TopNav: React.FC<TopNavProps> = ({
             </div>
           )}
 
-          {/* Right Side - Avatar */}
+          {/* Right Side - Search + Dashboard + Avatar */}
           <div className="flex items-center gap-3">
+            {/* Search */}
+            {onSearchClick && (
+              <button
+                onClick={onSearchClick}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-sm text-slate-600 hover:text-slate-900"
+                title="Search (⌘K)"
+              >
+                <Search className="w-4 h-4" />
+                <span className="hidden sm:inline">Search</span>
+                <kbd className="hidden md:inline-flex items-center px-1.5 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100 border border-slate-200 rounded">
+                  ⌘K
+                </kbd>
+              </button>
+            )}
+            
+            {/* Dashboard */}
+            {isLoggedIn && onDashboardClick && (
+              <button
+                onClick={onDashboardClick}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                aria-label="Dashboard"
+                title="Dashboard"
+              >
+                <LayoutDashboard className="w-5 h-5 text-slate-600" />
+              </button>
+            )}
+            
             {/* Avatar */}
             {isLoggedIn && onAvatarClick && (
               <button

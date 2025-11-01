@@ -389,7 +389,7 @@ const HomePage: React.FC<HomePageProps> = ({
           
           {/* Conversation Messages */}
           <div className="mb-4 min-h-[300px] max-h-[500px] overflow-y-auto">
-            {conversationMessages.length > 0 ? (
+            {conversationMessages.length > 0 && (
               <>
                 <Conversation
                   messages={conversationMessages}
@@ -398,11 +398,6 @@ const HomePage: React.FC<HomePageProps> = ({
                 />
                 <div ref={messagesEndRef} />
               </>
-            ) : (
-              <div className="flex items-center justify-center h-full text-center py-8">
-                <div className="max-w-md">
-                </div>
-              </div>
             )}
           </div>
 

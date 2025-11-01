@@ -376,20 +376,20 @@ const HomePage: React.FC<HomePageProps> = ({
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Hero Section with Chat - ANNOTATED */}
+        {/* Welcome Heading */}
+        <div className="text-center mb-8">
+          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
+            Welcome, <span className="text-blue-600">{userName}</span>.
+          </h1>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Start a conversation or pick up where you left off
+          </p>
+        </div>
+
+        {/* Conversation Section - ANNOTATED - On Top */}
         <div className="mb-12 max-w-4xl mx-auto annotation-wrapper">
           <div className="annotation-badge">1</div>
           
-          {/* Welcome Heading */}
-          <div className="text-center mb-8">
-            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
-              Welcome, <span className="text-blue-600">{userName}</span>.
-            </h1>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Start a conversation or pick up where you left off
-            </p>
-          </div>
-
           {/* Chat Container */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             {/* Conversation Messages */}
@@ -467,7 +467,7 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
 
-        {/* Pick up these Section */}
+        {/* Pick up these Section - Below Conversation */}
         <div className="mb-12">
           <div className="text-center mb-6">
             <h2 className="text-3xl font-bold text-slate-900 mb-6">

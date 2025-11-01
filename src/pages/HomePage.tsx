@@ -388,30 +388,6 @@ const HomePage: React.FC<HomePageProps> = ({
             </p>
           </div>
 
-          {/* Quick Actions - Above AI Input */}
-          {conversationMessages.length === 0 && (
-            <div className="space-y-3 mb-6 sm:mb-8">
-              <p className="text-sm font-medium text-slate-700 mb-4 text-center">Quick actions:</p>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {[
-                  "Show me my Salesforce projects",
-                  "Create a deployment plan",
-                  "Analyze my org health",
-                  "Help with user management",
-                  "Create Automation"
-                ].map((action, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleSendMessage(action, setShowCopadoTyping)}
-                    className="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm"
-                  >
-                    {action}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Conversation Section */}
           <div className="mb-6 sm:mb-8">
             {/* Conversation Messages */}
@@ -429,7 +405,7 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             {/* AI Input */}
-            <div>
+            <div className="mb-4">
               <AIInput
                 placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : "Start a conversation or pick up where you left off"}
                 onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
@@ -442,6 +418,30 @@ const HomePage: React.FC<HomePageProps> = ({
                 showTypingIndicator={showCopadoTyping}
               />
             </div>
+
+            {/* Quick Actions - Below AI Input */}
+            {conversationMessages.length === 0 && (
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-slate-700 mb-4 text-center">Quick actions:</p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {[
+                    "Show me my Salesforce projects",
+                    "Create a deployment plan",
+                    "Analyze my org health",
+                    "Help with user management",
+                    "Create Automation"
+                  ].map((action, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSendMessage(action, setShowCopadoTyping)}
+                      className="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm"
+                    >
+                      {action}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

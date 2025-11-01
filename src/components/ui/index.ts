@@ -14,3 +14,6 @@ export { default as TemplateDetailModal } from './TemplateDetailModal';
 export { default as TopNav } from './TopNav';
 export { default as NameCollectionModal } from './NameCollectionModal';
 export { default as BuildingModal } from './BuildingModal';
+export { TabToggle } from './TabToggle';
+export type { Tab } from './TabToggle';
+export type { TabToggleProps } from './TabToggle';

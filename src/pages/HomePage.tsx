@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { AIInput, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
+import { useState, useRef, useEffect } from 'react';
+import { AIInput, TemplateCard, TopNav, TabToggle } from '../components/ui';
 import FindTemplatesModal from '../components/ui/FindTemplatesModal';
+import Conversation, { type ConversationMessage } from '../components/Conversation';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
 
 interface HomePageProps {
@@ -100,17 +101,34 @@ const HomePage: React.FC<HomePageProps> = ({
     },
   ];
 
+  // Auto-scroll to bottom of conversation
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [conversationMessages]);
+
+  // Helper function to clean AIInput messages (handles mode prefixes automatically)
+  const cleanAIInputMessage = (text: string): string => {
+    // Remove mode prefixes like [ASK] or [MAKE] that AIInput adds
+    return text.replace(/^\[(ASK|MAKE)\]\s*/i, '').trim();
+  };
+
   const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void) => {
-    if (!text.trim()) return;
+    // Clean the message from AIInput (removes mode prefixes)
+    const cleanText = cleanAIInputMessage(text);
+    if (!cleanText) return;
 
     // Increment user message count
     const newUserMessageCount = userMessageCount + 1;
     setUserMessageCount(newUserMessageCount);
 
-    // Create user conversation message
+    // Create user conversation message with proper format
     const userConversationMessage: ConversationMessage = {
       id: Date.now().toString(),
-      content: text,
+      content: {
+        type: 'text',
+        content: cleanText
+      },
       isUser: true,
       timestamp: new Date()
     };
@@ -125,12 +143,12 @@ const HomePage: React.FC<HomePageProps> = ({
     // Simulate AI response
     setTimeout(() => {
       const response = generateAIResponse(text, newUserMessageCount);
-      // Convert complex message format to simple string content
+      // Use the response message as-is (it already has proper MessageContent format)
       const aiMessage: ConversationMessage = {
         id: response.conversationMessage.id,
-        content: typeof response.conversationMessage.content === 'string' 
-          ? response.conversationMessage.content 
-          : response.conversationMessage.content.content,
+        content: typeof response.conversationMessage.content === 'string'
+          ? { type: 'text', content: response.conversationMessage.content }
+          : response.conversationMessage.content,
         isUser: false,
         timestamp: response.conversationMessage.timestamp
       };
@@ -144,7 +162,7 @@ const HomePage: React.FC<HomePageProps> = ({
       // After second exchange, create project
       if (newUserMessageCount === 2 && onCreateProject) {
         setTimeout(() => {
-          onCreateProject(text);
+          onCreateProject(cleanText);
         }, 1500);
       }
     }, 1200);
@@ -358,44 +376,95 @@ const HomePage: React.FC<HomePageProps> = ({
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Welcome Section */}
-        <div className="mb-12 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
-            Welcome, <span className="text-blue-600">{userName}</span>.
-          </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Start a conversation or pick up where you left off
-          </p>
-        </div>
-
-        {/* AI Input Section - ANNOTATED */}
+        {/* Hero Section with Chat - ANNOTATED */}
         <div className="mb-12 max-w-4xl mx-auto annotation-wrapper">
           <div className="annotation-badge">1</div>
-          <AIInput
-            placeholder="What action do you want to start?"
-            onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
-            onIntegrationsClick={() => console.log('Integrations clicked')}
-            autoFocus={false}
-            isLoggedIn={true}
-            pageContext="home"
-            hasConversation={conversationMessages.length > 0}
-            messages={conversationMessages}
-            showTypingIndicator={showCopadoTyping}
-          />
+          
+          {/* Welcome Heading */}
+          <div className="text-center mb-8">
+            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
+              Welcome, <span className="text-blue-600">{userName}</span>.
+            </h1>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Start a conversation or pick up where you left off
+            </p>
+          </div>
 
-          {/* Show "Creating workspace..." message after second user message */}
-          {userMessageCount === 2 && (
-            <div className="mt-4 text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          {/* Chat Container */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            {/* Conversation Messages */}
+            <div className="p-6 min-h-[400px] max-h-[600px] overflow-y-auto">
+              {conversationMessages.length > 0 ? (
+                <>
+                  <Conversation
+                    messages={conversationMessages}
+                    showTypingIndicator={showCopadoTyping}
+                    onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
+                  />
+                  <div ref={messagesEndRef} />
+                </>
+              ) : (
+                <div className="flex items-center justify-center h-full text-center">
+                  <div className="max-w-md">
+                    <p className="text-slate-500 text-lg mb-6">
+                      Start by asking a question or describing what you'd like to work on.
+                    </p>
+                    
+                    {/* Quick Actions */}
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-slate-700 mb-4">Quick actions:</p>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {[
+                          "Show me my Salesforce projects",
+                          "Create a deployment plan",
+                          "Analyze my org health",
+                          "Help with user management",
+                          "Review recent changes"
+                        ].map((action, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleSendMessage(action, setShowCopadoTyping)}
+                            className="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm"
+                          >
+                            {action}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <span className="font-medium">Creating workspace...</span>
-              </div>
+              )}
             </div>
-          )}
+
+            {/* AI Input */}
+            <div className="border-t border-slate-200 p-6">
+              <AIInput
+                placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : undefined}
+                onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
+                onIntegrationsClick={() => console.log('Integrations clicked')}
+                autoFocus={false}
+                isLoggedIn={true}
+                pageContext="home"
+                hasConversation={conversationMessages.length > 0}
+                messages={[]}
+                showTypingIndicator={showCopadoTyping}
+              />
+            </div>
+
+            {/* Show "Creating workspace..." message after second user message */}
+            {userMessageCount === 2 && (
+              <div className="border-t border-slate-200 p-4 bg-blue-50">
+                <div className="flex items-center justify-center gap-2 text-blue-700">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                  <span className="font-medium">Creating workspace...</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Pick up these Section */}
@@ -407,38 +476,17 @@ const HomePage: React.FC<HomePageProps> = ({
             
             {/* Toggle Button */}
             <div className="flex flex-col items-center gap-3 mb-6">
-              <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
-                <button
-                  onClick={() => setActiveTab('recent')}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeTab === 'recent'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  Recent
-                </button>
-                <button
-                  onClick={() => setActiveTab('favorites')}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeTab === 'favorites'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  Favorites
-                </button>
-                <button
-                  onClick={() => setActiveTab('suggested')}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeTab === 'suggested'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  Suggested Templates
-                </button>
-              </div>
+              <TabToggle
+                tabs={[
+                  { id: 'recent', label: 'Recent', count: recentItems.length },
+                  { id: 'favorites', label: 'Favorites', count: favoritedTemplates.length },
+                  { id: 'suggested', label: 'Suggested Templates' }
+                ]}
+                activeTab={activeTab}
+                onTabChange={(id) => setActiveTab(id as 'recent' | 'favorites' | 'suggested' | 'work' | 'templates')}
+                size="default"
+                variant="blue"
+              />
               
               <button
                 onClick={() => setShowFindTemplatesModal(true)}

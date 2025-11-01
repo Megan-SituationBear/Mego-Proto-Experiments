@@ -38,6 +38,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Plus, Settings, Paperclip, MessageSquare, Ticket, Grid, Cloud } from 'lucide-react';
+import { TabToggle } from './TabToggle';
 
 type PageContext = 'home' | 'workspace' | 'context';
 type ViewState = 'default' | 'focused' | 'focused-with-conversation';
@@ -112,6 +113,33 @@ const AIInput: React.FC<AIInputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [hasBeenFocused, setHasBeenFocused] = useState(false);
   const [showContextMenu, setShowContextMenu] = useState(false);
+  
+  // Mode toggle state with localStorage persistence
+  const [inputMode, setInputMode] = useState<'ask' | 'make'>(() => {
+    const saved = localStorage.getItem('aiInput-mode');
+    return (saved === 'ask' || saved === 'make') ? saved : 'ask';
+  });
+
+  // Track if "Press enter to submit" tip has been shown (one-time only)
+  const [hasShownEnterTip, setHasShownEnterTip] = useState(() => {
+    return localStorage.getItem('aiInput-enterTipShown') === 'true';
+  });
+
+  // Update localStorage when mode changes
+  useEffect(() => {
+    localStorage.setItem('aiInput-mode', inputMode);
+  }, [inputMode]);
+
+  // Show tip once and mark as shown
+  useEffect(() => {
+    if (inputMode === 'ask' && !hasShownEnterTip && isFocused) {
+      const timer = setTimeout(() => {
+        setHasShownEnterTip(true);
+        localStorage.setItem('aiInput-enterTipShown', 'true');
+      }, 2000); // Show for 2 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [inputMode, hasShownEnterTip, isFocused]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
@@ -418,18 +446,34 @@ const AIInput: React.FC<AIInputProps> = ({
         messageContent = messageContent ? messageContent + snippetsText : snippetsText;
       }
       
+      // Prepend mode prefix to message based on selected mode
+      // This allows the backend/handler to differentiate between "ask" and "make" modes
+      const modePrefix = inputMode === 'make' ? '[MAKE] ' : '[ASK] ';
+      messageContent = modePrefix + messageContent;
+      
       onSendMessage(messageContent);
       setValue('');
       setCodeSnippets([]);
       setHasBeenFocused(false);
     }
   };
+  
+  // Update placeholder based on mode
+  const modePlaceholder = inputMode === 'make' 
+    ? (placeholder && placeholder.includes('action') ? placeholder.replace('action', 'thing to make or create') : 'What would you like to make or create?')
+    : 'What can I help you with?';
+  
+  // Use custom placeholder if provided (e.g., "Continue the conversation..."), otherwise use mode-based placeholder
+  const effectivePlaceholder = placeholder || modePlaceholder;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    // In "ask" mode: Enter submits, Shift+Enter for new line
+    // In "make" mode: Enter always creates new line (need to click Send button)
+    if (e.key === 'Enter' && !e.shiftKey && inputMode === 'ask') {
       e.preventDefault();
       handleSubmit();
     }
+    // In "make" mode, Enter always creates a new line (default behavior)
   };
 
   const handleFocus = () => {
@@ -676,7 +720,7 @@ const AIInput: React.FC<AIInputProps> = ({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
-            placeholder={placeholder}
+            placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             className={`w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 ${
               value ? 'text-slate-700' : 'text-slate-400'
@@ -774,6 +818,27 @@ const AIInput: React.FC<AIInputProps> = ({
         {value.length > 200 && (
           <div className="px-6 pb-2 text-xs text-slate-500 font-body">
             {value.length} characters
+          </div>
+        )}
+      </div>
+
+      {/* Mode Toggle - Below input, positioned to the left */}
+      <div className="mt-3 flex justify-start items-center gap-3">
+        <TabToggle
+          tabs={[
+            { id: 'ask', label: 'Ask' },
+            { id: 'make', label: 'Make' }
+          ]}
+          activeTab={inputMode}
+          onTabChange={(id) => setInputMode(id as 'ask' | 'make')}
+          size="sm"
+          variant="default"
+        />
+        
+        {/* One-time "Press enter to submit" tip for Ask mode */}
+        {inputMode === 'ask' && !hasShownEnterTip && isFocused && (
+          <div className="text-xs text-slate-500 animate-in fade-in slide-in-from-left-2 duration-300">
+            Press enter to submit
           </div>
         )}
       </div>

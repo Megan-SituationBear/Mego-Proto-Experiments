@@ -214,6 +214,13 @@ const HomePage: React.FC<HomePageProps> = ({
         onAvatarClick={() => setShowMenu(!showMenu)}
         userName={userName}
         isLoggedIn={true}
+        connectedIntegrations={{
+          salesforce: true,
+          slack: true,
+          jira: false,
+          github: false,
+        }}
+        onIntegrationClick={(integration) => console.log(`${integration} clicked`)}
       />
 
       {/* Slide-out Drawer Menu */}

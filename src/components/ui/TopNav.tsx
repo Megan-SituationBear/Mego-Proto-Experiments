@@ -1,4 +1,5 @@
-import { Search, LayoutDashboard, Star } from 'lucide-react';
+import { Search, LayoutDashboard, Star, ChevronDown, Check } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
 interface TopNavProps {
   // Left side - Logo and nav items
@@ -11,6 +12,15 @@ interface TopNavProps {
   onLearnClick?: () => void;
   onIntegrationsClick?: () => void;
   onPricingClick?: () => void;
+  
+  // Integrations state
+  connectedIntegrations?: {
+    salesforce?: boolean;
+    slack?: boolean;
+    jira?: boolean;
+    github?: boolean;
+  };
+  onIntegrationClick?: (integration: 'salesforce' | 'slack' | 'jira' | 'github') => void;
   
   // Right side actions
   onSearchClick?: () => void;
@@ -54,6 +64,10 @@ const TopNav: React.FC<TopNavProps> = ({
   onLearnClick,
   onIntegrationsClick,
   onPricingClick,
+  
+  // Integrations
+  connectedIntegrations = {},
+  onIntegrationClick,
   
   // Right side
   onSearchClick,
@@ -101,6 +115,41 @@ const TopNav: React.FC<TopNavProps> = ({
 
   // Check if using legacy mode (title-based nav)
   const isLegacyMode = title && !onProductsClick && !onLearnClick && !onIntegrationsClick && !onPricingClick;
+  
+  // Dropdown state
+  const [integrationsOpen, setIntegrationsOpen] = useState(false);
+  const [learnOpen, setLearnOpen] = useState(false);
+  const integrationsRef = useRef<HTMLDivElement>(null);
+  const learnRef = useRef<HTMLDivElement>(null);
+  
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (integrationsRef.current && !integrationsRef.current.contains(event.target as Node)) {
+        setIntegrationsOpen(false);
+      }
+      if (learnRef.current && !learnRef.current.contains(event.target as Node)) {
+        setLearnOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  
+  const integrations = [
+    { id: 'salesforce' as const, name: 'Salesforce', icon: '🏢' },
+    { id: 'slack' as const, name: 'Slack', icon: '💬' },
+    { id: 'jira' as const, name: 'Jira', icon: '🎫' },
+    { id: 'github' as const, name: 'Github', icon: '🐙' },
+  ];
+  
+  const learnItems = [
+    { id: 'docs', name: 'Documentation' },
+    { id: 'tutorials', name: 'Tutorials' },
+    { id: 'guides', name: 'Guides' },
+    { id: 'api', name: 'API Reference' },
+  ];
 
   return (
     <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
@@ -146,47 +195,110 @@ const TopNav: React.FC<TopNavProps> = ({
               </button>
             )}
             
-            {/* Learn */}
-            {!isLegacyMode && onLearnClick && (
-              <button
-                onClick={onLearnClick}
-                className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors hidden sm:block"
-              >
-                Learn
-              </button>
-            )}
           </div>
 
-          {/* Center - Legacy Title */}
-          {isLegacyMode && title && (
-            <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-              {categoryBadge && (
-                <span className={`text-xs font-semibold px-3 py-1 rounded-full mb-1 ${badgeColors[categoryBadge.color || 'slate']}`}>
-                  {categoryBadge.text}
-                </span>
-              )}
-              <h1 className="text-lg font-bold text-slate-900">
-                {title}
-              </h1>
-              {subtitle && (
-                <p className="text-xs text-slate-500">
-                  {subtitle}
-                </p>
-              )}
-            </div>
-          )}
-
-          {/* Center/Right - Integrations + Pricing */}
-          {!isLegacyMode && (
-            <div className="flex items-center gap-6">
-              {/* Integrations */}
+          {/* Center - Legacy Title OR Integrations + Learn Dropdowns */}
+          {isLegacyMode ? (
+            title && (
+              <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+                {categoryBadge && (
+                  <span className={`text-xs font-semibold px-3 py-1 rounded-full mb-1 ${badgeColors[categoryBadge.color || 'slate']}`}>
+                    {categoryBadge.text}
+                  </span>
+                )}
+                <h1 className="text-lg font-bold text-slate-900">
+                  {title}
+                </h1>
+                {subtitle && (
+                  <p className="text-xs text-slate-500">
+                    {subtitle}
+                  </p>
+                )}
+              </div>
+            )
+          ) : (
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-6">
+              {/* Integrations Dropdown */}
               {onIntegrationsClick && (
-                <button
-                  onClick={onIntegrationsClick}
-                  className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors hidden md:block"
-                >
-                  Integrations
-                </button>
+                <div className="relative" ref={integrationsRef}>
+                  <button
+                    onClick={() => {
+                      setIntegrationsOpen(!integrationsOpen);
+                      setLearnOpen(false);
+                    }}
+                    className="flex items-center gap-1 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors hidden md:flex"
+                  >
+                    Integrations
+                    <ChevronDown 
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        integrationsOpen ? 'transform rotate-180' : ''
+                      }`} 
+                    />
+                  </button>
+                  
+                  {integrationsOpen && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+                      {integrations.map((integration) => {
+                        const isConnected = connectedIntegrations[integration.id];
+                        return (
+                          <button
+                            key={integration.id}
+                            onClick={() => {
+                              onIntegrationClick?.(integration.id);
+                              setIntegrationsOpen(false);
+                            }}
+                            className="w-full flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="text-lg">{integration.icon}</span>
+                              <span>{integration.name}</span>
+                            </div>
+                            {isConnected && (
+                              <Check className="w-4 h-4 text-green-600" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Learn Dropdown */}
+              {onLearnClick && (
+                <div className="relative" ref={learnRef}>
+                  <button
+                    onClick={() => {
+                      setLearnOpen(!learnOpen);
+                      setIntegrationsOpen(false);
+                    }}
+                    className="flex items-center gap-1 text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors hidden md:flex"
+                  >
+                    Learn
+                    <ChevronDown 
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        learnOpen ? 'transform rotate-180' : ''
+                      }`} 
+                    />
+                  </button>
+                  
+                  {learnOpen && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+                      {learnItems.map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            onLearnClick();
+                            setLearnOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                        >
+                          {item.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )}
               
               {/* Pricing */}

@@ -217,7 +217,13 @@ const HomePage: React.FC<HomePageProps> = ({
         onIntegrationsClick={() => console.log('Integrations clicked')}
         onPricingClick={() => console.log('Pricing clicked')}
         onSearchClick={() => console.log('Search clicked')}
-        onDashboardClick={() => console.log('Dashboard clicked')}
+        onDashboardClick={() => {
+          // Navigate to dashboard - would use proper router in production
+          const url = window.location.pathname.includes('copado-home-page') 
+            ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
+            : '/Mego-Proto-Experiments/app.html?view=dashboard';
+          window.location.href = url;
+        }}
         onAvatarClick={() => setShowMenu(!showMenu)}
         userName={userName}
         isLoggedIn={true}

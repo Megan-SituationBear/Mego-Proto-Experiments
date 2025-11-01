@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import IntroPage from './pages/IntroPage';
 import HomePage from './pages/HomePage';
+import DashboardPage from './pages/DashboardPage';
 import OnboardingFlow from './pages/OnboardingFlow';
 import TemplatePage from './pages/TemplatePage';
 import PricingPage from './pages/PricingPage';
@@ -16,12 +17,13 @@ import './App.css';
  * Work Item pages need conversation state passed from App for continuity
  */
 function App() {
-  // Check URL parameter to start directly at home page
+  // Check URL parameter to start directly at home page or dashboard
   const urlParams = new URLSearchParams(window.location.search);
-  const initialView = urlParams.get('view') === 'home' ? 'home' : 'intro';
+  const viewParam = urlParams.get('view');
+  const initialView = viewParam === 'home' ? 'home' : viewParam === 'dashboard' ? 'dashboard' : 'intro';
   
   // Navigation state
-  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'work-item'>(initialView);
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'dashboard' | 'onboarding' | 'template' | 'pricing' | 'work-item'>(initialView);
   
   // Auth state - if starting at home, treat as logged in
   const [isLoggedIn, setIsLoggedIn] = useState(initialView === 'home');
@@ -348,6 +350,48 @@ function App() {
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}
         onViewTemplate={handleViewTemplate}
+      />
+    );
+  }
+
+  if (currentView === 'dashboard') {
+    // Calculate stats from projects
+    const dashboardStats = {
+      totalTimeSaved: activeProjects.reduce((sum, p) => sum + (p.savedHours || 0), 0),
+      totalProjects: activeProjects.length,
+      totalDeployments: activeProjects.reduce((sum, p) => sum + (p.deployments || 0), 0),
+    };
+
+    return (
+      <DashboardPage
+        userName={userName}
+        projects={activeProjects}
+        stats={dashboardStats}
+        onViewProject={handleViewTemplate}
+        onAvatarClick={() => setCurrentView('home')}
+        salesforceOrg={{
+          name: 'Acme Corp',
+          sandbox: 'dev-sandbox-01',
+        }}
+        connectedIntegrations={{
+          salesforce: true,
+          slack: true,
+          jira: false,
+          github: false,
+        }}
+        onLogoClick={() => {
+          if (window.location.pathname.includes('copado-home-page') || window.location.pathname.includes('app.html')) {
+            window.location.href = window.location.pathname.includes('copado-home-page') 
+              ? '/Mego-Proto-Experiments/copado-home-page.html?view=home'
+              : '/Mego-Proto-Experiments/app.html?view=home';
+          }
+        }}
+        onSearchClick={() => console.log('Search clicked')}
+        onDashboardClick={() => setCurrentView('dashboard')}
+        onLearnClick={() => console.log('Learn clicked')}
+        onIntegrationsClick={() => console.log('Integrations clicked')}
+        onPricingClick={() => setCurrentView('pricing')}
+        onIntegrationClick={(integration) => console.log(`${integration} clicked`)}
       />
     );
   }

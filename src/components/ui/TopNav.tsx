@@ -185,16 +185,6 @@ const TopNav: React.FC<TopNavProps> = ({
               </button>
             )}
             
-            {/* Products */}
-            {!isLegacyMode && onProductsClick && (
-              <button
-                onClick={onProductsClick}
-                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden sm:block py-1"
-              >
-                Products
-              </button>
-            )}
-            
           </div>
 
           {/* Center - Legacy Title OR Integrations + Learn Dropdowns */}

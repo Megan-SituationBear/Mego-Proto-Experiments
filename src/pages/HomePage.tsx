@@ -205,7 +205,14 @@ const HomePage: React.FC<HomePageProps> = ({
       <TopNav
         showLogo={true}
         logoText="+ COPADO AI"
-        onProductsClick={() => console.log('Products clicked')}
+        onLogoClick={() => {
+          // Navigate to home - could use window.location for now
+          if (window.location.pathname.includes('copado-home-page') || window.location.pathname.includes('app.html')) {
+            window.location.href = window.location.pathname.includes('copado-home-page') 
+              ? '/Mego-Proto-Experiments/copado-home-page.html?view=home'
+              : '/Mego-Proto-Experiments/app.html?view=home';
+          }
+        }}
         onLearnClick={() => console.log('Learn clicked')}
         onIntegrationsClick={() => console.log('Integrations clicked')}
         onPricingClick={() => console.log('Pricing clicked')}

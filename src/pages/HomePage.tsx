@@ -378,9 +378,12 @@ const HomePage: React.FC<HomePageProps> = ({
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Heading */}
         <div className="text-center mb-6">
-          <h1 className="text-5xl md:text-6xl font-bold text-slate-900">
-            Welcome, <span className="text-blue-600">{userName}</span>.
+          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
+            Great work comes alive here
           </h1>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
+          </p>
         </div>
 
         {/* Conversation Section - ANNOTATED - On Top */}

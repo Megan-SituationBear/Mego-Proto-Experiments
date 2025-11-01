@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:pages": "npm run build && mv dist/index.html dist/app.html && cp index.html dist/index.html && cp ai-input-interactive-demo.html dist/ && cp contextual-chat.html dist/ && echo 'Q4 landing page and demo pages copied to dist/'",
+    "build:pages": "npm run build && mv dist/index.html dist/app.html && cp index.html dist/index.html && cp ai-input-interactive-demo.html dist/ && cp contextual-chat.html dist/ && cp copado-home-page.html dist/ && echo 'Q4 landing page and demo pages copied to dist/'",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -16,11 +16,15 @@ import './App.css';
  * Work Item pages need conversation state passed from App for continuity
  */
 function App() {
-  // Navigation state
-  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'work-item'>('intro');
+  // Check URL parameter to start directly at home page
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialView = urlParams.get('view') === 'home' ? 'home' : 'intro';
   
-  // Auth state
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Navigation state
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'onboarding' | 'template' | 'pricing' | 'work-item'>(initialView);
+  
+  // Auth state - if starting at home, treat as logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(initialView === 'home');
   const [isSignUpFlow, setIsSignUpFlow] = useState(true); // Track if user is signing up vs logging in
   
   // User data (could be moved to context in future)

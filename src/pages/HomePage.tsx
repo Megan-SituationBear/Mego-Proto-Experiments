@@ -375,51 +375,22 @@ const HomePage: React.FC<HomePageProps> = ({
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Heading */}
-        <div className="text-center mb-6">
-          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
-            Great work comes alive here
-          </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
-          </p>
-        </div>
-
-        {/* Conversation Section - On Top */}
-        <div className="mb-12 max-w-4xl mx-auto">
-          {/* Conversation Messages */}
-          <div className="mb-4 max-h-[500px] overflow-y-auto">
-            {conversationMessages.length > 0 && (
-              <>
-                <Conversation
-                  messages={conversationMessages}
-                  showTypingIndicator={showCopadoTyping}
-                  onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
-                />
-                <div ref={messagesEndRef} />
-              </>
-            )}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-[calc(100vh-120px)] flex flex-col justify-center">
+        {/* Hero Section - H1, Subheader, Quick Actions, Chat Input */}
+        <div className="max-w-4xl mx-auto w-full">
+          {/* Welcome Heading */}
+          <div className="text-center mb-8 sm:mb-10">
+            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4 sm:mb-6">
+              Great work comes alive here
+            </h1>
+            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
+              Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
+            </p>
           </div>
 
-          {/* AI Input */}
-          <div className="mb-4">
-            <AIInput
-              placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : "Start a conversation or pick up where you left off"}
-              onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
-              onIntegrationsClick={() => console.log('Integrations clicked')}
-              autoFocus={false}
-              isLoggedIn={true}
-              pageContext="home"
-              hasConversation={conversationMessages.length > 0}
-              messages={[]}
-              showTypingIndicator={showCopadoTyping}
-            />
-          </div>
-
-          {/* Quick Actions - Under AI Input */}
+          {/* Quick Actions - Above AI Input */}
           {conversationMessages.length === 0 && (
-            <div className="space-y-3">
+            <div className="space-y-3 mb-6 sm:mb-8">
               <p className="text-sm font-medium text-slate-700 mb-4 text-center">Quick actions:</p>
               <div className="flex flex-wrap gap-2 justify-center">
                 {[
@@ -440,6 +411,39 @@ const HomePage: React.FC<HomePageProps> = ({
               </div>
             </div>
           )}
+
+          {/* Conversation Section */}
+          <div className="mb-6 sm:mb-8">
+            {/* Conversation Messages */}
+            <div className="mb-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
+              {conversationMessages.length > 0 && (
+                <>
+                  <Conversation
+                    messages={conversationMessages}
+                    showTypingIndicator={showCopadoTyping}
+                    onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
+                  />
+                  <div ref={messagesEndRef} />
+                </>
+              )}
+            </div>
+
+            {/* AI Input */}
+            <div>
+              <AIInput
+                placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : "Start a conversation or pick up where you left off"}
+                onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
+                onIntegrationsClick={() => console.log('Integrations clicked')}
+                autoFocus={false}
+                isLoggedIn={true}
+                pageContext="home"
+                hasConversation={conversationMessages.length > 0}
+                messages={[]}
+                showTypingIndicator={showCopadoTyping}
+              />
+            </div>
+          </div>
+        </div>
 
           {/* Show "Creating workspace..." message after second user message */}
           {userMessageCount === 2 && (

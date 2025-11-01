@@ -386,12 +386,10 @@ const HomePage: React.FC<HomePageProps> = ({
           </p>
         </div>
 
-        {/* Conversation Section - ANNOTATED - On Top */}
-        <div className="mb-12 max-w-4xl mx-auto annotation-wrapper">
-          <div className="annotation-badge">1</div>
-          
+        {/* Conversation Section - On Top */}
+        <div className="mb-12 max-w-4xl mx-auto">
           {/* Conversation Messages */}
-          <div className="mb-4 min-h-[300px] max-h-[500px] overflow-y-auto">
+          <div className="mb-4 max-h-[500px] overflow-y-auto">
             {conversationMessages.length > 0 && (
               <>
                 <Conversation

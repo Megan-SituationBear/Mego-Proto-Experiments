@@ -45,58 +45,58 @@ const HomePage: React.FC<HomePageProps> = ({
 
   const recommendedTemplates = [
     {
-      category: "Deployment Fixes",
+      category: "Deploy",
       categoryColor: "slate" as const,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
+      description: "Automate pre-deployment checks and fixes to catch issues before they reach production. Saves an average of 35 hours per deployment cycle.",
       favorites: 1234,
       views: 154
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Test",
+      categoryColor: "green" as const,
+      savedHours: 28,
+      title: "Automated Test Coverage Analysis",
+      description: "Identify gaps in test coverage and generate automated test scripts for your Salesforce org. Ensures 95%+ coverage before deployment.",
+      favorites: 892,
+      views: 89
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Org Magic",
+      categoryColor: "purple" as const,
+      savedHours: 42,
+      title: "Permission Set Audit & Remediation",
+      description: "Review and fix permission set misconfigurations automatically. Reduces security risks while maintaining user access requirements.",
+      favorites: 567,
+      views: 203
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Build",
+      categoryColor: "amber" as const,
+      savedHours: 51,
+      title: "Data Cleanup & Validation Workflow",
+      description: "Automate data quality checks and cleanup processes. Identifies duplicates, missing fields, and validation errors across your org.",
+      favorites: 1089,
+      views: 312
     },
     {
-      category: "Deployment Fixes",
+      category: "Plan",
       categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      savedHours: 19,
+      title: "API Integration Health Monitor",
+      description: "Track and optimize API usage across your Salesforce org. Prevents limit exceptions and identifies optimization opportunities.",
+      favorites: 723,
+      views: 145
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Org Magic",
+      categoryColor: "indigo" as const,
+      savedHours: 63,
+      title: "Query Optimization & Indexing",
+      description: "Analyze and optimize slow queries in your org. Automatically suggests indexes and query improvements to boost performance.",
+      favorites: 1445,
+      views: 278
     },
   ];
 
@@ -335,10 +335,13 @@ const HomePage: React.FC<HomePageProps> = ({
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Welcome Section */}
-        <div className="mb-8 text-center">
-          <h1 className="text-5xl font-bold text-slate-900 mb-8">
+        <div className="mb-12 text-center">
+          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
             Welcome, <span className="text-blue-600">{userName}</span>.
           </h1>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Start a conversation or pick up where you left off
+          </p>
         </div>
 
         {/* AI Input Section */}
@@ -420,7 +423,7 @@ const HomePage: React.FC<HomePageProps> = ({
               </button>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {activeTab === 'recent' ? (
               recentItems.length > 0 ? (
                 recentItems.map((item, index) => (

@@ -203,12 +203,17 @@ const HomePage: React.FC<HomePageProps> = ({
       `}</style>
       {/* Top Navigation Bar */}
       <TopNav
-        title=""
-        showBackButton={false}
         showLogo={true}
         logoText="+ COPADO AI"
-        showHamburger={true}
-        onHamburgerClick={() => setShowMenu(!showMenu)}
+        onProductsClick={() => console.log('Products clicked')}
+        onLearnClick={() => console.log('Learn clicked')}
+        onIntegrationsClick={() => console.log('Integrations clicked')}
+        onPricingClick={() => console.log('Pricing clicked')}
+        onSearchClick={() => console.log('Search clicked')}
+        onDashboardClick={() => console.log('Dashboard clicked')}
+        onAvatarClick={() => setShowMenu(!showMenu)}
+        userName={userName}
+        isLoggedIn={true}
       />
 
       {/* Slide-out Drawer Menu */}
@@ -449,22 +454,21 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
               </div>
             )}
-          </div>
-        </div>
-
-          {/* Show "Creating workspace..." message after second user message */}
-          {userMessageCount === 2 && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <div className="flex items-center justify-center gap-2 text-blue-700">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            
+            {/* Show "Creating workspace..." message after second user message */}
+            {userMessageCount === 2 && (
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-center gap-2 text-blue-700">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                  <span className="font-medium">Creating workspace...</span>
                 </div>
-                <span className="font-medium">Creating workspace...</span>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Pick up these Section - Below Conversation */}

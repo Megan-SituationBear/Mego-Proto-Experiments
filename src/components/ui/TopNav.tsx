@@ -1,19 +1,34 @@
-import { ArrowLeft, Star } from 'lucide-react';
+import { Search, LayoutDashboard, Star } from 'lucide-react';
 
 interface TopNavProps {
-  // Left side
+  // Left side - Logo and nav items
+  showLogo?: boolean;
+  logoText?: string;
+  onLogoClick?: () => void;
+  
+  // Navigation items
+  onProductsClick?: () => void;
+  onLearnClick?: () => void;
+  onIntegrationsClick?: () => void;
+  onPricingClick?: () => void;
+  
+  // Right side actions
+  onSearchClick?: () => void;
+  onDashboardClick?: () => void;
+  onAvatarClick?: () => void;
+  userName?: string;
+  userInitials?: string;
+  isLoggedIn?: boolean;
+  
+  // Legacy support - can be removed later
   onBack?: () => void;
   showBackButton?: boolean;
-  
-  // Center
-  title: string;
-  subtitle?: string; // e.g., "Project | Last Modified" or "Code | Last Modified"
+  title?: string;
+  subtitle?: string;
   categoryBadge?: {
     text: string;
     color?: 'green' | 'blue' | 'purple' | 'amber' | 'slate' | 'orange';
   };
-  
-  // Right side
   onFavorite?: () => void;
   isFavorited?: boolean;
   showFavorite?: boolean;
@@ -23,24 +38,34 @@ interface TopNavProps {
     icon?: React.ReactNode;
     variant?: 'blue' | 'white';
   };
-  
-  // Home page specific
-  showHamburger?: boolean;
-  onHamburgerClick?: () => void;
-  
-  // Logo (for landing/home)
-  showLogo?: boolean;
-  logoText?: string;
-  
-  // Landing page specific (logged out)
   showAuthButtons?: boolean;
   onLogin?: () => void;
   onSignUp?: () => void;
 }
 
 const TopNav: React.FC<TopNavProps> = ({
+  // Logo
+  showLogo = true,
+  logoText = '+ COPADO AI',
+  onLogoClick,
+  
+  // Navigation items
+  onProductsClick,
+  onLearnClick,
+  onIntegrationsClick,
+  onPricingClick,
+  
+  // Right side
+  onSearchClick,
+  onDashboardClick,
+  onAvatarClick,
+  userName,
+  userInitials,
+  isLoggedIn = false,
+  
+  // Legacy support
+  showBackButton = false,
   onBack,
-  showBackButton = true,
   title,
   subtitle,
   categoryBadge,
@@ -48,14 +73,23 @@ const TopNav: React.FC<TopNavProps> = ({
   isFavorited = false,
   showFavorite = false,
   primaryAction,
-  showHamburger = false,
-  onHamburgerClick,
-  showLogo = false,
-  logoText = '+ ASK COPADO',
   showAuthButtons = false,
   onLogin,
   onSignUp,
 }) => {
+  // Generate initials from userName if not provided
+  const getInitials = () => {
+    if (userInitials) return userInitials;
+    if (userName) {
+      const parts = userName.split(' ');
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      }
+      return userName.substring(0, 2).toUpperCase();
+    }
+    return 'U';
+  };
+
   const badgeColors = {
     green: 'bg-green-100 text-green-700',
     blue: 'bg-blue-100 text-blue-700',
@@ -65,70 +99,168 @@ const TopNav: React.FC<TopNavProps> = ({
     orange: 'bg-orange-100 text-orange-700',
   };
 
+  // Check if using legacy mode (title-based nav)
+  const isLegacyMode = title && !onProductsClick && !onLearnClick && !onIntegrationsClick && !onPricingClick;
+
   return (
-    <nav className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-lg">
+    <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Left Side */}
-          <div className="flex items-center gap-3">
-            {showBackButton && onBack && (
+          {/* Left Side - Logo + Products + Learn OR Legacy Back + Logo */}
+          <div className="flex items-center gap-6">
+            {/* Legacy Back Button */}
+            {isLegacyMode && showBackButton && onBack && (
               <button
                 onClick={onBack}
                 className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                 aria-label="Back"
               >
-                <ArrowLeft className="w-5 h-5 text-slate-700" />
+                <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
               </button>
             )}
             
+            {/* Logo */}
             {showLogo && (
-              <>
-                <div className="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <button
+                onClick={onLogoClick}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <span className="text-sm font-semibold text-blue-600">{logoText}</span>
-              </>
+                <span className="text-base font-semibold text-slate-900 hidden sm:inline">{logoText}</span>
+              </button>
+            )}
+            
+            {/* Products */}
+            {!isLegacyMode && onProductsClick && (
+              <button
+                onClick={onProductsClick}
+                className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors hidden sm:block"
+              >
+                Products
+              </button>
+            )}
+            
+            {/* Learn */}
+            {!isLegacyMode && onLearnClick && (
+              <button
+                onClick={onLearnClick}
+                className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors hidden sm:block"
+              >
+                Learn
+              </button>
             )}
           </div>
 
-          {/* Center */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-            {categoryBadge && (
-              <span className={`text-xs font-semibold px-3 py-1 rounded-full mb-1 ${badgeColors[categoryBadge.color || 'slate']}`}>
-                {categoryBadge.text}
-              </span>
-            )}
-            <h1 className="text-lg font-bold text-slate-900">
-              {title}
-            </h1>
-            {subtitle && (
-              <p className="text-xs text-slate-500">
-                {subtitle}
-              </p>
-            )}
-          </div>
+          {/* Center - Legacy Title */}
+          {isLegacyMode && title && (
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+              {categoryBadge && (
+                <span className={`text-xs font-semibold px-3 py-1 rounded-full mb-1 ${badgeColors[categoryBadge.color || 'slate']}`}>
+                  {categoryBadge.text}
+                </span>
+              )}
+              <h1 className="text-lg font-bold text-slate-900">
+                {title}
+              </h1>
+              {subtitle && (
+                <p className="text-xs text-slate-500">
+                  {subtitle}
+                </p>
+              )}
+            </div>
+          )}
 
-          {/* Right Side */}
+          {/* Center/Right - Integrations + Pricing */}
+          {!isLegacyMode && (
+            <div className="flex items-center gap-6">
+              {/* Integrations */}
+              {onIntegrationsClick && (
+                <button
+                  onClick={onIntegrationsClick}
+                  className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors hidden md:block"
+                >
+                  Integrations
+                </button>
+              )}
+              
+              {/* Pricing */}
+              {onPricingClick && (
+                <button
+                  onClick={onPricingClick}
+                  className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors hidden md:block"
+                >
+                  Pricing
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Right Side - Search + Dashboard + Avatar */}
           <div className="flex items-center gap-3">
-            {showAuthButtons && (
+            {/* Search */}
+            {onSearchClick && (
+              <button
+                onClick={onSearchClick}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-sm text-slate-600 hover:text-slate-900"
+                title="Search (⌘K)"
+              >
+                <Search className="w-4 h-4" />
+                <span className="hidden sm:inline">Search</span>
+                <kbd className="hidden md:inline-flex items-center px-1.5 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100 border border-slate-200 rounded">
+                  ⌘K
+                </kbd>
+              </button>
+            )}
+            
+            {/* Dashboard */}
+            {isLoggedIn && onDashboardClick && (
+              <button
+                onClick={onDashboardClick}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                aria-label="Dashboard"
+                title="Dashboard"
+              >
+                <LayoutDashboard className="w-5 h-5 text-slate-600" />
+              </button>
+            )}
+            
+            {/* Avatar */}
+            {isLoggedIn && onAvatarClick && (
+              <button
+                onClick={onAvatarClick}
+                className="w-8 h-8 rounded-full bg-blue-600 text-white text-xs font-semibold flex items-center justify-center hover:bg-blue-700 transition-colors"
+                aria-label={userName ? `User menu for ${userName}` : 'User menu'}
+                title={userName || 'User'}
+              >
+                {getInitials()}
+              </button>
+            )}
+            
+            {/* Legacy Auth Buttons */}
+            {showAuthButtons && !isLoggedIn && (
               <>
                 <button
                   onClick={onLogin}
-                  className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 rounded-lg border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors"
                 >
                   Login
                 </button>
                 <button
                   onClick={onSignUp}
-                  className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
                   Sign Up
                 </button>
               </>
             )}
             
+            {/* Legacy Favorite */}
             {showFavorite && onFavorite && (
               <button
                 onClick={onFavorite}
@@ -145,6 +277,7 @@ const TopNav: React.FC<TopNavProps> = ({
               </button>
             )}
             
+            {/* Legacy Primary Action */}
             {primaryAction && (
               <button
                 onClick={primaryAction.onClick}
@@ -156,20 +289,6 @@ const TopNav: React.FC<TopNavProps> = ({
               >
                 {primaryAction.icon}
                 {primaryAction.label}
-              </button>
-            )}
-            
-            {showHamburger && onHamburgerClick && (
-              <button 
-                onClick={onHamburgerClick}
-                className="p-2 hover:bg-slate-100 rounded transition-colors"
-                aria-label="Menu"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="3" y1="6" x2="21" y2="6" strokeLinecap="round"/>
-                  <line x1="3" y1="12" x2="21" y2="12" strokeLinecap="round"/>
-                  <line x1="3" y1="18" x2="21" y2="18" strokeLinecap="round"/>
-                </svg>
               </button>
             )}
           </div>

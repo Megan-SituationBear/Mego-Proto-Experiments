@@ -420,15 +420,15 @@ const HomePage: React.FC<HomePageProps> = ({
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-[calc(100vh-120px)] flex flex-col justify-center">
         {/* Hero Section - H1, Subheader, Quick Actions, Chat Input */}
         <div className="max-w-4xl mx-auto w-full">
-          {/* Welcome Heading */}
-          <div className="text-center mb-8 sm:mb-10">
-            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4 sm:mb-6">
-              Great work comes alive here
-            </h1>
-            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
-              Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
-            </p>
-          </div>
+        {/* Welcome Heading */}
+        <div className="text-center mb-16 sm:mb-20 py-8 sm:py-12">
+          <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-6 sm:mb-8">
+            Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
+          </p>
+          <h1 className="text-5xl md:text-6xl font-bold text-slate-900">
+            Great work comes alive here
+          </h1>
+        </div>
 
           {/* Conversation Section */}
           <div className="mb-6 sm:mb-8">

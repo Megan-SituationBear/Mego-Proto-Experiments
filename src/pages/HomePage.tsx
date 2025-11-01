@@ -227,6 +227,10 @@ const HomePage: React.FC<HomePageProps> = ({
           jira: false,
           github: false,
         }}
+        salesforceOrg={{
+          name: 'Acme Corp',
+          sandbox: 'dev-sandbox-01',
+        }}
         onIntegrationClick={(integration) => console.log(`${integration} clicked`)}
       />
 

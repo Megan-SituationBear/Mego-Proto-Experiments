@@ -1,4 +1,4 @@
-import { Search, LayoutDashboard, Star, ChevronDown, Check } from 'lucide-react';
+import { Search, Star, ChevronDown, Check } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 interface TopNavProps {
@@ -19,6 +19,10 @@ interface TopNavProps {
     slack?: boolean;
     jira?: boolean;
     github?: boolean;
+  };
+  salesforceOrg?: {
+    name?: string;
+    sandbox?: string;
   };
   onIntegrationClick?: (integration: 'salesforce' | 'slack' | 'jira' | 'github') => void;
   
@@ -67,6 +71,7 @@ const TopNav: React.FC<TopNavProps> = ({
   
   // Integrations
   connectedIntegrations = {},
+  salesforceOrg,
   onIntegrationClick,
   
   // Right side
@@ -144,11 +149,22 @@ const TopNav: React.FC<TopNavProps> = ({
     { id: 'github' as const, name: 'Github', icon: '🐙' },
   ];
   
-  const learnItems = [
-    { id: 'docs', name: 'Documentation' },
-    { id: 'tutorials', name: 'Tutorials' },
-    { id: 'guides', name: 'Guides' },
-    { id: 'api', name: 'API Reference' },
+  const learnVideos = [
+    { id: 'intro', title: 'Getting Started', duration: '5 min' },
+    { id: 'advanced', title: 'Advanced Workflows', duration: '12 min' },
+    { id: 'integrations', title: 'Setting Up Integrations', duration: '8 min' },
+  ];
+  
+  const learnHowTos = [
+    { id: 'deploy', title: 'Deploy Your First Project' },
+    { id: 'automate', title: 'Automate Deployments' },
+    { id: 'testing', title: 'Testing Best Practices' },
+  ];
+  
+  const learnLibrary = [
+    { id: 'template1', title: 'Salesforce Project Template' },
+    { id: 'template2', title: 'CI/CD Pipeline Setup' },
+    { id: 'template3', title: 'Org Health Checklist' },
   ];
 
   return (
@@ -227,28 +243,47 @@ const TopNav: React.FC<TopNavProps> = ({
                   </button>
                   
                   {integrationsOpen && (
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-64 bg-white rounded-lg shadow-xl border border-slate-100 py-2 z-50">
-                      {integrations.map((integration) => {
-                        const isConnected = connectedIntegrations[integration.id];
-                        return (
-                          <button
-                            key={integration.id}
-                            onClick={() => {
-                              onIntegrationClick?.(integration.id);
-                              setIntegrationsOpen(false);
-                            }}
-                            className="w-full flex items-center justify-between px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors group/item"
-                          >
-                            <div className="flex items-center gap-3">
-                              <span className="text-base">{integration.icon}</span>
-                              <span className="font-medium">{integration.name}</span>
-                            </div>
-                            {isConnected && (
-                              <Check className="w-4 h-4 text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-opacity" />
-                            )}
-                          </button>
-                        );
-                      })}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-[500px] bg-white rounded-xl shadow-2xl border border-slate-200 p-4 z-50">
+                      <div className="grid grid-cols-2 gap-3">
+                        {integrations.map((integration) => {
+                          const isConnected = connectedIntegrations[integration.id];
+                          const isSalesforce = integration.id === 'salesforce';
+                          return (
+                            <button
+                              key={integration.id}
+                              onClick={() => {
+                                onIntegrationClick?.(integration.id);
+                                setIntegrationsOpen(false);
+                              }}
+                              className={`group relative flex flex-col items-start gap-2 p-4 rounded-lg border-2 transition-all ${
+                                isConnected
+                                  ? 'bg-slate-50 border-slate-200 hover:border-slate-300 hover:bg-slate-100'
+                                  : 'bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between w-full">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-2xl">{integration.icon}</span>
+                                  <div className="flex flex-col items-start">
+                                    <span className="font-semibold text-slate-900 text-sm">{integration.name}</span>
+                                    {isSalesforce && isConnected && salesforceOrg && (
+                                      <div className="text-xs text-slate-600 mt-0.5">
+                                        <div>{salesforceOrg.name || 'Production'}</div>
+                                        {salesforceOrg.sandbox && (
+                                          <div className="text-slate-500">{salesforceOrg.sandbox}</div>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                {isConnected && (
+                                  <Check className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -273,22 +308,79 @@ const TopNav: React.FC<TopNavProps> = ({
                   </button>
                   
                   {learnOpen && (
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-52 bg-white rounded-lg shadow-xl border border-slate-100 py-2 z-50">
-                      {learnItems.map((item) => (
-                        <button
-                          key={item.id}
-                          onClick={() => {
-                            onLearnClick();
-                            setLearnOpen(false);
-                          }}
-                          className="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          {item.name}
-                        </button>
-                      ))}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-[700px] bg-white rounded-xl shadow-2xl border border-slate-200 p-6 z-50">
+                      <div className="grid grid-cols-3 gap-6">
+                        {/* Videos Column */}
+                        <div className="flex flex-col gap-3">
+                          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Videos</h3>
+                          {learnVideos.map((video) => (
+                            <button
+                              key={video.id}
+                              onClick={() => {
+                                onLearnClick();
+                                setLearnOpen(false);
+                              }}
+                              className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
+                            >
+                              <div className="font-medium text-sm text-slate-900 mb-1 group-hover:text-blue-600 transition-colors">
+                                {video.title}
+                              </div>
+                              <div className="text-xs text-slate-500">{video.duration}</div>
+                            </button>
+                          ))}
+                        </div>
+                        
+                        {/* Featured How-To's Column */}
+                        <div className="flex flex-col gap-3">
+                          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Featured How-To's</h3>
+                          {learnHowTos.map((howTo) => (
+                            <button
+                              key={howTo.id}
+                              onClick={() => {
+                                onLearnClick();
+                                setLearnOpen(false);
+                              }}
+                              className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
+                            >
+                              <div className="font-medium text-sm text-slate-900 group-hover:text-blue-600 transition-colors">
+                                {howTo.title}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        
+                        {/* Library Items For You Column */}
+                        <div className="flex flex-col gap-3">
+                          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Library Items For You</h3>
+                          {learnLibrary.map((item) => (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                onLearnClick();
+                                setLearnOpen(false);
+                              }}
+                              className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
+                            >
+                              <div className="font-medium text-sm text-slate-900 group-hover:text-blue-600 transition-colors">
+                                {item.title}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
+              )}
+              
+              {/* Pricing */}
+              {onPricingClick && (
+                <button
+                  onClick={onPricingClick}
+                  className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden md:block py-1"
+                >
+                  Pricing
+                </button>
               )}
             </div>
           )}
@@ -310,15 +402,13 @@ const TopNav: React.FC<TopNavProps> = ({
               </button>
             )}
             
-            {/* Dashboard */}
+            {/* My Dashboard Button */}
             {isLoggedIn && onDashboardClick && (
               <button
                 onClick={onDashboardClick}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                aria-label="Dashboard"
-                title="Dashboard"
+                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
               >
-                <LayoutDashboard className="w-5 h-5 text-slate-600" />
+                My Dashboard
               </button>
             )}
             

@@ -390,81 +390,80 @@ const HomePage: React.FC<HomePageProps> = ({
         <div className="mb-12 max-w-4xl mx-auto annotation-wrapper">
           <div className="annotation-badge">1</div>
           
-          {/* Chat Container */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            {/* Conversation Messages */}
-            <div className="p-6 min-h-[400px] max-h-[600px] overflow-y-auto">
-              {conversationMessages.length > 0 ? (
-                <>
-                  <Conversation
-                    messages={conversationMessages}
-                    showTypingIndicator={showCopadoTyping}
-                    onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
-                  />
-                  <div ref={messagesEndRef} />
-                </>
-              ) : (
-                <div className="flex items-center justify-center h-full text-center">
-                  <div className="max-w-md">
-                    <p className="text-slate-500 text-lg mb-6">
-                      Start by asking a question or describing what you'd like to work on.
-                    </p>
-                    
-                    {/* Quick Actions */}
-                    <div className="space-y-3">
-                      <p className="text-sm font-medium text-slate-700 mb-4">Quick actions:</p>
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        {[
-                          "Show me my Salesforce projects",
-                          "Create a deployment plan",
-                          "Analyze my org health",
-                          "Help with user management",
-                          "Review recent changes"
-                        ].map((action, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleSendMessage(action, setShowCopadoTyping)}
-                            className="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm"
-                          >
-                            {action}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* AI Input */}
-            <div className="border-t border-slate-200 p-6">
-              <AIInput
-                placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : undefined}
-                onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
-                onIntegrationsClick={() => console.log('Integrations clicked')}
-                autoFocus={false}
-                isLoggedIn={true}
-                pageContext="home"
-                hasConversation={conversationMessages.length > 0}
-                messages={[]}
-                showTypingIndicator={showCopadoTyping}
-              />
-            </div>
-
-            {/* Show "Creating workspace..." message after second user message */}
-            {userMessageCount === 2 && (
-              <div className="border-t border-slate-200 p-4 bg-blue-50">
-                <div className="flex items-center justify-center gap-2 text-blue-700">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                  </div>
-                  <span className="font-medium">Creating workspace...</span>
+          {/* Conversation Messages */}
+          <div className="mb-6 min-h-[400px] max-h-[600px] overflow-y-auto">
+            {conversationMessages.length > 0 ? (
+              <>
+                <Conversation
+                  messages={conversationMessages}
+                  showTypingIndicator={showCopadoTyping}
+                  onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
+                />
+                <div ref={messagesEndRef} />
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-full text-center py-12">
+                <div className="max-w-md">
+                  <p className="text-slate-500 text-lg mb-6">
+                    Start by asking a question or describing what you'd like to work on.
+                  </p>
                 </div>
               </div>
             )}
           </div>
+
+          {/* AI Input */}
+          <div className="mb-6">
+            <AIInput
+              placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : undefined}
+              onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
+              onIntegrationsClick={() => console.log('Integrations clicked')}
+              autoFocus={false}
+              isLoggedIn={true}
+              pageContext="home"
+              hasConversation={conversationMessages.length > 0}
+              messages={[]}
+              showTypingIndicator={showCopadoTyping}
+            />
+          </div>
+
+          {/* Quick Actions - Under AI Input */}
+          {conversationMessages.length === 0 && (
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-slate-700 mb-4 text-center">Quick actions:</p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {[
+                  "Show me my Salesforce projects",
+                  "Create a deployment plan",
+                  "Analyze my org health",
+                  "Help with user management",
+                  "Create Automation"
+                ].map((action, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSendMessage(action, setShowCopadoTyping)}
+                    className="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm"
+                  >
+                    {action}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Show "Creating workspace..." message after second user message */}
+          {userMessageCount === 2 && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center justify-center gap-2 text-blue-700">
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                </div>
+                <span className="font-medium">Creating workspace...</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Pick up these Section - Below Conversation */}

@@ -375,15 +375,12 @@ const HomePage: React.FC<HomePageProps> = ({
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Heading */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4">
+        <div className="text-center mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-slate-900">
             Welcome, <span className="text-blue-600">{userName}</span>.
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Start a conversation or pick up where you left off
-          </p>
         </div>
 
         {/* Conversation Section - ANNOTATED - On Top */}
@@ -391,7 +388,7 @@ const HomePage: React.FC<HomePageProps> = ({
           <div className="annotation-badge">1</div>
           
           {/* Conversation Messages */}
-          <div className="mb-6 min-h-[400px] max-h-[600px] overflow-y-auto">
+          <div className="mb-4 min-h-[300px] max-h-[500px] overflow-y-auto">
             {conversationMessages.length > 0 ? (
               <>
                 <Conversation
@@ -402,20 +399,17 @@ const HomePage: React.FC<HomePageProps> = ({
                 <div ref={messagesEndRef} />
               </>
             ) : (
-              <div className="flex items-center justify-center h-full text-center py-12">
+              <div className="flex items-center justify-center h-full text-center py-8">
                 <div className="max-w-md">
-                  <p className="text-slate-500 text-lg mb-6">
-                    Start by asking a question or describing what you'd like to work on.
-                  </p>
                 </div>
               </div>
             )}
           </div>
 
           {/* AI Input */}
-          <div className="mb-6">
+          <div className="mb-4">
             <AIInput
-              placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : undefined}
+              placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : "Start a conversation or pick up where you left off"}
               onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
               onIntegrationsClick={() => console.log('Integrations clicked')}
               autoFocus={false}

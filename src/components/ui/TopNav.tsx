@@ -290,16 +290,6 @@ const TopNav: React.FC<TopNavProps> = ({
                   )}
                 </div>
               )}
-              
-              {/* Pricing */}
-              {onPricingClick && (
-                <button
-                  onClick={onPricingClick}
-                  className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden md:block py-1"
-                >
-                  Pricing
-                </button>
-              )}
             </div>
           )}
 

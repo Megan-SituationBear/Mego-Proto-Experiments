@@ -148,6 +148,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [extractedName, setExtractedName] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [codeSnippets, setCodeSnippets] = useState<CodeSnippet[]>([]);
+  // @ts-ignore - unused for now but will be used later
   const [integrationContexts, setIntegrationContexts] = useState<IntegrationContext[]>([]);
   
   // Simulate which integrations are connected (in real app, this would come from props or context)
@@ -190,6 +191,7 @@ const AIInput: React.FC<AIInputProps> = ({
   };
 
   // Delete code snippet
+  // @ts-ignore - unused for now but will be used later
   const deleteSnippet = (id: string) => {
     setCodeSnippets(prev => prev.filter(snippet => snippet.id !== id));
   };
@@ -277,6 +279,7 @@ const AIInput: React.FC<AIInputProps> = ({
   };
 
   // Delete integration context
+  // @ts-ignore - unused for now but will be used later
   const deleteIntegrationContext = (id: string) => {
     setIntegrationContexts(prev => prev.filter(ctx => ctx.id !== id));
   };
@@ -622,8 +625,8 @@ const AIInput: React.FC<AIInputProps> = ({
         </div>
       )}
 
-      {/* Mode Toggle - Above input, positioned to the left */}
-      <div className="mb-3 flex justify-start items-center gap-3">
+      {/* Mode Toggle - Above input, centered */}
+      <div className="mb-3 flex justify-center items-center gap-3">
         <TabToggle
           tabs={[
             { id: 'ask', label: 'Ask' },
@@ -649,8 +652,36 @@ const AIInput: React.FC<AIInputProps> = ({
         className={`relative ${stateStyles.bgColor} rounded-2xl border-2 transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring} hover:shadow-2xl`}
       >
         <div className="flex flex-col">
+          {/* Textarea that grows */}
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            placeholder={effectivePlaceholder}
+            disabled={disabled || loading}
+            autoFocus={autoFocus}
+            className={`w-full px-6 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-center ${
+              value ? 'text-slate-700' : 'text-slate-400'
+            } ${isFocused ? 'placeholder-slate-500' : 'placeholder-slate-400'}`}
+            style={{
+              paddingTop: stateStyles.padding,
+              paddingBottom: stateStyles.padding,
+              height: stateStyles.height,
+              lineHeight: '1.5',
+              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+              fontFamily: 'Inter, system-ui, sans-serif',
+              fontSize: '16px',
+              fontWeight: '500'
+            }}
+            rows={1}
+          />
+
           {/* Plus and Salesforce Buttons Row */}
-          <div className="flex flex-row justify-between items-start px-6 py-6 bg-white border-b border-slate-200 relative">
+          <div className="flex flex-row justify-between items-start px-6 py-6 bg-white border-t border-slate-200 relative">
             {/* Plus Button with Context Menu */}
             <div className="relative">
               <button
@@ -658,10 +689,10 @@ const AIInput: React.FC<AIInputProps> = ({
                 onMouseEnter={() => setShowContextMenu(true)}
                 onMouseLeave={() => setShowContextMenu(false)}
                 onClick={() => setShowContextMenu(!showContextMenu)}
-                className="w-12 h-12 bg-white border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition-colors flex items-center justify-center"
+                className="w-12 h-12 bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center group"
                 title="Add context"
               >
-                <Plus className="w-5 h-5 text-slate-600" />
+                <Plus className="w-5 h-5" />
               </button>
 
               {/* Context Menu Dropdown */}
@@ -715,10 +746,10 @@ const AIInput: React.FC<AIInputProps> = ({
                   onConnectSalesforce();
                 }
               }}
-              className="w-12 h-12 bg-white border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition-colors flex items-center justify-center"
+              className="w-12 h-12 bg-transparent border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
               title={isSalesforceConnected ? "Change sandbox" : "Connect Salesforce"}
             >
-              <Cloud className="w-5 h-5 text-slate-600" />
+              <Cloud className="w-5 h-5" />
             </button>
 
             {/* Settings Button */}
@@ -726,99 +757,12 @@ const AIInput: React.FC<AIInputProps> = ({
               <button
                 type="button"
                 onClick={() => setShowSettingsModal(true)}
-                className="w-12 h-12 bg-white border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition-colors flex items-center justify-center"
+                className="w-12 h-12 bg-transparent border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
                 title="Settings"
               >
-                <Settings className="w-5 h-5 text-slate-600" />
+                <Settings className="w-5 h-5" />
               </button>
             )}
-          </div>
-
-          <div className="flex flex-col p-3">
-          {/* Textarea that grows */}
-          <textarea
-            ref={textareaRef}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onKeyDown={handleKeyDown}
-            onPaste={handlePaste}
-            placeholder={effectivePlaceholder}
-            disabled={disabled || loading}
-            className={`w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 ${
-              value ? 'text-slate-700' : 'text-slate-400'
-            } ${isFocused ? 'placeholder-slate-500' : 'placeholder-slate-400'}`}
-            style={{
-              paddingTop: stateStyles.padding,
-              paddingBottom: stateStyles.padding,
-              height: stateStyles.height,
-              lineHeight: '1.5',
-              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-              fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: '14px'
-            }}
-            rows={1}
-          />
-
-          {/* Integration Context Chips */}
-          {integrationContexts.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {integrationContexts.map((ctx) => {
-                const info = getIntegrationInfo(ctx.type);
-                return (
-                  <div key={ctx.id} className="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 rounded-lg px-3 py-1.5">
-                    <span className="text-sm">{info?.emoji}</span>
-                    <span className="text-xs font-medium text-blue-700">{ctx.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => deleteIntegrationContext(ctx.id)}
-                      className="ml-1 p-0.5 hover:bg-blue-200 rounded transition-colors"
-                      title="Remove"
-                    >
-                      <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Code Snippets Display */}
-          {codeSnippets.length > 0 && (
-            <div className="mt-2 space-y-2">
-              {codeSnippets.map((snippet, index) => (
-                <div key={snippet.id} className="flex items-start gap-2">
-                  <div className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                      </svg>
-                      <span className="text-xs text-slate-400">Code Snippet {index + 1} ({snippet.lineCount} lines)</span>
-                    </div>
-                    <pre className="text-xs text-slate-200 font-mono overflow-auto max-h-32 whitespace-pre-wrap break-all">
-                      {snippet.content}
-                    </pre>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => deleteSnippet(snippet.id)}
-                    className="flex-shrink-0 p-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
-                    title="Delete snippet"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Action buttons row - below textarea */}
-          <div className="flex items-center justify-end mt-3">
 
             {/* Send button */}
             <button 
@@ -834,7 +778,6 @@ const AIInput: React.FC<AIInputProps> = ({
             >
               <Send className="w-5 h-5" />
             </button>
-          </div>
           </div>
         </div>
 

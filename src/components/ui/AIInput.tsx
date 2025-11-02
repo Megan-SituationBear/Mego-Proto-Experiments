@@ -329,7 +329,7 @@ const AIInput: React.FC<AIInputProps> = ({
     // Logged Out States - Home Page (Landing/Intro)
     if (!isLoggedIn && pageContext === 'home') {
       if (viewState === 'default') {
-        // Default state: Shorter, centered placeholder
+        // Default state: Shorter, centered placeholder, light stroke
         return {
           ...baseStyles,
           shadow: 'shadow-xl',
@@ -341,7 +341,7 @@ const AIInput: React.FC<AIInputProps> = ({
           borderRadius: 'rounded-3xl',
           containerPadding: 'p-3',
           gap: 'gap-3',
-          borderWidth: 'border-2', // 2px border
+          borderWidth: 'border', // Light 1px border
         };
       }
       if (viewState === 'focused') {
@@ -377,12 +377,12 @@ const AIInput: React.FC<AIInputProps> = ({
     // Logged In States
     if (isLoggedIn && pageContext === 'home') {
       if (viewState === 'default') {
-        // Default state: Shorter, centered placeholder
+        // Default state: Shorter, centered placeholder, light stroke
         return {
           ...baseStyles,
           shadow: 'shadow-xl',
           borderColor: 'border-indigo-600',
-          borderWidth: 'border-2',
+          borderWidth: 'border', // Light 1px border
           bgColor: 'bg-white',
           height: '56px', // Shorter default state
           padding: '16px',

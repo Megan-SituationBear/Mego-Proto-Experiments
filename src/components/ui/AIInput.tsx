@@ -731,11 +731,11 @@ const AIInput: React.FC<AIInputProps> = ({
                   <Plus className="w-5 h-5" />
                 </button>
 
-              {/* Context Menu Dropdown */}
+              {/* Context Menu Dropdown - Opens upward */}
               {showContextMenu && (
                 <div 
                   ref={menuRef}
-                  className="absolute left-0 top-full mt-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-top-2 duration-200"
+                  className="absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-bottom-2 duration-200"
                   style={{
                     background: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(12px)',

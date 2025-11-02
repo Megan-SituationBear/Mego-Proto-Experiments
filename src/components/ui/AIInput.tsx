@@ -658,25 +658,7 @@ const AIInput: React.FC<AIInputProps> = ({
         className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} border transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring}`}
       >
         <div className={`flex flex-col ${stateStyles.containerPadding} ${stateStyles.gap}`}>
-          {/* Text: "How can I help you today?" OR Textarea */}
-          {!value && viewState === 'default' && !isLoggedIn && pageContext === 'home' ? (
-            <div 
-              className="w-full px-6 text-center cursor-text text-slate-950"
-              onClick={() => textareaRef.current?.focus()}
-              style={{
-                paddingTop: stateStyles.padding,
-                paddingBottom: stateStyles.padding,
-                lineHeight: '1.625rem',
-                fontFamily: 'Montserrat, Roboto, sans-serif',
-                fontSize: '20px',
-                fontWeight: '500',
-                letterSpacing: '-0.01125rem',
-              }}
-            >
-              How can I help you today?
-            </div>
-          ) : null}
-          
+          {/* Textarea - always visible and functional */}
           <textarea
             ref={textareaRef}
             value={value}
@@ -685,22 +667,24 @@ const AIInput: React.FC<AIInputProps> = ({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
-            placeholder={effectivePlaceholder}
+            placeholder={viewState === 'default' && !isLoggedIn && pageContext === 'home' && !value ? 'Ask' : effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className={`w-full px-6 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 ${
-              viewState === 'default' && !isLoggedIn && pageContext === 'home' && !value ? 'h-0 opacity-0' : 'text-center'
-            } ${
-              value ? 'text-slate-700' : 'text-slate-400'
-            } ${isFocused ? 'placeholder-slate-500' : 'placeholder-slate-400'}`}
+            className={`w-full px-6 bg-transparent outline-none resize-none font-body transition-all duration-500 text-center ${
+              value ? 'text-slate-700' : 'text-slate-950 placeholder-slate-950'
+            } ${isFocused && !value ? 'placeholder-slate-500' : ''}`}
             style={{
-              paddingTop: value || viewState !== 'default' ? stateStyles.padding : '0',
-              paddingBottom: value || viewState !== 'default' ? stateStyles.padding : '0',
-              height: value || viewState !== 'default' ? stateStyles.height : '0',
-              lineHeight: '1.5',
+              paddingTop: stateStyles.padding,
+              paddingBottom: stateStyles.padding,
+              height: stateStyles.height,
+              lineHeight: '1.625rem',
               transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-              fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: '16px',
+              fontFamily: viewState === 'default' && !isLoggedIn && pageContext === 'home' && !value 
+                ? 'Montserrat, Roboto, sans-serif' 
+                : 'Inter, system-ui, sans-serif',
+              fontSize: viewState === 'default' && !isLoggedIn && pageContext === 'home' && !value 
+                ? '20px' 
+                : '16px',
               fontWeight: '500'
             }}
             rows={1}

@@ -33,26 +33,20 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: new-proto/package-lock.json
 
       - name: Install dependencies
+        working-directory: ./new-proto
         run: npm ci
 
       - name: Build
-        run: npm run build:pages
+        working-directory: ./new-proto
+        run: npm run build
         
-      - name: Verify Q4 landing page
-        run: |
-          if grep -q "Q4 Priorities" dist/index.html; then
-            echo "✓ Q4 landing page found in dist/index.html"
-          else
-            echo "✗ ERROR: Q4 landing page NOT found!"
-            exit 1
-          fi
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./new-proto/dist
 
   deploy:
     needs: build

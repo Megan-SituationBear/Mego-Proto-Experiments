@@ -115,6 +115,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [hasBeenFocused, setHasBeenFocused] = useState(false);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const menuCloseTimeoutRef = useRef<number | null>(null);
   
   // Mode toggle state with localStorage persistence
   const [inputMode, setInputMode] = useState<'ask' | 'make' | 'automate'>(() => {
@@ -142,6 +143,15 @@ const AIInput: React.FC<AIInputProps> = ({
       return () => clearTimeout(timer);
     }
   }, [inputMode, hasShownEnterTip, isFocused]);
+  
+  // Cleanup menu close timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (menuCloseTimeoutRef.current) {
+        clearTimeout(menuCloseTimeoutRef.current);
+      }
+    };
+  }, []);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
@@ -730,6 +740,11 @@ const AIInput: React.FC<AIInputProps> = ({
                 <button
                   type="button"
                   onMouseEnter={(e) => {
+                    // Clear any pending close timeout
+                    if (menuCloseTimeoutRef.current) {
+                      clearTimeout(menuCloseTimeoutRef.current);
+                      menuCloseTimeoutRef.current = null;
+                    }
                     const rect = e.currentTarget.getBoundingClientRect();
                     setMenuPosition({ 
                       top: rect.top - 8, 
@@ -737,7 +752,12 @@ const AIInput: React.FC<AIInputProps> = ({
                     });
                     setShowContextMenu(true);
                   }}
-                  onMouseLeave={() => setShowContextMenu(false)}
+                  onMouseLeave={() => {
+                    // Delay closing the menu
+                    menuCloseTimeoutRef.current = setTimeout(() => {
+                      setShowContextMenu(false);
+                    }, 300);
+                  }}
                   onClick={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     setMenuPosition({ 
@@ -766,8 +786,20 @@ const AIInput: React.FC<AIInputProps> = ({
                     maxHeight: '300px',
                     overflowY: 'auto',
                   }}
-                  onMouseEnter={() => setShowContextMenu(true)}
-                  onMouseLeave={() => setShowContextMenu(false)}
+                  onMouseEnter={() => {
+                    // Clear any pending close timeout when hovering over menu
+                    if (menuCloseTimeoutRef.current) {
+                      clearTimeout(menuCloseTimeoutRef.current);
+                      menuCloseTimeoutRef.current = null;
+                    }
+                    setShowContextMenu(true);
+                  }}
+                  onMouseLeave={() => {
+                    // Delay closing the menu
+                    menuCloseTimeoutRef.current = setTimeout(() => {
+                      setShowContextMenu(false);
+                    }, 300);
+                  }}
                 >
                   {/* Menu Header */}
                   <div className="px-3 py-1.5 border-b border-slate-100">

@@ -103,50 +103,54 @@ const Conversation: React.FC<ConversationProps> = ({
   };
 
   return (
-    <div className="mt-8 max-w-2xl mx-auto">
-      <div className="space-y-4">
-        {messages.map((message) => (
+    <div className="space-y-4">
+      {messages.map((message) => (
+        <div
+          key={message.id}
+          className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+        >
           <div
-            key={message.id}
-            className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+            className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
+              message.isUser
+                ? 'bg-copado-blue text-white rounded-br-md'
+                : 'bg-slate-100 text-slate-800 rounded-bl-md'
+            }`}
           >
-            <div
-              className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
-                message.isUser
-                  ? 'bg-copado-blue text-white rounded-br-md'
-                  : 'bg-slate-100 text-slate-800 rounded-bl-md'
-              }`}
-            >
-              {message.isUser ? (
-                <div className="text-sm text-white">{message.content.content}</div>
-              ) : (
-                renderMessageContent(message.content)
-              )}
-              <p className={`text-xs mt-2 ${
-                message.isUser ? 'text-blue-100' : 'text-slate-500'
-              }`}>
-                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </p>
-            </div>
-          </div>
-        ))}
-        
-        {/* Typing Indicator */}
-        {showTypingIndicator && !messages.some(m => !m.isUser) && (
-          <div className="flex justify-start">
-            <div className="bg-slate-100 text-slate-800 rounded-2xl rounded-bl-md px-4 py-3">
-              <div className="flex items-center space-x-2">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.1s]"></div>
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                </div>
-                <span className="message-text text-sm">Copado is typing...</span>
+            {message.isUser ? (
+              <div className="text-sm text-white">
+                {typeof message.content === 'string' 
+                  ? message.content 
+                  : message.content.content}
               </div>
+            ) : (
+              renderMessageContent(typeof message.content === 'string' 
+                ? { type: 'text', content: message.content }
+                : message.content)
+            )}
+            <p className={`text-xs mt-2 ${
+              message.isUser ? 'text-blue-100' : 'text-slate-500'
+            }`}>
+              {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </p>
+          </div>
+        </div>
+      ))}
+      
+      {/* Typing Indicator */}
+      {showTypingIndicator && (
+        <div className="flex justify-start">
+          <div className="bg-slate-100 text-slate-800 rounded-2xl rounded-bl-md px-4 py-3">
+            <div className="flex items-center space-x-2">
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.1s]"></div>
+                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+              </div>
+              <span className="message-text text-sm">Copado is typing...</span>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

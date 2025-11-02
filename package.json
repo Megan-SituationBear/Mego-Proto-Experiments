@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:pages": "npm run build && mv dist/index.html dist/app.html && cp public/launcher.html dist/index.html",
+    "build:pages": "npm run build && cp dist/app.html dist/copado-home-page.html && cp index.html dist/index.html && cp ai-input-interactive-demo.html dist/ && cp contextual-chat.html dist/ && echo 'Q4 landing page and demo pages copied to dist/'",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -15,6 +15,7 @@
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/postcss": "^4.1.14",
     "@tailwindcss/vite": "^4.1.14",
+    "framer-motion": "^12.23.24",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.545.0",
     "react": "^19.1.1",

@@ -37,7 +37,8 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Plus, Settings, Paperclip, MessageSquare, Building2, Ticket, Grid } from 'lucide-react';
+import { Send, Plus, Settings, Paperclip, MessageSquare, Ticket, Grid, Cloud } from 'lucide-react';
+import { TabToggle } from './TabToggle';
 
 type PageContext = 'home' | 'workspace' | 'context';
 type ViewState = 'default' | 'focused' | 'focused-with-conversation';
@@ -68,6 +69,11 @@ interface AIInputProps {
   // Conversation props
   messages?: ConversationMessage[];
   showTypingIndicator?: boolean;
+  // Salesforce connection state props
+  isSalesforceConnected?: boolean;
+  connectedSandbox?: string | null; // e.g., "Production", "Dev Sandbox", "QA Sandbox"
+  onConnectSalesforce?: () => void;
+  onChangeSandbox?: () => void;
 }
 
 interface CodeSnippet {
@@ -98,11 +104,42 @@ const AIInput: React.FC<AIInputProps> = ({
   hasConversation = false,
   messages = [],
   showTypingIndicator = false,
+  isSalesforceConnected = false,
+  connectedSandbox: _connectedSandbox = null,
+  onConnectSalesforce,
+  onChangeSandbox,
 }) => {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [hasBeenFocused, setHasBeenFocused] = useState(false);
   const [showContextMenu, setShowContextMenu] = useState(false);
+  
+  // Mode toggle state with localStorage persistence
+  const [inputMode, setInputMode] = useState<'ask' | 'make' | 'automate'>(() => {
+    const saved = localStorage.getItem('aiInput-mode');
+    return (saved === 'ask' || saved === 'make' || saved === 'automate') ? saved : 'ask';
+  });
+
+  // Track if "Press enter to submit" tip has been shown (one-time only)
+  const [hasShownEnterTip, setHasShownEnterTip] = useState(() => {
+    return localStorage.getItem('aiInput-enterTipShown') === 'true';
+  });
+
+  // Update localStorage when mode changes
+  useEffect(() => {
+    localStorage.setItem('aiInput-mode', inputMode);
+  }, [inputMode]);
+
+  // Show tip once and mark as shown
+  useEffect(() => {
+    if (inputMode === 'ask' && !hasShownEnterTip && isFocused) {
+      const timer = setTimeout(() => {
+        setHasShownEnterTip(true);
+        localStorage.setItem('aiInput-enterTipShown', 'true');
+      }, 2000); // Show for 2 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [inputMode, hasShownEnterTip, isFocused]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
@@ -111,6 +148,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [extractedName, setExtractedName] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [codeSnippets, setCodeSnippets] = useState<CodeSnippet[]>([]);
+  // @ts-ignore - unused for now but will be used later
   const [integrationContexts, setIntegrationContexts] = useState<IntegrationContext[]>([]);
   
   // Simulate which integrations are connected (in real app, this would come from props or context)
@@ -153,6 +191,7 @@ const AIInput: React.FC<AIInputProps> = ({
   };
 
   // Delete code snippet
+  // @ts-ignore - unused for now but will be used later
   const deleteSnippet = (id: string) => {
     setCodeSnippets(prev => prev.filter(snippet => snippet.id !== id));
   };
@@ -240,6 +279,7 @@ const AIInput: React.FC<AIInputProps> = ({
   };
 
   // Delete integration context
+  // @ts-ignore - unused for now but will be used later
   const deleteIntegrationContext = (id: string) => {
     setIntegrationContexts(prev => prev.filter(ctx => ctx.id !== id));
   };
@@ -409,18 +449,36 @@ const AIInput: React.FC<AIInputProps> = ({
         messageContent = messageContent ? messageContent + snippetsText : snippetsText;
       }
       
+      // Prepend mode prefix to message based on selected mode
+      // This allows the backend/handler to differentiate between "ask", "make", and "automate" modes
+      const modePrefix = inputMode === 'make' ? '[MAKE] ' : inputMode === 'automate' ? '[AUTOMATE] ' : '[ASK] ';
+      messageContent = modePrefix + messageContent;
+      
       onSendMessage(messageContent);
       setValue('');
       setCodeSnippets([]);
       setHasBeenFocused(false);
     }
   };
+  
+  // Update placeholder based on mode
+  const modePlaceholder = inputMode === 'make' 
+    ? (placeholder && placeholder.includes('action') ? placeholder.replace('action', 'thing to make or create') : 'What would you like to make or create?')
+    : inputMode === 'automate'
+    ? 'What would you like to automate?'
+    : 'What can I help you with?';
+  
+  // Use custom placeholder if provided (e.g., "Continue the conversation..."), otherwise use mode-based placeholder
+  const effectivePlaceholder = placeholder || modePlaceholder;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    // In "ask" mode: Enter submits, Shift+Enter for new line
+    // In "make" mode: Enter always creates new line (need to click Send button)
+    if (e.key === 'Enter' && !e.shiftKey && inputMode === 'ask') {
       e.preventDefault();
       handleSubmit();
     }
+    // In "make" mode, Enter always creates a new line (default behavior)
   };
 
   const handleFocus = () => {
@@ -461,11 +519,6 @@ const AIInput: React.FC<AIInputProps> = ({
       action: () => handleOpenIntegrationModal('confluence')
     },
     { 
-      icon: Building2, 
-      label: 'Connect Org',
-      action: () => handleOpenIntegrationModal('org')
-    },
-    { 
       icon: Grid, 
       label: 'All Integrations',
       action: () => {
@@ -476,6 +529,10 @@ const AIInput: React.FC<AIInputProps> = ({
       }
     }
   ];
+
+  // Determine Salesforce connection state
+  const isMainInput = pageContext === 'home';
+  const isContextInput = pageContext === 'workspace' || pageContext === 'context';
 
   return (
     <div className={`w-full ${className}`}>
@@ -520,11 +577,81 @@ const AIInput: React.FC<AIInputProps> = ({
         </div>
       )}
 
+      {/* Salesforce Connection States */}
+      
+      {/* MAIN INPUT - No Salesforce Connection (logged out or logged in) */}
+      {isMainInput && !isSalesforceConnected && (
+        <div className="mb-4">
+          {/* TODO: Design - Main input when no Salesforce connected */}
+          {/* State: Main (home) - No Salesforce connection */}
+          {/* Applies to: Logged out users AND logged in users without Salesforce */}
+          {/* Show: Prompt to connect Salesforce */}
+          {/* isLoggedIn: {isLoggedIn ? 'true' : 'false'} */}
+        </div>
+      )}
+
+      {/* MAIN INPUT - Salesforce Connected (logged in only) */}
+      {isMainInput && isSalesforceConnected && (
+        <div className="mb-4">
+          {/* TODO: Design - Main input when Salesforce connected */}
+          {/* State: Main (home) - Salesforce connected */}
+          {/* Applies to: Logged in users with Salesforce connection */}
+          {/* Show: Connected sandbox name, allow change sandbox */}
+          {/* connectedSandbox: {connectedSandbox || 'Not specified'} */}
+        </div>
+      )}
+
+      {/* CONTEXT INPUT - No Salesforce Connection (logged out or logged in) */}
+      {isContextInput && !isSalesforceConnected && (
+        <div className="mb-4">
+          {/* TODO: Design - Context input when no Salesforce connected */}
+          {/* State: Context (workspace/context) - No Salesforce connection */}
+          {/* Applies to: Logged out users AND logged in users without Salesforce */}
+          {/* Show: Prompt to connect Salesforce (context-aware message) */}
+          {/* Keep context-aware setting: "Context For This Work:" */}
+          {/* isLoggedIn: {isLoggedIn ? 'true' : 'false'} */}
+        </div>
+      )}
+
+      {/* CONTEXT INPUT - Salesforce Connected (logged in only) */}
+      {isContextInput && isSalesforceConnected && (
+        <div className="mb-4">
+          {/* TODO: Design - Context input when Salesforce connected */}
+          {/* State: Context (workspace/context) - Salesforce connected */}
+          {/* Applies to: Logged in users with Salesforce connection */}
+          {/* Show: Connected sandbox name, allow change sandbox */}
+          {/* Keep context-aware setting: "Context For This Work:" */}
+          {/* connectedSandbox: {connectedSandbox || 'Not specified'} */}
+        </div>
+      )}
+
+      {/* Mode Toggle - Above input, centered */}
+      <div className="mb-3 flex justify-center items-center gap-3">
+        <TabToggle
+          tabs={[
+            { id: 'ask', label: 'Ask' },
+            { id: 'make', label: 'Make' },
+            { id: 'automate', label: 'Automate' }
+          ]}
+          activeTab={inputMode}
+          onTabChange={(id) => setInputMode(id as 'ask' | 'make' | 'automate')}
+          size="sm"
+          variant="default"
+        />
+        
+        {/* One-time "Press enter to submit" tip for Ask mode */}
+        {inputMode === 'ask' && !hasShownEnterTip && isFocused && (
+          <div className="text-xs text-slate-500 animate-in fade-in slide-in-from-left-2 duration-300">
+            Press enter to submit
+          </div>
+        )}
+      </div>
+
       {/* AI Input Field */}
       <div 
         className={`relative ${stateStyles.bgColor} rounded-2xl border-2 transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring} hover:shadow-2xl`}
       >
-        <div className="flex flex-col p-3">
+        <div className="flex flex-col">
           {/* Textarea that grows */}
           <textarea
             ref={textareaRef}
@@ -534,9 +661,10 @@ const AIInput: React.FC<AIInputProps> = ({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
-            placeholder={placeholder}
+            placeholder={effectivePlaceholder}
             disabled={disabled || loading}
-            className={`w-full px-4 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 ${
+            autoFocus={autoFocus}
+            className={`w-full px-6 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-center ${
               value ? 'text-slate-700' : 'text-slate-400'
             } ${isFocused ? 'placeholder-slate-500' : 'placeholder-slate-400'}`}
             style={{
@@ -546,137 +674,95 @@ const AIInput: React.FC<AIInputProps> = ({
               lineHeight: '1.5',
               transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
               fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: '14px'
+              fontSize: '16px',
+              fontWeight: '500'
             }}
             rows={1}
           />
 
-          {/* Integration Context Chips */}
-          {integrationContexts.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {integrationContexts.map((ctx) => {
-                const info = getIntegrationInfo(ctx.type);
-                return (
-                  <div key={ctx.id} className="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 rounded-lg px-3 py-1.5">
-                    <span className="text-sm">{info?.emoji}</span>
-                    <span className="text-xs font-medium text-blue-700">{ctx.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => deleteIntegrationContext(ctx.id)}
-                      className="ml-1 p-0.5 hover:bg-blue-200 rounded transition-colors"
-                      title="Remove"
-                    >
-                      <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          {/* Plus and Salesforce Buttons Row */}
+          <div className="flex flex-row justify-between items-start px-6 py-6 bg-white border-t border-slate-200 relative">
+            {/* Plus Button with Context Menu */}
+            <div className="relative">
+              <button
+                type="button"
+                onMouseEnter={() => setShowContextMenu(true)}
+                onMouseLeave={() => setShowContextMenu(false)}
+                onClick={() => setShowContextMenu(!showContextMenu)}
+                className="w-12 h-12 bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center group"
+                title="Add context"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
 
-          {/* Code Snippets Display */}
-          {codeSnippets.length > 0 && (
-            <div className="mt-2 space-y-2">
-              {codeSnippets.map((snippet, index) => (
-                <div key={snippet.id} className="flex items-start gap-2">
-                  <div className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                      </svg>
-                      <span className="text-xs text-slate-400">Code Snippet {index + 1} ({snippet.lineCount} lines)</span>
-                    </div>
-                    <pre className="text-xs text-slate-200 font-mono overflow-auto max-h-32 whitespace-pre-wrap break-all">
-                      {snippet.content}
-                    </pre>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => deleteSnippet(snippet.id)}
-                    className="flex-shrink-0 p-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
-                    title="Delete snippet"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Action buttons row - below textarea */}
-          <div className="flex items-center justify-between mt-3">
-            {/* Left action buttons */}
-            <div className="flex items-center gap-2 relative">
-            {/* Plus button with context menu */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setShowContextMenu(true)}
-              onMouseLeave={() => setShowContextMenu(false)}
-            >
-                <button 
-                  type="button"
-                  className="p-2.5 hover:bg-slate-100 rounded-lg transition-colors"
-                  title="Add context"
-                >
-                  <Plus className="w-5 h-5 text-slate-600" />
-                </button>
-
-                {/* Context Menu Dropdown */}
-                {showContextMenu && (
-                  <div 
-                    ref={menuRef}
-                    className="absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-bottom-2 duration-200"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      backdropFilter: 'blur(12px)',
-                    }}
+              {/* Context Menu Dropdown */}
+              {showContextMenu && (
+                <div 
+                  ref={menuRef}
+                  className="absolute left-0 top-full mt-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-top-2 duration-200"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(12px)',
+                  }}
                   onMouseEnter={() => setShowContextMenu(true)}
                   onMouseLeave={() => setShowContextMenu(false)}
-                  >
-                    {/* Menu Header */}
-                    <div className="px-3 py-1.5 border-b border-slate-100">
-                      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                        {pageContext === 'workspace' ? 'Context For This Work:' : 'Conversation Context:'}
-                      </p>
-                    </div>
-
-                    {/* Menu Items */}
-                    <div className="py-0.5">
-                      {contextMenuItems.map((item, index) => {
-                        const IconComponent = item.icon;
-                        return (
-                          <button
-                            key={index}
-                            onClick={item.action}
-                            className="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group"
-                          >
-                            <IconComponent className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
-                            <span className="text-xs text-slate-700 group-hover:text-blue-600 font-medium">
-                              {item.label}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
+                >
+                  {/* Menu Header */}
+                  <div className="px-3 py-1.5 border-b border-slate-100">
+                    <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                      {pageContext === 'workspace' ? 'Context For This Work:' : 'Conversation Context:'}
+                    </p>
                   </div>
-                )}
-              </div>
 
+                  {/* Menu Items */}
+                  <div className="py-0.5">
+                    {contextMenuItems.map((item, index) => {
+                      const IconComponent = item.icon;
+                      return (
+                        <button
+                          key={index}
+                          onClick={item.action}
+                          className="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group"
+                        >
+                          <IconComponent className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
+                          <span className="text-xs text-slate-700 group-hover:text-blue-600 font-medium">
+                            {item.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Salesforce Cloud Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (isSalesforceConnected && onChangeSandbox) {
+                  onChangeSandbox();
+                } else if (onConnectSalesforce) {
+                  onConnectSalesforce();
+                }
+              }}
+              className="w-12 h-12 bg-transparent border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
+              title={isSalesforceConnected ? "Change sandbox" : "Connect Salesforce"}
+            >
+              <Cloud className="w-5 h-5" />
+            </button>
+
+            {/* Settings Button */}
             {isLoggedIn && (
-              <button 
+              <button
                 type="button"
                 onClick={() => setShowSettingsModal(true)}
-                className="p-2.5 hover:bg-indigo-600 rounded-lg transition-colors group"
+                className="w-12 h-12 bg-transparent border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
                 title="Settings"
               >
-                <Settings className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors" />
+                <Settings className="w-5 h-5" />
               </button>
             )}
-            </div>
 
             {/* Send button */}
             <button 

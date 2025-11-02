@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { AIInput, TemplateCard, TopNav, type ConversationMessage } from '../components/ui';
+import { useState, useRef, useEffect } from 'react';
+import { AIInput, TemplateCard, TopNav, TabToggle } from '../components/ui';
 import FindTemplatesModal from '../components/ui/FindTemplatesModal';
+import Conversation, { type ConversationMessage } from '../components/Conversation';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
 
 interface HomePageProps {
@@ -45,72 +46,96 @@ const HomePage: React.FC<HomePageProps> = ({
 
   const recommendedTemplates = [
     {
-      category: "Deployment Fixes",
+      category: "Deploy",
       categoryColor: "slate" as const,
       savedHours: 35,
       title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
+      description: "Automate pre-deployment checks and fixes to catch issues before they reach production. Saves an average of 35 hours per deployment cycle.",
       favorites: 1234,
       views: 154
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Test",
+      categoryColor: "green" as const,
+      savedHours: 28,
+      title: "Automated Test Coverage Analysis",
+      description: "Identify gaps in test coverage and generate automated test scripts for your Salesforce org. Ensures 95%+ coverage before deployment.",
+      favorites: 892,
+      views: 89
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Org Magic",
+      categoryColor: "purple" as const,
+      savedHours: 42,
+      title: "Permission Set Audit & Remediation",
+      description: "Review and fix permission set misconfigurations automatically. Reduces security risks while maintaining user access requirements.",
+      favorites: 567,
+      views: 203
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Build",
+      categoryColor: "amber" as const,
+      savedHours: 51,
+      title: "Data Cleanup & Validation Workflow",
+      description: "Automate data quality checks and cleanup processes. Identifies duplicates, missing fields, and validation errors across your org.",
+      favorites: 1089,
+      views: 312
     },
     {
-      category: "Deployment Fixes",
+      category: "Plan",
       categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      savedHours: 19,
+      title: "API Integration Health Monitor",
+      description: "Track and optimize API usage across your Salesforce org. Prevents limit exceptions and identifies optimization opportunities.",
+      favorites: 723,
+      views: 145
     },
     {
-      category: "Deployment Fixes",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Body text body text body text Body text body text body text Body text body text Body text body text.",
-      favorites: 1234,
-      views: 154
+      category: "Org Magic",
+      categoryColor: "indigo" as const,
+      savedHours: 63,
+      title: "Query Optimization & Indexing",
+      description: "Analyze and optimize slow queries in your org. Automatically suggests indexes and query improvements to boost performance.",
+      favorites: 1445,
+      views: 278
     },
   ];
 
+  // Auto-scroll to bottom of conversation
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Scroll to top on page load/refresh
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
+  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [conversationMessages]);
+
+  // Helper function to clean AIInput messages (handles mode prefixes automatically)
+  const cleanAIInputMessage = (text: string): string => {
+    // Remove mode prefixes like [ASK] or [MAKE] that AIInput adds
+    return text.replace(/^\[(ASK|MAKE)\]\s*/i, '').trim();
+  };
+
   const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void) => {
-    if (!text.trim()) return;
+    // Clean the message from AIInput (removes mode prefixes)
+    const cleanText = cleanAIInputMessage(text);
+    if (!cleanText) return;
 
     // Increment user message count
     const newUserMessageCount = userMessageCount + 1;
     setUserMessageCount(newUserMessageCount);
 
-    // Create user conversation message
+    // Create user conversation message with proper format
     const userConversationMessage: ConversationMessage = {
       id: Date.now().toString(),
-      content: text,
+      content: {
+        type: 'text',
+        content: cleanText
+      },
       isUser: true,
       timestamp: new Date()
     };
@@ -125,12 +150,12 @@ const HomePage: React.FC<HomePageProps> = ({
     // Simulate AI response
     setTimeout(() => {
       const response = generateAIResponse(text, newUserMessageCount);
-      // Convert complex message format to simple string content
+      // Use the response message as-is (it already has proper MessageContent format)
       const aiMessage: ConversationMessage = {
         id: response.conversationMessage.id,
-        content: typeof response.conversationMessage.content === 'string' 
-          ? response.conversationMessage.content 
-          : response.conversationMessage.content.content,
+        content: typeof response.conversationMessage.content === 'string'
+          ? { type: 'text', content: response.conversationMessage.content }
+          : response.conversationMessage.content,
         isUser: false,
         timestamp: response.conversationMessage.timestamp
       };
@@ -144,22 +169,75 @@ const HomePage: React.FC<HomePageProps> = ({
       // After second exchange, create project
       if (newUserMessageCount === 2 && onCreateProject) {
         setTimeout(() => {
-          onCreateProject(text);
+          onCreateProject(cleanText);
         }, 1500);
       }
     }, 1200);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 animate-fadeIn">
+    <div className="min-h-screen bg-slate-50 animate-fadeIn relative">
+      <style>{`
+        .annotation-badge {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          width: 28px;
+          height: 28px;
+          background: linear-gradient(135deg, #f59e0b, #d97706);
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 14px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          z-index: 10;
+          border: 2px solid white;
+        }
+        
+        .annotation-wrapper {
+          position: relative;
+        }
+      `}</style>
       {/* Top Navigation Bar */}
       <TopNav
-        title=""
-        showBackButton={false}
         showLogo={true}
         logoText="+ COPADO AI"
-        showHamburger={true}
-        onHamburgerClick={() => setShowMenu(!showMenu)}
+        onLogoClick={() => {
+          // Navigate to home - could use window.location for now
+          if (window.location.pathname.includes('copado-home-page') || window.location.pathname.includes('app.html')) {
+            window.location.href = window.location.pathname.includes('copado-home-page') 
+              ? '/Mego-Proto-Experiments/copado-home-page.html?view=home'
+              : '/Mego-Proto-Experiments/app.html?view=home';
+          }
+        }}
+        onLearnClick={() => console.log('Learn clicked')}
+        onIntegrationsClick={() => console.log('Integrations clicked')}
+        onPricingClick={() => console.log('Pricing clicked')}
+        onSearchClick={() => console.log('Search clicked')}
+        onDashboardClick={() => {
+          // Navigate to dashboard - would use proper router in production
+          const url = window.location.pathname.includes('copado-home-page') 
+            ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
+            : '/Mego-Proto-Experiments/app.html?view=dashboard';
+          window.location.href = url;
+        }}
+        onAvatarClick={() => setShowMenu(!showMenu)}
+        userName={userName}
+        isLoggedIn={true}
+        connectedIntegrations={{
+          salesforce: true,
+          slack: true,
+          jira: false,
+          github: false,
+        }}
+        salesforceOrg={{
+          name: 'Acme Corp',
+          sandbox: 'dev-sandbox-01',
+        }}
+        onIntegrationClick={(integration) => console.log(`${integration} clicked`)}
       />
 
       {/* Slide-out Drawer Menu */}
@@ -333,44 +411,90 @@ const HomePage: React.FC<HomePageProps> = ({
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Welcome Section */}
-        <div className="mb-8 text-center">
-          <h1 className="text-5xl font-bold text-slate-900 mb-8">
-            Welcome, <span className="text-blue-600">{userName}</span>.
-          </h1>
-        </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-[calc(100vh-120px)] flex flex-col justify-center">
+        <div className="max-w-4xl mx-auto w-full">
+          {/* Welcome Heading */}
+          <div className="text-center mb-8 sm:mb-10">
+            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4 sm:mb-6">
+              Great work comes alive here
+            </h1>
+            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
+              Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
+            </p>
+          </div>
 
-        {/* AI Input Section */}
-        <div className="mb-12 max-w-4xl mx-auto">
-          <AIInput
-            placeholder="What action do you want to start?"
-            onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
-            onIntegrationsClick={() => console.log('Integrations clicked')}
-            autoFocus={false}
-            isLoggedIn={true}
-            pageContext="home"
-            hasConversation={conversationMessages.length > 0}
-            messages={conversationMessages}
-            showTypingIndicator={showCopadoTyping}
-          />
-
-          {/* Show "Creating workspace..." message after second user message */}
-          {userMessageCount === 2 && (
-            <div className="mt-4 text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                </div>
-                <span className="font-medium">Creating workspace...</span>
-              </div>
+          {/* Conversation Section */}
+          <div className="mb-6 sm:mb-8">
+            {/* Conversation Messages */}
+            <div className="mb-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
+              {conversationMessages.length > 0 && (
+                <>
+                  <Conversation
+                    messages={conversationMessages}
+                    showTypingIndicator={showCopadoTyping}
+                    onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
+                  />
+                  <div ref={messagesEndRef} />
+                </>
+              )}
             </div>
-          )}
+
+            {/* AI Input */}
+            <div className="mb-4">
+              <AIInput
+                placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : "Start a conversation or pick up where you left off"}
+                onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
+                onIntegrationsClick={() => console.log('Integrations clicked')}
+                autoFocus={false}
+                isLoggedIn={true}
+                pageContext="home"
+                hasConversation={conversationMessages.length > 0}
+                messages={[]}
+                showTypingIndicator={showCopadoTyping}
+              />
+            </div>
+
+            {/* Quick Actions - Below AI Input */}
+            {conversationMessages.length === 0 && (
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-slate-700 mb-4 text-center">Quick actions:</p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {[
+                    "Show me my Salesforce projects",
+                    "Create a deployment plan",
+                    "Analyze my org health",
+                    "Help with user management",
+                    "Create Automation"
+                  ].map((action, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSendMessage(action, setShowCopadoTyping)}
+                      className="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm"
+                    >
+                      {action}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Show "Creating workspace..." message after second user message */}
+            {userMessageCount === 2 && (
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-center gap-2 text-blue-700">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                  <span className="font-medium">Creating workspace...</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Pick up these Section */}
+        {/* Pick up these Section - Below Conversation */}
         <div className="mb-12">
           <div className="text-center mb-6">
             <h2 className="text-3xl font-bold text-slate-900 mb-6">
@@ -379,38 +503,17 @@ const HomePage: React.FC<HomePageProps> = ({
             
             {/* Toggle Button */}
             <div className="flex flex-col items-center gap-3 mb-6">
-              <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
-                <button
-                  onClick={() => setActiveTab('recent')}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeTab === 'recent'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  Recent
-                </button>
-                <button
-                  onClick={() => setActiveTab('favorites')}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeTab === 'favorites'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  Favorites
-                </button>
-                <button
-                  onClick={() => setActiveTab('suggested')}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeTab === 'suggested'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  Suggested Templates
-                </button>
-              </div>
+              <TabToggle
+                tabs={[
+                  { id: 'recent', label: 'Recent', count: recentItems.length },
+                  { id: 'favorites', label: 'Favorites', count: favoritedTemplates.length },
+                  { id: 'suggested', label: 'Suggested Templates' }
+                ]}
+                activeTab={activeTab}
+                onTabChange={(id) => setActiveTab(id as 'recent' | 'favorites' | 'suggested' | 'work' | 'templates')}
+                size="default"
+                variant="blue"
+              />
               
               <button
                 onClick={() => setShowFindTemplatesModal(true)}
@@ -420,7 +523,7 @@ const HomePage: React.FC<HomePageProps> = ({
               </button>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {activeTab === 'recent' ? (
               recentItems.length > 0 ? (
                 recentItems.map((item, index) => (

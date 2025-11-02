@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>404</title>
+    <meta http-equiv="refresh" content="0; url=./" />
+  </head>
+  <body>
+    <script>
+      // SPA fallback for GitHub Pages
+      (function() {
+        var redirectTo = './';
+        if (location.search && location.search.startsWith('?redirect=')) {
+          try {
+            var target = decodeURIComponent(location.search.replace('?redirect=', ''));
+            if (target.startsWith('/')) target = target.slice(1);
+            redirectTo = './' + target;
+          } catch (e) {}
+        }
+        location.replace(redirectTo);
+      })();
+    </script>
+  </body>
+  </html>
+
+

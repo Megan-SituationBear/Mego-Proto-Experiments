@@ -374,30 +374,39 @@ const AIInput: React.FC<AIInputProps> = ({
       if (viewState === 'default') {
         return {
           ...baseStyles,
-          shadow: 'shadow-lg',
-          borderColor: 'border-blue-200',
+          shadow: 'shadow-xl',
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2',
+          bgColor: 'bg-white',
+          height: '80px',
+          padding: '20px',
+          borderRadius: 'rounded-3xl',
+          containerPadding: 'p-4',
+          gap: 'gap-4',
         };
       }
       if (viewState === 'focused') {
         return {
           ...baseStyles,
-          containerScale: 'scale-[1.01]',
-          borderColor: 'border-blue-400',
+          containerScale: 'scale-100',
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2',
           shadow: 'shadow-xl',
-          ring: 'ring-2 ring-blue-200',
+          ring: '',
           height: '100px',
-          padding: '16px',
+          padding: '18px',
         };
       }
       if (viewState === 'focused-with-conversation') {
         return {
           ...baseStyles,
-          containerScale: 'scale-[1.02]',
-          borderColor: 'border-blue-500',
-          shadow: 'shadow-2xl',
-          ring: 'ring-4 ring-blue-100',
-          height: '140px',
-          padding: '24px',
+          containerScale: 'scale-100',
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2',
+          shadow: 'shadow-xl',
+          ring: '',
+          height: '120px',
+          padding: '22px',
         };
       }
     }

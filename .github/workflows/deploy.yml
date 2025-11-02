@@ -43,11 +43,12 @@ jobs:
         working-directory: ./new-proto
         run: npm run build
         
-      - name: Copy files for GitHub Pages
-        working-directory: ./new-proto
+      - name: Setup deployment files
         run: |
-          cp dist/app.html dist/copado-home-page.html
-          echo "Copied app.html to copado-home-page.html"
+          cp index.html new-proto/dist/
+          cp new-proto/dist/app.html new-proto/dist/copado-home-page.html
+          echo "Files prepared for deployment"
+          ls -la new-proto/dist/
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

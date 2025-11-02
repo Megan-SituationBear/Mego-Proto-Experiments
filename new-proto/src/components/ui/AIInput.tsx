@@ -752,7 +752,7 @@ const AIInput: React.FC<AIInputProps> = ({
                   <Plus className="w-5 h-5" />
                 </button>
 
-              {/* Context Menu Dropdown - Always floats above - Rendered via Portal */}
+              {/* Context Menu Dropdown - Always floats above with safe positioning - Rendered via Portal */}
               {showContextMenu && createPortal(
                 <div 
                   ref={menuRef}
@@ -760,9 +760,11 @@ const AIInput: React.FC<AIInputProps> = ({
                   style={{
                     background: 'rgba(255, 255, 255, 0.98)',
                     backdropFilter: 'blur(12px)',
-                    zIndex: 9999,
-                    bottom: `${window.innerHeight - menuPosition.top + 8}px`,
+                    zIndex: 2000,
+                    bottom: `${Math.max(window.innerHeight - menuPosition.top + 8, 280)}px`,
                     left: `${menuPosition.left}px`,
+                    maxHeight: '300px',
+                    overflowY: 'auto',
                   }}
                   onMouseEnter={() => setShowContextMenu(true)}
                   onMouseLeave={() => setShowContextMenu(false)}

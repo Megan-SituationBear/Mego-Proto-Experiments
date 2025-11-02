@@ -300,11 +300,14 @@ const AIInput: React.FC<AIInputProps> = ({
   // Determine current view state
   const getViewState = (): ViewState => {
     if (isFocused && hasConversation) return 'focused-with-conversation';
-    if (isFocused || hasBeenFocused) return 'focused';
+    if (isFocused || hasBeenFocused || value.trim()) return 'focused';
     return 'default';
   };
 
   const viewState = getViewState();
+  
+  // Determine if placeholder should be centered (default state with no text)
+  const isCenteredPlaceholder = viewState === 'default' && !value.trim();
 
   // Get styling based on state combination
   const getStateStyles = () => {
@@ -326,23 +329,23 @@ const AIInput: React.FC<AIInputProps> = ({
     // Logged Out States - Home Page (Landing/Intro)
     if (!isLoggedIn && pageContext === 'home') {
       if (viewState === 'default') {
-        // New design: slate background, rounded-3xl, taller input
+        // Default state: Shorter, centered placeholder
         return {
           ...baseStyles,
           shadow: 'shadow-xl',
           borderColor: 'border-indigo-600',
           bgColor: 'bg-white',
           containerScale: 'scale-100',
-          height: '80px',
-          padding: '20px',
+          height: '56px', // Shorter default state
+          padding: '16px',
           borderRadius: 'rounded-3xl',
-          containerPadding: 'p-4',
-          gap: 'gap-4',
+          containerPadding: 'p-3',
+          gap: 'gap-3',
           borderWidth: 'border-2', // 2px border
         };
       }
       if (viewState === 'focused') {
-        // Expanded, focused state - no conversation yet
+        // Text entry state: Taller, left-aligned
         return {
           ...baseStyles,
           containerScale: 'scale-100', // Keep same width (no scale)
@@ -352,7 +355,7 @@ const AIInput: React.FC<AIInputProps> = ({
           ring: '',
           bgColor: 'bg-white',
           height: '100px',
-          padding: '18px',
+          padding: '20px',
         };
       }
       if (viewState === 'focused-with-conversation') {
@@ -366,7 +369,7 @@ const AIInput: React.FC<AIInputProps> = ({
           ring: '',
           bgColor: 'bg-white',
           height: '120px',
-          padding: '22px',
+          padding: '24px',
         };
       }
     }
@@ -374,20 +377,22 @@ const AIInput: React.FC<AIInputProps> = ({
     // Logged In States
     if (isLoggedIn && pageContext === 'home') {
       if (viewState === 'default') {
+        // Default state: Shorter, centered placeholder
         return {
           ...baseStyles,
           shadow: 'shadow-xl',
           borderColor: 'border-indigo-600',
           borderWidth: 'border-2',
           bgColor: 'bg-white',
-          height: '80px',
-          padding: '20px',
+          height: '56px', // Shorter default state
+          padding: '16px',
           borderRadius: 'rounded-3xl',
-          containerPadding: 'p-4',
-          gap: 'gap-4',
+          containerPadding: 'p-3',
+          gap: 'gap-3',
         };
       }
       if (viewState === 'focused') {
+        // Text entry state: Taller, left-aligned
         return {
           ...baseStyles,
           containerScale: 'scale-100',
@@ -396,7 +401,7 @@ const AIInput: React.FC<AIInputProps> = ({
           shadow: 'shadow-xl',
           ring: '',
           height: '100px',
-          padding: '18px',
+          padding: '20px',
         };
       }
       if (viewState === 'focused-with-conversation') {
@@ -408,7 +413,7 @@ const AIInput: React.FC<AIInputProps> = ({
           shadow: 'shadow-xl',
           ring: '',
           height: '120px',
-          padding: '22px',
+          padding: '24px',
         };
       }
     }
@@ -697,13 +702,13 @@ const AIInput: React.FC<AIInputProps> = ({
             placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className="w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out text-left text-slate-900 placeholder-slate-600"
+            className={`w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out ${isCenteredPlaceholder ? 'text-center placeholder:text-center' : 'text-left placeholder:text-left'} text-slate-900 placeholder-slate-600`}
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
               height: stateStyles.height,
               lineHeight: '1.5',
-              transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+              transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s cubic-bezier(0.4, 0, 0.2, 1), text-align 0.3s ease-out',
               fontFamily: 'Inter, system-ui, sans-serif',
               fontSize: '16px',
               fontWeight: '400',

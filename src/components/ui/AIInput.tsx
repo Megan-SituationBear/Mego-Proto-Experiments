@@ -315,20 +315,26 @@ const AIInput: React.FC<AIInputProps> = ({
       ring: '',
       height: '48px',
       padding: '12px',
+      borderRadius: 'rounded-2xl',
+      containerPadding: 'p-3',
+      gap: 'gap-3',
     };
 
     // Logged Out States - Home Page (Landing/Intro)
     if (!isLoggedIn && pageContext === 'home') {
       if (viewState === 'default') {
-        // Subtle, inviting default state
+        // New design: blue border, rounded-3xl, minimal padding
         return {
           ...baseStyles,
-          shadow: 'shadow-2xl hover:shadow-3xl',
-          borderColor: 'border-slate-200',
+          shadow: '',
+          borderColor: 'border-[#155dfc]',
           bgColor: 'bg-white',
-          containerScale: 'scale-100 hover:scale-[1.005]',
+          containerScale: 'scale-100',
           height: '56px',
-          padding: '14px',
+          padding: '12px',
+          borderRadius: 'rounded-3xl',
+          containerPadding: 'p-1',
+          gap: 'gap-3',
         };
       }
       if (viewState === 'focused') {
@@ -649,10 +655,28 @@ const AIInput: React.FC<AIInputProps> = ({
 
       {/* AI Input Field */}
       <div 
-        className={`relative ${stateStyles.bgColor} rounded-2xl border-2 transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring} hover:shadow-2xl`}
+        className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} border transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring}`}
       >
-        <div className="flex flex-col">
-          {/* Textarea that grows */}
+        <div className={`flex flex-col ${stateStyles.containerPadding} ${stateStyles.gap}`}>
+          {/* Text: "How can I help you today?" OR Textarea */}
+          {!value && viewState === 'default' && !isLoggedIn && pageContext === 'home' ? (
+            <div 
+              className="w-full px-6 text-center cursor-text text-slate-950"
+              onClick={() => textareaRef.current?.focus()}
+              style={{
+                paddingTop: stateStyles.padding,
+                paddingBottom: stateStyles.padding,
+                lineHeight: '1.625rem',
+                fontFamily: 'Montserrat, Roboto, sans-serif',
+                fontSize: '20px',
+                fontWeight: '500',
+                letterSpacing: '-0.01125rem',
+              }}
+            >
+              How can I help you today?
+            </div>
+          ) : null}
+          
           <textarea
             ref={textareaRef}
             value={value}
@@ -664,13 +688,15 @@ const AIInput: React.FC<AIInputProps> = ({
             placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className={`w-full px-6 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-center ${
+            className={`w-full px-6 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 ${
+              viewState === 'default' && !isLoggedIn && pageContext === 'home' && !value ? 'h-0 opacity-0' : 'text-center'
+            } ${
               value ? 'text-slate-700' : 'text-slate-400'
             } ${isFocused ? 'placeholder-slate-500' : 'placeholder-slate-400'}`}
             style={{
-              paddingTop: stateStyles.padding,
-              paddingBottom: stateStyles.padding,
-              height: stateStyles.height,
+              paddingTop: value || viewState !== 'default' ? stateStyles.padding : '0',
+              paddingBottom: value || viewState !== 'default' ? stateStyles.padding : '0',
+              height: value || viewState !== 'default' ? stateStyles.height : '0',
               lineHeight: '1.5',
               transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
               fontFamily: 'Inter, system-ui, sans-serif',
@@ -680,20 +706,22 @@ const AIInput: React.FC<AIInputProps> = ({
             rows={1}
           />
 
-          {/* Plus and Salesforce Buttons Row */}
-          <div className="flex flex-row justify-between items-start px-6 py-6 bg-white border-t border-slate-200 relative">
-            {/* Plus Button with Context Menu */}
-            <div className="relative">
-              <button
-                type="button"
-                onMouseEnter={() => setShowContextMenu(true)}
-                onMouseLeave={() => setShowContextMenu(false)}
-                onClick={() => setShowContextMenu(!showContextMenu)}
-                className="w-12 h-12 bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center group"
-                title="Add context"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
+          {/* Actions Row */}
+          <div className="flex flex-row justify-between items-center bg-white relative">
+            {/* Action Left: Plus and Settings Buttons */}
+            <div className="flex flex-row items-center gap-0 px-2">
+              {/* Plus Button with Context Menu */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onMouseEnter={() => setShowContextMenu(true)}
+                  onMouseLeave={() => setShowContextMenu(false)}
+                  onClick={() => setShowContextMenu(!showContextMenu)}
+                  className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
+                  title="Add context"
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
 
               {/* Context Menu Dropdown */}
               {showContextMenu && (
@@ -734,35 +762,36 @@ const AIInput: React.FC<AIInputProps> = ({
                   </div>
                 </div>
               )}
-            </div>
+              </div>
 
-            {/* Salesforce Cloud Button */}
-            <button
-              type="button"
-              onClick={() => {
-                if (isSalesforceConnected && onChangeSandbox) {
-                  onChangeSandbox();
-                } else if (onConnectSalesforce) {
-                  onConnectSalesforce();
-                }
-              }}
-              className="w-12 h-12 bg-transparent border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
-              title={isSalesforceConnected ? "Change sandbox" : "Connect Salesforce"}
-            >
-              <Cloud className="w-5 h-5" />
-            </button>
-
-            {/* Settings Button */}
-            {isLoggedIn && (
+              {/* Salesforce Cloud Button */}
               <button
                 type="button"
-                onClick={() => setShowSettingsModal(true)}
-                className="w-12 h-12 bg-transparent border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
-                title="Settings"
+                onClick={() => {
+                  if (isSalesforceConnected && onChangeSandbox) {
+                    onChangeSandbox();
+                  } else if (onConnectSalesforce) {
+                    onConnectSalesforce();
+                  }
+                }}
+                className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
+                title={isSalesforceConnected ? "Change sandbox" : "Connect Salesforce"}
               >
-                <Settings className="w-5 h-5" />
+                <Cloud className="w-5 h-5" />
               </button>
-            )}
+
+              {/* Settings Button - Square with Icon */}
+              {isLoggedIn && (
+                <button
+                  type="button"
+                  onClick={() => setShowSettingsModal(true)}
+                  className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
+                  title="Settings"
+                >
+                  <Settings className="w-5 h-5" />
+                </button>
+              )}
+            </div>
 
             {/* Send button */}
             <button 

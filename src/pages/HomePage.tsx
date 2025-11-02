@@ -420,7 +420,7 @@ const HomePage: React.FC<HomePageProps> = ({
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-[calc(100vh-120px)] flex flex-col justify-center">
         <div className="max-w-4xl mx-auto w-full">
         {/* Welcome Heading */}
-        <div className="text-center mb-16 sm:mb-20 py-8 sm:py-12">
+        <div className="text-center mb-8 py-4">
           <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-6 sm:mb-8">
             Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
           </p>

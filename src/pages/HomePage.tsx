@@ -13,6 +13,7 @@ interface HomePageProps {
   onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
   onViewTemplate?: (template: any) => void;
+  onNavigateToDashboard?: () => void;
 }
 
 /**
@@ -28,6 +29,7 @@ const HomePage: React.FC<HomePageProps> = ({
   onCreateProject,
   onLogout,
   onViewTemplate,
+  onNavigateToDashboard,
 }) => {
   // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
@@ -218,11 +220,15 @@ const HomePage: React.FC<HomePageProps> = ({
         onPricingClick={() => console.log('Pricing clicked')}
         onSearchClick={() => console.log('Search clicked')}
         onDashboardClick={() => {
-          // Navigate to dashboard - would use proper router in production
-          const url = window.location.pathname.includes('copado-home-page') 
-            ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
-            : '/Mego-Proto-Experiments/app.html?view=dashboard';
-          window.location.href = url;
+          if (onNavigateToDashboard) {
+            onNavigateToDashboard();
+          } else {
+            // Fallback navigation
+            const url = window.location.pathname.includes('copado-home-page') 
+              ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
+              : '/Mego-Proto-Experiments/app.html?view=dashboard';
+            window.location.href = url;
+          }
         }}
         onAvatarClick={() => setShowMenu(!showMenu)}
         userName={userName}
@@ -411,20 +417,20 @@ const HomePage: React.FC<HomePageProps> = ({
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-[calc(100vh-120px)] flex flex-col justify-center">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="max-w-4xl mx-auto w-full">
-          {/* Welcome Heading */}
-          <div className="text-center mb-8 sm:mb-10">
-            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4 sm:mb-6">
-              Great work comes alive here
-            </h1>
-            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
-              Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
-            </p>
-          </div>
+        {/* Welcome Heading */}
+        <div className="text-center mb-3 py-2">
+          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mb-2 sm:mb-3">
+            Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
+          </p>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900">
+            Great work comes alive here
+          </h1>
+        </div>
 
           {/* Conversation Section */}
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-4 sm:mb-6">
             {/* Conversation Messages */}
             <div className="mb-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
               {conversationMessages.length > 0 && (
@@ -456,8 +462,8 @@ const HomePage: React.FC<HomePageProps> = ({
 
             {/* Quick Actions - Below AI Input */}
             {conversationMessages.length === 0 && (
-              <div className="space-y-3">
-                <p className="text-sm font-medium text-slate-700 mb-4 text-center">Quick actions:</p>
+              <div className="space-y-2">
+                <p className="text-xs sm:text-sm font-medium text-slate-700 mb-2 text-center">Quick actions:</p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {[
                     "Show me my Salesforce projects",
@@ -469,7 +475,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     <button
                       key={index}
                       onClick={() => handleSendMessage(action, setShowCopadoTyping)}
-                      className="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm"
+                      className="px-3 py-1.5 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-xs sm:text-sm"
                     >
                       {action}
                     </button>

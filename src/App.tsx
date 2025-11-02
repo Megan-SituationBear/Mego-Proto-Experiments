@@ -350,6 +350,7 @@ function App() {
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}
         onViewTemplate={handleViewTemplate}
+        onNavigateToDashboard={() => setCurrentView('dashboard')}
       />
     );
   }

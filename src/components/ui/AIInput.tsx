@@ -315,30 +315,39 @@ const AIInput: React.FC<AIInputProps> = ({
       ring: '',
       height: '48px',
       padding: '12px',
+      borderRadius: 'rounded-2xl',
+      containerPadding: 'p-3',
+      gap: 'gap-3',
+      borderWidth: 'border', // Default 1px border
     };
 
     // Logged Out States - Home Page (Landing/Intro)
     if (!isLoggedIn && pageContext === 'home') {
       if (viewState === 'default') {
-        // Subtle, inviting default state
+        // New design: slate background, rounded-3xl, taller input
         return {
           ...baseStyles,
-          shadow: 'shadow-2xl hover:shadow-3xl',
-          borderColor: 'border-slate-200',
+          shadow: 'shadow-xl',
+          borderColor: 'border-indigo-600',
           bgColor: 'bg-white',
-          containerScale: 'scale-100 hover:scale-[1.005]',
-          height: '56px',
-          padding: '14px',
+          containerScale: 'scale-100',
+          height: '80px',
+          padding: '20px',
+          borderRadius: 'rounded-3xl',
+          containerPadding: 'p-4',
+          gap: 'gap-4',
+          borderWidth: 'border-2', // 2px border
         };
       }
       if (viewState === 'focused') {
         // Expanded, focused state - no conversation yet
         return {
           ...baseStyles,
-          containerScale: 'scale-[1.02]',
-          borderColor: 'border-blue-400',
-          shadow: 'shadow-2xl',
-          ring: 'ring-4 ring-blue-50',
+          containerScale: 'scale-100', // Keep same width (no scale)
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2', // 2px border
+          shadow: 'shadow-xl',
+          ring: '',
           bgColor: 'bg-white',
           height: '100px',
           padding: '18px',
@@ -348,10 +357,11 @@ const AIInput: React.FC<AIInputProps> = ({
         // Maximum expansion when conversation is active
         return {
           ...baseStyles,
-          containerScale: 'scale-[1.03]',
-          borderColor: 'border-blue-500',
-          shadow: 'shadow-3xl',
-          ring: 'ring-6 ring-blue-100/50',
+          containerScale: 'scale-100', // Keep same width (no scale)
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2', // 2px border
+          shadow: 'shadow-xl',
+          ring: '',
           bgColor: 'bg-white',
           height: '120px',
           padding: '22px',
@@ -364,30 +374,39 @@ const AIInput: React.FC<AIInputProps> = ({
       if (viewState === 'default') {
         return {
           ...baseStyles,
-          shadow: 'shadow-lg',
-          borderColor: 'border-blue-200',
+          shadow: 'shadow-xl',
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2',
+          bgColor: 'bg-white',
+          height: '80px',
+          padding: '20px',
+          borderRadius: 'rounded-3xl',
+          containerPadding: 'p-4',
+          gap: 'gap-4',
         };
       }
       if (viewState === 'focused') {
         return {
           ...baseStyles,
-          containerScale: 'scale-[1.01]',
-          borderColor: 'border-blue-400',
+          containerScale: 'scale-100',
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2',
           shadow: 'shadow-xl',
-          ring: 'ring-2 ring-blue-200',
+          ring: '',
           height: '100px',
-          padding: '16px',
+          padding: '18px',
         };
       }
       if (viewState === 'focused-with-conversation') {
         return {
           ...baseStyles,
-          containerScale: 'scale-[1.02]',
-          borderColor: 'border-blue-500',
-          shadow: 'shadow-2xl',
-          ring: 'ring-4 ring-blue-100',
-          height: '140px',
-          padding: '24px',
+          containerScale: 'scale-100',
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2',
+          shadow: 'shadow-xl',
+          ring: '',
+          height: '120px',
+          padding: '22px',
         };
       }
     }
@@ -420,16 +439,22 @@ const AIInput: React.FC<AIInputProps> = ({
 
   const stateStyles = getStateStyles();
 
-  // Auto-resize textarea based on state
+  // Force hide scrollbar on mount and updates
   useEffect(() => {
     const textarea = textareaRef.current;
-    if (textarea && (isFocused || hasBeenFocused)) {
-      textarea.style.height = 'auto';
-      const newHeight = Math.min(textarea.scrollHeight, 300); // Max height of 300px
-      const minHeight = parseInt(stateStyles.height);
-      textarea.style.height = Math.max(newHeight, minHeight) + 'px';
+    if (textarea) {
+      // Force hide scrollbar with all methods - use setProperty for better control
+      textarea.style.setProperty('overflow', 'clip', 'important');
+      textarea.style.setProperty('overflow-y', 'clip', 'important');
+      textarea.style.setProperty('overflow-x', 'clip', 'important');
+      textarea.style.setProperty('scrollbar-width', 'none', 'important');
+      textarea.style.setProperty('-ms-overflow-style', 'none', 'important');
+      textarea.style.setProperty('max-height', stateStyles.height, 'important');
     }
   }, [value, isFocused, hasBeenFocused, stateStyles.height]);
+
+  // Auto-resize textarea based on state - REMOVED to prevent scrollbar
+  // Using fixed heights from stateStyles instead
 
   // Autofocus on mount if requested
   useEffect(() => {
@@ -649,10 +674,16 @@ const AIInput: React.FC<AIInputProps> = ({
 
       {/* AI Input Field */}
       <div 
-        className={`relative ${stateStyles.bgColor} rounded-2xl border-2 transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring} hover:shadow-2xl`}
+        className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.ring}`}
+        style={{
+          transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflow: 'hidden',
+          transform: 'scale(1)', // Lock width at 100% - no scaling
+          transformOrigin: 'top center',
+        }}
       >
-        <div className="flex flex-col">
-          {/* Textarea that grows */}
+        <div className={`flex flex-col ${stateStyles.containerPadding} ${stateStyles.gap}`}>
+          {/* Textarea - always visible and functional */}
           <textarea
             ref={textareaRef}
             value={value}
@@ -664,42 +695,47 @@ const AIInput: React.FC<AIInputProps> = ({
             placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className={`w-full px-6 text-sm bg-transparent outline-none resize-none font-body transition-all duration-500 text-center ${
-              value ? 'text-slate-700' : 'text-slate-400'
-            } ${isFocused ? 'placeholder-slate-500' : 'placeholder-slate-400'}`}
+            className="w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out text-left text-slate-900 placeholder-slate-600"
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
               height: stateStyles.height,
               lineHeight: '1.5',
-              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+              transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
               fontFamily: 'Inter, system-ui, sans-serif',
               fontSize: '16px',
-              fontWeight: '500'
-            }}
+              fontWeight: '400',
+              minHeight: stateStyles.height,
+              maxHeight: stateStyles.height,
+              overflow: 'clip',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            } as React.CSSProperties}
             rows={1}
           />
 
-          {/* Plus and Salesforce Buttons Row */}
-          <div className="flex flex-row justify-between items-start px-6 py-6 bg-white border-t border-slate-200 relative">
-            {/* Plus Button with Context Menu */}
-            <div className="relative">
-              <button
-                type="button"
-                onMouseEnter={() => setShowContextMenu(true)}
-                onMouseLeave={() => setShowContextMenu(false)}
-                onClick={() => setShowContextMenu(!showContextMenu)}
-                className="w-12 h-12 bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center group"
-                title="Add context"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
+          {/* Actions Row */}
+          <div className="flex flex-row justify-between items-center bg-white relative">
+            {/* Action Left: Plus and Settings Buttons */}
+            <div className="flex flex-row items-center gap-0 px-2">
+              {/* Plus Button with Context Menu */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onMouseEnter={() => setShowContextMenu(true)}
+                  onMouseLeave={() => setShowContextMenu(false)}
+                  onClick={() => setShowContextMenu(!showContextMenu)}
+                  className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
+                  title="Add context"
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
 
-              {/* Context Menu Dropdown */}
+              {/* Context Menu Dropdown - Opens upward */}
               {showContextMenu && (
                 <div 
                   ref={menuRef}
-                  className="absolute left-0 top-full mt-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-top-2 duration-200"
+                  className="absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-bottom-2 duration-200"
                   style={{
                     background: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(12px)',
@@ -734,35 +770,36 @@ const AIInput: React.FC<AIInputProps> = ({
                   </div>
                 </div>
               )}
-            </div>
+              </div>
 
-            {/* Salesforce Cloud Button */}
-            <button
-              type="button"
-              onClick={() => {
-                if (isSalesforceConnected && onChangeSandbox) {
-                  onChangeSandbox();
-                } else if (onConnectSalesforce) {
-                  onConnectSalesforce();
-                }
-              }}
-              className="w-12 h-12 bg-transparent border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
-              title={isSalesforceConnected ? "Change sandbox" : "Connect Salesforce"}
-            >
-              <Cloud className="w-5 h-5" />
-            </button>
-
-            {/* Settings Button */}
-            {isLoggedIn && (
+              {/* Salesforce Cloud Button */}
               <button
                 type="button"
-                onClick={() => setShowSettingsModal(true)}
-                className="w-12 h-12 bg-transparent border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
-                title="Settings"
+                onClick={() => {
+                  if (isSalesforceConnected && onChangeSandbox) {
+                    onChangeSandbox();
+                  } else if (onConnectSalesforce) {
+                    onConnectSalesforce();
+                  }
+                }}
+                className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
+                title={isSalesforceConnected ? "Change sandbox" : "Connect Salesforce"}
               >
-                <Settings className="w-5 h-5" />
+                <Cloud className="w-5 h-5" />
               </button>
-            )}
+
+              {/* Settings Button - Square with Icon */}
+              {isLoggedIn && (
+                <button
+                  type="button"
+                  onClick={() => setShowSettingsModal(true)}
+                  className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
+                  title="Settings"
+                >
+                  <Settings className="w-5 h-5" />
+                </button>
+              )}
+            </div>
 
             {/* Send button */}
             <button 

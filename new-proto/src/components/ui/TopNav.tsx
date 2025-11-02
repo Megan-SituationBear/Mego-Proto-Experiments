@@ -124,10 +124,13 @@ const TopNav: React.FC<TopNavProps> = ({
   // Dropdown state
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [learnOpen, setLearnOpen] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
   const integrationsRef = useRef<HTMLDivElement>(null);
   const learnRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   
-  // Close dropdowns when clicking outside
+  // Close dropdowns and search when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (integrationsRef.current && !integrationsRef.current.contains(event.target as Node)) {
@@ -136,11 +139,21 @@ const TopNav: React.FC<TopNavProps> = ({
       if (learnRef.current && !learnRef.current.contains(event.target as Node)) {
         setLearnOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setSearchExpanded(false);
+      }
     };
     
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  
+  // Focus input when search expands
+  useEffect(() => {
+    if (searchExpanded && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [searchExpanded]);
   
   const integrations = [
     { id: 'salesforce' as const, name: 'Salesforce', icon: '🏢' },
@@ -387,19 +400,44 @@ const TopNav: React.FC<TopNavProps> = ({
 
           {/* Right Side - Search + Dashboard + Avatar */}
           <div className="flex items-center gap-3">
-            {/* Search */}
+            {/* Expandable Search */}
             {onSearchClick && (
-              <button
-                onClick={onSearchClick}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-sm text-slate-600 hover:text-slate-900"
-                title="Search (⌘K)"
-              >
-                <Search className="w-4 h-4" />
-                <span className="hidden sm:inline">Search</span>
-                <kbd className="hidden md:inline-flex items-center px-1.5 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100 border border-slate-200 rounded">
-                  ⌘K
-                </kbd>
-              </button>
+              <div ref={searchRef} className="relative">
+                <div 
+                  className={`flex items-center gap-2 rounded-lg border border-slate-200 bg-white transition-all duration-300 ease-in-out overflow-hidden ${
+                    searchExpanded ? 'w-64' : 'w-10'
+                  }`}
+                >
+                  <button
+                    onClick={() => {
+                      if (!searchExpanded) {
+                        setSearchExpanded(true);
+                      }
+                    }}
+                    className="p-2 text-slate-600 hover:text-slate-900 transition-colors flex-shrink-0"
+                    title="Search (⌘K)"
+                  >
+                    <Search className="w-4 h-4" />
+                  </button>
+                  {searchExpanded && (
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      placeholder="Search..."
+                      className="flex-1 outline-none text-sm text-slate-900 placeholder-slate-500 pr-3 bg-transparent"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          onSearchClick();
+                          setSearchExpanded(false);
+                        }
+                        if (e.key === 'Escape') {
+                          setSearchExpanded(false);
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
             )}
             
             {/* My Dashboard Button */}

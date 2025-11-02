@@ -828,6 +828,33 @@ const AIInput: React.FC<AIInputProps> = ({
                       );
                     })}
                   </div>
+                  
+                  {/* Uploaded Files Section */}
+                  {uploadedFiles.length > 0 && (
+                    <>
+                      <div className="border-t border-slate-100 mt-1 pt-1"></div>
+                      <div className="px-3 py-1.5">
+                        <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                          Added Context:
+                        </p>
+                      </div>
+                      <div className="py-0.5 max-h-32 overflow-y-auto">
+                        {uploadedFiles.map((file) => (
+                          <div
+                            key={file.id}
+                            className="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors"
+                          >
+                            <span className="text-sm">
+                              {file.type === 'document' ? '📄' : file.type === 'image' ? '🖼️' : '💻'}
+                            </span>
+                            <span className="text-xs text-slate-700 truncate flex-1">
+                              {file.name}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>,
                 document.body
               )}
@@ -927,7 +954,12 @@ const AIInput: React.FC<AIInputProps> = ({
                 </button>
                 <button 
                   onClick={() => {
-                    console.log('Files uploaded');
+                    // Simulate adding files to context
+                    const newFiles = [
+                      { id: Date.now().toString(), name: 'example-doc.pdf', type: 'document' as const },
+                      { id: (Date.now() + 1).toString(), name: 'screenshot.png', type: 'image' as const },
+                    ];
+                    setUploadedFiles([...uploadedFiles, ...newFiles]);
                     setShowUploadModal(false);
                   }}
                   className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"

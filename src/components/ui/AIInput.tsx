@@ -434,10 +434,17 @@ const AIInput: React.FC<AIInputProps> = ({
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea && (isFocused || hasBeenFocused)) {
+      // Temporarily allow overflow for scrollHeight calculation
+      const originalOverflow = textarea.style.overflow;
+      textarea.style.overflow = 'hidden';
       textarea.style.height = 'auto';
       const newHeight = Math.min(textarea.scrollHeight, 300); // Max height of 300px
       const minHeight = parseInt(stateStyles.height);
       textarea.style.height = Math.max(newHeight, minHeight) + 'px';
+      // Ensure overflow stays hidden and scrollbar is hidden
+      textarea.style.overflow = 'hidden';
+      textarea.style.scrollbarWidth = 'none';
+      textarea.style.msOverflowStyle = 'none';
     }
   }, [value, isFocused, hasBeenFocused, stateStyles.height]);
 
@@ -678,7 +685,7 @@ const AIInput: React.FC<AIInputProps> = ({
             placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className="w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out text-left text-slate-900 placeholder-slate-600 overflow-hidden"
+            className="w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out text-left text-slate-900 placeholder-slate-600"
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
@@ -689,6 +696,7 @@ const AIInput: React.FC<AIInputProps> = ({
               fontSize: '16px',
               fontWeight: '400',
               minHeight: stateStyles.height,
+              overflow: 'hidden',
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
             }}

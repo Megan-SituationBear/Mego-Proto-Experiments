@@ -31,6 +31,15 @@ body {
   background-color: #f8fafc;
 }
 
+/* Cursor styles for all interactive elements */
+a, button, [role="button"], [onclick], .cursor-pointer {
+  cursor: pointer;
+}
+
+button:disabled, [aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 #root {
   min-height: 100vh;
 }

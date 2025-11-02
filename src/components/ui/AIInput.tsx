@@ -318,6 +318,7 @@ const AIInput: React.FC<AIInputProps> = ({
       borderRadius: 'rounded-2xl',
       containerPadding: 'p-3',
       gap: 'gap-3',
+      borderWidth: 'border', // Default 1px border
     };
 
     // Logged Out States - Home Page (Landing/Intro)
@@ -326,24 +327,26 @@ const AIInput: React.FC<AIInputProps> = ({
         // New design: slate background, rounded-3xl, taller input
         return {
           ...baseStyles,
-          shadow: '',
-          borderColor: 'border-slate-300',
-          bgColor: 'bg-slate-300',
+          shadow: 'shadow-[0_20px_60px_-12px_rgba(0,0,0,0.25)]', // Custom shadow-xxl
+          borderColor: 'border-indigo-600',
+          bgColor: 'bg-white',
           containerScale: 'scale-100',
           height: '80px',
           padding: '20px',
           borderRadius: 'rounded-3xl',
           containerPadding: 'p-4',
           gap: 'gap-4',
+          borderWidth: 'border-2', // 2px border
         };
       }
       if (viewState === 'focused') {
         // Expanded, focused state - no conversation yet
         return {
           ...baseStyles,
-          containerScale: 'scale-[1.02]',
-          borderColor: 'border-blue-400',
-          shadow: 'shadow-2xl',
+          containerScale: 'scale-100', // Keep same width (no scale)
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2', // 2px border
+          shadow: 'shadow-[0_20px_60px_-12px_rgba(0,0,0,0.25)]', // Custom shadow-xxl
           ring: 'ring-4 ring-blue-50',
           bgColor: 'bg-white',
           height: '100px',
@@ -354,9 +357,10 @@ const AIInput: React.FC<AIInputProps> = ({
         // Maximum expansion when conversation is active
         return {
           ...baseStyles,
-          containerScale: 'scale-[1.03]',
-          borderColor: 'border-blue-500',
-          shadow: 'shadow-3xl',
+          containerScale: 'scale-100', // Keep same width (no scale)
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2', // 2px border
+          shadow: 'shadow-[0_20px_60px_-12px_rgba(0,0,0,0.25)]', // Custom shadow-xxl
           ring: 'ring-6 ring-blue-100/50',
           bgColor: 'bg-white',
           height: '120px',
@@ -655,7 +659,11 @@ const AIInput: React.FC<AIInputProps> = ({
 
       {/* AI Input Field */}
       <div 
-        className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} border transition-all duration-500 transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring}`}
+        className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} transition-all duration-500 ease-out transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring}`}
+        style={{
+          transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflow: 'hidden', // Ensure smooth slide-down animation
+        }}
       >
         <div className={`flex flex-col ${stateStyles.containerPadding} ${stateStyles.gap}`}>
           {/* Textarea - always visible and functional */}
@@ -670,18 +678,19 @@ const AIInput: React.FC<AIInputProps> = ({
             placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className={`w-full px-6 bg-transparent outline-none resize-none font-body transition-all duration-500 text-center ${
-              value ? 'text-slate-900' : 'text-slate-600 placeholder-slate-600'
-            }`}
+            className="w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out text-left text-slate-900 placeholder-slate-600 overflow-hidden"
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
               height: stateStyles.height,
-              lineHeight: '1.625rem',
-              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+              lineHeight: '1.5',
+              transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
               fontFamily: 'Inter, system-ui, sans-serif',
               fontSize: '16px',
-              fontWeight: '400'
+              fontWeight: '400',
+              minHeight: stateStyles.height,
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
             }}
             rows={1}
           />

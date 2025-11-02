@@ -323,18 +323,18 @@ const AIInput: React.FC<AIInputProps> = ({
     // Logged Out States - Home Page (Landing/Intro)
     if (!isLoggedIn && pageContext === 'home') {
       if (viewState === 'default') {
-        // New design: blue border, rounded-3xl, minimal padding
+        // New design: slate background, rounded-3xl, taller input
         return {
           ...baseStyles,
           shadow: '',
-          borderColor: 'border-[#155dfc]',
-          bgColor: 'bg-white',
+          borderColor: 'border-slate-300',
+          bgColor: 'bg-slate-300',
           containerScale: 'scale-100',
-          height: '56px',
-          padding: '12px',
+          height: '80px',
+          padding: '20px',
           borderRadius: 'rounded-3xl',
-          containerPadding: 'p-1',
-          gap: 'gap-3',
+          containerPadding: 'p-4',
+          gap: 'gap-4',
         };
       }
       if (viewState === 'focused') {
@@ -667,25 +667,21 @@ const AIInput: React.FC<AIInputProps> = ({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
-            placeholder={viewState === 'default' && !isLoggedIn && pageContext === 'home' && !value ? 'Ask' : effectivePlaceholder}
+            placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
             className={`w-full px-6 bg-transparent outline-none resize-none font-body transition-all duration-500 text-center ${
-              value ? 'text-slate-700' : 'text-slate-950 placeholder-slate-950'
-            } ${isFocused && !value ? 'placeholder-slate-500' : ''}`}
+              value ? 'text-slate-900' : 'text-slate-600 placeholder-slate-600'
+            }`}
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
               height: stateStyles.height,
               lineHeight: '1.625rem',
               transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-              fontFamily: viewState === 'default' && !isLoggedIn && pageContext === 'home' && !value 
-                ? 'Montserrat, Roboto, sans-serif' 
-                : 'Inter, system-ui, sans-serif',
-              fontSize: viewState === 'default' && !isLoggedIn && pageContext === 'home' && !value 
-                ? '20px' 
-                : '16px',
-              fontWeight: '500'
+              fontFamily: 'Inter, system-ui, sans-serif',
+              fontSize: '16px',
+              fontWeight: '400'
             }}
             rows={1}
           />

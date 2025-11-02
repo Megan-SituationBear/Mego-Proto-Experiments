@@ -6,6 +6,7 @@ on:
       - main
       - master
       - Q4
+      - tonight-work
   workflow_dispatch: {}
 
 permissions:

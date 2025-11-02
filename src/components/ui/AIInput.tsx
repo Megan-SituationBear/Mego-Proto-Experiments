@@ -434,36 +434,18 @@ const AIInput: React.FC<AIInputProps> = ({
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      // Force hide scrollbar with all methods
-      textarea.style.overflow = 'hidden';
-      textarea.style.overflowY = 'hidden';
-      textarea.style.overflowX = 'hidden';
-      textarea.style.scrollbarWidth = 'none';
-      textarea.style.msOverflowStyle = 'none';
-      // Webkit-specific
-      if (textarea.style.webkitOverflowScrolling !== undefined) {
-        textarea.style.webkitOverflowScrolling = 'auto';
-      }
+      // Force hide scrollbar with all methods - use setProperty for better control
+      textarea.style.setProperty('overflow', 'clip', 'important');
+      textarea.style.setProperty('overflow-y', 'clip', 'important');
+      textarea.style.setProperty('overflow-x', 'clip', 'important');
+      textarea.style.setProperty('scrollbar-width', 'none', 'important');
+      textarea.style.setProperty('-ms-overflow-style', 'none', 'important');
+      textarea.style.setProperty('max-height', stateStyles.height, 'important');
     }
   }, [value, isFocused, hasBeenFocused, stateStyles.height]);
 
-  // Auto-resize textarea based on state
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea && (isFocused || hasBeenFocused)) {
-      // Temporarily allow overflow for scrollHeight calculation
-      textarea.style.height = 'auto';
-      const newHeight = Math.min(textarea.scrollHeight, 300); // Max height of 300px
-      const minHeight = parseInt(stateStyles.height);
-      textarea.style.height = Math.max(newHeight, minHeight) + 'px';
-      // Ensure overflow stays hidden and scrollbar is hidden
-      textarea.style.overflow = 'hidden';
-      textarea.style.overflowY = 'hidden';
-      textarea.style.overflowX = 'hidden';
-      textarea.style.scrollbarWidth = 'none';
-      textarea.style.msOverflowStyle = 'none';
-    }
-  }, [value, isFocused, hasBeenFocused, stateStyles.height]);
+  // Auto-resize textarea based on state - REMOVED to prevent scrollbar
+  // Using fixed heights from stateStyles instead
 
   // Autofocus on mount if requested
   useEffect(() => {
@@ -702,7 +684,7 @@ const AIInput: React.FC<AIInputProps> = ({
             placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className="w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out text-left text-slate-900 placeholder-slate-600 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            className="w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out text-left text-slate-900 placeholder-slate-600"
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
@@ -713,13 +695,11 @@ const AIInput: React.FC<AIInputProps> = ({
               fontSize: '16px',
               fontWeight: '400',
               minHeight: stateStyles.height,
-              overflow: 'hidden',
-              overflowY: 'hidden',
-              overflowX: 'hidden',
+              maxHeight: stateStyles.height,
+              overflow: 'clip',
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
-              WebkitScrollbarWidth: 'none',
-            }}
+            } as React.CSSProperties}
             rows={1}
           />
 

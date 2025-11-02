@@ -113,6 +113,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [hasBeenFocused, setHasBeenFocused] = useState(false);
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   
   // Mode toggle state with localStorage persistence
   const [inputMode, setInputMode] = useState<'ask' | 'make' | 'automate'>(() => {
@@ -722,9 +723,23 @@ const AIInput: React.FC<AIInputProps> = ({
               <div className="relative">
                 <button
                   type="button"
-                  onMouseEnter={() => setShowContextMenu(true)}
+                  onMouseEnter={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setMenuPosition({ 
+                      top: rect.top - 8, 
+                      left: rect.left 
+                    });
+                    setShowContextMenu(true);
+                  }}
                   onMouseLeave={() => setShowContextMenu(false)}
-                  onClick={() => setShowContextMenu(!showContextMenu)}
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setMenuPosition({ 
+                      top: rect.top - 8, 
+                      left: rect.left 
+                    });
+                    setShowContextMenu(!showContextMenu);
+                  }}
                   className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
                   title="Add context"
                 >
@@ -735,10 +750,14 @@ const AIInput: React.FC<AIInputProps> = ({
               {showContextMenu && (
                 <div 
                   ref={menuRef}
-                  className="absolute left-0 bottom-full mb-2 w-56 bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl z-50 py-1.5 animate-in fade-in slide-in-from-bottom-2 duration-200"
+                  className="fixed w-56 bg-white backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl py-1.5 animate-in fade-in duration-200"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.95)',
+                    background: 'rgba(255, 255, 255, 0.98)',
                     backdropFilter: 'blur(12px)',
+                    zIndex: 9999,
+                    top: `${menuPosition.top}px`,
+                    left: `${menuPosition.left}px`,
+                    transform: 'translateY(-100%)',
                   }}
                   onMouseEnter={() => setShowContextMenu(true)}
                   onMouseLeave={() => setShowContextMenu(false)}

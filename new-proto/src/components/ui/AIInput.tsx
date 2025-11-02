@@ -155,6 +155,8 @@ const AIInput: React.FC<AIInputProps> = ({
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
+  const [longTermMemory, setLongTermMemory] = useState(true);
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{id: string, name: string, type: 'document' | 'image' | 'code'}>>([]);
   const [activeIntegrationType, setActiveIntegrationType] = useState<IntegrationType>(null);
   const [integrationUrl, setIntegrationUrl] = useState('');
   const [extractedName, setExtractedName] = useState('');
@@ -949,20 +951,16 @@ const AIInput: React.FC<AIInputProps> = ({
             className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col p-6 animate-in fade-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-slate-900">
-                {pageContext === 'workspace' ? 'Settings For This Work' : 'Settings For Copado'}
-              </h3>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => {
-                    console.log('Settings saved');
-                    setShowSettingsModal(false);
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Save
-                </button>
+            <div className="mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    Settings for Your Main Chats & Work
+                  </h3>
+                  <p className="text-sm text-slate-500 mt-1">
+                    (specific conversations can be customized on that work)
+                  </p>
+                </div>
                 <button 
                   onClick={() => setShowSettingsModal(false)}
                   className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
@@ -975,58 +973,64 @@ const AIInput: React.FC<AIInputProps> = ({
             </div>
             
             <div className="overflow-y-auto flex-1 pr-2 space-y-6 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 hover:scrollbar-thumb-slate-400">
-              {/* Integrations Section */}
+              {/* Long Term Memory Section */}
               <div className="mb-6">
-                <h4 className="text-base font-semibold text-slate-700 mb-3">Integrations</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="border-2 border-slate-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
-                    <div className="text-2xl mb-2">💬</div>
-                    <div className="text-sm font-medium text-slate-700">Slack</div>
-                    <div className="text-xs text-slate-500 mt-1">Connect workspace</div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-base font-semibold text-slate-700">Long term memory</h4>
+                    <p className="text-xs text-slate-500 mt-1">Remember context across conversations</p>
                   </div>
-                  <div className="border-2 border-slate-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
-                    <div className="text-2xl mb-2">📚</div>
-                    <div className="text-sm font-medium text-slate-700">Confluence</div>
-                    <div className="text-xs text-slate-500 mt-1">Link knowledge base</div>
-                  </div>
-                  <div className="border-2 border-slate-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
-                    <div className="text-2xl mb-2">🎫</div>
-                    <div className="text-sm font-medium text-slate-700">Jira</div>
-                    <div className="text-xs text-slate-500 mt-1">Sync with projects</div>
-                  </div>
-                  <div className="border-2 border-slate-200 rounded-xl p-4 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
-                    <div className="text-2xl mb-2">🐙</div>
-                    <div className="text-sm font-medium text-slate-700">GitHub</div>
-                    <div className="text-xs text-slate-500 mt-1">Access repositories</div>
-                  </div>
+                  <button
+                    onClick={() => setLongTermMemory(!longTermMemory)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      longTermMemory ? 'bg-blue-600' : 'bg-slate-300'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        longTermMemory ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
                 </div>
               </div>
 
-              {/* Sandbox Setup Section */}
+              {/* Conversation Context Section */}
               <div className="mb-6">
-                <h4 className="text-base font-semibold text-slate-700 mb-3">Set up your sandboxes</h4>
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-slate-700">Authenticate and assign permissions</div>
-                      <div className="text-xs text-slate-500 mt-1">Connect your Salesforce orgs for seamless deployment</div>
-                    </div>
-                    <button 
-                      onClick={() => console.log('Authenticating sandbox...')}
-                      className="px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Authenticate
-                    </button>
+                <h4 className="text-base font-semibold text-slate-700 mb-3">Conversation Context</h4>
+                {uploadedFiles.length === 0 ? (
+                  <div className="bg-slate-50 rounded-lg p-6 text-center text-sm text-slate-500">
+                    No documents, images, or code uploaded yet
                   </div>
-                </div>
-              </div>
-
-              {/* Team Rules Section */}
-              <div className="mb-6">
-                <h4 className="text-base font-semibold text-slate-700 mb-3">Team Rules</h4>
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <div className="text-sm text-slate-500 italic">Add setup sections here</div>
-                </div>
+                ) : (
+                  <div className="space-y-2">
+                    {uploadedFiles.map((file) => (
+                      <div
+                        key={file.id}
+                        className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg">
+                            {file.type === 'document' ? '📄' : file.type === 'image' ? '🖼️' : '💻'}
+                          </span>
+                          <div>
+                            <div className="text-sm font-medium text-slate-900">{file.name}</div>
+                            <div className="text-xs text-slate-500 capitalize">{file.type}</div>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setUploadedFiles(uploadedFiles.filter(f => f.id !== file.id))}
+                          className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                          title="Remove"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>

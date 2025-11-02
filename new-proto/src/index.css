@@ -40,6 +40,16 @@ button:disabled, [aria-disabled="true"] {
   cursor: not-allowed;
 }
 
+/* Global icon styles */
+svg {
+  color: rgb(100 116 139); /* slate-500 */
+  transition: color 0.2s ease;
+}
+
+button:hover svg, a:hover svg, [role="button"]:hover svg {
+  color: rgb(79 70 229); /* indigo-600 */
+}
+
 #root {
   min-height: 100vh;
 }

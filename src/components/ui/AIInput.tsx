@@ -430,19 +430,36 @@ const AIInput: React.FC<AIInputProps> = ({
 
   const stateStyles = getStateStyles();
 
+  // Force hide scrollbar on mount and updates
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      // Force hide scrollbar with all methods
+      textarea.style.overflow = 'hidden';
+      textarea.style.overflowY = 'hidden';
+      textarea.style.overflowX = 'hidden';
+      textarea.style.scrollbarWidth = 'none';
+      textarea.style.msOverflowStyle = 'none';
+      // Webkit-specific
+      if (textarea.style.webkitOverflowScrolling !== undefined) {
+        textarea.style.webkitOverflowScrolling = 'auto';
+      }
+    }
+  }, [value, isFocused, hasBeenFocused, stateStyles.height]);
+
   // Auto-resize textarea based on state
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea && (isFocused || hasBeenFocused)) {
       // Temporarily allow overflow for scrollHeight calculation
-      const originalOverflow = textarea.style.overflow;
-      textarea.style.overflow = 'hidden';
       textarea.style.height = 'auto';
       const newHeight = Math.min(textarea.scrollHeight, 300); // Max height of 300px
       const minHeight = parseInt(stateStyles.height);
       textarea.style.height = Math.max(newHeight, minHeight) + 'px';
       // Ensure overflow stays hidden and scrollbar is hidden
       textarea.style.overflow = 'hidden';
+      textarea.style.overflowY = 'hidden';
+      textarea.style.overflowX = 'hidden';
       textarea.style.scrollbarWidth = 'none';
       textarea.style.msOverflowStyle = 'none';
     }
@@ -685,7 +702,7 @@ const AIInput: React.FC<AIInputProps> = ({
             placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className="w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out text-left text-slate-900 placeholder-slate-600"
+            className="w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out text-left text-slate-900 placeholder-slate-600 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
@@ -697,8 +714,11 @@ const AIInput: React.FC<AIInputProps> = ({
               fontWeight: '400',
               minHeight: stateStyles.height,
               overflow: 'hidden',
+              overflowY: 'hidden',
+              overflowX: 'hidden',
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
+              WebkitScrollbarWidth: 'none',
             }}
             rows={1}
           />

@@ -181,7 +181,7 @@ const TopNav: React.FC<TopNavProps> = ({
   ];
 
   return (
-    <nav className="bg-white border-b border-slate-100 sticky top-0 z-50">
+    <nav className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Left Side - Logo + Products + Learn OR Legacy Back + Logo */}
@@ -245,11 +245,11 @@ const TopNav: React.FC<TopNavProps> = ({
                       setIntegrationsOpen(!integrationsOpen);
                       setLearnOpen(false);
                     }}
-                    className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden md:flex py-1 group"
+                    className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden md:flex py-1 group"
                   >
                     Integrations
                     <ChevronDown 
-                      className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-500 group-hover:text-slate-700 ${
+                      className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-500 group-hover:text-indigo-600 ${
                         integrationsOpen ? 'transform rotate-180' : ''
                       }`} 
                     />
@@ -310,11 +310,11 @@ const TopNav: React.FC<TopNavProps> = ({
                       setLearnOpen(!learnOpen);
                       setIntegrationsOpen(false);
                     }}
-                    className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden md:flex py-1 group"
+                    className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden md:flex py-1 group"
                   >
                     Learn
                     <ChevronDown 
-                      className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-500 group-hover:text-slate-700 ${
+                      className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-500 group-hover:text-indigo-600 ${
                         learnOpen ? 'transform rotate-180' : ''
                       }`} 
                     />
@@ -390,7 +390,7 @@ const TopNav: React.FC<TopNavProps> = ({
               {onPricingClick && (
                 <button
                   onClick={onPricingClick}
-                  className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden md:block py-1"
+                  className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden md:block py-1"
                 >
                   Pricing
                 </button>

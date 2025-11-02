@@ -217,7 +217,12 @@ const HomePage: React.FC<HomePageProps> = ({
         }}
         onLearnClick={() => console.log('Learn clicked')}
         onIntegrationsClick={() => console.log('Integrations clicked')}
-        onPricingClick={() => console.log('Pricing clicked')}
+        onPricingClick={() => {
+          const url = window.location.pathname.includes('copado-home-page') 
+            ? '/Mego-Proto-Experiments/copado-home-page.html?view=pricing'
+            : '/Mego-Proto-Experiments/app.html?view=pricing';
+          window.location.href = url;
+        }}
         onSearchClick={() => console.log('Search clicked')}
         onDashboardClick={() => {
           if (onNavigateToDashboard) {

@@ -418,7 +418,6 @@ const HomePage: React.FC<HomePageProps> = ({
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-[calc(100vh-120px)] flex flex-col justify-center">
-        {/* Hero Section - H1, Subheader, Quick Actions, Chat Input */}
         <div className="max-w-4xl mx-auto w-full">
         {/* Welcome Heading */}
         <div className="text-center mb-16 sm:mb-20 py-8 sm:py-12">

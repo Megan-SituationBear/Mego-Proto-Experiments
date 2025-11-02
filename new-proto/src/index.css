@@ -40,7 +40,7 @@ button:disabled, [aria-disabled="true"] {
   cursor: not-allowed;
 }
 
-/* Global icon styles */
+/* Global icon styles - all icons slate-500, hover indigo-600 */
 svg {
   color: rgb(100 116 139); /* slate-500 */
   transition: color 0.2s ease;

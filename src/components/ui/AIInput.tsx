@@ -37,6 +37,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Send, Plus, Settings, Paperclip, MessageSquare, Ticket, Grid, Cloud } from 'lucide-react';
 import { TabToggle } from './TabToggle';
 
@@ -746,8 +747,8 @@ const AIInput: React.FC<AIInputProps> = ({
                   <Plus className="w-5 h-5" />
                 </button>
 
-              {/* Context Menu Dropdown - Opens upward */}
-              {showContextMenu && (
+              {/* Context Menu Dropdown - Opens upward - Rendered via Portal */}
+              {showContextMenu && createPortal(
                 <div 
                   ref={menuRef}
                   className="fixed w-56 bg-white backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl py-1.5 animate-in fade-in duration-200"
@@ -787,7 +788,8 @@ const AIInput: React.FC<AIInputProps> = ({
                       );
                     })}
                   </div>
-                </div>
+                </div>,
+                document.body
               )}
               </div>
 
@@ -845,8 +847,8 @@ const AIInput: React.FC<AIInputProps> = ({
         )}
       </div>
 
-      {/* Upload Modal */}
-      {showUploadModal && (
+      {/* Upload Modal - Rendered via Portal */}
+      {showUploadModal && createPortal(
         <div 
           className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowUploadModal(false)}
@@ -895,11 +897,12 @@ const AIInput: React.FC<AIInputProps> = ({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Settings Modal */}
-      {showSettingsModal && (
+      {/* Settings Modal - Rendered via Portal */}
+      {showSettingsModal && createPortal(
         <div 
           className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowSettingsModal(false)}
@@ -989,11 +992,12 @@ const AIInput: React.FC<AIInputProps> = ({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Integration Modal (Slack, Jira, Confluence, Org) */}
-      {showIntegrationModal && activeIntegrationType && (
+      {/* Integration Modal (Slack, Jira, Confluence, Org) - Rendered via Portal */}
+      {showIntegrationModal && activeIntegrationType && createPortal(
         <div 
           className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowIntegrationModal(false)}
@@ -1103,7 +1107,8 @@ const AIInput: React.FC<AIInputProps> = ({
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

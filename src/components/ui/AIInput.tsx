@@ -327,7 +327,7 @@ const AIInput: React.FC<AIInputProps> = ({
         // New design: slate background, rounded-3xl, taller input
         return {
           ...baseStyles,
-          shadow: 'shadow-[0_20px_60px_-12px_rgba(0,0,0,0.25)]', // Custom shadow-xxl
+          shadow: 'shadow-xl',
           borderColor: 'border-indigo-600',
           bgColor: 'bg-white',
           containerScale: 'scale-100',
@@ -346,8 +346,8 @@ const AIInput: React.FC<AIInputProps> = ({
           containerScale: 'scale-100', // Keep same width (no scale)
           borderColor: 'border-indigo-600',
           borderWidth: 'border-2', // 2px border
-          shadow: 'shadow-[0_20px_60px_-12px_rgba(0,0,0,0.25)]', // Custom shadow-xxl
-          ring: 'ring-4 ring-blue-50',
+          shadow: 'shadow-xl',
+          ring: '',
           bgColor: 'bg-white',
           height: '100px',
           padding: '18px',
@@ -360,8 +360,8 @@ const AIInput: React.FC<AIInputProps> = ({
           containerScale: 'scale-100', // Keep same width (no scale)
           borderColor: 'border-indigo-600',
           borderWidth: 'border-2', // 2px border
-          shadow: 'shadow-[0_20px_60px_-12px_rgba(0,0,0,0.25)]', // Custom shadow-xxl
-          ring: 'ring-6 ring-blue-100/50',
+          shadow: 'shadow-xl',
+          ring: '',
           bgColor: 'bg-white',
           height: '120px',
           padding: '22px',
@@ -665,10 +665,12 @@ const AIInput: React.FC<AIInputProps> = ({
 
       {/* AI Input Field */}
       <div 
-        className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} transition-all duration-500 ease-out transform ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.containerScale} ${stateStyles.ring}`}
+        className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.ring}`}
         style={{
-          transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-          overflow: 'hidden', // Ensure smooth slide-down animation
+          transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflow: 'hidden',
+          transform: 'scale(1)', // Lock width at 100% - no scaling
+          transformOrigin: 'top center',
         }}
       >
         <div className={`flex flex-col ${stateStyles.containerPadding} ${stateStyles.gap}`}>

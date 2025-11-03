@@ -1216,65 +1216,59 @@ const AIInput: React.FC<AIInputProps> = ({
 
             {/* Login Screen */}
             {salesforceAuthStep === 'login' && (
-              <div className="bg-gradient-to-b from-slate-50 to-white min-h-[600px] flex flex-col items-center justify-center p-8">
-                {/* Salesforce Cloud Logo */}
-                <div className="mb-10">
-                  <svg width="320" height="160" viewBox="0 0 320 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M180 80c0-22.091-17.909-40-40-40-8.837 0-17.01 2.87-23.619 7.719C111.424 37.528 101.177 30 89.5 30 71.552 30 57 44.552 57 62.5c0 1.657.127 3.282.364 4.873C50.906 70.164 46 76.51 46 84c0 9.941 8.059 18 18 18h96c13.255 0 24-10.745 24-24z" fill="#1B96FF"/>
-                    <path d="M226 100c0-16.569-13.431-30-30-30-6.627 0-12.758 2.153-17.714 5.789C174.818 67.646 167.383 62 158.625 62 145.664 62 135.125 72.539 135.125 85.5c0 1.243.095 2.461.273 3.655-4.864 2.625-8.148 7.682-8.148 13.395 0 8.456 6.794 15.25 15.25 15.25h72c9.941 0 18-8.059 18-18z" fill="#1B96FF"/>
-                    <path d="M270 90c0-11.046-8.954-20-20-20-4.418 0-8.505 1.436-11.809 3.859C235.879 68.431 230.922 65 225.083 65c-8.644 0-15.583 7.026-15.583 15.667 0 .828.064 1.64.182 2.437-3.243 1.75-5.432 5.121-5.432 8.93 0 5.637 4.53 10.166 10.167 10.166h48c6.627 0 12-5.373 12-12z" fill="#1B96FF"/>
-                  </svg>
-                  <div className="text-center mt-6">
-                    <span className="text-2xl font-normal tracking-wide text-slate-600">salesforce</span>
-                  </div>
+              <div className="p-8">
+                {/* Header */}
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-slate-900">Connect to Salesforce</h3>
+                  <p className="text-sm text-slate-600 mt-1">
+                    Connect your Salesforce org to enable seamless collaboration and deployment
+                  </p>
                 </div>
 
                 {/* Login Form */}
-                <div className="w-full max-w-sm bg-white rounded-lg border border-slate-200 shadow-lg p-8">
-                  <div className="space-y-6">
-                    {/* Username */}
-                    <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-2">Username</label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 border-2 border-blue-400 rounded focus:outline-none focus:border-blue-500 text-slate-900"
-                        placeholder=""
-                      />
-                    </div>
+                <div className="space-y-6">
+                  {/* Username */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-600 mb-2">Username</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 border-2 border-slate-300 rounded focus:outline-none focus:border-blue-500 text-slate-900"
+                      placeholder=""
+                    />
+                  </div>
 
-                    {/* Password */}
-                    <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-2">Password</label>
-                      <input
-                        type="password"
-                        className="w-full px-4 py-3 border-2 border-slate-300 rounded focus:outline-none focus:border-blue-400 text-slate-900"
-                        placeholder=""
-                      />
-                    </div>
+                  {/* Password */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-600 mb-2">Password</label>
+                    <input
+                      type="password"
+                      className="w-full px-4 py-3 border-2 border-slate-300 rounded focus:outline-none focus:border-blue-500 text-slate-900"
+                      placeholder=""
+                    />
+                  </div>
 
-                    {/* Log In Button */}
-                    <button
-                      onClick={() => setSalesforceAuthStep('auth')}
-                      className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded transition-colors"
-                    >
-                      Log In
-                    </button>
+                  {/* Log In Button */}
+                  <button
+                    onClick={() => setSalesforceAuthStep('auth')}
+                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors"
+                  >
+                    Log In
+                  </button>
 
-                    {/* Remember me */}
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="remember"
-                        className="w-4 h-4 border-2 border-slate-300 rounded"
-                      />
-                      <label htmlFor="remember" className="text-sm text-slate-600">Remember me</label>
-                    </div>
+                  {/* Remember me */}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="remember"
+                      className="w-4 h-4 border-2 border-slate-300 rounded"
+                    />
+                    <label htmlFor="remember" className="text-sm text-slate-600">Remember me</label>
+                  </div>
 
-                    {/* Links */}
-                    <div className="flex justify-between items-center pt-4 text-sm">
-                      <button className="text-blue-600 hover:underline">Forgot Your Password?</button>
-                      <button className="text-blue-600 hover:underline">Use Custom Domain</button>
-                    </div>
+                  {/* Links */}
+                  <div className="flex justify-between items-center pt-2 text-sm">
+                    <button className="text-blue-600 hover:underline">Forgot Your Password?</button>
+                    <button className="text-blue-600 hover:underline">Use Custom Domain</button>
                   </div>
                 </div>
               </div>

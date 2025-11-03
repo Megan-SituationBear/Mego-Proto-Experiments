@@ -158,6 +158,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [selectedSandboxes, setSelectedSandboxes] = useState<string[]>([]);
   const [longTermMemory, setLongTermMemory] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{id: string, name: string, type: 'document' | 'image' | 'code'}>>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const [activeIntegrationType, setActiveIntegrationType] = useState<IntegrationType>(null);
   const [integrationUrl, setIntegrationUrl] = useState('');
   const [extractedName, setExtractedName] = useState('');
@@ -694,14 +695,89 @@ const AIInput: React.FC<AIInputProps> = ({
 
       {/* AI Input Field */}
       <div 
-        className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} ${stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.ring}`}
+        className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} ${isDragging ? 'border-blue-500 bg-blue-50' : stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.ring}`}
         style={{
           transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
           overflow: 'hidden',
           transform: 'scale(1)', // Lock width at 100% - no scaling
           transformOrigin: 'top center',
         }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(true);
+        }}
+        onDragEnter={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(true);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          // Only set dragging to false if we're leaving the main container
+          const rect = e.currentTarget.getBoundingClientRect();
+          const x = e.clientX;
+          const y = e.clientY;
+          if (x < rect.left || x >= rect.right || y < rect.top || y >= rect.bottom) {
+            setIsDragging(false);
+          }
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(false);
+          
+          const files = Array.from(e.dataTransfer.files);
+          files.forEach((file) => {
+            const fileType = file.type;
+            let type: 'document' | 'image' | 'code' = 'document';
+            
+            if (fileType.startsWith('image/')) {
+              type = 'image';
+            } else if (
+              fileType.includes('javascript') ||
+              fileType.includes('typescript') ||
+              fileType.includes('python') ||
+              fileType.includes('java') ||
+              file.name.endsWith('.js') ||
+              file.name.endsWith('.ts') ||
+              file.name.endsWith('.tsx') ||
+              file.name.endsWith('.jsx') ||
+              file.name.endsWith('.py') ||
+              file.name.endsWith('.java') ||
+              file.name.endsWith('.cpp') ||
+              file.name.endsWith('.c') ||
+              file.name.endsWith('.h') ||
+              file.name.endsWith('.css') ||
+              file.name.endsWith('.html')
+            ) {
+              type = 'code';
+            }
+            
+            const newFile = {
+              id: `file-${Date.now()}-${Math.random()}`,
+              name: file.name,
+              type: type
+            };
+            
+            setUploadedFiles(prev => [...prev, newFile]);
+          });
+        }}
       >
+        {/* Drag Overlay */}
+        {isDragging && (
+          <div className="absolute inset-0 bg-blue-50/90 backdrop-blur-sm z-10 flex items-center justify-center pointer-events-none">
+            <div className="text-center">
+              <svg className="w-12 h-12 text-blue-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              <p className="text-blue-600 font-medium">Drop files to upload</p>
+              <p className="text-blue-500 text-sm mt-1">Images, documents, and code files</p>
+            </div>
+          </div>
+        )}
+
         <div className={`flex flex-col ${stateStyles.containerPadding} ${stateStyles.gap}`}>
           {/* Textarea - always visible and functional */}
           <textarea

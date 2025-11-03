@@ -672,10 +672,23 @@ const AIInput: React.FC<AIInputProps> = ({
         </div>
       )}
 
+      {/* Mode Toggle - Above input, centered */}
+      <div className="mb-3 flex justify-center items-center gap-3">
+        <TabToggle
+          tabs={[
+            { id: 'ask', label: 'Ask' },
+            { id: 'make', label: 'Make' },
+          ]}
+          activeTab={inputMode}
+          onTabChange={(id) => setInputMode(id as 'ask' | 'make')}
+          size="sm"
+          variant="default"
+        />
+      </div>
 
       {/* AI Input Field */}
       <div 
-        className={`relative ${stateStyles.bgColor} ${(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) ? 'rounded-t-2xl' : stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} ${isDragging ? 'border-blue-500 bg-blue-50' : stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.ring}`}
+        className={`relative ${stateStyles.bgColor} ${stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} ${isDragging ? 'border-blue-500 bg-blue-50' : stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.ring}`}
         style={{
           transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
           overflow: 'hidden',
@@ -789,6 +802,72 @@ const AIInput: React.FC<AIInputProps> = ({
             } as React.CSSProperties}
             rows={1}
           />
+
+          {/* Context Chips - Show uploaded files and connected sandboxes ABOVE actions */}
+          {(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
+            <div className="bg-slate-50 px-6 py-3 border-t border-slate-200">
+              <div className="flex flex-wrap gap-2">
+                {/* Uploaded Files */}
+                {uploadedFiles.map((file) => (
+                  <div
+                    key={file.id}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-full border border-blue-200 text-xs transition-colors group"
+                  >
+                    <span className="text-slate-700">
+                      <span className="font-medium capitalize">{file.type}</span>: {file.name}
+                    </span>
+                    <button
+                      onClick={() => setUploadedFiles(uploadedFiles.filter(f => f.id !== file.id))}
+                      className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 transition-all"
+                      title="Remove"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+
+                {/* Connected Salesforce Sandboxes */}
+                {salesforceConnected && selectedSandboxes.map((sandboxId) => {
+                  const sandbox = [
+                    { id: 'prod', name: 'Production' },
+                    { id: 'dev', name: 'Dev Sandbox' },
+                    { id: 'qa', name: 'QA Sandbox' },
+                    { id: 'staging', name: 'Staging Sandbox' },
+                    { id: 'uat', name: 'UAT Sandbox' },
+                    { id: 'demo', name: 'Demo Sandbox' },
+                  ].find(s => s.id === sandboxId);
+                  
+                  return sandbox ? (
+                    <div
+                      key={sandboxId}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-full border border-blue-200 text-xs transition-colors group"
+                    >
+                      <span className="text-slate-700">
+                        <span className="font-medium">Sandbox</span>: {sandbox.name}
+                      </span>
+                      <button
+                        onClick={() => {
+                          const newSandboxes = selectedSandboxes.filter(id => id !== sandboxId);
+                          setSelectedSandboxes(newSandboxes);
+                          if (newSandboxes.length === 0) {
+                            setSalesforceConnected(false);
+                          }
+                        }}
+                        className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 transition-all"
+                        title="Remove"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Actions Row */}
           <div className="flex flex-row justify-between items-center bg-white relative">
@@ -949,20 +1028,6 @@ const AIInput: React.FC<AIInputProps> = ({
               )}
             </div>
 
-            {/* Mode Toggle - Small, inline with actions */}
-            <div className="flex-1 flex justify-center">
-              <TabToggle
-                tabs={[
-                  { id: 'ask', label: 'Ask' },
-                  { id: 'make', label: 'Make' },
-                ]}
-                activeTab={inputMode}
-                onTabChange={(id) => setInputMode(id as 'ask' | 'make')}
-                size="xs"
-                variant="default"
-              />
-            </div>
-
             {/* Send button */}
             <button 
               type="button"
@@ -987,72 +1052,6 @@ const AIInput: React.FC<AIInputProps> = ({
           </div>
         )}
       </div>
-
-      {/* Context Chips - Show uploaded files and connected sandboxes BELOW actions */}
-      {(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
-        <div className="bg-white px-6 py-3 rounded-b-2xl border border-t-0 border-slate-200">
-          <div className="flex flex-wrap gap-2">
-            {/* Uploaded Files */}
-            {uploadedFiles.map((file) => (
-              <div
-                key={file.id}
-                className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 rounded-full border border-slate-200 text-xs transition-colors group"
-              >
-                <span className="text-slate-700">
-                  <span className="font-medium capitalize">{file.type}</span>: {file.name}
-                </span>
-                <button
-                  onClick={() => setUploadedFiles(uploadedFiles.filter(f => f.id !== file.id))}
-                  className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 transition-all"
-                  title="Remove"
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            ))}
-
-            {/* Connected Salesforce Sandboxes */}
-            {salesforceConnected && selectedSandboxes.map((sandboxId) => {
-              const sandbox = [
-                { id: 'prod', name: 'Production' },
-                { id: 'dev', name: 'Dev Sandbox' },
-                { id: 'qa', name: 'QA Sandbox' },
-                { id: 'staging', name: 'Staging Sandbox' },
-                { id: 'uat', name: 'UAT Sandbox' },
-                { id: 'demo', name: 'Demo Sandbox' },
-              ].find(s => s.id === sandboxId);
-              
-              return sandbox ? (
-                <div
-                  key={sandboxId}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 rounded-full border border-slate-200 text-xs transition-colors group"
-                >
-                  <span className="text-slate-700">
-                    <span className="font-medium">Sandbox</span>: {sandbox.name}
-                  </span>
-                  <button
-                    onClick={() => {
-                      const newSandboxes = selectedSandboxes.filter(id => id !== sandboxId);
-                      setSelectedSandboxes(newSandboxes);
-                      if (newSandboxes.length === 0) {
-                        setSalesforceConnected(false);
-                      }
-                    }}
-                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 transition-all"
-                    title="Remove"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ) : null;
-            })}
-          </div>
-        </div>
-      )}
 
       {/* Upload Modal - Rendered via Portal */}
       {showUploadModal && createPortal(

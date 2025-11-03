@@ -226,18 +226,26 @@ function App() {
   // ============ Template & Project Handlers ============
   
   const handleViewTemplate = (template: any) => {
-    setSelectedTemplate(template);
-    setWorkItemType('project'); // Templates are always 'project' type
-    setIsDuplicatedTemplate(false); // Reset duplicated state when viewing a template
-    
     // Add to recent items when viewing (cap at 5)
-    const templateWithTimestamp = {
-      ...template,
-      lastAccessed: new Date(),
+    const recentItem = {
+      id: template.id,
+      title: template.title,
+      type: template.type || 'chat',
+      category: template.category || 'General',
+      lastModified: new Date().toLocaleDateString(),
     };
-    setRecentItems(prev => [templateWithTimestamp, ...prev.filter(item => item.id !== template.id)].slice(0, 5));
+    setRecentItems(prev => {
+      const filtered = prev.filter(item => item.title !== template.title);
+      return [recentItem, ...filtered].slice(0, 5);
+    });
     
-    setCurrentView('work-item'); // Navigate to work item template page
+    // Navigate to workspace using the new layout
+    handleNavigateToWorkspace({
+      type: template.type || 'chat',
+      title: template.title,
+      topic: template.category || 'General',
+      initialPrompt: template.title
+    });
   };
 
   const handleToggleFavorite = (template: any, isFavorited: boolean) => {

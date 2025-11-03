@@ -477,13 +477,40 @@ const WorkspacePage = ({
               {/* Tab Content */}
               <div className="flex-1 overflow-auto p-6">
                 {activeRightPanelTab === 'overview' && (
-                  <div className="space-y-6">
-                    {/* Header */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Overview</h3>
-                      <p className="text-sm text-slate-600">
-                        High-level summary and actionable items for this workspace
-                      </p>
+                  <div className="space-y-4">
+                    {/* Key Metrics - Moved to Top */}
+                    <div className="grid grid-cols-3 gap-3">
+                      {workspaceTitle === "What did Megan do?" ? (
+                        <>
+                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                            <p className="text-xs text-slate-500 mb-0.5">Components</p>
+                            <p className="text-xl font-bold text-slate-900">12</p>
+                          </div>
+                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                            <p className="text-xs text-slate-500 mb-0.5">Features</p>
+                            <p className="text-xl font-bold text-slate-900">24</p>
+                          </div>
+                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                            <p className="text-xs text-slate-500 mb-0.5">This Week</p>
+                            <p className="text-xl font-bold text-slate-900">8</p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                            <p className="text-xs text-slate-500 mb-0.5">Progress</p>
+                            <p className="text-xl font-bold text-slate-900">65%</p>
+                          </div>
+                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                            <p className="text-xs text-slate-500 mb-0.5">Items</p>
+                            <p className="text-xl font-bold text-slate-900">8</p>
+                          </div>
+                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                            <p className="text-xs text-slate-500 mb-0.5">Time Est.</p>
+                            <p className="text-xl font-bold text-slate-900">4h</p>
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {/* Highlights / Steps */}
@@ -599,41 +626,6 @@ const WorkspacePage = ({
                           </>
                         )}
                       </div>
-                    </div>
-
-                    {/* Key Metrics */}
-                    <div className="grid grid-cols-3 gap-4">
-                      {workspaceTitle === "What did Megan do?" ? (
-                        <>
-                          <div className="bg-white border border-slate-200 rounded-lg p-4">
-                            <p className="text-xs text-slate-600 mb-1">Components</p>
-                            <p className="text-2xl font-bold text-slate-900">12</p>
-                          </div>
-                          <div className="bg-white border border-slate-200 rounded-lg p-4">
-                            <p className="text-xs text-slate-600 mb-1">Features</p>
-                            <p className="text-2xl font-bold text-slate-900">24</p>
-                          </div>
-                          <div className="bg-white border border-slate-200 rounded-lg p-4">
-                            <p className="text-xs text-slate-600 mb-1">This Week</p>
-                            <p className="text-2xl font-bold text-slate-900">8</p>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="bg-white border border-slate-200 rounded-lg p-4">
-                            <p className="text-xs text-slate-600 mb-1">Progress</p>
-                            <p className="text-2xl font-bold text-slate-900">65%</p>
-                          </div>
-                          <div className="bg-white border border-slate-200 rounded-lg p-4">
-                            <p className="text-xs text-slate-600 mb-1">Items</p>
-                            <p className="text-2xl font-bold text-slate-900">8</p>
-                          </div>
-                          <div className="bg-white border border-slate-200 rounded-lg p-4">
-                            <p className="text-xs text-slate-600 mb-1">Time Est.</p>
-                            <p className="text-2xl font-bold text-slate-900">4h</p>
-                          </div>
-                        </>
-                      )}
                     </div>
                   </div>
                 )}

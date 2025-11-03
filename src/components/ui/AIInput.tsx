@@ -2011,6 +2011,47 @@ const AIInput: React.FC<AIInputProps> = ({
               </div>
             </div>
 
+            {/* API Key Section */}
+            <div className="mt-6 pt-6 border-t border-slate-200">
+              <h4 className="text-base font-semibold text-slate-700 mb-3">Create API Key</h4>
+              <p className="text-xs text-slate-500 mb-4">Generate an API key to integrate with external services</p>
+              
+              <div className="space-y-3">
+                {/* Name Field */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., Production API Key"
+                    required
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
+                  />
+                </div>
+
+                {/* Value Field */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Value <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter API key value"
+                    required
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm font-mono"
+                  />
+                </div>
+
+                {/* Create Button */}
+                <button
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors text-sm"
+                >
+                  Create API Key
+                </button>
+              </div>
+            </div>
+
             {/* Footer */}
             <div className="mt-6 pt-4 border-t border-slate-200">
               <button

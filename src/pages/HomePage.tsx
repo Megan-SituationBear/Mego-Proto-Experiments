@@ -45,6 +45,8 @@ const HomePage: React.FC<HomePageProps> = ({
   // Conversation state - managed internally
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [userMessageCount, setUserMessageCount] = useState(0);
+  const [showBuildingWorkspace, setShowBuildingWorkspace] = useState(false);
+  const [workspaceAction, setWorkspaceAction] = useState('');
 
   const recommendedTemplates = [
     {
@@ -473,7 +475,21 @@ const HomePage: React.FC<HomePageProps> = ({
                   ].map((action, index) => (
                     <button
                       key={index}
-                      onClick={() => handleSendMessage(action, setShowCopadoTyping)}
+                      onClick={() => {
+                        setWorkspaceAction(action);
+                        setShowBuildingWorkspace(true);
+                        // After 2 seconds, navigate to workspace page
+                        setTimeout(() => {
+                          if (onNavigateToDashboard) {
+                            onNavigateToDashboard();
+                          } else {
+                            const url = window.location.pathname.includes('copado-home-page') 
+                              ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
+                              : '/Mego-Proto-Experiments/app.html?view=dashboard';
+                            window.location.href = url;
+                          }
+                        }, 2000);
+                      }}
                       className="px-3 py-1.5 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-xs sm:text-sm"
                     >
                       {action}
@@ -604,6 +620,25 @@ const HomePage: React.FC<HomePageProps> = ({
         }}
         initialGoals={selectedGoalsForTemplates}
       />
+
+      {/* Building Workspace Modal */}
+      {showBuildingWorkspace && (
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-2xl p-12 max-w-md w-full mx-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="text-center">
+              {/* Animated spinner */}
+              <div className="relative mb-6">
+                <div className="w-16 h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">Building workspace</h3>
+              <p className="text-slate-600 text-sm">
+                Setting up your {workspaceAction.toLowerCase()} workspace...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

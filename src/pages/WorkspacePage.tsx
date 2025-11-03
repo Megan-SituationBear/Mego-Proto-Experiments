@@ -29,11 +29,13 @@ const WorkspacePage = ({
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'preview' | 'code' | 'outcome'>('overview');
+  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'preview' | 'code' | 'artifacts'>('overview');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [saveTitle, setSaveTitle] = useState(workspaceTitle);
   const [leftPanelWidth, setLeftPanelWidth] = useState(75); // percentage - 3/4 of page by default
   const [isResizing, setIsResizing] = useState(false);
+  const [pinnedMessages, setPinnedMessages] = useState<ConversationMessage[]>([]);
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
 
   // Determine which tabs to show based on topic
   const topicsWithoutCode = ['Strategy', 'Planning', 'Learn'];
@@ -258,6 +260,15 @@ const WorkspacePage = ({
     }, 1500);
   };
 
+  const handlePinMessage = (message: ConversationMessage) => {
+    const isAlreadyPinned = pinnedMessages.some(m => m.id === message.id);
+    if (isAlreadyPinned) {
+      setPinnedMessages(prev => prev.filter(m => m.id !== message.id));
+    } else {
+      setPinnedMessages(prev => [...prev, message]);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Workspace Header */}
@@ -341,19 +352,53 @@ const WorkspacePage = ({
               {/* Conversation Messages */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {conversationMessages.length > 0 ? (
-                  conversationMessages.map((msg) => (
-                    <div key={msg.id}>
-                      <div className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+                  conversationMessages.map((msg) => {
+                    const isPinned = pinnedMessages.some(m => m.id === msg.id);
+                    return (
+                      <div key={msg.id}>
                         <div 
-                          className={`max-w-[80%] px-4 py-3 rounded-2xl ${
-                            msg.isUser 
-                              ? 'bg-slate-100 text-slate-900' 
-                              : 'bg-blue-600 text-white'
-                          }`}
+                          className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} group`}
+                          onMouseEnter={() => !msg.isUser && setHoveredMessageId(msg.id)}
+                          onMouseLeave={() => setHoveredMessageId(null)}
                         >
-                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                          <div className="flex items-start gap-2 max-w-[80%]">
+                            <div 
+                              className={`px-4 py-3 rounded-2xl ${
+                                msg.isUser 
+                                  ? 'bg-slate-100 text-slate-900' 
+                                  : 'bg-blue-600 text-white'
+                              }`}
+                            >
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                            </div>
+                            {/* Pin Icon - Only show for Copado messages */}
+                            {!msg.isUser && (
+                              <button
+                                onClick={() => handlePinMessage(msg)}
+                                className={`p-1.5 rounded-full transition-all ${
+                                  hoveredMessageId === msg.id || isPinned
+                                    ? 'opacity-100' 
+                                    : 'opacity-0'
+                                } ${
+                                  isPinned 
+                                    ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200' 
+                                    : 'bg-white/10 text-white hover:bg-white/20'
+                                }`}
+                                title={isPinned ? "Unpin message" : "Pin to highlights"}
+                              >
+                                <svg 
+                                  className="w-4 h-4" 
+                                  fill={isPinned ? "currentColor" : "none"}
+                                  stroke="currentColor" 
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={2}
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
                         </div>
-                      </div>
                       {/* Option Pills */}
                       {msg.options && msg.options.length > 0 && (
                         <div className="flex justify-start mt-2">
@@ -371,7 +416,8 @@ const WorkspacePage = ({
                         </div>
                       )}
                     </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <div className="flex items-center justify-center h-full text-center">
                     <div>
@@ -437,7 +483,7 @@ const WorkspacePage = ({
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
-                  Overview
+                  Highlights
                 </button>
                 {!showCodeTab ? (
                   <button 
@@ -463,14 +509,14 @@ const WorkspacePage = ({
                   </button>
                 )}
                 <button 
-                  onClick={() => setActiveRightPanelTab('outcome')}
+                  onClick={() => setActiveRightPanelTab('artifacts')}
                   className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
-                    activeRightPanelTab === 'outcome' 
+                    activeRightPanelTab === 'artifacts' 
                       ? 'text-blue-600 bg-blue-50' 
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
-                  Outcome
+                  Artifacts
                 </button>
               </div>
               
@@ -482,36 +528,64 @@ const WorkspacePage = ({
                     <div className="grid grid-cols-3 gap-3">
                       {workspaceTitle === "What did Megan do?" ? (
                         <>
-                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                          <div className="p-3">
                             <p className="text-xs text-slate-500 mb-0.5">Components</p>
                             <p className="text-xl font-bold text-slate-900">12</p>
                           </div>
-                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                          <div className="p-3">
                             <p className="text-xs text-slate-500 mb-0.5">Features</p>
                             <p className="text-xl font-bold text-slate-900">24</p>
                           </div>
-                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                          <div className="p-3">
                             <p className="text-xs text-slate-500 mb-0.5">This Week</p>
                             <p className="text-xl font-bold text-slate-900">8</p>
                           </div>
                         </>
                       ) : (
                         <>
-                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                          <div className="p-3">
                             <p className="text-xs text-slate-500 mb-0.5">Progress</p>
                             <p className="text-xl font-bold text-slate-900">65%</p>
                           </div>
-                          <div className="bg-white border border-slate-200 rounded-lg p-3">
+                          <div className="p-3">
                             <p className="text-xs text-slate-500 mb-0.5">Items</p>
                             <p className="text-xl font-bold text-slate-900">8</p>
                           </div>
-                          <div className="bg-white border border-slate-200 rounded-lg p-3">
-                            <p className="text-xs text-slate-500 mb-0.5">Time Est.</p>
+                          <div className="p-3">
+                            <p className="text-xs text-slate-500 mb-0.5">Time Saved</p>
                             <p className="text-xl font-bold text-slate-900">4h</p>
                           </div>
                         </>
                       )}
                     </div>
+
+                    {/* Pinned Messages */}
+                    {pinnedMessages.length > 0 && (
+                      <div className="bg-white border border-slate-200 rounded-xl p-6">
+                        <h4 className="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                          <svg className="w-5 h-5 text-yellow-600" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                          </svg>
+                          Pinned Messages
+                        </h4>
+                        <div className="space-y-2">
+                          {pinnedMessages.map((msg) => (
+                            <button
+                              key={msg.id}
+                              onClick={() => handleSendMessage(msg.content.substring(0, 100))}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm text-slate-900 group-hover:text-blue-600 line-clamp-2">{msg.content}</p>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Highlights / Steps */}
                     <div className="bg-white border border-slate-200 rounded-xl p-6">
@@ -659,10 +733,10 @@ const WorkspacePage = ({
                   </div>
                 )}
 
-                {activeRightPanelTab === 'outcome' && (
+                {activeRightPanelTab === 'artifacts' && (
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Outcome</h3>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Artifacts</h3>
                       <p className="text-sm text-slate-600 mb-4">
                         Generated artifacts and results from this workspace
                       </p>

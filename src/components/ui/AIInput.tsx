@@ -335,7 +335,7 @@ const AIInput: React.FC<AIInputProps> = ({
   // Determine if placeholder should be centered (default state with no text)
   const isCenteredPlaceholder = viewState === 'default' && !value.trim();
 
-  // Get styling based on state combination
+  // Get styling based on state combination and mode
   const getStateStyles = () => {
     // Base styles for all states
     const baseStyles = {
@@ -350,8 +350,71 @@ const AIInput: React.FC<AIInputProps> = ({
       containerPadding: 'p-3',
       gap: 'gap-3',
       borderWidth: 'border', // Default 1px border
+      textColor: 'text-slate-900', // Default text color
     };
 
+    // MAKE MODE - Different styling
+    if (inputMode === 'make') {
+      // Logged Out - Make Mode
+      if (!isLoggedIn && pageContext === 'home') {
+        if (viewState === 'default') {
+          return {
+            ...baseStyles,
+            shadow: 'shadow-xl',
+            borderColor: 'border-indigo-600',
+            bgColor: 'bg-white',
+            height: '120px', // Taller default for Make mode
+            padding: '20px',
+            borderRadius: 'rounded-3xl',
+            borderWidth: 'border',
+            textColor: 'text-slate-900',
+          };
+        }
+        if (viewState === 'focused' || viewState === 'focused-with-conversation') {
+          return {
+            ...baseStyles,
+            borderColor: 'border-indigo-600',
+            borderWidth: 'border-2',
+            shadow: 'shadow-xl',
+            bgColor: 'bg-white',
+            height: '200px', // Much taller for focused Make mode
+            padding: '24px',
+            textColor: 'text-slate-950', // Darker text when focused
+          };
+        }
+      }
+      
+      // Logged In - Make Mode
+      if (isLoggedIn && pageContext === 'home') {
+        if (viewState === 'default') {
+          return {
+            ...baseStyles,
+            shadow: 'shadow-xl',
+            borderColor: 'border-indigo-600',
+            borderWidth: 'border',
+            bgColor: 'bg-white',
+            height: '120px', // Taller default for Make mode
+            padding: '20px',
+            borderRadius: 'rounded-3xl',
+            textColor: 'text-slate-900',
+          };
+        }
+        if (viewState === 'focused' || viewState === 'focused-with-conversation') {
+          return {
+            ...baseStyles,
+            borderColor: 'border-indigo-600',
+            borderWidth: 'border-2',
+            shadow: 'shadow-xl',
+            bgColor: 'bg-white',
+            height: '200px', // Much taller for focused Make mode
+            padding: '24px',
+            textColor: 'text-slate-950', // Darker text when focused
+          };
+        }
+      }
+    }
+
+    // ASK MODE - Original styling
     // Logged Out States - Home Page (Landing/Intro)
     if (!isLoggedIn && pageContext === 'home') {
       if (viewState === 'default') {
@@ -368,6 +431,7 @@ const AIInput: React.FC<AIInputProps> = ({
           containerPadding: 'p-3',
           gap: 'gap-3',
           borderWidth: 'border', // Light 1px border
+          textColor: 'text-slate-900',
         };
       }
       if (viewState === 'focused') {
@@ -382,6 +446,7 @@ const AIInput: React.FC<AIInputProps> = ({
           bgColor: 'bg-white',
           height: '100px',
           padding: '20px',
+          textColor: 'text-slate-900',
         };
       }
       if (viewState === 'focused-with-conversation') {
@@ -396,11 +461,12 @@ const AIInput: React.FC<AIInputProps> = ({
           bgColor: 'bg-white',
           height: '120px',
           padding: '24px',
+          textColor: 'text-slate-900',
         };
       }
     }
 
-    // Logged In States
+    // Logged In States - Ask Mode
     if (isLoggedIn && pageContext === 'home') {
       if (viewState === 'default') {
         // Default state: Shorter, centered placeholder, light stroke
@@ -415,6 +481,7 @@ const AIInput: React.FC<AIInputProps> = ({
           borderRadius: 'rounded-3xl',
           containerPadding: 'p-3',
           gap: 'gap-3',
+          textColor: 'text-slate-900',
         };
       }
       if (viewState === 'focused') {
@@ -428,6 +495,7 @@ const AIInput: React.FC<AIInputProps> = ({
           ring: '',
           height: '100px',
           padding: '20px',
+          textColor: 'text-slate-900',
         };
       }
       if (viewState === 'focused-with-conversation') {
@@ -440,6 +508,7 @@ const AIInput: React.FC<AIInputProps> = ({
           ring: '',
           height: '120px',
           padding: '24px',
+          textColor: 'text-slate-900',
         };
       }
     }
@@ -484,7 +553,7 @@ const AIInput: React.FC<AIInputProps> = ({
       textarea.style.setProperty('-ms-overflow-style', 'none', 'important');
       textarea.style.setProperty('max-height', stateStyles.height, 'important');
     }
-  }, [value, isFocused, hasBeenFocused, stateStyles.height]);
+  }, [value, isFocused, hasBeenFocused, inputMode, stateStyles.height]);
 
   // Auto-resize textarea based on state - REMOVED to prevent scrollbar
   // Using fixed heights from stateStyles instead
@@ -521,7 +590,7 @@ const AIInput: React.FC<AIInputProps> = ({
   
   // Update placeholder based on mode
   const modePlaceholder = inputMode === 'make' 
-    ? (placeholder && placeholder.includes('action') ? placeholder.replace('action', 'thing to make or create') : 'What would you like to make or create?')
+    ? 'Make Mode - Great for long instructions, copy and pasting code - press button to submit'
     : 'How can I help you today?  |  Press \'enter\' to send';
   
   // Use custom placeholder if provided (e.g., "Continue the conversation..."), otherwise use mode-based placeholder
@@ -848,7 +917,7 @@ Can you help me with any questions I have about this setup?`
             placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className={`w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out ${isCenteredPlaceholder ? 'text-center placeholder:text-center' : 'text-left placeholder:text-left'} text-slate-900 placeholder-slate-600`}
+            className={`w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out ${isCenteredPlaceholder ? 'text-center placeholder:text-center' : 'text-left placeholder:text-left'} ${stateStyles.textColor} placeholder-slate-600`}
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
@@ -1092,12 +1161,12 @@ Can you help me with any questions I have about this setup?`
               )}
             </div>
 
-            {/* Send button */}
+            {/* Send button - More prominent in Make mode */}
             <button 
               type="button"
               onClick={handleSubmit}
               disabled={(!value.trim() && codeSnippets.length === 0) || disabled || loading}
-              className={`p-3.5 rounded-xl transition-all duration-200 ${
+              className={`${inputMode === 'make' ? 'px-6 py-3' : 'p-3.5'} rounded-xl transition-all duration-200 flex items-center gap-2 ${
                 (value.trim() || codeSnippets.length > 0) && !disabled && !loading
                   ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
                   : 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -1105,6 +1174,9 @@ Can you help me with any questions I have about this setup?`
               title="Send message"
             >
               <Send className="w-5 h-5" />
+              {inputMode === 'make' && (
+                <span className="font-medium text-sm">Submit</span>
+              )}
             </button>
           </div>
         </div>

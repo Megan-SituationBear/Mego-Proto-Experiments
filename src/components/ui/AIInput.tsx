@@ -1310,6 +1310,30 @@ const AIInput: React.FC<AIInputProps> = ({
                   </div>
                 )}
               </div>
+
+              {/* Agents Section */}
+              <div className="mb-6">
+                <h4 className="text-base font-semibold text-slate-700 mb-3">Agents</h4>
+                <div className="bg-slate-50 rounded-lg p-6 text-center text-sm text-slate-500">
+                  No agents configured yet
+                </div>
+              </div>
+
+              {/* Actions Section */}
+              <div className="mb-6">
+                <h4 className="text-base font-semibold text-slate-700 mb-3">Actions</h4>
+                <div className="bg-slate-50 rounded-lg p-6 text-center text-sm text-slate-500">
+                  No actions configured yet
+                </div>
+              </div>
+
+              {/* Scheduled Jobs Section */}
+              <div className="mb-6">
+                <h4 className="text-base font-semibold text-slate-700 mb-3">Scheduled Jobs</h4>
+                <div className="bg-slate-50 rounded-lg p-6 text-center text-sm text-slate-500">
+                  No scheduled jobs configured yet
+                </div>
+              </div>
             </div>
           </div>
         </div>,

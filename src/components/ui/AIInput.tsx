@@ -1202,7 +1202,7 @@ const AIInput: React.FC<AIInputProps> = ({
           <div 
             className={`rounded-2xl shadow-2xl w-full animate-in fade-in zoom-in-95 duration-200 relative ${
               salesforceAuthStep === 'login' 
-                ? 'max-w-md bg-white' 
+                ? 'max-w-md bg-[#F4F6F9]' 
                 : salesforceAuthStep === 'auth'
                 ? 'max-w-md bg-[#F4F6F9]'
                 : salesforceAuthStep === 'thinking'
@@ -1228,58 +1228,70 @@ const AIInput: React.FC<AIInputProps> = ({
             {/* Login Screen */}
             {salesforceAuthStep === 'login' && (
               <div className="p-8">
-                {/* Header */}
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold text-slate-900">Connect to Salesforce</h3>
-                  <p className="text-sm text-slate-600 mt-1">
-                    Connect your Salesforce org to enable seamless collaboration and deployment
-                  </p>
-                </div>
+                {/* White card with login form - just like real Salesforce */}
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8">
+                  <div className="space-y-6">
+                    {/* Username */}
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="block text-sm font-medium text-slate-600">Username</label>
+                        <span className="text-xs text-slate-500">1 Saved Username</span>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 border-2 border-blue-400 rounded focus:outline-none focus:border-blue-500 text-slate-900"
+                          placeholder=""
+                          defaultValue=""
+                        />
+                        <button className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
 
-                {/* Login Form */}
-                <div className="space-y-6">
-                  {/* Username */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 mb-2">Username</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 border-2 border-slate-300 rounded focus:outline-none focus:border-blue-500 text-slate-900"
-                      placeholder=""
-                    />
-                  </div>
+                    {/* Password */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-2">Password</label>
+                      <div className="relative">
+                        <input
+                          type="password"
+                          className="w-full px-4 py-3 border-2 border-slate-300 rounded focus:outline-none focus:border-blue-500 text-slate-900"
+                          placeholder=""
+                        />
+                        <button className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
 
-                  {/* Password */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 mb-2">Password</label>
-                    <input
-                      type="password"
-                      className="w-full px-4 py-3 border-2 border-slate-300 rounded focus:outline-none focus:border-blue-500 text-slate-900"
-                      placeholder=""
-                    />
-                  </div>
+                    {/* Log In Button */}
+                    <button
+                      onClick={() => setSalesforceAuthStep('auth')}
+                      className="w-full py-3 bg-[#0176D3] hover:bg-[#014f92] text-white font-medium rounded transition-colors"
+                    >
+                      Log In
+                    </button>
 
-                  {/* Log In Button */}
-                  <button
-                    onClick={() => setSalesforceAuthStep('auth')}
-                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors"
-                  >
-                    Log In
-                  </button>
+                    {/* Remember me */}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="remember"
+                        className="w-4 h-4 border-2 border-slate-300 rounded"
+                      />
+                      <label htmlFor="remember" className="text-sm text-slate-600">Remember me</label>
+                    </div>
 
-                  {/* Remember me */}
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="remember"
-                      className="w-4 h-4 border-2 border-slate-300 rounded"
-                    />
-                    <label htmlFor="remember" className="text-sm text-slate-600">Remember me</label>
-                  </div>
-
-                  {/* Links */}
-                  <div className="flex justify-between items-center pt-2 text-sm">
-                    <button className="text-blue-600 hover:underline">Forgot Your Password?</button>
-                    <button className="text-blue-600 hover:underline">Use Custom Domain</button>
+                    {/* Links */}
+                    <div className="flex justify-between items-center pt-2 text-sm">
+                      <button className="text-[#0176D3] hover:underline">Forgot Your Password?</button>
+                      <button className="text-[#0176D3] hover:underline">Use Custom Domain</button>
+                    </div>
                   </div>
                 </div>
               </div>

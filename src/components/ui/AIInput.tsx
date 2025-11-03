@@ -73,8 +73,6 @@ interface AIInputProps {
   // Salesforce connection state props
   isSalesforceConnected?: boolean;
   connectedSandbox?: string | null; // e.g., "Production", "Dev Sandbox", "QA Sandbox"
-  onConnectSalesforce?: () => void;
-  onChangeSandbox?: () => void;
 }
 
 interface CodeSnippet {
@@ -107,8 +105,6 @@ const AIInput: React.FC<AIInputProps> = ({
   showTypingIndicator = false,
   isSalesforceConnected = false,
   connectedSandbox: _connectedSandbox = null,
-  onConnectSalesforce,
-  onChangeSandbox,
 }) => {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -155,6 +151,10 @@ const AIInput: React.FC<AIInputProps> = ({
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
+  const [showSalesforceModal, setShowSalesforceModal] = useState(false);
+  const [salesforceAuthStep, setSalesforceAuthStep] = useState<'auth' | 'thinking' | 'sandboxes' | 'connected'>('auth');
+  const [salesforceConnected, setSalesforceConnected] = useState(false);
+  const [selectedSandboxes, setSelectedSandboxes] = useState<string[]>([]);
   const [longTermMemory, setLongTermMemory] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{id: string, name: string, type: 'document' | 'image' | 'code'}>>([]);
   const [activeIntegrationType, setActiveIntegrationType] = useState<IntegrationType>(null);
@@ -864,14 +864,13 @@ const AIInput: React.FC<AIInputProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  if (isSalesforceConnected && onChangeSandbox) {
-                    onChangeSandbox();
-                  } else if (onConnectSalesforce) {
-                    onConnectSalesforce();
-                  }
+                  setShowSalesforceModal(true);
+                  setSalesforceAuthStep('auth');
                 }}
-                className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
-                title={isSalesforceConnected ? "Change sandbox" : "Connect Salesforce"}
+                className={`p-2 rounded bg-white border-0 transition-colors flex items-center justify-center ${
+                  salesforceConnected ? 'text-blue-600 hover:text-blue-700' : 'text-slate-500 hover:text-indigo-600'
+                }`}
+                title={salesforceConnected ? "Manage Salesforce connection" : "Connect Salesforce"}
               >
                 <Cloud className="w-5 h-5" />
               </button>
@@ -1179,6 +1178,193 @@ const AIInput: React.FC<AIInputProps> = ({
                   </div>
                 )}
               </div>
+            )}
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Salesforce Auth Modal */}
+      {showSalesforceModal && createPortal(
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => {
+            if (salesforceAuthStep === 'connected') {
+              setShowSalesforceModal(false);
+            }
+          }}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Auth Screen */}
+            {salesforceAuthStep === 'auth' && (
+              <>
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Cloud className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2">Connect to Salesforce</h3>
+                  <p className="text-sm text-slate-600">
+                    Connect your Salesforce org to enable seamless collaboration and deployment
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 rounded-lg p-4 mb-6 space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-slate-700">Access your sandboxes and production environments</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-slate-700">Deploy changes directly from the AI</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-slate-700">Get real-time org data and metadata</span>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowSalesforceModal(false)}
+                    className="flex-1 px-4 py-3 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSalesforceAuthStep('thinking');
+                      setTimeout(() => setSalesforceAuthStep('sandboxes'), 2000);
+                    }}
+                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+                  >
+                    Connect
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Thinking Screen */}
+            {salesforceAuthStep === 'thinking' && (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                  <Cloud className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">Locating your sandboxes...</h3>
+                <p className="text-sm text-slate-600">This will just take a moment</p>
+              </div>
+            )}
+
+            {/* Sandbox Selection Screen */}
+            {salesforceAuthStep === 'sandboxes' && (
+              <>
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Select Sandboxes</h3>
+                  <p className="text-sm text-slate-600">
+                    It's advised to select all sandboxes you'd want to work on
+                  </p>
+                </div>
+
+                <div className="space-y-2 mb-6 max-h-96 overflow-y-auto">
+                  {[
+                    { id: 'prod', name: 'Production', type: 'Production' },
+                    { id: 'dev', name: 'Dev Sandbox', type: 'Developer' },
+                    { id: 'qa', name: 'QA Sandbox', type: 'Developer Pro' },
+                    { id: 'staging', name: 'Staging Sandbox', type: 'Partial Copy' },
+                    { id: 'uat', name: 'UAT Sandbox', type: 'Full Copy' },
+                    { id: 'demo', name: 'Demo Sandbox', type: 'Developer' },
+                  ].map((sandbox) => (
+                    <button
+                      key={sandbox.id}
+                      onClick={() => {
+                        setSelectedSandboxes(prev => 
+                          prev.includes(sandbox.id) 
+                            ? prev.filter(id => id !== sandbox.id)
+                            : [...prev, sandbox.id]
+                        );
+                      }}
+                      className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                        selectedSandboxes.includes(sandbox.id)
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-slate-200 bg-white hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-semibold text-slate-900">{sandbox.name}</div>
+                          <div className="text-sm text-slate-600">{sandbox.type}</div>
+                        </div>
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                          selectedSandboxes.includes(sandbox.id)
+                            ? 'border-blue-600 bg-blue-600'
+                            : 'border-slate-300'
+                        }`}>
+                          {selectedSandboxes.includes(sandbox.id) && (
+                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowSalesforceModal(false);
+                      setSalesforceAuthStep('auth');
+                      setSelectedSandboxes([]);
+                    }}
+                    className="flex-1 px-4 py-3 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSalesforceAuthStep('connected');
+                      setSalesforceConnected(true);
+                    }}
+                    disabled={selectedSandboxes.length === 0}
+                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Connect ({selectedSandboxes.length})
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Connected Screen */}
+            {salesforceAuthStep === 'connected' && (
+              <>
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2">Connected!</h3>
+                  <p className="text-sm text-slate-600">
+                    You've successfully connected {selectedSandboxes.length} sandbox{selectedSandboxes.length !== 1 ? 'es' : ''}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setShowSalesforceModal(false)}
+                  className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+                >
+                  Done
+                </button>
+              </>
             )}
           </div>
         </div>,

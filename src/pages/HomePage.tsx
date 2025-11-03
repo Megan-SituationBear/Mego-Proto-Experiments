@@ -12,7 +12,6 @@ interface HomePageProps {
   recentItems?: any[];
   onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
-  onViewTemplate?: (template: any) => void;
   onNavigateToDashboard?: () => void;
   onNavigateToWorkspace?: (config: {
     type: 'chat' | 'library-item' | 'artifact';
@@ -34,7 +33,6 @@ const HomePage: React.FC<HomePageProps> = ({
   recentItems = [],
   onCreateProject,
   onLogout,
-  onViewTemplate,
   onNavigateToDashboard,
   onNavigateToWorkspace,
 }) => {
@@ -315,7 +313,12 @@ const HomePage: React.FC<HomePageProps> = ({
                       key={item.id || index}
                       onClick={() => {
                         setShowMenu(false);
-                        onViewTemplate?.(item);
+                        onNavigateToWorkspace?.({
+                          type: 'library-item',
+                          title: item.title,
+                          topic: item.category || 'Template',
+                          initialPrompt: `I want to use the "${item.title}" template. ${item.description || ''}`
+                        });
                       }}
                       className="w-full text-left py-2 px-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded transition-colors"
                     >
@@ -563,7 +566,14 @@ const HomePage: React.FC<HomePageProps> = ({
                     favoriteCount={item.favorites || 0}
                     variant="standard"
                     isFavorited={favoritedTemplates.some(t => t.title === item.title)}
-                    onClick={() => onViewTemplate?.(item)}
+                    onClick={() => {
+                      onNavigateToWorkspace?.({
+                        type: 'library-item',
+                        title: item.title,
+                        topic: item.category || 'Template',
+                        initialPrompt: `I want to use the "${item.title}" template. ${item.description || ''}`
+                      });
+                    }}
                   />
                 ))
               ) : (
@@ -583,7 +593,14 @@ const HomePage: React.FC<HomePageProps> = ({
                     favoriteCount={template.favorites || 0}
                     variant="standard"
                     isFavorited={true}
-                    onClick={() => onViewTemplate?.(template)}
+                    onClick={() => {
+                      onNavigateToWorkspace?.({
+                        type: 'library-item',
+                        title: template.title,
+                        topic: template.category,
+                        initialPrompt: `I want to use the "${template.title}" template. ${template.description}`
+                      });
+                    }}
                   />
                 ))
               ) : (
@@ -603,7 +620,14 @@ const HomePage: React.FC<HomePageProps> = ({
                   favoriteCount={template.favorites || 0}
                   variant="standard"
                   isFavorited={false}
-                  onClick={() => onViewTemplate?.(template)}
+                  onClick={() => {
+                    onNavigateToWorkspace?.({
+                      type: 'library-item',
+                      title: template.title,
+                      topic: template.category,
+                      initialPrompt: `I want to use the "${template.title}" template. ${template.description}`
+                    });
+                  }}
                 />
               ))
             )}
@@ -622,7 +646,12 @@ const HomePage: React.FC<HomePageProps> = ({
         onSelectTemplate={(template) => {
           setShowFindTemplatesModal(false);
           setSelectedGoalsForTemplates([]);
-          onViewTemplate?.(template);
+          onNavigateToWorkspace?.({
+            type: 'library-item',
+            title: template.title,
+            topic: template.category,
+            initialPrompt: `I want to use the "${template.title}" template. ${template.description}`
+          });
         }}
         initialGoals={selectedGoalsForTemplates}
       />

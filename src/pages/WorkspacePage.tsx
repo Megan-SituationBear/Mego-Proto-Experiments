@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import AIInput from '../components/ui/AIInput';
-import { TabToggle } from '../components/ui/TabToggle';
 import type { ConversationMessage } from '../components/ui/AIInput';
 
 type WorkspaceType = 'chat' | 'library-item' | 'artifact';
@@ -28,7 +27,7 @@ const WorkspacePage = ({
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'work' | 'summary' | 'outcome'>('work');
+  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'preview' | 'code' | 'summary' | 'outcome'>('preview');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [saveTitle, setSaveTitle] = useState(workspaceTitle);
   const [leftPanelWidth, setLeftPanelWidth] = useState(50); // percentage
@@ -216,26 +215,10 @@ const WorkspacePage = ({
         </div>
       </div>
 
-      {/* Workspace Tab Toggle */}
-      <div className="bg-white border-b border-slate-200 px-6 py-3">
-        <TabToggle
-          tabs={[
-            { id: 'work', label: 'Work' },
-            { id: 'summary', label: 'Summary' },
-            { id: 'outcome', label: 'Outcome' },
-          ]}
-          activeTab={activeWorkspaceTab}
-          onTabChange={(id) => setActiveWorkspaceTab(id as 'work' | 'summary' | 'outcome')}
-          size="sm"
-          variant="blue"
-        />
-      </div>
-
       {/* Main Content Area - Full Width */}
       <div className="flex-1 bg-white overflow-hidden flex flex-col">
-        {activeWorkspaceTab === 'work' ? (
-          /* Work Tab - Split Layout: Conversation + Code/Preview */
-          <div className="flex-1 flex overflow-hidden work-container">
+        {/* Split Layout: Conversation (Left) + Tabbed Panel (Right) */}
+        <div className="flex-1 flex overflow-hidden work-container">
             {/* Left: Conversation Area */}
             <div 
               className="flex flex-col border-r border-slate-200"
@@ -309,76 +292,121 @@ const WorkspacePage = ({
               style={{ userSelect: 'none' }}
             />
 
-            {/* Right: Code/Preview Area */}
+            {/* Right: Tabbed Panel */}
             <div 
               className="flex flex-col bg-slate-50"
               style={{ width: `${100 - leftPanelWidth}%` }}
             >
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-white">
-                <h3 className="text-sm font-semibold text-slate-700">Preview</h3>
-                <div className="flex items-center gap-2">
-                  <button className="px-3 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition-colors">
-                    Code
-                  </button>
-                  <button className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded">
-                    Preview
-                  </button>
-                </div>
+              {/* Tabs Header */}
+              <div className="flex items-center gap-1 px-4 py-3 border-b border-slate-200 bg-white">
+                <button 
+                  onClick={() => setActiveRightPanelTab('preview')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                    activeRightPanelTab === 'preview' 
+                      ? 'text-blue-600 bg-blue-50' 
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  Preview
+                </button>
+                <button 
+                  onClick={() => setActiveRightPanelTab('code')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                    activeRightPanelTab === 'code' 
+                      ? 'text-blue-600 bg-blue-50' 
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  Code
+                </button>
+                <button 
+                  onClick={() => setActiveRightPanelTab('summary')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                    activeRightPanelTab === 'summary' 
+                      ? 'text-blue-600 bg-blue-50' 
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  Summary
+                </button>
+                <button 
+                  onClick={() => setActiveRightPanelTab('outcome')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                    activeRightPanelTab === 'outcome' 
+                      ? 'text-blue-600 bg-blue-50' 
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  Outcome
+                </button>
               </div>
               
+              {/* Tab Content */}
               <div className="flex-1 overflow-auto p-6">
-                <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center h-full flex items-center justify-center">
-                  <div>
-                    <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">Code & Preview</h3>
-                    <p className="text-sm text-slate-600">
-                      Generated code and previews will appear here
-                    </p>
+                {activeRightPanelTab === 'preview' && (
+                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center h-full flex items-center justify-center">
+                    <div>
+                      <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Preview</h3>
+                      <p className="text-sm text-slate-600">
+                        Generated previews will appear here
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : activeWorkspaceTab === 'summary' ? (
-          /* Summary Tab Content */
-          <div className="flex-1 overflow-y-auto">
-            <div className="max-w-6xl mx-auto p-8">
-              <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900 mb-2">Summary</h1>
-                <p className="text-slate-600">
-                  Overview of your workspace progress
-                </p>
-              </div>
+                )}
 
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
-                <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                </svg>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Summary View</h3>
-                <p className="text-sm text-slate-600 mb-4">
-                  View a comprehensive summary of your workspace
-                </p>
-                <p className="text-xs text-slate-500">
-                  Key metrics, progress, and insights will be displayed here
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* Outcome Tab Content */
-          <div className="flex-1 overflow-y-auto">
-            <div className="max-w-6xl mx-auto p-8">
-              <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900 mb-2">Outcome</h1>
-                <p className="text-slate-600">
-                  Generated artifacts and results from this workspace
-                </p>
-              </div>
+                {activeRightPanelTab === 'code' && (
+                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center h-full flex items-center justify-center">
+                    <div>
+                      <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Code</h3>
+                      <p className="text-sm text-slate-600">
+                        Generated code will appear here
+                      </p>
+                    </div>
+                  </div>
+                )}
 
-              {/* Artifacts List */}
-              <div className="space-y-4">
+                {activeRightPanelTab === 'summary' && (
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Summary</h3>
+                      <p className="text-sm text-slate-600 mb-4">
+                        Overview of your workspace progress
+                      </p>
+                    </div>
+
+                    <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                      <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                      </svg>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Summary View</h3>
+                      <p className="text-sm text-slate-600 mb-4">
+                        View a comprehensive summary of your workspace
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Key metrics, progress, and insights will be displayed here
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {activeRightPanelTab === 'outcome' && (
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Outcome</h3>
+                      <p className="text-sm text-slate-600 mb-4">
+                        Generated artifacts and results from this workspace
+                      </p>
+                    </div>
+
+                    {/* Artifacts List */}
+                    <div className="space-y-4">
                 {/* Example Artifact 1 */}
                 <div className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-4">
@@ -474,21 +502,23 @@ const WorkspacePage = ({
                   </div>
                 </div>
 
-                {/* Empty State (can be shown when no artifacts) */}
-                {/* <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
-                  <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">No Artifacts Yet</h3>
-                  <p className="text-sm text-slate-600 mb-4">
-                    Artifacts will appear here as you complete work
-                  </p>
-                </div> */}
+                      {/* Empty State (can be shown when no artifacts) */}
+                      {/* <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                        <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <h3 className="text-lg font-semibold text-slate-900 mb-2">No Artifacts Yet</h3>
+                        <p className="text-sm text-slate-600 mb-4">
+                          Artifacts will appear here as you complete work
+                        </p>
+                      </div> */}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
 
       {/* Save/Rename Modal */}
       {showSaveModal && (

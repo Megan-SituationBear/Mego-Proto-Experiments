@@ -350,7 +350,6 @@ function App() {
       <IntroPage 
         onLogin={handleLogin}
         onSignUp={handleSignUp}
-        onViewTemplate={handleViewTemplate}
         onViewPricing={() => setCurrentView('pricing')}
       />
     );
@@ -389,7 +388,6 @@ function App() {
         recentItems={recentItems}
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}
-        onViewTemplate={handleViewTemplate}
         onNavigateToDashboard={() => setCurrentView('dashboard')}
         onNavigateToWorkspace={handleNavigateToWorkspace}
       />

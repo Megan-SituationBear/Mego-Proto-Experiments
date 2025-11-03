@@ -104,7 +104,33 @@ const WorkspacePage = ({
   // Initialize conversation with the initial prompt if provided
   useState(() => {
     if (initialPrompt && conversationMessages.length === 0) {
-      // Add user's initial message
+      // Special conversation for "What did Megan do?"
+      if (workspaceTitle === "What did Megan do?") {
+        const meganConversation: ConversationMessage[] = [
+          {
+            id: '1',
+            content: "What did Megan do?",
+            isUser: true,
+            timestamp: new Date()
+          },
+          {
+            id: '2',
+            content: "I'll analyze Megan's recent work across all your connected systems. Let me pull that together for you...",
+            isUser: false,
+            timestamp: new Date()
+          },
+          {
+            id: '3',
+            content: "Here's what Megan accomplished:\n\n**This Week:**\n• Redesigned the AI input component with Ask/Make modes\n• Implemented environment selection for Make mode\n• Built out workspace navigation system\n• Created dashboard with Recent/Saved/Artifacts tabs\n\n**Key Contributions:**\n• Replaced Favorites with Saved (bookmark icon)\n• Added conversation tracking (5-item recent cap)\n• Integrated FindTemplatesModal for quick actions\n• Improved dashboard layout with inline stats\n\nWould you like me to drill into any specific area?",
+            isUser: false,
+            timestamp: new Date()
+          }
+        ];
+        setConversationMessages(meganConversation);
+        return;
+      }
+      
+      // Default conversation for other prompts
       const userMessage: ConversationMessage = {
         id: Date.now().toString(),
         content: initialPrompt,
@@ -244,11 +270,11 @@ const WorkspacePage = ({
                       <div 
                         className={`max-w-[80%] px-4 py-3 rounded-2xl ${
                           msg.isUser 
-                            ? 'bg-blue-600 text-white' 
-                            : 'bg-slate-100 text-slate-900'
+                            ? 'bg-slate-100 text-slate-900' 
+                            : 'bg-blue-600 text-white'
                         }`}
                       >
-                        <p className="text-sm leading-relaxed">{msg.content}</p>
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                       </div>
                     </div>
                   ))
@@ -362,71 +388,145 @@ const WorkspacePage = ({
                         Key Highlights
                       </h4>
                       <div className="space-y-2">
-                        <button
-                          onClick={() => handleSendMessage("Tell me about Copado's deployment features")}
-                          className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
-                        >
-                          <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Deployment Automation</p>
-                            <p className="text-xs text-slate-600 mt-1">Learn about automated deployment pipelines</p>
-                          </div>
-                        </button>
-                        <button
-                          onClick={() => handleSendMessage("Explain Copado's testing capabilities")}
-                          className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
-                        >
-                          <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Quality Testing</p>
-                            <p className="text-xs text-slate-600 mt-1">Automated testing and quality gates</p>
-                          </div>
-                        </button>
-                        <button
-                          onClick={() => handleSendMessage("How does Copado integrate with Salesforce?")}
-                          className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
-                        >
-                          <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Salesforce Integration</p>
-                            <p className="text-xs text-slate-600 mt-1">Native integration with Salesforce orgs</p>
-                          </div>
-                        </button>
-                        <button
-                          onClick={() => handleSendMessage("Show me Copado's collaboration features")}
-                          className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
-                        >
-                          <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Team Collaboration</p>
-                            <p className="text-xs text-slate-600 mt-1">Work together with your team in real-time</p>
-                          </div>
-                        </button>
+                        {workspaceTitle === "What did Megan do?" ? (
+                          <>
+                            <button
+                              onClick={() => handleSendMessage("Tell me more about the AI input redesign")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">AI Input Redesign</p>
+                                <p className="text-xs text-slate-600 mt-1">Ask/Make modes with environment selection</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("Show me the dashboard improvements")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Dashboard Enhancements</p>
+                                <p className="text-xs text-slate-600 mt-1">Table views with Recent/Saved/Artifacts tabs</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("Explain the Saved feature changes")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Favorites → Saved</p>
+                                <p className="text-xs text-slate-600 mt-1">Green bookmark icon with toggle behavior</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("What's the recent items tracking system?")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Recent Tracking</p>
+                                <p className="text-xs text-slate-600 mt-1">All clicks tracked, 5-item cap across pages</p>
+                              </div>
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleSendMessage("Tell me about Copado's deployment features")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Deployment Automation</p>
+                                <p className="text-xs text-slate-600 mt-1">Learn about automated deployment pipelines</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("Explain Copado's testing capabilities")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Quality Testing</p>
+                                <p className="text-xs text-slate-600 mt-1">Automated testing and quality gates</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("How does Copado integrate with Salesforce?")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Salesforce Integration</p>
+                                <p className="text-xs text-slate-600 mt-1">Native integration with Salesforce orgs</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("Show me Copado's collaboration features")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Team Collaboration</p>
+                                <p className="text-xs text-slate-600 mt-1">Work together with your team in real-time</p>
+                              </div>
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
 
                     {/* Key Metrics */}
                     <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-white border border-slate-200 rounded-lg p-4">
-                        <p className="text-xs text-slate-600 mb-1">Progress</p>
-                        <p className="text-2xl font-bold text-slate-900">65%</p>
-                      </div>
-                      <div className="bg-white border border-slate-200 rounded-lg p-4">
-                        <p className="text-xs text-slate-600 mb-1">Items</p>
-                        <p className="text-2xl font-bold text-slate-900">8</p>
-                      </div>
-                      <div className="bg-white border border-slate-200 rounded-lg p-4">
-                        <p className="text-xs text-slate-600 mb-1">Time Est.</p>
-                        <p className="text-2xl font-bold text-slate-900">4h</p>
-                      </div>
+                      {workspaceTitle === "What did Megan do?" ? (
+                        <>
+                          <div className="bg-white border border-slate-200 rounded-lg p-4">
+                            <p className="text-xs text-slate-600 mb-1">Components</p>
+                            <p className="text-2xl font-bold text-slate-900">12</p>
+                          </div>
+                          <div className="bg-white border border-slate-200 rounded-lg p-4">
+                            <p className="text-xs text-slate-600 mb-1">Features</p>
+                            <p className="text-2xl font-bold text-slate-900">24</p>
+                          </div>
+                          <div className="bg-white border border-slate-200 rounded-lg p-4">
+                            <p className="text-xs text-slate-600 mb-1">This Week</p>
+                            <p className="text-2xl font-bold text-slate-900">8</p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="bg-white border border-slate-200 rounded-lg p-4">
+                            <p className="text-xs text-slate-600 mb-1">Progress</p>
+                            <p className="text-2xl font-bold text-slate-900">65%</p>
+                          </div>
+                          <div className="bg-white border border-slate-200 rounded-lg p-4">
+                            <p className="text-xs text-slate-600 mb-1">Items</p>
+                            <p className="text-2xl font-bold text-slate-900">8</p>
+                          </div>
+                          <div className="bg-white border border-slate-200 rounded-lg p-4">
+                            <p className="text-xs text-slate-600 mb-1">Time Est.</p>
+                            <p className="text-2xl font-bold text-slate-900">4h</p>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}

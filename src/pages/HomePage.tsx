@@ -420,10 +420,10 @@ const HomePage: React.FC<HomePageProps> = ({
                 <p className="text-xs font-medium text-slate-700 mb-2 text-center">Quick actions:</p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {[
+                    { text: "What did Megan do?", topic: "Strategy" },
                     { text: "Quick summary of Copado", topic: "Learn" },
                     { text: "Create a deployment plan", topic: "Deploy" },
-                    { text: "Analyze my org health", topic: "Analyze" },
-                    { text: "Help with user management", topic: "Manage" }
+                    { text: "Analyze my org health", topic: "Analyze" }
                   ].map((action, index) => (
                     <button
                       key={index}

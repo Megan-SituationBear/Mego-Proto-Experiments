@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { AIInput, TemplateCard, TopNav, TabToggle } from '../components/ui';
-import FindTemplatesModal from '../components/ui/FindTemplatesModal';
 import Conversation, { type ConversationMessage } from '../components/Conversation';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
 
@@ -37,12 +36,11 @@ const HomePage: React.FC<HomePageProps> = ({
   onNavigateToWorkspace,
 }) => {
   // UI state
-  const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
-  const [selectedGoalsForTemplates, setSelectedGoalsForTemplates] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'suggested' | 'work' | 'templates'>(
+  const [showCustomizeActionsModal, setShowCustomizeActionsModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'artifacts'>(
     recentItems.length > 0 ? 'recent' : 
     favoritedTemplates.length > 0 ? 'favorites' : 
-    'suggested'
+    'artifacts'
   );
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -52,63 +50,6 @@ const HomePage: React.FC<HomePageProps> = ({
   const [userMessageCount, setUserMessageCount] = useState(0);
   const [showBuildingWorkspace, setShowBuildingWorkspace] = useState(false);
   const [workspaceAction, setWorkspaceAction] = useState('');
-
-  const recommendedTemplates = [
-    {
-      category: "Deploy",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Automate pre-deployment checks and fixes to catch issues before they reach production. Saves an average of 35 hours per deployment cycle.",
-      favorites: 1234,
-      views: 154
-    },
-    {
-      category: "Test",
-      categoryColor: "green" as const,
-      savedHours: 28,
-      title: "Automated Test Coverage Analysis",
-      description: "Identify gaps in test coverage and generate automated test scripts for your Salesforce org. Ensures 95%+ coverage before deployment.",
-      favorites: 892,
-      views: 89
-    },
-    {
-      category: "Org Magic",
-      categoryColor: "purple" as const,
-      savedHours: 42,
-      title: "Permission Set Audit & Remediation",
-      description: "Review and fix permission set misconfigurations automatically. Reduces security risks while maintaining user access requirements.",
-      favorites: 567,
-      views: 203
-    },
-    {
-      category: "Build",
-      categoryColor: "amber" as const,
-      savedHours: 51,
-      title: "Data Cleanup & Validation Workflow",
-      description: "Automate data quality checks and cleanup processes. Identifies duplicates, missing fields, and validation errors across your org.",
-      favorites: 1089,
-      views: 312
-    },
-    {
-      category: "Plan",
-      categoryColor: "slate" as const,
-      savedHours: 19,
-      title: "API Integration Health Monitor",
-      description: "Track and optimize API usage across your Salesforce org. Prevents limit exceptions and identifies optimization opportunities.",
-      favorites: 723,
-      views: 145
-    },
-    {
-      category: "Org Magic",
-      categoryColor: "indigo" as const,
-      savedHours: 63,
-      title: "Query Optimization & Indexing",
-      description: "Analyze and optimize slow queries in your org. Automatically suggests indexes and query improvements to boost performance.",
-      favorites: 1445,
-      views: 278
-    },
-  ];
 
   // Auto-scroll to bottom of conversation
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -294,7 +235,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 <button
                   onClick={() => {
                     setShowMenu(false);
-                    setActiveTab('work');
+                    setActiveTab('recent');
                   }}
                   className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
@@ -330,7 +271,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     <button
                       onClick={() => {
                         setShowMenu(false);
-                        setActiveTab('work');
+                        setActiveTab('recent');
                       }}
                       className="w-full text-left py-2 px-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
                     >
@@ -347,7 +288,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 <button
                   onClick={() => {
                     setShowMenu(false);
-                    setActiveTab('work');
+                    setActiveTab('favorites');
                   }}
                   className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
@@ -361,15 +302,15 @@ const HomePage: React.FC<HomePageProps> = ({
               </div>
             </div>
             
-            {/* Templates */}
+            {/* Artifacts */}
             <button
               onClick={() => {
                 setShowMenu(false);
-                setActiveTab('templates');
+                setActiveTab('artifacts');
               }}
               className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
             >
-              Templates
+              Artifacts
             </button>
 
             {/* Divider */}
@@ -505,6 +446,14 @@ const HomePage: React.FC<HomePageProps> = ({
                     </button>
                   ))}
                 </div>
+                <div className="text-center mt-3">
+                  <button
+                    onClick={() => setShowCustomizeActionsModal(true)}
+                    className="text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
+                  >
+                    Customize Quick Actions
+                  </button>
+                </div>
               </div>
             )}
             
@@ -537,20 +486,13 @@ const HomePage: React.FC<HomePageProps> = ({
                 tabs={[
                   { id: 'recent', label: 'Recent', count: recentItems.length },
                   { id: 'favorites', label: 'Favorites', count: favoritedTemplates.length },
-                  { id: 'suggested', label: 'Suggested Templates' }
+                  { id: 'artifacts', label: 'Artifacts' }
                 ]}
                 activeTab={activeTab}
-                onTabChange={(id) => setActiveTab(id as 'recent' | 'favorites' | 'suggested' | 'work' | 'templates')}
+                onTabChange={(id) => setActiveTab(id as 'recent' | 'favorites' | 'artifacts')}
                 size="default"
                 variant="blue"
               />
-              
-              <button
-                onClick={() => setShowFindTemplatesModal(true)}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
-              >
-                Find Templates
-              </button>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -609,52 +551,93 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
               )
             ) : (
-              // Suggested Templates
-              recommendedTemplates.map((template, index) => (
-                <TemplateCard
-                  key={`suggested-${index}`}
-                  category={template.category}
-                  title={template.title}
-                  description={template.description}
-                  remixCount={template.views || 0}
-                  favoriteCount={template.favorites || 0}
-                  variant="standard"
-                  isFavorited={false}
-                  onClick={() => {
-                    onNavigateToWorkspace?.({
-                      type: 'library-item',
-                      title: template.title,
-                      topic: template.category,
-                      initialPrompt: `I want to use the "${template.title}" template. ${template.description}`
-                    });
-                  }}
-                />
-              ))
+              // Artifacts
+              <div className="col-span-full">
+                <div className="text-center py-12">
+                  <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">No Artifacts Yet</h3>
+                  <p className="text-sm text-slate-600">
+                    Artifacts generated from your workspaces will appear here
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </div>
 
       </main>
 
-      {/* Find Templates Modal - Logged in users get direct access */}
-      <FindTemplatesModal
-        isOpen={showFindTemplatesModal}
-        onClose={() => {
-          setShowFindTemplatesModal(false);
-          setSelectedGoalsForTemplates([]);
-        }}
-        onSelectTemplate={(template) => {
-          setShowFindTemplatesModal(false);
-          setSelectedGoalsForTemplates([]);
-          onNavigateToWorkspace?.({
-            type: 'library-item',
-            title: template.title,
-            topic: template.category,
-            initialPrompt: `I want to use the "${template.title}" template. ${template.description}`
-          });
-        }}
-        initialGoals={selectedGoalsForTemplates}
-      />
+      {/* Customize Quick Actions Modal */}
+      {showCustomizeActionsModal && (
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowCustomizeActionsModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Customize Quick Actions</h3>
+                <p className="text-sm text-slate-600 mt-1">Pick your top 4 quick actions to display</p>
+              </div>
+              <button 
+                onClick={() => setShowCustomizeActionsModal(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Available Actions */}
+            <div className="space-y-3 mb-6">
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Quick summary of Copado",
+                  "Create a deployment plan",
+                  "Analyze my org health",
+                  "Help with user management",
+                  "Review code changes",
+                  "Set up automation",
+                  "Configure permissions",
+                  "Generate test cases",
+                  "Optimize performance",
+                  "Create documentation"
+                ].map((action, index) => (
+                  <button
+                    key={index}
+                    className="px-4 py-2 bg-slate-50 text-slate-700 border border-slate-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all text-sm"
+                  >
+                    {action}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowCustomizeActionsModal(false)}
+                className="px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowCustomizeActionsModal(false)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+              >
+                Save Actions
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Building Workspace Modal */}
       {showBuildingWorkspace && (

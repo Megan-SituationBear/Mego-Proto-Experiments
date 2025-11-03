@@ -133,6 +133,17 @@ const AIInput: React.FC<AIInputProps> = ({
     return availableModes[0] || 'ask';
   });
 
+  // When switching to Make mode, automatically expand to focused state
+  useEffect(() => {
+    if (inputMode === 'make' && pageContext === 'home') {
+      setHasBeenFocused(true);
+      // Optionally focus the textarea
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }
+  }, [inputMode, pageContext]);
+
   // Track if "Press enter to submit" tip has been shown (one-time only)
   const [hasShownEnterTip, setHasShownEnterTip] = useState(() => {
     return localStorage.getItem('aiInput-enterTipShown') === 'true';

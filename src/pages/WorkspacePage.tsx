@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import TopNav from '../components/ui/TopNav';
 import AIInput from '../components/ui/AIInput';
+import { TabToggle } from '../components/ui/TabToggle';
 import type { ConversationMessage } from '../components/ui/AIInput';
 
 type WorkspaceType = 'chat' | 'library-item' | 'artifact';
@@ -29,6 +30,7 @@ const WorkspacePage = ({
   const [showTyping, setShowTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'work' | 'summary' | 'output'>('work');
 
   // Determine primary action based on workspace type
   const getPrimaryAction = () => {
@@ -176,6 +178,21 @@ const WorkspacePage = ({
         </div>
       </div>
 
+      {/* Workspace Tab Toggle */}
+      <div className="bg-white border-b border-slate-200 px-6 py-3">
+        <TabToggle
+          tabs={[
+            { id: 'work', label: 'Work' },
+            { id: 'summary', label: 'Summary' },
+            { id: 'output', label: 'Output' },
+          ]}
+          activeTab={activeWorkspaceTab}
+          onTabChange={(id) => setActiveWorkspaceTab(id as 'work' | 'summary' | 'output')}
+          size="sm"
+          variant="blue"
+        />
+      </div>
+
       {/* Main Content - Split View */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Side - Chat */}
@@ -243,27 +260,80 @@ const WorkspacePage = ({
         {/* Right Side - Work Area */}
         <div className="flex-1 bg-white overflow-y-auto">
           <div className="max-w-6xl mx-auto p-8">
-            {/* Work Area Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">{workspaceTitle}</h1>
-              <p className="text-slate-600">
-                Workspace for {workspaceType.split('-').join(' ')}
-              </p>
-            </div>
+            {/* Work Tab Content */}
+            {activeWorkspaceTab === 'work' && (
+              <>
+                <div className="mb-8">
+                  <h1 className="text-3xl font-bold text-slate-900 mb-2">{workspaceTitle}</h1>
+                  <p className="text-slate-600">
+                    Workspace for {workspaceType.split('-').join(' ')}
+                  </p>
+                </div>
 
-            {/* Placeholder for workspace content */}
-            <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
-              <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">Work Area</h3>
-              <p className="text-sm text-slate-600 mb-4">
-                This is where workspace content will appear
-              </p>
-              <p className="text-xs text-slate-500">
-                Documents, code, deployments, and other artifacts will be displayed here
-              </p>
-            </div>
+                <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                  <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Work Area</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    This is where workspace content will appear
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Documents, code, deployments, and other artifacts will be displayed here
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Summary Tab Content */}
+            {activeWorkspaceTab === 'summary' && (
+              <>
+                <div className="mb-8">
+                  <h1 className="text-3xl font-bold text-slate-900 mb-2">Summary</h1>
+                  <p className="text-slate-600">
+                    Overview of your workspace progress
+                  </p>
+                </div>
+
+                <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                  <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Summary View</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    View a comprehensive summary of your workspace
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Key metrics, progress, and insights will be displayed here
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Output Tab Content */}
+            {activeWorkspaceTab === 'output' && (
+              <>
+                <div className="mb-8">
+                  <h1 className="text-3xl font-bold text-slate-900 mb-2">Output</h1>
+                  <p className="text-slate-600">
+                    Generated artifacts and results
+                  </p>
+                </div>
+
+                <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                  <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Output Files</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    View and download generated outputs
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Code, documents, and other generated artifacts will appear here
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

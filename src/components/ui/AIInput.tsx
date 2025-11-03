@@ -72,6 +72,13 @@ interface AIInputProps {
   // Salesforce connection state props
   isSalesforceConnected?: boolean;
   connectedSandbox?: string | null; // e.g., "Production", "Dev Sandbox", "QA Sandbox"
+  // Navigation
+  onNavigateToWorkspace?: (config: {
+    type: 'chat' | 'library-item' | 'artifact';
+    title: string;
+    topic: string;
+    initialPrompt: string;
+  }) => void;
 }
 
 interface CodeSnippet {
@@ -103,6 +110,7 @@ const AIInput: React.FC<AIInputProps> = ({
   showTypingIndicator = false,
   isSalesforceConnected = false,
   connectedSandbox: _connectedSandbox = null,
+  onNavigateToWorkspace,
 }) => {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -152,6 +160,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [showAllIntegrationsModal, setShowAllIntegrationsModal] = useState(false);
   const [showSalesforceModal, setShowSalesforceModal] = useState(false);
   const [showManageConnectionModal, setShowManageConnectionModal] = useState(false);
+  const [jiraConnected] = useState(false); // Track Jira connection status
   const [salesforceAuthStep, setSalesforceAuthStep] = useState<'login' | 'auth' | 'thinking' | 'sandboxes' | 'connected'>('login');
   const [salesforceConnected, setSalesforceConnected] = useState(false);
   const [selectedSandboxes, setSelectedSandboxes] = useState<string[]>([]);
@@ -1983,16 +1992,78 @@ const AIInput: React.FC<AIInputProps> = ({
                 <button
                   onClick={() => {
                     setShowAllIntegrationsModal(false);
-                    handleOpenIntegrationModal('jira');
+                    onNavigateToWorkspace?.({
+                      type: 'chat',
+                      title: 'Connect Jira to Copado',
+                      topic: 'Integration Setup',
+                      initialPrompt: `I need help connecting Jira to Copado. Here's the setup guide:
+
+⚙️ **1. Prerequisites**
+
+✅ Admin access to both Jira Cloud and Copado.
+✅ A Copado Connected App installed in your Salesforce org.
+✅ Your Jira Cloud URL (e.g. https://yourteam.atlassian.net).
+
+🧩 **2. Create a Jira API token**
+
+• Go to https://id.atlassian.com/manage/api-tokens.
+• Click Create API token, give it a name like "Copado Integration," and copy it.
+• Note your Atlassian email address (the one used to log in).
+• You'll use both email + token for authentication from Copado.
+
+🔐 **3. In Copado (Salesforce) – Add Jira connection**
+
+• In Salesforce, open the Copado Setup tab.
+• Navigate to Connections → Add New Connection.
+• Choose Type = Jira.
+• Enter:
+  - Jira Base URL: https://yourteam.atlassian.net
+  - Username: your Atlassian email
+  - Password / Token: the API token you created
+• Click Test Connection — it should return Success.
+• Save the connection.
+
+**4. Map Jira projects and issue types**
+
+• Go to Copado Setup → Jira Project Mappings.
+• Add a new mapping for each Jira project you want to sync.
+• Jira Project Key
+• Copado Environment or Release Name
+• Optionally map issue types, status values, or custom fields if you want two-way updates.
+
+**5. Enable automatic sync**
+
+• In Copado, enable the Jira Integration Job or set up a Copado Job Scheduler.
+• Decide whether you want:
+  - Push → Jira: Create/update Jira issues from Copado User Stories.
+  - Pull ← Jira: Sync Jira stories into Copado for release tracking.
+• Verify by creating or updating a test story — Copado should log the transaction in the Integration Logs tab.
+
+🧠 **Tips**
+
+• Use OAuth 2.0 (3-legged) if your org enforces SSO — you'll need an Atlassian developer app registration.
+• Limit Copado's Jira user permissions to the relevant projects only.
+• You can also run Apex jobs (Copado → Jira Sync) manually if automations are paused.
+
+Can you help me with any questions I have about this setup?`
+                    });
                   }}
-                  className="p-4 rounded-lg border-2 border-slate-200 bg-white hover:border-slate-300 transition-all text-left"
+                  className={`p-4 rounded-lg border-2 transition-all text-left ${
+                    jiraConnected
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-slate-200 bg-white hover:border-slate-300'
+                  }`}
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <Ticket className="w-6 h-6 text-blue-500" />
                     <span className="font-semibold text-slate-900">Jira</span>
                   </div>
                   <p className="text-xs text-slate-600 mb-2">Connect Jira tickets and projects</p>
-                  <span className="text-xs text-slate-500">Not connected</span>
+                  {jiraConnected ? (
+                    <span className="text-xs text-green-600 font-medium">✓ Connected</span>
+                  ) : (
+                    <span className="text-xs text-slate-500">Not connected</span>
+                  )}
                 </button>
 
                 {/* Confluence */}

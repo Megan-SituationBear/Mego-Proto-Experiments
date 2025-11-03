@@ -464,6 +464,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 hasConversation={conversationMessages.length > 0}
                 messages={[]}
                 showTypingIndicator={showCopadoTyping}
+                onNavigateToWorkspace={onNavigateToWorkspace}
               />
             </div>
 

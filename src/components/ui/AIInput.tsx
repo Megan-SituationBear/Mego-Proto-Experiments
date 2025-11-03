@@ -992,6 +992,62 @@ Can you help me with any questions I have about this setup?`
                 >
                   <Plus className="w-5 h-5" />
                 </button>
+
+                {/* Context Menu Dropdown for Make Mode - Rendered via Portal */}
+                {showContextMenu && createPortal(
+                  <div 
+                    ref={menuRef}
+                    className="fixed w-56 bg-white backdrop-blur-md rounded-xl border border-slate-200 shadow-2xl py-1.5 animate-in fade-in duration-200"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.98)',
+                      backdropFilter: 'blur(12px)',
+                      zIndex: 2000,
+                      bottom: `${Math.max(window.innerHeight - menuPosition.top + 8, 280)}px`,
+                      left: `${menuPosition.left}px`,
+                      maxHeight: '300px',
+                      overflowY: 'auto',
+                    }}
+                    onMouseEnter={() => {
+                      if (menuCloseTimeoutRef.current) {
+                        clearTimeout(menuCloseTimeoutRef.current);
+                        menuCloseTimeoutRef.current = null;
+                      }
+                      setShowContextMenu(true);
+                    }}
+                    onMouseLeave={() => {
+                      menuCloseTimeoutRef.current = setTimeout(() => {
+                        setShowContextMenu(false);
+                      }, 300);
+                    }}
+                  >
+                    {/* Menu Header */}
+                    <div className="px-3 py-1.5 border-b border-slate-100">
+                      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                        {pageContext === 'workspace' ? 'Context For This Work:' : 'Conversation Context:'}
+                      </p>
+                    </div>
+
+                    {/* Menu Items */}
+                    <div className="py-0.5">
+                      {contextMenuItems.map((item, index) => {
+                        const IconComponent = item.icon;
+                        return (
+                          <button
+                            key={index}
+                            onClick={item.action}
+                            className="w-full px-3 py-2 flex items-center gap-2.5 hover:bg-blue-50 transition-colors text-left group"
+                          >
+                            <IconComponent className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
+                            <span className="text-xs text-slate-700 group-hover:text-blue-600 font-medium">
+                              {item.label}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>,
+                  document.body
+                )}
               </div>
             </div>
           )}

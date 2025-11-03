@@ -371,8 +371,18 @@ const HomePage: React.FC<HomePageProps> = ({
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <div className="max-w-4xl mx-auto w-full">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 relative">
+        {/* Gradient Background */}
+        <div 
+          className="absolute inset-0 top-0 pointer-events-none overflow-hidden"
+          style={{
+            background: 'radial-gradient(ellipse 800px 600px at 50% 0%, rgba(99, 102, 241, 0.15), transparent 50%), radial-gradient(ellipse 600px 400px at 80% 20%, rgba(168, 85, 247, 0.1), transparent 50%)',
+            filter: 'blur(60px)',
+            opacity: 0.7,
+          }}
+        />
+        
+        <div className="max-w-4xl mx-auto w-full relative z-10">
         {/* Welcome Heading */}
         <div className="text-center mb-3 py-2">
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mb-2 sm:mb-3">

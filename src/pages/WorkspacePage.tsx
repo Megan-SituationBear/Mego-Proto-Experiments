@@ -393,18 +393,18 @@ const WorkspacePage = ({
                 )}
               </div>
 
-              {/* AI Input - Inside Conversation Area */}
-              <div className="border-t border-slate-200 p-4 bg-slate-50">
+              {/* AI Input - Locked at Bottom */}
+              <div className="border-t border-slate-200 p-4 bg-white sticky bottom-0">
                 <AIInput
                   onSendMessage={handleSendMessage}
-                  placeholder="Message about this workspace..."
+                  placeholder="your move ..."
                   disabled={false}
                   loading={showTyping}
                   autoFocus={false}
                   isLoggedIn={true}
                   pageContext="workspace"
                   defaultMode="ask"
-                  availableModes={['ask', 'make']}
+                  availableModes={['ask']}
                 />
               </div>
             </div>

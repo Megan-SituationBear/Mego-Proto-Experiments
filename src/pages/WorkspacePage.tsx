@@ -3,24 +3,47 @@ import TopNav from '../components/ui/TopNav';
 import AIInput from '../components/ui/AIInput';
 import type { ConversationMessage } from '../components/ui/AIInput';
 
+type WorkspaceType = 'chat' | 'library-item' | 'artifact';
+
 interface WorkspacePageProps {
-  workspaceType?: string; // e.g., "copado-summary", "deployment-plan", etc.
+  workspaceType?: WorkspaceType;
+  workspaceId?: string; // e.g., "copado-summary", "deployment-plan", etc.
   workspaceTitle?: string;
+  workspaceTopic?: string; // e.g., "Deploy", "Analyze", "Learn"
   initialPrompt?: string;
   userName?: string;
   onNavigateHome?: () => void;
+  onBack?: () => void;
 }
 
 const WorkspacePage = ({
-  workspaceType = 'general',
+  workspaceType = 'chat',
   workspaceTitle = 'Workspace',
+  workspaceTopic = 'General',
   initialPrompt = '',
   userName = 'You',
   onNavigateHome,
+  onBack,
 }: WorkspacePageProps) => {
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Determine primary action based on workspace type
+  const getPrimaryAction = () => {
+    switch (workspaceType) {
+      case 'library-item':
+        return { label: 'Remix', icon: '✨' };
+      case 'artifact':
+        return { label: 'Deploy', icon: '🚀' };
+      case 'chat':
+      default:
+        return { label: 'Share', icon: '↗' };
+    }
+  };
+
+  const primaryAction = getPrimaryAction();
 
   // Initialize conversation with the initial prompt if provided
   useState(() => {
@@ -104,18 +127,61 @@ const WorkspacePage = ({
         }}
       />
 
+      {/* Workspace Header */}
+      <div className="bg-white border-b border-slate-200 px-6 py-4">
+        <div className="max-w-full mx-auto flex items-center justify-between">
+          {/* Left: Back Button */}
+          <button
+            onClick={onBack || onNavigateHome || (() => window.history.back())}
+            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            title="Go back"
+          >
+            <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          </button>
+
+          {/* Center: Topic Badge + Title */}
+          <div className="flex-1 flex flex-col items-center justify-center mx-8">
+            <span className="text-xs font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full mb-2">
+              {workspaceTopic}
+            </span>
+            <h1 className="text-xl font-bold text-slate-900">{workspaceTitle}</h1>
+          </div>
+
+          {/* Right: Favorite + Primary Action */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsFavorite(!isFavorite)}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <svg 
+                className={`w-5 h-5 ${isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-slate-400'}`} 
+                fill={isFavorite ? 'currentColor' : 'none'} 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => console.log(`Primary action: ${primaryAction.label}`)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm flex items-center gap-2"
+            >
+              {primaryAction.label}
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content - Split View */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Side - Chat */}
         <div className="w-96 border-r border-slate-200 bg-white flex flex-col">
-          {/* Chat Header */}
-          <div className="p-4 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900">{workspaceTitle}</h2>
-            <p className="text-xs text-slate-500 mt-1">Workspace chat</p>
-          </div>
-
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-6">
             {conversationMessages.length === 0 && (
               <div className="text-center py-12">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">

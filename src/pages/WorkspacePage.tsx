@@ -27,7 +27,7 @@ const WorkspacePage = ({
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'preview' | 'code' | 'summary' | 'outcome'>('preview');
+  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'code' | 'outcome'>('overview');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [saveTitle, setSaveTitle] = useState(workspaceTitle);
   const [leftPanelWidth, setLeftPanelWidth] = useState(75); // percentage - 3/4 of page by default
@@ -298,14 +298,14 @@ const WorkspacePage = ({
               {/* Tabs Header */}
               <div className="flex items-center gap-1 px-4 py-3 border-b border-slate-200 bg-white">
                 <button 
-                  onClick={() => setActiveRightPanelTab('preview')}
+                  onClick={() => setActiveRightPanelTab('overview')}
                   className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
-                    activeRightPanelTab === 'preview' 
+                    activeRightPanelTab === 'overview' 
                       ? 'text-blue-600 bg-blue-50' 
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
-                  Preview
+                  Overview
                 </button>
                 <button 
                   onClick={() => setActiveRightPanelTab('code')}
@@ -316,16 +316,6 @@ const WorkspacePage = ({
                   }`}
                 >
                   Code
-                </button>
-                <button 
-                  onClick={() => setActiveRightPanelTab('summary')}
-                  className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
-                    activeRightPanelTab === 'summary' 
-                      ? 'text-blue-600 bg-blue-50' 
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  Summary
                 </button>
                 <button 
                   onClick={() => setActiveRightPanelTab('outcome')}
@@ -341,17 +331,63 @@ const WorkspacePage = ({
               
               {/* Tab Content */}
               <div className="flex-1 overflow-auto p-6">
-                {activeRightPanelTab === 'preview' && (
-                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center h-full flex items-center justify-center">
+                {activeRightPanelTab === 'overview' && (
+                  <div className="space-y-6">
+                    {/* Header */}
                     <div>
-                      <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Preview</h3>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Overview</h3>
                       <p className="text-sm text-slate-600">
-                        Generated previews will appear here
+                        High-level summary and actionable items for this workspace
                       </p>
+                    </div>
+
+                    {/* Actionable Items */}
+                    <div className="bg-white border border-slate-200 rounded-xl p-6">
+                      <h4 className="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                        </svg>
+                        Actionable Items
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                          <div className="w-5 h-5 rounded border-2 border-slate-300 mt-0.5 flex-shrink-0"></div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-slate-900">Review generated user story requirements</p>
+                            <p className="text-xs text-slate-600 mt-1">Ensure acceptance criteria are complete</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                          <div className="w-5 h-5 rounded border-2 border-slate-300 mt-0.5 flex-shrink-0"></div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-slate-900">Test code in Dev Sandbox</p>
+                            <p className="text-xs text-slate-600 mt-1">Run unit tests before deployment</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                          <div className="w-5 h-5 rounded border-2 border-slate-300 mt-0.5 flex-shrink-0"></div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-slate-900">Update documentation</p>
+                            <p className="text-xs text-slate-600 mt-1">Document API changes and usage examples</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Key Metrics */}
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="bg-white border border-slate-200 rounded-lg p-4">
+                        <p className="text-xs text-slate-600 mb-1">Progress</p>
+                        <p className="text-2xl font-bold text-slate-900">65%</p>
+                      </div>
+                      <div className="bg-white border border-slate-200 rounded-lg p-4">
+                        <p className="text-xs text-slate-600 mb-1">Items</p>
+                        <p className="text-2xl font-bold text-slate-900">8</p>
+                      </div>
+                      <div className="bg-white border border-slate-200 rounded-lg p-4">
+                        <p className="text-xs text-slate-600 mb-1">Time Est.</p>
+                        <p className="text-2xl font-bold text-slate-900">4h</p>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -365,30 +401,6 @@ const WorkspacePage = ({
                       <h3 className="text-lg font-semibold text-slate-900 mb-2">Code</h3>
                       <p className="text-sm text-slate-600">
                         Generated code will appear here
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {activeRightPanelTab === 'summary' && (
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Summary</h3>
-                      <p className="text-sm text-slate-600 mb-4">
-                        Overview of your workspace progress
-                      </p>
-                    </div>
-
-                    <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
-                      <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                      </svg>
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Summary View</h3>
-                      <p className="text-sm text-slate-600 mb-4">
-                        View a comprehensive summary of your workspace
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        Key metrics, progress, and insights will be displayed here
                       </p>
                     </div>
                   </div>

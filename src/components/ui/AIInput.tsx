@@ -232,8 +232,7 @@ const AIInput: React.FC<AIInputProps> = ({
     }
   };
 
-  // Delete code snippet
-  // @ts-ignore - unused for now but will be used later
+  // Delete code snippet (used in UI chips)
   const deleteSnippet = (id: string) => {
     setCodeSnippets(prev => prev.filter(snippet => snippet.id !== id));
   };
@@ -971,8 +970,8 @@ Can you help me with any questions I have about this setup?`
           )}
         </div>
 
-        {/* Context Chips - Show uploaded files and connected sandboxes */}
-        {!(inputMode === 'make' && viewState === 'focused') && (uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
+        {/* Context Chips - Show uploaded files, code snippets, and connected sandboxes */}
+        {!(inputMode === 'make' && viewState === 'focused') && (uploadedFiles.length > 0 || codeSnippets.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
           <div className="bg-slate-50 px-6 py-3 border-t border-slate-200">
             <div className="flex flex-wrap gap-2">
                 {/* Uploaded Files */}
@@ -986,6 +985,27 @@ Can you help me with any questions I have about this setup?`
                     </span>
                     <button
                       onClick={() => setUploadedFiles(uploadedFiles.filter(f => f.id !== file.id))}
+                      className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 transition-all"
+                      title="Remove"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+
+                {/* Pasted Code Snippets */}
+                {codeSnippets.map((snippet) => (
+                  <div
+                    key={snippet.id}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-full border border-blue-200 text-xs transition-colors group"
+                  >
+                    <span className="text-slate-700">
+                      <span className="font-medium">Code</span>: {snippet.lineCount} lines
+                    </span>
+                    <button
+                      onClick={() => deleteSnippet(snippet.id)}
                       className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 transition-all"
                       title="Remove"
                     >

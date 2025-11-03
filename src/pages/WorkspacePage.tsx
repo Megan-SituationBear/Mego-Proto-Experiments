@@ -30,7 +30,7 @@ const WorkspacePage = ({
   const [activeRightPanelTab, setActiveRightPanelTab] = useState<'preview' | 'code' | 'summary' | 'outcome'>('preview');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [saveTitle, setSaveTitle] = useState(workspaceTitle);
-  const [leftPanelWidth, setLeftPanelWidth] = useState(50); // percentage
+  const [leftPanelWidth, setLeftPanelWidth] = useState(75); // percentage - 3/4 of page by default
   const [isResizing, setIsResizing] = useState(false);
 
   // Determine primary action based on workspace type

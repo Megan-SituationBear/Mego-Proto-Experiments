@@ -1271,7 +1271,9 @@ Can you help me with any questions I have about this setup?`
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">Add Images and Documents</h3>
+              <h3 className="text-lg font-semibold text-slate-900">
+                {pageContext === 'workspace' ? 'Add Images and Documents for This Conversation' : 'Add Images and Documents'}
+              </h3>
               <button 
                 onClick={() => {
                   setShowUploadModal(false);
@@ -1437,11 +1439,13 @@ Can you help me with any questions I have about this setup?`
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900">
-                    Settings for Your Main Chats & Work
+                    {pageContext === 'workspace' ? 'Settings for This Conversation' : 'Settings for Your Main Chats & Work'}
                   </h3>
-                  <p className="text-sm text-slate-500 mt-1">
-                    (specific conversations can be customized on that work)
-                  </p>
+                  {pageContext !== 'workspace' && (
+                    <p className="text-sm text-slate-500 mt-1">
+                      (specific conversations can be customized on that work)
+                    </p>
+                  )}
                 </div>
                 <button 
                   onClick={() => setShowSettingsModal(false)}
@@ -1479,7 +1483,9 @@ Can you help me with any questions I have about this setup?`
 
               {/* Conversation Context Section */}
               <div className="mb-6">
-                <h4 className="text-base font-semibold text-slate-700 mb-3">Conversation Context</h4>
+                <h4 className="text-base font-semibold text-slate-700 mb-3">
+                  {pageContext === 'workspace' ? 'Context for This Conversation' : 'Conversation Context'}
+                </h4>
                 {uploadedFiles.length === 0 ? (
                   <div className="bg-slate-50 rounded-lg p-6 text-center text-sm text-slate-500">
                     No documents, images, or code uploaded yet

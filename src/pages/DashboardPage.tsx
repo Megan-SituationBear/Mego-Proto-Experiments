@@ -113,64 +113,43 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">
-            My Dashboard
-          </h1>
-          <p className="text-lg text-slate-600">
-            Welcome back, {userName}
-          </p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {/* Time Saved */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-slate-600 uppercase tracking-wider">
-                Time Saved
-              </h3>
-              <div className="text-2xl">⏱️</div>
-            </div>
-            <p className="text-3xl font-bold text-slate-900">
-              {totalTimeSaved.toLocaleString()}h
-            </p>
-            <p className="text-sm text-slate-500 mt-1">
-              Hours saved across all projects
+        {/* Header with Stats */}
+        <div className="flex items-start justify-between mb-8">
+          {/* Left: Title */}
+          <div>
+            <h1 className="text-4xl font-bold text-slate-900 mb-2">
+              My Dashboard
+            </h1>
+            <p className="text-lg text-slate-600">
+              Welcome back, {userName}
             </p>
           </div>
 
-          {/* Total Projects */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-slate-600 uppercase tracking-wider">
-                Projects
-              </h3>
-              <div className="text-2xl">📁</div>
+          {/* Right: Compact Stats */}
+          <div className="flex items-center gap-6">
+            {/* Time Saved */}
+            <div className="text-right">
+              <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Time Saved</div>
+              <div className="text-2xl font-bold text-slate-900">{totalTimeSaved.toLocaleString()}h</div>
             </div>
-            <p className="text-3xl font-bold text-slate-900">
-              {totalProjects}
-            </p>
-            <p className="text-sm text-slate-500 mt-1">
-              Active projects
-            </p>
-          </div>
 
-          {/* Total Deployments */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-slate-600 uppercase tracking-wider">
-                Deployments
-              </h3>
-              <div className="text-2xl">🚀</div>
+            {/* Divider */}
+            <div className="h-10 w-px bg-slate-200"></div>
+
+            {/* Total Projects */}
+            <div className="text-right">
+              <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Projects</div>
+              <div className="text-2xl font-bold text-slate-900">{totalProjects}</div>
             </div>
-            <p className="text-3xl font-bold text-slate-900">
-              {totalDeployments}
-            </p>
-            <p className="text-sm text-slate-500 mt-1">
-              Total deployments
-            </p>
+
+            {/* Divider */}
+            <div className="h-10 w-px bg-slate-200"></div>
+
+            {/* Total Deployments */}
+            <div className="text-right">
+              <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Deployments</div>
+              <div className="text-2xl font-bold text-slate-900">{totalDeployments}</div>
+            </div>
           </div>
         </div>
 

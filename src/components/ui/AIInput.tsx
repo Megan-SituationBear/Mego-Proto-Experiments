@@ -152,6 +152,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
   const [showSalesforceModal, setShowSalesforceModal] = useState(false);
+  const [showManageConnectionModal, setShowManageConnectionModal] = useState(false);
   const [salesforceAuthStep, setSalesforceAuthStep] = useState<'login' | 'auth' | 'thinking' | 'sandboxes' | 'connected'>('login');
   const [salesforceConnected, setSalesforceConnected] = useState(false);
   const [selectedSandboxes, setSelectedSandboxes] = useState<string[]>([]);
@@ -864,8 +865,12 @@ const AIInput: React.FC<AIInputProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  setShowSalesforceModal(true);
-                  setSalesforceAuthStep('login');
+                  if (salesforceConnected) {
+                    setShowManageConnectionModal(true);
+                  } else {
+                    setShowSalesforceModal(true);
+                    setSalesforceAuthStep('login');
+                  }
                 }}
                 className={`p-2 rounded bg-white border-0 transition-colors flex items-center justify-center ${
                   salesforceConnected ? 'text-blue-600 hover:text-blue-700' : 'text-slate-500 hover:text-indigo-600'
@@ -1453,6 +1458,79 @@ const AIInput: React.FC<AIInputProps> = ({
                 </button>
               </>
             )}
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Manage Connection Modal */}
+      {showManageConnectionModal && createPortal(
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowManageConnectionModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-in fade-in zoom-in-95 duration-200 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowManageConnectionModal(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Header */}
+            <div className="mb-6">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Cloud className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 text-center mb-2">Salesforce Connection</h3>
+              <p className="text-sm text-slate-600 text-center">
+                Manage your connected Salesforce environments
+              </p>
+            </div>
+
+            {/* Connected Sandboxes */}
+            <div className="mb-6">
+              <h4 className="text-sm font-semibold text-slate-700 mb-3">Connected Environments</h4>
+              <div className="space-y-2">
+                {[
+                  { id: 'prod', name: 'Production', type: 'Production' },
+                  { id: 'dev', name: 'Dev Sandbox', type: 'Developer' },
+                  { id: 'qa', name: 'QA Sandbox', type: 'Developer Pro' },
+                  { id: 'staging', name: 'Staging Sandbox', type: 'Partial Copy' },
+                  { id: 'uat', name: 'UAT Sandbox', type: 'Full Copy' },
+                  { id: 'demo', name: 'Demo Sandbox', type: 'Developer' },
+                ].filter(sandbox => selectedSandboxes.includes(sandbox.id)).map((sandbox) => (
+                  <div
+                    key={sandbox.id}
+                    className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200"
+                  >
+                    <div>
+                      <div className="font-medium text-slate-900 text-sm">{sandbox.name}</div>
+                      <div className="text-xs text-slate-600">{sandbox.type}</div>
+                    </div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full" title="Connected"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Disconnect Button */}
+            <button
+              onClick={() => {
+                setSalesforceConnected(false);
+                setSelectedSandboxes([]);
+                setShowManageConnectionModal(false);
+              }}
+              className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors"
+            >
+              Disconnect All
+            </button>
           </div>
         </div>,
         document.body

@@ -28,7 +28,7 @@ const WorkspacePage = ({
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'work' | 'summary' | 'output'>('work');
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'work' | 'summary' | 'outcome'>('work');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [saveTitle, setSaveTitle] = useState(workspaceTitle);
 
@@ -140,9 +140,11 @@ const WorkspacePage = ({
             </svg>
           </button>
 
-          {/* Center: Title Only */}
+          {/* Center: Title with Item Label */}
           <div className="flex-1 flex items-center justify-center mx-8">
-            <h1 className="text-xl font-bold text-slate-900">{workspaceTitle}</h1>
+            <h1 className="text-xl font-bold text-slate-900">
+              <span className="text-slate-500 font-normal">{workspaceTopic}:</span> {workspaceTitle}
+            </h1>
           </div>
 
           {/* Right: Favorite + Primary Action */}
@@ -178,10 +180,10 @@ const WorkspacePage = ({
           tabs={[
             { id: 'work', label: 'Work' },
             { id: 'summary', label: 'Summary' },
-            { id: 'output', label: 'Output' },
+            { id: 'outcome', label: 'Outcome' },
           ]}
           activeTab={activeWorkspaceTab}
-          onTabChange={(id) => setActiveWorkspaceTab(id as 'work' | 'summary' | 'output')}
+          onTabChange={(id) => setActiveWorkspaceTab(id as 'work' | 'summary' | 'outcome')}
           size="sm"
           variant="blue"
         />
@@ -247,6 +249,8 @@ const WorkspacePage = ({
                   pageContext="workspace"
                   messages={conversationMessages}
                   showTypingIndicator={showTyping}
+                  defaultMode="ask"
+                  availableModes={['ask', 'make']}
                 />
               </div>
             </div>
@@ -306,11 +310,11 @@ const WorkspacePage = ({
             </div>
           </div>
         ) : (
-          /* Output Tab Content */
+          /* Outcome Tab Content */
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-6xl mx-auto p-8">
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900 mb-2">Output</h1>
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">Outcome</h1>
                 <p className="text-slate-600">
                   Generated artifacts and results
                 </p>
@@ -320,9 +324,9 @@ const WorkspacePage = ({
                 <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Output Files</h3>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Outcome Files</h3>
                 <p className="text-sm text-slate-600 mb-4">
-                  View and download generated outputs
+                  View and download generated outcomes
                 </p>
                 <p className="text-xs text-slate-500">
                   Code, documents, and other generated artifacts will appear here

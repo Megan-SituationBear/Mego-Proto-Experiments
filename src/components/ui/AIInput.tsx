@@ -159,6 +159,9 @@ const AIInput: React.FC<AIInputProps> = ({
   const [longTermMemory, setLongTermMemory] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{id: string, name: string, type: 'document' | 'image' | 'code'}>>([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [modalDragging, setModalDragging] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeIntegrationType, setActiveIntegrationType] = useState<IntegrationType>(null);
   const [integrationUrl, setIntegrationUrl] = useState('');
   const [extractedName, setExtractedName] = useState('');
@@ -1064,7 +1067,10 @@ const AIInput: React.FC<AIInputProps> = ({
       {showUploadModal && createPortal(
         <div 
           className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setShowUploadModal(false)}
+          onClick={() => {
+            setShowUploadModal(false);
+            setSelectedFiles([]);
+          }}
         >
           <div 
             className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
@@ -1073,7 +1079,10 @@ const AIInput: React.FC<AIInputProps> = ({
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-slate-900">Add Images and Documents</h3>
               <button 
-                onClick={() => setShowUploadModal(false)}
+                onClick={() => {
+                  setShowUploadModal(false);
+                  setSelectedFiles([]);
+                }}
                 className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1083,34 +1092,135 @@ const AIInput: React.FC<AIInputProps> = ({
             </div>
             
             <div className="space-y-4">
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors cursor-pointer">
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*,.pdf,.doc,.docx,.txt,.js,.ts,.tsx,.jsx,.py,.java,.cpp,.c,.h,.css,.html"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    setSelectedFiles(Array.from(e.target.files));
+                  }
+                }}
+                className="hidden"
+              />
+
+              {/* Drag and drop area */}
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setModalDragging(true);
+                }}
+                onDragEnter={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setModalDragging(true);
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setModalDragging(false);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setModalDragging(false);
+                  
+                  const files = Array.from(e.dataTransfer.files);
+                  setSelectedFiles(files);
+                }}
+                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer ${
+                  modalDragging 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : 'border-slate-300 hover:border-blue-400'
+                }`}
+              >
                 <svg className="w-12 h-12 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
                 <p className="text-sm text-slate-600 mb-2">Drag and drop files here</p>
                 <p className="text-xs text-slate-500">or click to browse</p>
               </div>
+
+              {/* Selected files preview */}
+              {selectedFiles.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-slate-700">Selected files ({selectedFiles.length}):</p>
+                  <div className="max-h-32 overflow-y-auto space-y-1">
+                    {selectedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded text-sm">
+                        <span className="text-slate-700 truncate">{file.name}</span>
+                        <button
+                          onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== index))}
+                          className="text-slate-400 hover:text-red-600 ml-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               <div className="flex gap-2">
                 <button 
-                  onClick={() => setShowUploadModal(false)}
+                  onClick={() => {
+                    setShowUploadModal(false);
+                    setSelectedFiles([]);
+                  }}
                   className="flex-1 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={() => {
-                    // Simulate adding files to context
-                    const newFiles = [
-                      { id: Date.now().toString(), name: 'example-doc.pdf', type: 'document' as const },
-                      { id: (Date.now() + 1).toString(), name: 'screenshot.png', type: 'image' as const },
-                    ];
+                    // Add selected files to uploadedFiles
+                    const newFiles = selectedFiles.map(file => {
+                      const fileType = file.type;
+                      let type: 'document' | 'image' | 'code' = 'document';
+                      
+                      if (fileType.startsWith('image/')) {
+                        type = 'image';
+                      } else if (
+                        fileType.includes('javascript') ||
+                        fileType.includes('typescript') ||
+                        fileType.includes('python') ||
+                        fileType.includes('java') ||
+                        file.name.endsWith('.js') ||
+                        file.name.endsWith('.ts') ||
+                        file.name.endsWith('.tsx') ||
+                        file.name.endsWith('.jsx') ||
+                        file.name.endsWith('.py') ||
+                        file.name.endsWith('.java') ||
+                        file.name.endsWith('.cpp') ||
+                        file.name.endsWith('.c') ||
+                        file.name.endsWith('.h') ||
+                        file.name.endsWith('.css') ||
+                        file.name.endsWith('.html')
+                      ) {
+                        type = 'code';
+                      }
+                      
+                      return {
+                        id: `${Date.now()}-${Math.random()}`,
+                        name: file.name,
+                        type: type
+                      };
+                    });
+                    
                     setUploadedFiles([...uploadedFiles, ...newFiles]);
                     setShowUploadModal(false);
+                    setSelectedFiles([]);
                   }}
-                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                  disabled={selectedFiles.length === 0}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Upload
+                  Upload {selectedFiles.length > 0 && `(${selectedFiles.length})`}
                 </button>
               </div>
             </div>

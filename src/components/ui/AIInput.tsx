@@ -49,6 +49,7 @@ export interface ConversationMessage {
   content: string;
   isUser: boolean;
   timestamp?: Date;
+  options?: string[]; // Optional pill button options for interactive responses
 }
 
 interface AIInputProps {

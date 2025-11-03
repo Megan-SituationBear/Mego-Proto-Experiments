@@ -29,11 +29,15 @@ const WorkspacePage = ({
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'code' | 'outcome'>('overview');
+  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'preview' | 'code' | 'outcome'>('overview');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [saveTitle, setSaveTitle] = useState(workspaceTitle);
   const [leftPanelWidth, setLeftPanelWidth] = useState(75); // percentage - 3/4 of page by default
   const [isResizing, setIsResizing] = useState(false);
+
+  // Determine which tabs to show based on topic
+  const topicsWithoutCode = ['Strategy', 'Planning', 'Learn'];
+  const showCodeTab = !topicsWithoutCode.includes(workspaceTopic);
 
   // Determine primary action - always "Apply"
   const getPrimaryAction = () => {
@@ -123,7 +127,13 @@ const WorkspacePage = ({
             id: '3',
             content: "Here's what Megan accomplished:\n\n**This Week:**\n• Redesigned the AI input component with Ask/Make modes\n• Implemented environment selection for Make mode\n• Built out workspace navigation system\n• Created dashboard with Recent/Saved/Artifacts tabs\n\n**Key Contributions:**\n• Replaced Favorites with Saved (bookmark icon)\n• Added conversation tracking (5-item recent cap)\n• Integrated FindTemplatesModal for quick actions\n• Improved dashboard layout with inline stats\n\nWould you like me to drill into any specific area?",
             isUser: false,
-            timestamp: new Date()
+            timestamp: new Date(),
+            options: [
+              "Tell me about the AI Input redesign",
+              "Tell me about Dashboard improvements",
+              "Tell me about Environment selection",
+              "I don't care"
+            ]
           }
         ];
         setConversationMessages(meganConversation);
@@ -169,7 +179,69 @@ const WorkspacePage = ({
     setConversationMessages(prev => [...prev, userMessage]);
     setShowTyping(true);
 
-    // Simulate AI response
+    // Special responses for "What did Megan do?" workspace
+    if (workspaceTitle === "What did Megan do?") {
+      // Handle "Tell me about X" responses
+      if (text.startsWith("Tell me about")) {
+        setTimeout(() => {
+          const aiMessage: ConversationMessage = {
+            id: (Date.now() + 1).toString(),
+            content: `Great question! One of the key improvements is the ability to get back to artifacts.\n\nNow you can easily access your saved artifacts from:\n• The home page Recent tab\n• The dashboard Artifacts tab\n• Any workspace you've created\n\nThis makes it simple to find and continue work on any generated output.\n\nWant to know more about finding artifacts?`,
+            isUser: false,
+            timestamp: new Date(),
+            options: ["Yes", "No"]
+          };
+          setConversationMessages(prev => [...prev, aiMessage]);
+          setShowTyping(false);
+        }, 1500);
+        return;
+      }
+      
+      // Handle Yes/No responses
+      if (text === "Yes") {
+        setTimeout(() => {
+          const aiMessage: ConversationMessage = {
+            id: (Date.now() + 1).toString(),
+            content: `Awesome! Here's how the artifact system works:\n\n**Finding Artifacts:**\n• All artifacts are automatically saved\n• Access them from the Artifacts tab on the home page\n• Each artifact shows when it was created and what type it is\n• You can favorite (bookmark) artifacts for quick access\n\n**Working with Artifacts:**\n• Click any artifact to open it in a workspace\n• Download artifacts with one click\n• Share artifacts with your team\n• Apply changes directly from the workspace\n\nThe system tracks everything so you never lose your work!`,
+            isUser: false,
+            timestamp: new Date()
+          };
+          setConversationMessages(prev => [...prev, aiMessage]);
+          setShowTyping(false);
+        }, 1500);
+        return;
+      }
+      
+      if (text === "No") {
+        setTimeout(() => {
+          const aiMessage: ConversationMessage = {
+            id: (Date.now() + 1).toString(),
+            content: `No problem! Is there anything else you'd like to know about Megan's work?`,
+            isUser: false,
+            timestamp: new Date()
+          };
+          setConversationMessages(prev => [...prev, aiMessage]);
+          setShowTyping(false);
+        }, 1500);
+        return;
+      }
+      
+      if (text === "I don't care") {
+        setTimeout(() => {
+          const aiMessage: ConversationMessage = {
+            id: (Date.now() + 1).toString(),
+            content: `Got it! Let me know if you need anything else. 👍`,
+            isUser: false,
+            timestamp: new Date()
+          };
+          setConversationMessages(prev => [...prev, aiMessage]);
+          setShowTyping(false);
+        }, 1000);
+        return;
+      }
+    }
+
+    // Default response for other workspaces
     setTimeout(() => {
       const aiMessage: ConversationMessage = {
         id: (Date.now() + 1).toString(),
@@ -266,16 +338,34 @@ const WorkspacePage = ({
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {conversationMessages.length > 0 ? (
                   conversationMessages.map((msg) => (
-                    <div key={msg.id} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
-                      <div 
-                        className={`max-w-[80%] px-4 py-3 rounded-2xl ${
-                          msg.isUser 
-                            ? 'bg-slate-100 text-slate-900' 
-                            : 'bg-blue-600 text-white'
-                        }`}
-                      >
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                    <div key={msg.id}>
+                      <div className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+                        <div 
+                          className={`max-w-[80%] px-4 py-3 rounded-2xl ${
+                            msg.isUser 
+                              ? 'bg-slate-100 text-slate-900' 
+                              : 'bg-blue-600 text-white'
+                          }`}
+                        >
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                        </div>
                       </div>
+                      {/* Option Pills */}
+                      {msg.options && msg.options.length > 0 && (
+                        <div className="flex justify-start mt-2">
+                          <div className="flex flex-wrap gap-2 max-w-[80%]">
+                            {msg.options.map((option, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => handleSendMessage(option)}
+                                className="px-4 py-2 bg-white text-slate-700 border border-slate-300 rounded-full hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700 transition-all duration-200 text-sm font-medium shadow-sm"
+                              >
+                                {option}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))
                 ) : (
@@ -345,16 +435,29 @@ const WorkspacePage = ({
                 >
                   Overview
                 </button>
-                <button 
-                  onClick={() => setActiveRightPanelTab('code')}
-                  className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
-                    activeRightPanelTab === 'code' 
-                      ? 'text-blue-600 bg-blue-50' 
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  Code
-                </button>
+                {!showCodeTab ? (
+                  <button 
+                    onClick={() => setActiveRightPanelTab('preview')}
+                    className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                      activeRightPanelTab === 'preview' 
+                        ? 'text-blue-600 bg-blue-50' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    Preview
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => setActiveRightPanelTab('code')}
+                    className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                      activeRightPanelTab === 'code' 
+                        ? 'text-blue-600 bg-blue-50' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    Code
+                  </button>
+                )}
                 <button 
                   onClick={() => setActiveRightPanelTab('outcome')}
                   className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
@@ -527,6 +630,21 @@ const WorkspacePage = ({
                           </div>
                         </>
                       )}
+                    </div>
+                  </div>
+                )}
+
+                {activeRightPanelTab === 'preview' && (
+                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center h-full flex items-center justify-center">
+                    <div>
+                      <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Preview</h3>
+                      <p className="text-sm text-slate-600">
+                        Visual preview will appear here
+                      </p>
                     </div>
                   </div>
                 )}

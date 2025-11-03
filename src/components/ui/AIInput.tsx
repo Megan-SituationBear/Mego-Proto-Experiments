@@ -1189,17 +1189,33 @@ const AIInput: React.FC<AIInputProps> = ({
         <div 
           className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => {
-            if (salesforceAuthStep === 'connected') {
-              setShowSalesforceModal(false);
-            }
+            setShowSalesforceModal(false);
+            setSalesforceAuthStep('login');
+            setSelectedSandboxes([]);
           }}
         >
           <div 
-            className={`bg-white rounded-2xl shadow-2xl w-full animate-in fade-in zoom-in-95 duration-200 ${
+            className={`bg-white rounded-2xl shadow-2xl w-full animate-in fade-in zoom-in-95 duration-200 relative ${
               salesforceAuthStep === 'login' ? 'max-w-md' : 'max-w-lg p-8'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Close Button */}
+            {salesforceAuthStep !== 'thinking' && (
+              <button
+                onClick={() => {
+                  setShowSalesforceModal(false);
+                  setSalesforceAuthStep('login');
+                  setSelectedSandboxes([]);
+                }}
+                className="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-lg transition-colors z-10"
+              >
+                <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+
             {/* Login Screen */}
             {salesforceAuthStep === 'login' && (
               <div className="bg-gradient-to-b from-slate-50 to-white min-h-[600px] flex flex-col items-center justify-center p-8">
@@ -1300,23 +1316,15 @@ const AIInput: React.FC<AIInputProps> = ({
                   </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowSalesforceModal(false)}
-                    className="flex-1 px-4 py-3 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSalesforceAuthStep('thinking');
-                      setTimeout(() => setSalesforceAuthStep('sandboxes'), 2000);
-                    }}
-                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
-                  >
-                    Connect
-                  </button>
-                </div>
+                <button
+                  onClick={() => {
+                    setSalesforceAuthStep('thinking');
+                    setTimeout(() => setSalesforceAuthStep('sandboxes'), 2000);
+                  }}
+                  className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+                >
+                  Connect
+                </button>
               </>
             )}
 
@@ -1386,28 +1394,16 @@ const AIInput: React.FC<AIInputProps> = ({
                   ))}
                 </div>
 
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => {
-                      setShowSalesforceModal(false);
-                      setSalesforceAuthStep('login');
-                      setSelectedSandboxes([]);
-                    }}
-                    className="flex-1 px-4 py-3 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSalesforceAuthStep('connected');
-                      setSalesforceConnected(true);
-                    }}
-                    disabled={selectedSandboxes.length === 0}
-                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Connect ({selectedSandboxes.length})
-                  </button>
-                </div>
+                <button
+                  onClick={() => {
+                    setSalesforceAuthStep('connected');
+                    setSalesforceConnected(true);
+                  }}
+                  disabled={selectedSandboxes.length === 0}
+                  className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Connect ({selectedSandboxes.length})
+                </button>
               </>
             )}
 

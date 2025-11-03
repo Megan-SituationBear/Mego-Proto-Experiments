@@ -225,7 +225,6 @@ const HomePage: React.FC<HomePageProps> = ({
           }
         }}
         onLearnClick={() => console.log('Learn clicked')}
-        onIntegrationsClick={() => console.log('Integrations clicked')}
         onPricingClick={() => console.log('Pricing clicked')}
         onSearchClick={() => console.log('Search clicked')}
         onDashboardClick={() => {
@@ -459,7 +458,6 @@ const HomePage: React.FC<HomePageProps> = ({
               <AIInput
                 placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : "Start a conversation or pick up where you left off"}
                 onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
-                onIntegrationsClick={() => console.log('Integrations clicked')}
                 autoFocus={false}
                 isLoggedIn={true}
                 pageContext="home"

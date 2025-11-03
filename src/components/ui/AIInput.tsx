@@ -58,7 +58,6 @@ interface AIInputProps {
   onUploadDoc?: () => void;
   onExamineSlack?: () => void;
   onAddConfluence?: () => void;
-  onIntegrationsClick?: () => void;
   className?: string;
   disabled?: boolean;
   loading?: boolean;
@@ -93,7 +92,6 @@ type IntegrationType = 'slack' | 'jira' | 'confluence' | 'org' | null;
 const AIInput: React.FC<AIInputProps> = ({
   placeholder = "Try: @Copado what do you do? Or, @project Let's Go!",
   onSendMessage,
-  onIntegrationsClick,
   className = "",
   disabled = false,
   loading = false,
@@ -151,6 +149,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
+  const [showAllIntegrationsModal, setShowAllIntegrationsModal] = useState(false);
   const [showSalesforceModal, setShowSalesforceModal] = useState(false);
   const [showManageConnectionModal, setShowManageConnectionModal] = useState(false);
   const [salesforceAuthStep, setSalesforceAuthStep] = useState<'login' | 'auth' | 'thinking' | 'sandboxes' | 'connected'>('login');
@@ -570,9 +569,7 @@ const AIInput: React.FC<AIInputProps> = ({
       icon: Grid, 
       label: 'All Integrations',
       action: () => {
-        if (onIntegrationsClick) {
-          onIntegrationsClick();
-        }
+        setShowAllIntegrationsModal(true);
         setShowContextMenu(false);
       }
     }
@@ -1379,6 +1376,45 @@ const AIInput: React.FC<AIInputProps> = ({
                   No scheduled jobs configured yet
                 </div>
               </div>
+
+              {/* Integrations Section */}
+              <div className="mb-6">
+                <h4 className="text-base font-semibold text-slate-700 mb-3">Integrations</h4>
+                <p className="text-xs text-slate-500 mb-4">These apply to all of your chats</p>
+                
+                {/* Show connected integrations */}
+                <div className="space-y-2 mb-4">
+                  {salesforceConnected && (
+                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M11.548 21.115c-1.068-0.379-2.011-1.021-2.757-1.891-0.745-0.87-1.304-1.966-1.627-3.204-0.323-1.238-0.397-2.574-0.205-3.897 0.192-1.323 0.675-2.594 1.42-3.706 0.745-1.112 1.743-2.041 2.908-2.703 1.165-0.662 2.476-1.046 3.82-1.118 1.344-0.072 2.694 0.163 3.938 0.685 1.244 0.522 2.353 1.315 3.234 2.309 0.881 0.994 1.513 2.166 1.844 3.421 0.331 1.255 0.353 2.562 0.063 3.815-0.29 1.253-0.881 2.425-1.722 3.415-0.841 0.99-1.908 1.778-3.113 2.297-1.205 0.519-2.522 0.756-3.839 0.691-1.317-0.065-2.608-0.418-3.764-1.028z"/>
+                      </svg>
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-slate-900">Salesforce</div>
+                        <div className="text-xs text-slate-600">{selectedSandboxes.length} sandbox{selectedSandboxes.length !== 1 ? 'es' : ''} connected</div>
+                      </div>
+                      <span className="text-xs text-green-600 font-medium">Connected</span>
+                    </div>
+                  )}
+                  
+                  {!salesforceConnected && (
+                    <div className="bg-slate-50 rounded-lg p-4 text-center text-sm text-slate-500">
+                      No integrations connected yet
+                    </div>
+                  )}
+                </div>
+
+                {/* Manage integrations link */}
+                <button
+                  onClick={() => {
+                    setShowSettingsModal(false);
+                    setShowAllIntegrationsModal(true);
+                  }}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
+                >
+                  Manage integrations
+                </button>
+              </div>
             </div>
           </div>
         </div>,
@@ -1862,6 +1898,128 @@ const AIInput: React.FC<AIInputProps> = ({
             >
               Disconnect All
             </button>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* All Integrations Modal - Rendered via Portal */}
+      {showAllIntegrationsModal && createPortal(
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowAllIntegrationsModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col p-6 animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">All Integrations</h3>
+                <p className="text-sm text-slate-500 mt-1">Connect your tools and services</p>
+              </div>
+              <button 
+                onClick={() => setShowAllIntegrationsModal(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Integrations Grid */}
+            <div className="overflow-y-auto flex-1">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Salesforce */}
+                <button
+                  onClick={() => {
+                    setShowAllIntegrationsModal(false);
+                    if (salesforceConnected) {
+                      setShowManageConnectionModal(true);
+                    } else {
+                      setShowSalesforceModal(true);
+                      setSalesforceAuthStep('login');
+                    }
+                  }}
+                  className={`p-4 rounded-lg border-2 transition-all text-left ${
+                    salesforceConnected
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-slate-200 bg-white hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <Cloud className="w-6 h-6 text-blue-600" />
+                    <span className="font-semibold text-slate-900">Salesforce</span>
+                  </div>
+                  <p className="text-xs text-slate-600 mb-2">Connect your Salesforce org and sandboxes</p>
+                  {salesforceConnected ? (
+                    <span className="text-xs text-green-600 font-medium">✓ Connected</span>
+                  ) : (
+                    <span className="text-xs text-slate-500">Not connected</span>
+                  )}
+                </button>
+
+                {/* Slack */}
+                <button
+                  onClick={() => {
+                    setShowAllIntegrationsModal(false);
+                    handleOpenIntegrationModal('slack');
+                  }}
+                  className="p-4 rounded-lg border-2 border-slate-200 bg-white hover:border-slate-300 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <MessageSquare className="w-6 h-6 text-purple-600" />
+                    <span className="font-semibold text-slate-900">Slack</span>
+                  </div>
+                  <p className="text-xs text-slate-600 mb-2">Connect Slack channels for context</p>
+                  <span className="text-xs text-slate-500">Not connected</span>
+                </button>
+
+                {/* Jira */}
+                <button
+                  onClick={() => {
+                    setShowAllIntegrationsModal(false);
+                    handleOpenIntegrationModal('jira');
+                  }}
+                  className="p-4 rounded-lg border-2 border-slate-200 bg-white hover:border-slate-300 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <Ticket className="w-6 h-6 text-blue-500" />
+                    <span className="font-semibold text-slate-900">Jira</span>
+                  </div>
+                  <p className="text-xs text-slate-600 mb-2">Connect Jira tickets and projects</p>
+                  <span className="text-xs text-slate-500">Not connected</span>
+                </button>
+
+                {/* Confluence */}
+                <button
+                  onClick={() => {
+                    setShowAllIntegrationsModal(false);
+                    handleOpenIntegrationModal('confluence');
+                  }}
+                  className="p-4 rounded-lg border-2 border-slate-200 bg-white hover:border-slate-300 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <Paperclip className="w-6 h-6 text-indigo-600" />
+                    <span className="font-semibold text-slate-900">Confluence</span>
+                  </div>
+                  <p className="text-xs text-slate-600 mb-2">Connect Confluence documentation</p>
+                  <span className="text-xs text-slate-500">Not connected</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-6 pt-4 border-t border-slate-200">
+              <button
+                onClick={() => setShowAllIntegrationsModal(false)}
+                className="w-full px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 font-medium transition-colors"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>,
         document.body

@@ -380,7 +380,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                       onSendMessage(text, setShowCopadoTyping);
                     }
                   }}
-                  onIntegrationsClick={() => console.log('Integrations clicked')}
                   autoFocus={false}
                   isLoggedIn={true}
                   pageContext="workspace"
@@ -531,7 +530,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                   onSendMessage(text, setShowCopadoTyping);
                 }
               }}
-              onIntegrationsClick={() => console.log('Integrations clicked')}
               autoFocus={false}
               isLoggedIn={true}
               pageContext="workspace"
@@ -815,7 +813,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                 console.log('Template preview message:', text);
                 // Could show a preview of how the template works
               }}
-              onIntegrationsClick={() => console.log('Integrations clicked')}
               autoFocus={false}
               isLoggedIn={true}
               pageContext="workspace"

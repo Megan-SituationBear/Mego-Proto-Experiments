@@ -159,9 +159,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
     setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
   };
 
-  const handleIntegrationsClick = () => {
-    setShowIntegrationsModal(true);
-  };
 
   const handleSendMessageWithConversation = (text: string, setTypingIndicator?: (show: boolean) => void) => {
     handleSendMessage(text, setTypingIndicator);
@@ -313,7 +310,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
             <AIInput
               placeholder="Describe how I can help ...."
               onSendMessage={(text) => handleSendMessageWithConversation(text, setShowCopadoTyping)}
-              onIntegrationsClick={handleIntegrationsClick}
               autoFocus={false}
               isLoggedIn={false}
               pageContext="home"

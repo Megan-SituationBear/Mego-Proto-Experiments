@@ -40,17 +40,12 @@ export function AIInputHomeLoggedInExample() {
     }, 1200);
   };
 
-  const handleIntegrationsClick = () => {
-    console.log('Integrations modal opened');
-    // You can trigger your integrations modal here
-  };
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
       <AIInput
         placeholder="What would you like to work on today?"
         onSendMessage={handleSendMessage}
-        onIntegrationsClick={handleIntegrationsClick}
         messages={messages}
         showTypingIndicator={isTyping}
         isLoggedIn={true}

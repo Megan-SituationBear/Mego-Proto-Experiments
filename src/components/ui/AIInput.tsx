@@ -1228,6 +1228,14 @@ const AIInput: React.FC<AIInputProps> = ({
             {/* Login Screen */}
             {salesforceAuthStep === 'login' && (
               <div className="p-8">
+                {/* Header */}
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">Connect to Salesforce</h3>
+                  <p className="text-sm text-slate-600">
+                    Connect your Salesforce org to enable seamless collaboration and deployment
+                  </p>
+                </div>
+
                 {/* White card with login form - just like real Salesforce */}
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8">
                   <div className="space-y-6">

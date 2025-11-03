@@ -39,8 +39,12 @@ const WorkspacePage = ({
   const topicsWithoutCode = ['Strategy', 'Planning', 'Learn'];
   const showCodeTab = !topicsWithoutCode.includes(workspaceTopic);
 
-  // Determine primary action - always "Apply"
+  // Determine primary action based on topic
   const getPrimaryAction = () => {
+    const topicsWithDownload = ['Learn', 'Strategy', 'Planning'];
+    if (topicsWithDownload.includes(workspaceTopic)) {
+      return { label: 'Download', icon: '↓' };
+    }
     return { label: 'Apply', icon: '✓' };
   };
 

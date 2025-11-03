@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AIInput from '../components/ui/AIInput';
 import { TabToggle } from '../components/ui/TabToggle';
 import type { ConversationMessage } from '../components/ui/AIInput';
@@ -31,6 +31,8 @@ const WorkspacePage = ({
   const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'work' | 'summary' | 'outcome'>('work');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [saveTitle, setSaveTitle] = useState(workspaceTitle);
+  const [leftPanelWidth, setLeftPanelWidth] = useState(50); // percentage
+  const [isResizing, setIsResizing] = useState(false);
 
   // Determine primary action based on workspace type
   const getPrimaryAction = () => {
@@ -68,6 +70,46 @@ const WorkspacePage = ({
     // Optionally navigate home after saving
     onNavigateHome?.();
   };
+
+  // Handle panel resizing
+  const handleMouseDown = () => {
+    setIsResizing(true);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isResizing) return;
+    
+    const container = document.querySelector('.work-container');
+    if (!container) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+    
+    // Constrain between 30% and 70%
+    if (newWidth >= 30 && newWidth <= 70) {
+      setLeftPanelWidth(newWidth);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+  };
+
+  // Add and remove mouse event listeners
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove as any);
+      document.addEventListener('mouseup', handleMouseUp);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove as any);
+      document.removeEventListener('mouseup', handleMouseUp);
+    }
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove as any);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
   // Initialize conversation with the initial prompt if provided
   useState(() => {
@@ -193,9 +235,12 @@ const WorkspacePage = ({
       <div className="flex-1 bg-white overflow-hidden flex flex-col">
         {activeWorkspaceTab === 'work' ? (
           /* Work Tab - Split Layout: Conversation + Code/Preview */
-          <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex overflow-hidden work-container">
             {/* Left: Conversation Area */}
-            <div className="flex-1 flex flex-col border-r border-slate-200">
+            <div 
+              className="flex flex-col border-r border-slate-200"
+              style={{ width: `${leftPanelWidth}%` }}
+            >
               {/* Conversation Messages */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {conversationMessages.length > 0 ? (
@@ -255,8 +300,20 @@ const WorkspacePage = ({
               </div>
             </div>
 
+            {/* Resizable Divider */}
+            <div
+              className={`w-1 bg-slate-200 hover:bg-blue-400 cursor-col-resize flex-shrink-0 transition-colors ${
+                isResizing ? 'bg-blue-500' : ''
+              }`}
+              onMouseDown={handleMouseDown}
+              style={{ userSelect: 'none' }}
+            />
+
             {/* Right: Code/Preview Area */}
-            <div className="w-1/2 flex flex-col bg-slate-50">
+            <div 
+              className="flex flex-col bg-slate-50"
+              style={{ width: `${100 - leftPanelWidth}%` }}
+            >
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-white">
                 <h3 className="text-sm font-semibold text-slate-700">Preview</h3>
                 <div className="flex items-center gap-2">
@@ -316,21 +373,117 @@ const WorkspacePage = ({
               <div className="mb-8">
                 <h1 className="text-3xl font-bold text-slate-900 mb-2">Outcome</h1>
                 <p className="text-slate-600">
-                  Generated artifacts and results
+                  Generated artifacts and results from this workspace
                 </p>
               </div>
 
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
-                <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Outcome Files</h3>
-                <p className="text-sm text-slate-600 mb-4">
-                  View and download generated outcomes
-                </p>
-                <p className="text-xs text-slate-500">
-                  Code, documents, and other generated artifacts will appear here
-                </p>
+              {/* Artifacts List */}
+              <div className="space-y-4">
+                {/* Example Artifact 1 */}
+                <div className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-slate-900 mb-1">
+                        <span className="text-slate-500 font-normal">Artifact:</span> User Story
+                      </h3>
+                      <p className="text-sm text-slate-600">Created just now</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                        title="Favorite"
+                      >
+                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                      </button>
+                      <button
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Artifact Preview */}
+                  <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <span className="font-semibold text-slate-700">Title:</span>
+                        <p className="text-slate-900 mt-1">As a sales manager, I want to view team performance metrics in real-time</p>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-slate-700">Acceptance Criteria:</span>
+                        <ul className="list-disc list-inside text-slate-900 mt-1 space-y-1">
+                          <li>Dashboard displays current quarter metrics</li>
+                          <li>Metrics update every 5 minutes</li>
+                          <li>Ability to filter by team member</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-slate-700">Priority:</span>
+                        <span className="ml-2 px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-medium">High</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Example Artifact 2 */}
+                <div className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-slate-900 mb-1">
+                        <span className="text-slate-500 font-normal">Artifact:</span> Apex Class
+                      </h3>
+                      <p className="text-sm text-slate-600">Created 2 minutes ago</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                        title="Favorite"
+                      >
+                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                      </button>
+                      <button
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Artifact Preview */}
+                  <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-slate-700">PerformanceMetricsController.cls</span>
+                        <span className="text-xs text-slate-500">156 lines</span>
+                      </div>
+                      <pre className="bg-slate-900 text-slate-100 p-3 rounded text-xs overflow-x-auto">
+{`public class PerformanceMetricsController {
+    @AuraEnabled(cacheable=true)
+    public static List<MetricData> getTeamMetrics() {
+        // Implementation here
+        return metrics;
+    }
+}`}
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Empty State (can be shown when no artifacts) */}
+                {/* <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                  <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">No Artifacts Yet</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    Artifacts will appear here as you complete work
+                  </p>
+                </div> */}
               </div>
             </div>
           </div>

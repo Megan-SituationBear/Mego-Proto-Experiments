@@ -39,9 +39,9 @@ const HomePage: React.FC<HomePageProps> = ({
   // UI state
   const [showCustomizeActionsModal, setShowCustomizeActionsModal] = useState(false);
   const [selectedQuickActions, setSelectedQuickActions] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'artifacts'>(
+  const [activeTab, setActiveTab] = useState<'recent' | 'saved' | 'artifacts'>(
     recentItems.length > 0 ? 'recent' : 
-    favoritedTemplates.length > 0 ? 'favorites' : 
+    favoritedTemplates.length > 0 ? 'saved' : 
     'artifacts'
   );
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
@@ -284,17 +284,17 @@ const HomePage: React.FC<HomePageProps> = ({
               )}
             </div>
             
-            {/* Favorite */}
+            {/* Saved */}
             <div className="px-6 py-3">
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => {
                     setShowMenu(false);
-                    setActiveTab('favorites');
+                    setActiveTab('saved');
                   }}
                   className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
-                  Favorite
+                  Saved
                 </button>
                 {favoritedTemplates.length > 0 && (
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
@@ -487,11 +487,11 @@ const HomePage: React.FC<HomePageProps> = ({
               <TabToggle
                 tabs={[
                   { id: 'recent', label: 'Recent', count: recentItems.length },
-                  { id: 'favorites', label: 'Favorites', count: favoritedTemplates.length },
+                  { id: 'saved', label: 'Saved', count: favoritedTemplates.length },
                   { id: 'artifacts', label: 'Artifacts' }
                 ]}
                 activeTab={activeTab}
-                onTabChange={(id) => setActiveTab(id as 'recent' | 'favorites' | 'artifacts')}
+                onTabChange={(id) => setActiveTab(id as 'recent' | 'saved' | 'artifacts')}
                 size="default"
                 variant="blue"
               />
@@ -525,11 +525,11 @@ const HomePage: React.FC<HomePageProps> = ({
                   <p className="text-slate-500">No recent items yet. Start working on templates to see them here!</p>
                 </div>
               )
-            ) : activeTab === 'favorites' ? (
+            ) : activeTab === 'saved' ? (
               favoritedTemplates.length > 0 ? (
                 favoritedTemplates.map((template, index) => (
                   <TemplateCard
-                    key={`favorite-${index}`}
+                    key={`saved-${index}`}
                     category={template.category}
                     title={template.title}
                     description={template.description}
@@ -549,7 +549,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-slate-500">No favorites yet. Star templates to save them here!</p>
+                  <p className="text-slate-500">No saved items yet. Bookmark items to save them here!</p>
                 </div>
               )
             ) : (

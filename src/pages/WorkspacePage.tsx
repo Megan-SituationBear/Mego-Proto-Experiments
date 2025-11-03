@@ -140,11 +140,8 @@ const WorkspacePage = ({
             </svg>
           </button>
 
-          {/* Center: Topic Badge + Title */}
-          <div className="flex-1 flex flex-col items-center justify-center mx-8">
-            <span className="text-xs font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full mb-2">
-              {workspaceTopic}
-            </span>
+          {/* Center: Title Only */}
+          <div className="flex-1 flex items-center justify-center mx-8">
             <h1 className="text-xl font-bold text-slate-900">{workspaceTitle}</h1>
           </div>
 
@@ -191,101 +188,149 @@ const WorkspacePage = ({
       </div>
 
       {/* Main Content Area - Full Width */}
-      <div className="flex-1 bg-white overflow-y-auto pb-32">
-          <div className="max-w-6xl mx-auto p-8">
-            {/* Work Tab Content */}
-            {activeWorkspaceTab === 'work' && (
-              <>
-                <div className="mb-8">
-                  <h1 className="text-3xl font-bold text-slate-900 mb-2">{workspaceTitle}</h1>
-                  <p className="text-slate-600">
-                    Workspace for {workspaceType.split('-').join(' ')}
-                  </p>
-                </div>
+      <div className="flex-1 bg-white overflow-hidden flex flex-col">
+        {activeWorkspaceTab === 'work' ? (
+          /* Work Tab - Split Layout: Conversation + Code/Preview */
+          <div className="flex-1 flex overflow-hidden">
+            {/* Left: Conversation Area */}
+            <div className="flex-1 flex flex-col border-r border-slate-200">
+              {/* Conversation Messages */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                {conversationMessages.length > 0 ? (
+                  conversationMessages.map((msg) => (
+                    <div key={msg.id} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+                      <div 
+                        className={`max-w-[80%] px-4 py-3 rounded-2xl ${
+                          msg.isUser 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-slate-100 text-slate-900'
+                        }`}
+                      >
+                        <p className="text-sm leading-relaxed">{msg.content}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center h-full text-center">
+                    <div>
+                      <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                      <p className="text-slate-500 text-sm">Start a conversation to begin working</p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Typing Indicator */}
+                {showTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-slate-100 px-4 py-3 rounded-2xl">
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
-                <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
-                  <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Work Area</h3>
-                  <p className="text-sm text-slate-600 mb-4">
-                    This is where workspace content will appear
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    Documents, code, deployments, and other artifacts will be displayed here
-                  </p>
-                </div>
-              </>
-            )}
+              {/* AI Input - Inside Conversation Area */}
+              <div className="border-t border-slate-200 p-4 bg-slate-50">
+                <AIInput
+                  onSendMessage={handleSendMessage}
+                  placeholder="Message about this workspace..."
+                  disabled={false}
+                  loading={showTyping}
+                  autoFocus={false}
+                  isLoggedIn={true}
+                  pageContext="workspace"
+                  messages={conversationMessages}
+                  showTypingIndicator={showTyping}
+                />
+              </div>
+            </div>
 
-            {/* Summary Tab Content */}
-            {activeWorkspaceTab === 'summary' && (
-              <>
-                <div className="mb-8">
-                  <h1 className="text-3xl font-bold text-slate-900 mb-2">Summary</h1>
-                  <p className="text-slate-600">
-                    Overview of your workspace progress
-                  </p>
+            {/* Right: Code/Preview Area */}
+            <div className="w-1/2 flex flex-col bg-slate-50">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-white">
+                <h3 className="text-sm font-semibold text-slate-700">Preview</h3>
+                <div className="flex items-center gap-2">
+                  <button className="px-3 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition-colors">
+                    Code
+                  </button>
+                  <button className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded">
+                    Preview
+                  </button>
                 </div>
-
-                <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
-                  <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                  </svg>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Summary View</h3>
-                  <p className="text-sm text-slate-600 mb-4">
-                    View a comprehensive summary of your workspace
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    Key metrics, progress, and insights will be displayed here
-                  </p>
+              </div>
+              
+              <div className="flex-1 overflow-auto p-6">
+                <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center h-full flex items-center justify-center">
+                  <div>
+                    <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-2">Code & Preview</h3>
+                    <p className="text-sm text-slate-600">
+                      Generated code and previews will appear here
+                    </p>
+                  </div>
                 </div>
-              </>
-            )}
-
-            {/* Output Tab Content */}
-            {activeWorkspaceTab === 'output' && (
-              <>
-                <div className="mb-8">
-                  <h1 className="text-3xl font-bold text-slate-900 mb-2">Output</h1>
-                  <p className="text-slate-600">
-                    Generated artifacts and results
-                  </p>
-                </div>
-
-                <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
-                  <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Output Files</h3>
-                  <p className="text-sm text-slate-600 mb-4">
-                    View and download generated outputs
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    Code, documents, and other generated artifacts will appear here
-                  </p>
-                </div>
-              </>
-            )}
+              </div>
+            </div>
           </div>
-        </div>
+        ) : activeWorkspaceTab === 'summary' ? (
+          /* Summary Tab Content */
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-6xl mx-auto p-8">
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">Summary</h1>
+                <p className="text-slate-600">
+                  Overview of your workspace progress
+                </p>
+              </div>
 
-      {/* AI Input - Fixed at Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-30">
-        <div className="max-w-6xl mx-auto px-8 py-4">
-          <AIInput
-            onSendMessage={handleSendMessage}
-            placeholder="Message about this workspace..."
-            disabled={false}
-            loading={showTyping}
-            autoFocus={false}
-            isLoggedIn={true}
-            pageContext="workspace"
-            hasConversation={conversationMessages.length > 0}
-            messages={conversationMessages}
-            showTypingIndicator={showTyping}
-          />
-        </div>
+              <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Summary View</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  View a comprehensive summary of your workspace
+                </p>
+                <p className="text-xs text-slate-500">
+                  Key metrics, progress, and insights will be displayed here
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Output Tab Content */
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-6xl mx-auto p-8">
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">Output</h1>
+                <p className="text-slate-600">
+                  Generated artifacts and results
+                </p>
+              </div>
+
+              <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Output Files</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  View and download generated outputs
+                </p>
+                <p className="text-xs text-slate-500">
+                  Code, documents, and other generated artifacts will appear here
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Save/Rename Modal */}

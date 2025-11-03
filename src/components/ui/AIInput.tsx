@@ -734,6 +734,69 @@ const AIInput: React.FC<AIInputProps> = ({
             rows={1}
           />
 
+          {/* Context Chips - Show uploaded files and connected sandboxes */}
+          {(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
+            <div className="px-6 pb-3 pt-2">
+              <div className="flex flex-wrap gap-2">
+                {/* Uploaded Files */}
+                {uploadedFiles.map((file) => (
+                  <div
+                    key={file.id}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg border border-slate-300 text-sm transition-colors group"
+                  >
+                    <span className="text-slate-700">{file.name}</span>
+                    <button
+                      onClick={() => setUploadedFiles(uploadedFiles.filter(f => f.id !== file.id))}
+                      className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 transition-all"
+                      title="Remove"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+
+                {/* Connected Salesforce Sandboxes */}
+                {salesforceConnected && selectedSandboxes.map((sandboxId) => {
+                  const sandbox = [
+                    { id: 'prod', name: 'Production' },
+                    { id: 'dev', name: 'Dev Sandbox' },
+                    { id: 'qa', name: 'QA Sandbox' },
+                    { id: 'staging', name: 'Staging Sandbox' },
+                    { id: 'uat', name: 'UAT Sandbox' },
+                    { id: 'demo', name: 'Demo Sandbox' },
+                  ].find(s => s.id === sandboxId);
+                  
+                  return sandbox ? (
+                    <div
+                      key={sandboxId}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-300 text-sm transition-colors group"
+                    >
+                      <Cloud className="w-3.5 h-3.5 text-blue-600" />
+                      <span className="text-blue-700">{sandbox.name}</span>
+                      <button
+                        onClick={() => {
+                          const newSandboxes = selectedSandboxes.filter(id => id !== sandboxId);
+                          setSelectedSandboxes(newSandboxes);
+                          if (newSandboxes.length === 0) {
+                            setSalesforceConnected(false);
+                          }
+                        }}
+                        className="opacity-0 group-hover:opacity-100 text-blue-400 hover:text-blue-700 transition-all"
+                        title="Remove"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Actions Row */}
           <div className="flex flex-row justify-between items-center bg-white relative">
             {/* Action Left: Plus and Settings Buttons */}

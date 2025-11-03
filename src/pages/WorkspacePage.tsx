@@ -164,72 +164,8 @@ const WorkspacePage = ({
         />
       </div>
 
-      {/* Main Content - Split View */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Side - Chat */}
-        <div className="w-96 border-r border-slate-200 bg-white flex flex-col">
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-6">
-            {conversationMessages.length === 0 && (
-              <div className="text-center py-12">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                  </svg>
-                </div>
-                <p className="text-sm text-slate-600">Start a conversation</p>
-              </div>
-            )}
-
-            {conversationMessages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                    message.isUser
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-100 text-slate-900'
-                  }`}
-                >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                </div>
-              </div>
-            ))}
-
-            {showTyping && (
-              <div className="flex justify-start">
-                <div className="bg-slate-100 rounded-2xl px-4 py-3">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Chat Input */}
-          <div className="p-4 border-t border-slate-200">
-            <AIInput
-              onSendMessage={handleSendMessage}
-              placeholder="Message about this workspace..."
-              disabled={false}
-              loading={showTyping}
-              autoFocus={false}
-              isLoggedIn={true}
-              pageContext="workspace"
-              hasConversation={conversationMessages.length > 0}
-              messages={conversationMessages}
-              showTypingIndicator={showTyping}
-            />
-          </div>
-        </div>
-
-        {/* Right Side - Work Area */}
-        <div className="flex-1 bg-white overflow-y-auto">
+      {/* Main Content Area - Full Width */}
+      <div className="flex-1 bg-white overflow-y-auto pb-32">
           <div className="max-w-6xl mx-auto p-8">
             {/* Work Tab Content */}
             {activeWorkspaceTab === 'work' && (
@@ -306,6 +242,23 @@ const WorkspacePage = ({
               </>
             )}
           </div>
+        </div>
+
+      {/* AI Input - Fixed at Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-30">
+        <div className="max-w-6xl mx-auto px-8 py-4">
+          <AIInput
+            onSendMessage={handleSendMessage}
+            placeholder="Message about this workspace..."
+            disabled={false}
+            loading={showTyping}
+            autoFocus={false}
+            isLoggedIn={true}
+            pageContext="workspace"
+            hasConversation={conversationMessages.length > 0}
+            messages={conversationMessages}
+            showTypingIndicator={showTyping}
+          />
         </div>
       </div>
     </div>

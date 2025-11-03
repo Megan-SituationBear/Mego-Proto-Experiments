@@ -6,6 +6,7 @@ interface TopNavProps {
   showLogo?: boolean;
   logoText?: string;
   onLogoClick?: () => void;
+  isHomePage?: boolean; // If true, shows Copado logo instead of back arrow
   
   // Navigation items
   onProductsClick?: () => void;
@@ -62,6 +63,7 @@ const TopNav: React.FC<TopNavProps> = ({
   showLogo = true,
   logoText = '+ COPADO AI',
   onLogoClick,
+  isHomePage = false,
   
   // Navigation items
   onProductsClick,
@@ -199,17 +201,25 @@ const TopNav: React.FC<TopNavProps> = ({
               </button>
             )}
             
-            {/* Back Arrow Logo */}
+            {/* Logo */}
             {showLogo && (
               <button
                 onClick={onLogoClick}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                title="Back to Home"
+                title={isHomePage ? "Copado AI" : "Back to Home"}
               >
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" fill="white" />
-                  </svg>
+                  {isHomePage ? (
+                    // Copado logo for home page
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ) : (
+                    // Back arrow for other pages
+                    <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" fill="white" />
+                    </svg>
+                  )}
                 </div>
                 <span className="text-base font-semibold text-slate-900 hidden sm:inline">{logoText}</span>
               </button>

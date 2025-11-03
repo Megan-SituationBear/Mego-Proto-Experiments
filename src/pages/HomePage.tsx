@@ -157,6 +157,7 @@ const HomePage: React.FC<HomePageProps> = ({
       <TopNav
         showLogo={true}
         logoText="+ COPADO AI"
+        isHomePage={true}
         onLogoClick={() => {
           // Navigate to home - could use window.location for now
           if (window.location.pathname.includes('copado-home-page') || window.location.pathname.includes('app.html')) {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import AIInput from '../components/ui/AIInput';
+import PricingModal from '../components/ui/PricingModal';
 import type { ConversationMessage } from '../components/ui/AIInput';
 
 type WorkspaceType = 'chat' | 'library-item' | 'artifact';
@@ -30,8 +31,7 @@ const WorkspacePage = ({
   const [showTyping, setShowTyping] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
   const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'preview' | 'code' | 'artifacts'>('overview');
-  const [showSaveModal, setShowSaveModal] = useState(false);
-  const [saveTitle, setSaveTitle] = useState(workspaceTitle);
+  const [showPricingModal, setShowPricingModal] = useState(false);
   const [leftPanelWidth, setLeftPanelWidth] = useState(75); // percentage - 3/4 of page by default
   const [isResizing, setIsResizing] = useState(false);
   const [pinnedMessages, setPinnedMessages] = useState<ConversationMessage[]>([]);
@@ -57,22 +57,8 @@ const WorkspacePage = ({
   const primaryAction = getPrimaryAction();
 
   const handlePrimaryAction = () => {
-    // Always show save modal for all workspace types
-    setSaveTitle(workspaceTitle);
-    setShowSaveModal(true);
-  };
-
-  const handleSaveWorkspace = () => {
-    onSaveWorkspace?.(saveTitle, {
-      type: workspaceType,
-      title: saveTitle,
-      topic: workspaceTopic,
-      conversationMessages,
-      createdAt: new Date(),
-    });
-    setShowSaveModal(false);
-    // Optionally navigate home after saving
-    onNavigateHome?.();
+    // Show pricing modal for all primary actions
+    setShowPricingModal(true);
   };
 
   // Handle panel resizing
@@ -846,14 +832,7 @@ const WorkspacePage = ({
                         </svg>
                       </button>
                       <button
-                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                        title="Favorite"
-                      >
-                        <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                        </svg>
-                      </button>
-                      <button
+                        onClick={() => setShowPricingModal(true)}
                         className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                         title="Download"
                       >
@@ -906,14 +885,7 @@ const WorkspacePage = ({
                         </svg>
                       </button>
                       <button
-                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                        title="Favorite"
-                      >
-                        <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                        </svg>
-                      </button>
-                      <button
+                        onClick={() => setShowPricingModal(true)}
                         className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                         title="Download"
                       >
@@ -962,66 +934,12 @@ const WorkspacePage = ({
           </div>
         </div>
 
-      {/* Save/Rename Modal */}
-      {showSaveModal && (
-        <div 
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setShowSaveModal(false)}
-        >
-          <div 
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-slate-900">Save Workspace</h3>
-              <button 
-                onClick={() => setShowSaveModal(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <p className="text-sm text-slate-600 mb-4">
-              Give your workspace a name (optional)
-            </p>
-
-            {/* Title Input */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Workspace Name
-              </label>
-              <input
-                type="text"
-                value={saveTitle}
-                onChange={(e) => setSaveTitle(e.target.value)}
-                placeholder="Enter workspace name"
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                autoFocus
-              />
-            </div>
-
-            {/* Buttons */}
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowSaveModal(false)}
-                className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveWorkspace}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Pricing Modal */}
+      <PricingModal
+        isOpen={showPricingModal}
+        onClose={() => setShowPricingModal(false)}
+        feature="saving workspaces and applying changes"
+      />
     </div>
   );
 };

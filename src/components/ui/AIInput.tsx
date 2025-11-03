@@ -570,7 +570,7 @@ const AIInput: React.FC<AIInputProps> = ({
       action: () => {
         setShowContextMenu(false);
         onNavigateToWorkspace?.({
-          type: 'chat',
+          type: 'library-item',
           title: 'Connect Jira to Copado',
           topic: 'Integration Setup',
           initialPrompt: `I need help connecting Jira to Copado. Here's the setup guide:
@@ -2050,7 +2050,7 @@ Can you help me with any questions I have about this setup?`
                   onClick={() => {
                     setShowAllIntegrationsModal(false);
                     onNavigateToWorkspace?.({
-                      type: 'chat',
+                      type: 'library-item',
                       title: 'Connect Jira to Copado',
                       topic: 'Integration Setup',
                       initialPrompt: `I need help connecting Jira to Copado. Here's the setup guide:

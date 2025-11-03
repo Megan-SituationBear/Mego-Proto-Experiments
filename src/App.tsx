@@ -322,6 +322,27 @@ function App() {
     setCurrentView('workspace');
   };
 
+  const handleSaveWorkspace = (title: string, workspaceData: any) => {
+    // Create a new item for saved workspace
+    const savedWorkspace = {
+      id: Date.now().toString(),
+      title: title,
+      category: workspaceData.topic || 'Workspace',
+      type: workspaceData.type,
+      savedHours: 0,
+      startedAt: workspaceData.createdAt || new Date(),
+      lastAccessed: new Date(),
+      conversationMessages: workspaceData.conversationMessages || [],
+    };
+
+    // Add to active projects (shows in "My Work" on dashboard)
+    setActiveProjects(prev => [savedWorkspace, ...prev]);
+    setHasProjects(true);
+
+    // Add to recent items (shows in hamburger menu on home page)
+    setRecentItems(prev => [savedWorkspace, ...prev.filter(item => item.id !== savedWorkspace.id)].slice(0, 10));
+  };
+
   // ============ Render Views ============
 
   if (currentView === 'intro') {
@@ -389,6 +410,7 @@ function App() {
         initialPrompt={workspaceConfig.initialPrompt}
         onNavigateHome={() => setCurrentView('home')}
         onBack={() => setCurrentView('home')}
+        onSaveWorkspace={handleSaveWorkspace}
       />
     );
   }

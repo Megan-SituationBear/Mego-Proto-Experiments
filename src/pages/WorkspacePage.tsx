@@ -13,6 +13,7 @@ interface WorkspacePageProps {
   initialPrompt?: string;
   onNavigateHome?: () => void;
   onBack?: () => void;
+  onSaveWorkspace?: (title: string, workspaceData: any) => void;
 }
 
 const WorkspacePage = ({
@@ -22,17 +23,20 @@ const WorkspacePage = ({
   initialPrompt = '',
   onNavigateHome,
   onBack,
+  onSaveWorkspace,
 }: WorkspacePageProps) => {
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'work' | 'summary' | 'output'>('work');
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveTitle, setSaveTitle] = useState(workspaceTitle);
 
   // Determine primary action based on workspace type
   const getPrimaryAction = () => {
     switch (workspaceType) {
       case 'library-item':
-        return { label: 'Remix', icon: '✨' };
+        return { label: 'Save', icon: '💾' };
       case 'artifact':
         return { label: 'Deploy', icon: '🚀' };
       case 'chat':
@@ -42,6 +46,28 @@ const WorkspacePage = ({
   };
 
   const primaryAction = getPrimaryAction();
+
+  const handlePrimaryAction = () => {
+    if (workspaceType === 'library-item') {
+      setSaveTitle(workspaceTitle);
+      setShowSaveModal(true);
+    } else {
+      console.log(`Primary action: ${primaryAction.label}`);
+    }
+  };
+
+  const handleSaveWorkspace = () => {
+    onSaveWorkspace?.(saveTitle, {
+      type: workspaceType,
+      title: saveTitle,
+      topic: workspaceTopic,
+      conversationMessages,
+      createdAt: new Date(),
+    });
+    setShowSaveModal(false);
+    // Optionally navigate home after saving
+    onNavigateHome?.();
+  };
 
   // Initialize conversation with the initial prompt if provided
   useState(() => {
@@ -140,7 +166,7 @@ const WorkspacePage = ({
             </button>
 
             <button
-              onClick={() => console.log(`Primary action: ${primaryAction.label}`)}
+              onClick={handlePrimaryAction}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm flex items-center gap-2"
             >
               {primaryAction.label}
@@ -261,6 +287,67 @@ const WorkspacePage = ({
           />
         </div>
       </div>
+
+      {/* Save/Rename Modal */}
+      {showSaveModal && (
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowSaveModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-slate-900">Save Workspace</h3>
+              <button 
+                onClick={() => setShowSaveModal(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <p className="text-sm text-slate-600 mb-4">
+              Give your workspace a name (optional)
+            </p>
+
+            {/* Title Input */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Workspace Name
+              </label>
+              <input
+                type="text"
+                value={saveTitle}
+                onChange={(e) => setSaveTitle(e.target.value)}
+                placeholder="Enter workspace name"
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                autoFocus
+              />
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveWorkspace}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

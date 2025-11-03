@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AIInput from '../components/ui/AIInput';
 import type { ConversationMessage } from '../components/ui/AIInput';
 
@@ -37,6 +37,9 @@ const WorkspacePage = ({
   const [pinnedMessages, setPinnedMessages] = useState<ConversationMessage[]>([]);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [mobileActiveTab, setMobileActiveTab] = useState<'work' | 'highlights' | 'code' | 'artifacts'>('work');
+  
+  // Refs for scrolling to messages
+  const messageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Determine which tabs to show based on topic
   const topicsWithoutCode = ['Strategy', 'Planning', 'Learn'];
@@ -270,6 +273,28 @@ const WorkspacePage = ({
     }
   };
 
+  const scrollToMessage = (messageId: string) => {
+    const messageElement = messageRefs.current[messageId];
+    if (messageElement) {
+      // Switch to work tab on mobile
+      setMobileActiveTab('work');
+      
+      // Scroll to message with smooth behavior, positioned at top
+      messageElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+        inline: 'nearest' 
+      });
+      
+      // Add a brief highlight effect
+      messageElement.style.transition = 'background-color 0.3s';
+      messageElement.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+      setTimeout(() => {
+        messageElement.style.backgroundColor = '';
+      }, 1000);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Workspace Header */}
@@ -408,7 +433,10 @@ const WorkspacePage = ({
                   conversationMessages.map((msg) => {
                     const isPinned = pinnedMessages.some(m => m.id === msg.id);
                     return (
-                      <div key={msg.id}>
+                      <div 
+                        key={msg.id}
+                        ref={(el) => { messageRefs.current[msg.id] = el; }}
+                      >
                         <div 
                           className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} group`}
                           onMouseEnter={() => !msg.isUser && setHoveredMessageId(msg.id)}
@@ -627,7 +655,7 @@ const WorkspacePage = ({
                           {pinnedMessages.map((msg) => (
                             <button
                               key={msg.id}
-                              onClick={() => handleSendMessage(msg.content.substring(0, 100))}
+                              onClick={() => scrollToMessage(msg.id)}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

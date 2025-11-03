@@ -1003,7 +1003,7 @@ Can you help me with any questions I have about this setup?`
                       backdropFilter: 'blur(12px)',
                       zIndex: 2000,
                       bottom: `${Math.max(window.innerHeight - menuPosition.top + 8, 280)}px`,
-                      left: `${menuPosition.left}px`,
+                      left: `${menuPosition.left - 200}px`,
                       maxHeight: '300px',
                       overflowY: 'auto',
                     }}
@@ -1192,7 +1192,7 @@ Can you help me with any questions I have about this setup?`
                     backdropFilter: 'blur(12px)',
                     zIndex: 2000,
                     bottom: `${Math.max(window.innerHeight - menuPosition.top + 8, 280)}px`,
-                    left: `${menuPosition.left}px`,
+                    left: `${menuPosition.left - 200}px`,
                     maxHeight: '300px',
                     overflowY: 'auto',
                   }}
@@ -1755,6 +1755,22 @@ Can you help me with any questions I have about this setup?`
                   Manage integrations
                 </button>
               </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 mt-6 pt-4 border-t border-slate-200">
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="flex-1 px-4 py-2.5 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+              >
+                Save
+              </button>
             </div>
           </div>
         </div>,
@@ -2457,13 +2473,19 @@ Can you help me with any questions I have about this setup?`
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="mt-6 pt-4 border-t border-slate-200">
+            {/* Action Buttons */}
+            <div className="flex gap-3 mt-6 pt-4 border-t border-slate-200">
               <button
                 onClick={() => setShowAllIntegrationsModal(false)}
-                className="w-full px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 font-medium transition-colors"
+                className="flex-1 px-4 py-2.5 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
               >
-                Close
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowAllIntegrationsModal(false)}
+                className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+              >
+                Save
               </button>
             </div>
           </div>

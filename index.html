@@ -10,6 +10,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
       body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+      .feature-showcase {
+        position: relative;
+        background: linear-gradient(to bottom, #f8fafc, #fff);
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .prototype-frame {
+        opacity: 0.3;
+        pointer-events: none;
+        filter: blur(2px);
+        transition: all 0.3s ease;
+      }
+      .feature-showcase:hover .prototype-frame {
+        opacity: 0.5;
+        filter: blur(1px);
+      }
+      .highlight-box {
+        position: absolute;
+        border: 3px solid #3b82f6;
+        border-radius: 12px;
+        background: rgba(59, 130, 246, 0.1);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        animation: pulse-border 2s ease-in-out infinite;
+        z-index: 10;
+      }
+      @keyframes pulse-border {
+        0%, 100% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); }
+        50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.3); }
+      }
+      .feature-notes {
+        background: white;
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 16px;
+        min-height: 120px;
+      }
+      .feature-notes:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+      .feature-notes:empty:before {
+        content: attr(data-placeholder);
+        color: #94a3b8;
+      }
     </style>
   </head>
   <body class="bg-white min-h-screen">
@@ -40,8 +86,104 @@
       </div>
     </section>
 
-    <!-- Orange Grid -->
+    <!-- Feature Showcases -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      
+      <!-- Showcase 1: AI Input Component -->
+      <section class="mb-12">
+        <div class="mb-4">
+          <div class="text-sm font-semibold text-blue-600 mb-1">Q4 • 1 • Feature Highlight</div>
+          <h2 class="text-2xl font-bold text-slate-900">AI Input Component</h2>
+          <p class="text-slate-600 mt-1">Contextual chat component with integrations clarity</p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Left: Prototype Preview -->
+          <div class="feature-showcase" style="min-height: 600px;">
+            <div class="prototype-frame h-full">
+              <iframe 
+                src="./copado-home-page.html?view=home" 
+                class="w-full h-full border-0"
+                style="transform: scale(0.9); transform-origin: top left; width: 111%; height: 111%;"
+              ></iframe>
+            </div>
+            <!-- Highlight Box for AI Input (positioned over the input area) -->
+            <div class="highlight-box" style="bottom: 5%; left: 15%; right: 15%; height: 20%;"></div>
+          </div>
+          
+          <!-- Right: Feature Notes -->
+          <div>
+            <h3 class="text-lg font-semibold text-slate-900 mb-3">AI Input Features</h3>
+            <div 
+              class="feature-notes text-sm text-slate-700"
+              contenteditable="true"
+              data-placeholder="Type AI input features here... (Ask/Make modes, environment selection, file uploads, integrations, etc.)"
+            ></div>
+            
+            <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 class="text-sm font-semibold text-blue-900 mb-2">Key Areas:</h4>
+              <ul class="text-sm text-blue-800 space-y-1">
+                <li>• Ask/Make mode toggle</li>
+                <li>• Environment selection</li>
+                <li>• File uploads & context chips</li>
+                <li>• Salesforce integration</li>
+                <li>• Quick actions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Showcase 2: Landing Page Elements -->
+      <section class="mb-12">
+        <div class="mb-4">
+          <div class="text-sm font-semibold text-blue-600 mb-1">Q4 • 2 • Feature Highlight</div>
+          <h2 class="text-2xl font-bold text-slate-900">Landing Page Architecture</h2>
+          <p class="text-slate-600 mt-1">Hero text, quick start actions, and integrations</p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Left: Prototype Preview -->
+          <div class="feature-showcase" style="min-height: 600px;">
+            <div class="prototype-frame h-full">
+              <iframe 
+                src="./copado-home-page.html?view=home" 
+                class="w-full h-full border-0"
+                style="transform: scale(0.9); transform-origin: top left; width: 111%; height: 111%;"
+              ></iframe>
+            </div>
+            <!-- Highlight Box for Hero Text (top center) -->
+            <div class="highlight-box" style="top: 15%; left: 20%; right: 20%; height: 15%;"></div>
+            <!-- Highlight Box for Quick Actions (middle) -->
+            <div class="highlight-box" style="top: 35%; left: 25%; right: 25%; height: 12%;"></div>
+            <!-- Highlight Box for Salesforce Integration (in AI input area) -->
+            <div class="highlight-box" style="bottom: 8%; right: 17%; width: 15%; height: 15%;"></div>
+          </div>
+          
+          <!-- Right: Feature Notes -->
+          <div>
+            <h3 class="text-lg font-semibold text-slate-900 mb-3">Landing Page Features</h3>
+            <div 
+              class="feature-notes text-sm text-slate-700"
+              contenteditable="true"
+              data-placeholder="Type landing page features here... (Hero text, quick actions, navigation, branding, etc.)"
+            ></div>
+            
+            <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 class="text-sm font-semibold text-blue-900 mb-2">Key Areas:</h4>
+              <ul class="text-sm text-blue-800 space-y-1">
+                <li>• Hero text & gradient background</li>
+                <li>• Quick action buttons</li>
+                <li>• Salesforce cloud integration</li>
+                <li>• Recent/Pinned/Artifacts tabs</li>
+                <li>• Copado branding</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Original Orange Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         <!-- 1. MVP Onboarding: Contextual Chat -->
         <a href="./contextual-chat.html" class="block rounded-xl bg-orange-100 p-6 border border-orange-200 hover:shadow-md transition-shadow">
@@ -114,5 +256,33 @@
         </div>
       </div>
     </footer>
+
+    <!-- Script to save notes -->
+    <script>
+      // Load saved notes from localStorage
+      document.addEventListener('DOMContentLoaded', () => {
+        const noteAreas = document.querySelectorAll('.feature-notes');
+        noteAreas.forEach((area, index) => {
+          const savedContent = localStorage.getItem(`feature-notes-${index}`);
+          if (savedContent) {
+            area.innerHTML = savedContent;
+          }
+          
+          // Save content on blur
+          area.addEventListener('blur', () => {
+            localStorage.setItem(`feature-notes-${index}`, area.innerHTML);
+          });
+          
+          // Also save on input with debounce
+          let timeout;
+          area.addEventListener('input', () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+              localStorage.setItem(`feature-notes-${index}`, area.innerHTML);
+            }, 500);
+          });
+        });
+      });
+    </script>
   </body>
-  </html>
+</html>

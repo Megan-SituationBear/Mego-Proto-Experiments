@@ -553,8 +553,8 @@ const AIInput: React.FC<AIInputProps> = ({
 
   const handleBlur = () => {
     setIsFocused(false);
-    // Keep expanded if there's content
-    if (!value.trim()) {
+    // Keep expanded if there's content or in Make mode
+    if (!value.trim() && inputMode !== 'make') {
       setHasBeenFocused(false);
     }
   };

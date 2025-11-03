@@ -14,6 +14,12 @@ interface HomePageProps {
   onLogout?: () => void;
   onViewTemplate?: (template: any) => void;
   onNavigateToDashboard?: () => void;
+  onNavigateToWorkspace?: (config: {
+    type: 'chat' | 'library-item' | 'artifact';
+    title: string;
+    topic: string;
+    initialPrompt: string;
+  }) => void;
 }
 
 /**
@@ -30,6 +36,7 @@ const HomePage: React.FC<HomePageProps> = ({
   onLogout,
   onViewTemplate,
   onNavigateToDashboard,
+  onNavigateToWorkspace,
 }) => {
   // UI state
   const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
@@ -468,31 +475,31 @@ const HomePage: React.FC<HomePageProps> = ({
                 <p className="text-xs font-medium text-slate-700 mb-2 text-center">Quick actions:</p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {[
-                    "Quick summary of Copado",
-                    "Create a deployment plan",
-                    "Analyze my org health",
-                    "Help with user management"
+                    { text: "Quick summary of Copado", topic: "Learn" },
+                    { text: "Create a deployment plan", topic: "Deploy" },
+                    { text: "Analyze my org health", topic: "Analyze" },
+                    { text: "Help with user management", topic: "Manage" }
                   ].map((action, index) => (
                     <button
                       key={index}
                       onClick={() => {
-                        setWorkspaceAction(action);
+                        setWorkspaceAction(action.text);
                         setShowBuildingWorkspace(true);
                         // After 2 seconds, navigate to workspace page
                         setTimeout(() => {
-                          if (onNavigateToDashboard) {
-                            onNavigateToDashboard();
-                          } else {
-                            const url = window.location.pathname.includes('copado-home-page') 
-                              ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
-                              : '/Mego-Proto-Experiments/app.html?view=dashboard';
-                            window.location.href = url;
+                          if (onNavigateToWorkspace) {
+                            onNavigateToWorkspace({
+                              type: 'chat',
+                              title: action.text,
+                              topic: action.topic,
+                              initialPrompt: action.text
+                            });
                           }
                         }, 2000);
                       }}
                       className="px-3 py-1.5 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-xs sm:text-sm"
                     >
-                      {action}
+                      {action.text}
                     </button>
                   ))}
                 </div>

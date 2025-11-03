@@ -6,6 +6,7 @@ import OnboardingFlow from './pages/OnboardingFlow';
 import TemplatePage from './pages/TemplatePage';
 import PricingPage from './pages/PricingPage';
 import WorkItemPage from './pages/WorkItemPage';
+import WorkspacePage from './pages/WorkspacePage';
 import type { ConversationMessage } from './components/Conversation';
 import './App.css';
 
@@ -23,11 +24,19 @@ function App() {
   const initialView = viewParam === 'home' ? 'home' : viewParam === 'dashboard' ? 'dashboard' : 'intro';
   
   // Navigation state
-  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'dashboard' | 'onboarding' | 'template' | 'pricing' | 'work-item'>(initialView);
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'dashboard' | 'onboarding' | 'template' | 'pricing' | 'work-item' | 'workspace'>(initialView);
   
   // Auth state - if starting at home, treat as logged in
   const [isLoggedIn, setIsLoggedIn] = useState(initialView === 'home');
   const [isSignUpFlow, setIsSignUpFlow] = useState(true); // Track if user is signing up vs logging in
+  
+  // Workspace state
+  const [workspaceConfig, setWorkspaceConfig] = useState<{
+    type: 'chat' | 'library-item' | 'artifact';
+    title: string;
+    topic: string;
+    initialPrompt: string;
+  } | null>(null);
   
   // User data (could be moved to context in future)
   const [userName, setUserName] = useState('Jill');
@@ -303,6 +312,16 @@ function App() {
     }
   };
 
+  const handleNavigateToWorkspace = (config: {
+    type: 'chat' | 'library-item' | 'artifact';
+    title: string;
+    topic: string;
+    initialPrompt: string;
+  }) => {
+    setWorkspaceConfig(config);
+    setCurrentView('workspace');
+  };
+
   // ============ Render Views ============
 
   if (currentView === 'intro') {
@@ -351,6 +370,26 @@ function App() {
         onLogout={handleLogout}
         onViewTemplate={handleViewTemplate}
         onNavigateToDashboard={() => setCurrentView('dashboard')}
+        onNavigateToWorkspace={handleNavigateToWorkspace}
+      />
+    );
+  }
+
+  if (currentView === 'workspace') {
+    if (!workspaceConfig) {
+      setCurrentView('home');
+      return null;
+    }
+
+    return (
+      <WorkspacePage
+        workspaceType={workspaceConfig.type}
+        workspaceTitle={workspaceConfig.title}
+        workspaceTopic={workspaceConfig.topic}
+        initialPrompt={workspaceConfig.initialPrompt}
+        userName={userName}
+        onNavigateHome={() => setCurrentView('home')}
+        onBack={() => setCurrentView('home')}
       />
     );
   }

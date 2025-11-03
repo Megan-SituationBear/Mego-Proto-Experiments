@@ -1380,7 +1380,7 @@ const AIInput: React.FC<AIInputProps> = ({
               {/* Integrations Section */}
               <div className="mb-6">
                 <h4 className="text-base font-semibold text-slate-700 mb-3">Integrations</h4>
-                <p className="text-xs text-slate-500 mb-4">These apply to all of your chats</p>
+                <p className="text-xs text-slate-500 mb-4">Integrations allow agents to further help you in all of their answers with work context</p>
                 
                 {/* Show connected integrations */}
                 <div className="space-y-2 mb-4">

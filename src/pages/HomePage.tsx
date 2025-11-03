@@ -39,11 +39,20 @@ const HomePage: React.FC<HomePageProps> = ({
   // UI state
   const [showCustomizeActionsModal, setShowCustomizeActionsModal] = useState(false);
   const [selectedQuickActions, setSelectedQuickActions] = useState<string[]>([]);
+  const [savedQuickActions, setSavedQuickActions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'recent' | 'saved' | 'artifacts'>(
     recentItems.length > 0 ? 'recent' : 
     favoritedTemplates.length > 0 ? 'saved' : 
     'artifacts'
   );
+
+  const toggleQuickActionBookmark = (actionText: string) => {
+    setSavedQuickActions(prev => 
+      prev.includes(actionText) 
+        ? prev.filter(a => a !== actionText)
+        : [...prev, actionText]
+    );
+  };
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   
@@ -424,37 +433,49 @@ const HomePage: React.FC<HomePageProps> = ({
                     { text: "Quick summary of Copado", topic: "Learn" },
                     { text: "Create a deployment plan", topic: "Deploy" },
                     { text: "Analyze my org health", topic: "Analyze" }
-                  ].map((action, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setWorkspaceAction(action.text);
-                        setShowBuildingWorkspace(true);
-                        // After 2 seconds, navigate to workspace page
-                        setTimeout(() => {
-                          if (onNavigateToWorkspace) {
-                            onNavigateToWorkspace({
-                              type: 'chat',
-                              title: action.text,
-                              topic: action.topic,
-                              initialPrompt: action.text
-                            });
-                          }
-                        }, 2000);
-                      }}
-                      className="px-3 py-1.5 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-xs sm:text-sm"
-                    >
-                      {action.text}
-                    </button>
-                  ))}
-                </div>
-                <div className="text-center mt-3">
-                  <button
-                    onClick={() => setShowCustomizeActionsModal(true)}
-                    className="text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
-                  >
-                    Customize Quick Actions
-                  </button>
+                  ].map((action, index) => {
+                    const isSaved = savedQuickActions.includes(action.text);
+                    return (
+                      <div key={index} className="flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            setWorkspaceAction(action.text);
+                            setShowBuildingWorkspace(true);
+                            // After 2 seconds, navigate to workspace page
+                            setTimeout(() => {
+                              if (onNavigateToWorkspace) {
+                                onNavigateToWorkspace({
+                                  type: 'chat',
+                                  title: action.text,
+                                  topic: action.topic,
+                                  initialPrompt: action.text
+                                });
+                              }
+                            }, 2000);
+                          }}
+                          className="px-3 py-1.5 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-xs sm:text-sm"
+                        >
+                          {action.text}
+                        </button>
+                        <button
+                          onClick={() => toggleQuickActionBookmark(action.text)}
+                          className="p-1.5 hover:bg-slate-100 rounded-full transition-colors"
+                          title={isSaved ? "Remove bookmark" : "Bookmark"}
+                        >
+                          <svg 
+                            className={`w-4 h-4 transition-colors ${
+                              isSaved ? 'fill-green-500 text-green-500' : 'text-slate-400 hover:text-slate-600'
+                            }`}
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor" 
+                            strokeWidth={2}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                          </svg>
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -522,7 +543,22 @@ const HomePage: React.FC<HomePageProps> = ({
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-slate-500">No recent items yet. Start working on templates to see them here!</p>
+                  <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">No Recent Items Yet</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    Start working on quick actions or templates to see them here
+                  </p>
+                  <button
+                    onClick={() => setShowCustomizeActionsModal(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Customize Quick Actions
+                  </button>
                 </div>
               )
             ) : activeTab === 'saved' ? (

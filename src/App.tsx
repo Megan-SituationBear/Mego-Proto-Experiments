@@ -230,12 +230,12 @@ function App() {
     setWorkItemType('project'); // Templates are always 'project' type
     setIsDuplicatedTemplate(false); // Reset duplicated state when viewing a template
     
-    // Add to recent items when viewing
+    // Add to recent items when viewing (cap at 5)
     const templateWithTimestamp = {
       ...template,
       lastAccessed: new Date(),
     };
-    setRecentItems(prev => [templateWithTimestamp, ...prev.filter(item => item.id !== template.id)].slice(0, 10));
+    setRecentItems(prev => [templateWithTimestamp, ...prev.filter(item => item.id !== template.id)].slice(0, 5));
     
     setCurrentView('work-item'); // Navigate to work item template page
   };
@@ -273,8 +273,8 @@ function App() {
       setActiveProjects(prev => [...prev, newProject]);
       setHasProjects(true);
       
-      // Add to recent items (shows in hamburger menu)
-      setRecentItems(prev => [newProject, ...prev.filter(item => item.id !== newProject.id)].slice(0, 10)); // Keep last 10
+      // Add to recent items (shows in hamburger menu, cap at 5)
+      setRecentItems(prev => [newProject, ...prev.filter(item => item.id !== newProject.id)].slice(0, 5));
       
       // Set as current template and mark as duplicated
       setSelectedTemplate(newProject);
@@ -320,6 +320,16 @@ function App() {
     initialPrompt: string;
     environment?: string;
   }) => {
+    // Add to recent items with timestamp (cap at 5)
+    const recentItem = {
+      id: Date.now().toString(),
+      title: config.title,
+      type: config.type,
+      category: config.topic,
+      lastModified: new Date().toISOString(),
+    };
+    setRecentItems(prev => [recentItem, ...prev.filter(item => item.title !== config.title)].slice(0, 5));
+    
     setWorkspaceConfig(config);
     setCurrentView('workspace');
   };
@@ -341,8 +351,8 @@ function App() {
     setActiveProjects(prev => [savedWorkspace, ...prev]);
     setHasProjects(true);
 
-    // Add to recent items (shows in hamburger menu on home page)
-    setRecentItems(prev => [savedWorkspace, ...prev.filter(item => item.id !== savedWorkspace.id)].slice(0, 10));
+    // Add to recent items (shows in hamburger menu on home page, cap at 5)
+    setRecentItems(prev => [savedWorkspace, ...prev.filter(item => item.id !== savedWorkspace.id)].slice(0, 5));
   };
 
   // ============ Render Views ============

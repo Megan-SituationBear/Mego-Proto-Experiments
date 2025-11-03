@@ -1910,7 +1910,7 @@ const AIInput: React.FC<AIInputProps> = ({
           onClick={() => setShowAllIntegrationsModal(false)}
         >
           <div 
-            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col p-6 animate-in fade-in zoom-in-95 duration-200"
+            className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full flex flex-col p-6 animate-in fade-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -1929,9 +1929,11 @@ const AIInput: React.FC<AIInputProps> = ({
               </button>
             </div>
 
-            {/* Integrations Grid */}
-            <div className="overflow-y-auto flex-1">
-              <div className="grid grid-cols-2 gap-4">
+            {/* Two Column Layout */}
+            <div className="flex gap-6">
+              {/* Left Column: Integrations */}
+              <div className="flex-1">
+                <div className="grid grid-cols-2 gap-4">
                 {/* Salesforce */}
                 <button
                   onClick={() => {
@@ -2008,13 +2010,13 @@ const AIInput: React.FC<AIInputProps> = ({
                   <p className="text-xs text-slate-600 mb-2">Connect Confluence documentation</p>
                   <span className="text-xs text-slate-500">Not connected</span>
                 </button>
+                </div>
               </div>
-            </div>
 
-            {/* API Key Section */}
-            <div className="mt-6 pt-6 border-t border-slate-200">
-              <h4 className="text-base font-semibold text-slate-700 mb-3">Create API Key</h4>
-              <p className="text-xs text-slate-500 mb-4">Generate an API key to integrate with external services</p>
+              {/* Right Column: API Key Section */}
+              <div className="w-80 border-l border-slate-200 pl-6">
+                <h4 className="text-base font-semibold text-slate-700 mb-3">Create API Key</h4>
+                <p className="text-xs text-slate-500 mb-4">Generate an API key to integrate with external services</p>
               
               <div className="space-y-3">
                 {/* Name Field */}
@@ -2049,6 +2051,7 @@ const AIInput: React.FC<AIInputProps> = ({
                 >
                   Create API Key
                 </button>
+              </div>
               </div>
             </div>
 

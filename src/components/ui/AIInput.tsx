@@ -114,9 +114,9 @@ const AIInput: React.FC<AIInputProps> = ({
   const menuCloseTimeoutRef = useRef<number | null>(null);
   
   // Mode toggle state with localStorage persistence
-  const [inputMode, setInputMode] = useState<'ask' | 'make' | 'automate'>(() => {
+  const [inputMode, setInputMode] = useState<'ask' | 'make'>(() => {
     const saved = localStorage.getItem('aiInput-mode');
-    return (saved === 'ask' || saved === 'make' || saved === 'automate') ? saved : 'ask';
+    return (saved === 'ask' || saved === 'make') ? saved : 'ask';
   });
 
   // Track if "Press enter to submit" tip has been shown (one-time only)
@@ -499,8 +499,8 @@ const AIInput: React.FC<AIInputProps> = ({
       }
       
       // Prepend mode prefix to message based on selected mode
-      // This allows the backend/handler to differentiate between "ask", "make", and "automate" modes
-      const modePrefix = inputMode === 'make' ? '[MAKE] ' : inputMode === 'automate' ? '[AUTOMATE] ' : '[ASK] ';
+      // This allows the backend/handler to differentiate between "ask" and "make" modes
+      const modePrefix = inputMode === 'make' ? '[MAKE] ' : '[ASK] ';
       messageContent = modePrefix + messageContent;
       
       onSendMessage(messageContent);
@@ -513,8 +513,6 @@ const AIInput: React.FC<AIInputProps> = ({
   // Update placeholder based on mode
   const modePlaceholder = inputMode === 'make' 
     ? (placeholder && placeholder.includes('action') ? placeholder.replace('action', 'thing to make or create') : 'What would you like to make or create?')
-    : inputMode === 'automate'
-    ? 'What would you like to automate?'
     : 'What can I help you with?';
   
   // Use custom placeholder if provided (e.g., "Continue the conversation..."), otherwise use mode-based placeholder
@@ -674,27 +672,6 @@ const AIInput: React.FC<AIInputProps> = ({
         </div>
       )}
 
-      {/* Mode Toggle - Above input, centered */}
-      <div className="mb-3 flex justify-center items-center gap-3">
-        <TabToggle
-          tabs={[
-            { id: 'ask', label: 'Ask' },
-            { id: 'make', label: 'Make' },
-            { id: 'automate', label: 'Automate' }
-          ]}
-          activeTab={inputMode}
-          onTabChange={(id) => setInputMode(id as 'ask' | 'make' | 'automate')}
-          size="sm"
-          variant="default"
-        />
-        
-        {/* One-time "Press enter to submit" tip for Ask mode */}
-        {inputMode === 'ask' && !hasShownEnterTip && isFocused && (
-          <div className="text-xs text-slate-500 animate-in fade-in slide-in-from-left-2 duration-300">
-            Press enter to submit
-          </div>
-        )}
-      </div>
 
       {/* AI Input Field */}
       <div 
@@ -816,7 +793,7 @@ const AIInput: React.FC<AIInputProps> = ({
           {/* Actions Row */}
           <div className="flex flex-row justify-between items-center bg-white relative">
             {/* Action Left: Plus and Settings Buttons */}
-            <div className="flex flex-row items-center gap-0 px-2">
+            <div className="flex flex-row items-center gap-2 px-2">
               {/* Plus Button with Context Menu */}
               <div className="relative">
                 <button
@@ -970,6 +947,20 @@ const AIInput: React.FC<AIInputProps> = ({
                   <Settings className="w-5 h-5" />
                 </button>
               )}
+            </div>
+
+            {/* Mode Toggle - Small, inline with actions */}
+            <div className="flex-1 flex justify-center">
+              <TabToggle
+                tabs={[
+                  { id: 'ask', label: 'Ask' },
+                  { id: 'make', label: 'Make' },
+                ]}
+                activeTab={inputMode}
+                onTabChange={(id) => setInputMode(id as 'ask' | 'make')}
+                size="xs"
+                variant="default"
+              />
             </div>
 
             {/* Send button */}

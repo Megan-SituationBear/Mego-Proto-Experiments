@@ -513,7 +513,7 @@ const AIInput: React.FC<AIInputProps> = ({
   // Update placeholder based on mode
   const modePlaceholder = inputMode === 'make' 
     ? (placeholder && placeholder.includes('action') ? placeholder.replace('action', 'thing to make or create') : 'What would you like to make or create?')
-    : 'What can I help you with?';
+    : 'How can I help you today?\nPress \'enter\' to send';
   
   // Use custom placeholder if provided (e.g., "Continue the conversation..."), otherwise use mode-based placeholder
   const effectivePlaceholder = placeholder || modePlaceholder;

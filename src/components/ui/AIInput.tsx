@@ -78,6 +78,7 @@ interface AIInputProps {
     title: string;
     topic: string;
     initialPrompt: string;
+    environment?: string;
   }) => void;
   // Mode configuration
   defaultMode?: 'ask' | 'make'; // Default mode for this instance
@@ -178,6 +179,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [salesforceAuthStep, setSalesforceAuthStep] = useState<'login' | 'auth' | 'thinking' | 'sandboxes' | 'connected'>('login');
   const [salesforceConnected, setSalesforceConnected] = useState(false);
   const [selectedSandboxes, setSelectedSandboxes] = useState<string[]>([]);
+  const [selectedEnvironment, setSelectedEnvironment] = useState<string>(''); // For Make mode - which env to develop in
   const [selectedAgents, setSelectedAgents] = useState<string[]>(['salesforce-expert']); // Default: Salesforce Expert
   const [longTermMemory, setLongTermMemory] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{id: string, name: string, type: 'document' | 'image' | 'code'}>>([]);
@@ -483,7 +485,19 @@ const AIInput: React.FC<AIInputProps> = ({
     }
   }, [autoFocus]);
 
+  // Auto-select first environment when sandboxes change or switching to Make mode
+  useEffect(() => {
+    if (inputMode === 'make' && selectedSandboxes.length > 0 && !selectedEnvironment) {
+      setSelectedEnvironment(selectedSandboxes[0]);
+    }
+  }, [inputMode, selectedSandboxes, selectedEnvironment]);
+
   const handleSubmit = () => {
+    // In Make mode on home page, require environment selection
+    if (inputMode === 'make' && pageContext === 'home' && !selectedEnvironment) {
+      return; // Don't submit if no environment selected
+    }
+    
     if ((value.trim() || codeSnippets.length > 0) && !disabled && !loading) {
       // Combine text and code snippets
       let messageContent = value.trim();
@@ -500,16 +514,28 @@ const AIInput: React.FC<AIInputProps> = ({
         const summary = messageContent.split(/[.!?]/)[0].substring(0, 60).trim();
         const workspaceTitle = `Make: ${summary}${messageContent.length > 60 ? '...' : ''}`;
         
+        // Get the selected sandbox info
+        const sandbox = [
+          { id: 'prod', name: 'Production' },
+          { id: 'dev', name: 'Dev Sandbox' },
+          { id: 'qa', name: 'QA Sandbox' },
+          { id: 'staging', name: 'Staging Sandbox' },
+          { id: 'uat', name: 'UAT Sandbox' },
+          { id: 'demo', name: 'Demo Sandbox' },
+        ].find(s => s.id === selectedEnvironment);
+        
         onNavigateToWorkspace({
           type: 'artifact',
           title: workspaceTitle,
           topic: 'Make',
-          initialPrompt: messageContent
+          initialPrompt: messageContent,
+          environment: sandbox ? sandbox.name : selectedEnvironment
         });
         
         setValue('');
         setCodeSnippets([]);
         setHasBeenFocused(false);
+        // Keep selectedEnvironment persistent for next make
         return;
       }
       
@@ -1221,13 +1247,21 @@ Can you help me with any questions I have about this setup?`
             <button 
               type="button"
               onClick={handleSubmit}
-              disabled={(!value.trim() && codeSnippets.length === 0) || disabled || loading}
+              disabled={
+                (!value.trim() && codeSnippets.length === 0) || 
+                disabled || 
+                loading ||
+                (inputMode === 'make' && pageContext === 'home' && !selectedEnvironment)
+              }
               className={`${inputMode === 'make' ? 'px-6 py-3' : 'p-3.5'} rounded-xl transition-all duration-200 flex items-center gap-2 ${
-                (value.trim() || codeSnippets.length > 0) && !disabled && !loading
+                (value.trim() || codeSnippets.length > 0) && 
+                !disabled && 
+                !loading && 
+                !(inputMode === 'make' && pageContext === 'home' && !selectedEnvironment)
                   ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
                   : 'bg-slate-100 text-slate-400 cursor-not-allowed'
               }`}
-              title="Send message"
+              title={inputMode === 'make' && pageContext === 'home' && !selectedEnvironment ? "Select an environment to continue" : "Send message"}
             >
               <Send className="w-5 h-5" />
               {inputMode === 'make' && (
@@ -1239,10 +1273,15 @@ Can you help me with any questions I have about this setup?`
 
         {/* Environment Section - Show connected Salesforce sandboxes in Make mode */}
         {inputMode === 'make' && viewState === 'focused' && salesforceConnected && selectedSandboxes.length > 0 && (
-          <div className="border-t border-slate-200 px-6 py-3 bg-white">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-slate-700">Environment:</span>
-              <div className="flex flex-wrap gap-2">
+          <div className="border-t border-slate-200 px-6 py-4 bg-slate-50">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-slate-700">Choose Environment</span>
+                {!selectedEnvironment && (
+                  <span className="text-xs text-red-600 font-medium">Required to submit</span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-2">
                 {selectedSandboxes.map((sandboxId) => {
                   const sandbox = [
                     { id: 'prod', name: 'Production' },
@@ -1254,14 +1293,26 @@ Can you help me with any questions I have about this setup?`
                   ].find(s => s.id === sandboxId);
                   
                   return sandbox ? (
-                    <div
+                    <button
                       key={sandboxId}
-                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 rounded-full border border-green-300 text-xs"
+                      onClick={() => setSelectedEnvironment(sandboxId)}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 transition-all text-sm font-medium ${
+                        selectedEnvironment === sandboxId
+                          ? 'bg-blue-50 border-blue-500 text-blue-700'
+                          : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50'
+                      }`}
                     >
-                      <span className="text-slate-700 font-medium">
-                        Sandbox: {sandbox.name}
-                      </span>
-                    </div>
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                        selectedEnvironment === sandboxId
+                          ? 'border-blue-500'
+                          : 'border-slate-300'
+                      }`}>
+                        {selectedEnvironment === sandboxId && (
+                          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                        )}
+                      </div>
+                      <span>{sandbox.name}</span>
+                    </button>
                   ) : null;
                 })}
               </div>

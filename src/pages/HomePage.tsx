@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { AIInput, TemplateCard, TopNav, TabToggle } from '../components/ui';
+import FindTemplatesModal from '../components/ui/FindTemplatesModal';
 import Conversation, { type ConversationMessage } from '../components/Conversation';
 import { generateAIResponse } from '../utils/aiMessageGenerator';
 
@@ -37,6 +38,7 @@ const HomePage: React.FC<HomePageProps> = ({
 }) => {
   // UI state
   const [showCustomizeActionsModal, setShowCustomizeActionsModal] = useState(false);
+  const [selectedQuickActions, setSelectedQuickActions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'artifacts'>(
     recentItems.length > 0 ? 'recent' : 
     favoritedTemplates.length > 0 ? 'favorites' : 
@@ -569,75 +571,22 @@ const HomePage: React.FC<HomePageProps> = ({
 
       </main>
 
-      {/* Customize Quick Actions Modal */}
-      {showCustomizeActionsModal && (
-        <div 
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setShowCustomizeActionsModal(false)}
-        >
-          <div 
-            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">Customize Quick Actions</h3>
-                <p className="text-sm text-slate-600 mt-1">Pick your top 4 quick actions to display</p>
-              </div>
-              <button 
-                onClick={() => setShowCustomizeActionsModal(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Available Actions */}
-            <div className="space-y-3 mb-6">
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "Quick summary of Copado",
-                  "Create a deployment plan",
-                  "Analyze my org health",
-                  "Help with user management",
-                  "Review code changes",
-                  "Set up automation",
-                  "Configure permissions",
-                  "Generate test cases",
-                  "Optimize performance",
-                  "Create documentation"
-                ].map((action, index) => (
-                  <button
-                    key={index}
-                    className="px-4 py-2 bg-slate-50 text-slate-700 border border-slate-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all text-sm"
-                  >
-                    {action}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setShowCustomizeActionsModal(false)}
-                className="px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg font-medium transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => setShowCustomizeActionsModal(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
-              >
-                Save Actions
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Customize Quick Actions Modal - using FindTemplatesModal */}
+      <FindTemplatesModal
+        isOpen={showCustomizeActionsModal}
+        onClose={() => {
+          setShowCustomizeActionsModal(false);
+          setSelectedQuickActions([]);
+        }}
+        onSelectTemplate={(action) => {
+          setShowCustomizeActionsModal(false);
+          setSelectedQuickActions([]);
+          // Handle quick action selection
+          console.log('Selected action:', action);
+        }}
+        initialGoals={selectedQuickActions}
+        mode="quick-actions"
+      />
 
       {/* Building Workspace Modal */}
       {showBuildingWorkspace && (

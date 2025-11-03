@@ -8,6 +8,7 @@ interface FindTemplatesModalProps {
   onClose: () => void;
   onSelectTemplate: (template: any) => void;
   initialGoals?: string[]; // Pre-selected goals from MatchingModal
+  mode?: 'templates' | 'quick-actions'; // Mode to switch between templates and quick actions
 }
 
 const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
@@ -15,13 +16,14 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
   onClose,
   onSelectTemplate,
   initialGoals = [],
+  mode = 'templates',
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'popular' | 'hours' | 'newest'>('popular');
   const [selectedTags, setSelectedTags] = useState<string[]>(initialGoals);
 
-  const categories = [
+  const templateCategories = [
     { id: 'all', name: 'All Templates', count: 24 },
     { id: 'deployment', name: 'Deployment & CI/CD', count: 6, color: 'blue' },
     { id: 'planning', name: 'Planning & Analytics', count: 5, color: 'purple' },
@@ -30,7 +32,7 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     { id: 'building', name: 'Development', count: 4, color: 'indigo' },
   ];
 
-  const tags = [
+  const templateTags = [
     { id: 'plan', label: 'Planning', icon: '📊' },
     { id: 'deploy', label: 'Deployment', icon: '🚀' },
     { id: 'build', label: 'Building', icon: '⚡' },
@@ -335,6 +337,49 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     },
   ];
 
+  // Quick Actions data
+  const quickActionCategories = [
+    { id: 'all', name: 'All Actions', count: 15 },
+    { id: 'learn', name: 'Learn & Explore', count: 3, color: 'blue' },
+    { id: 'deploy', name: 'Deploy & Release', count: 3, color: 'purple' },
+    { id: 'analyze', name: 'Analyze & Monitor', count: 3, color: 'green' },
+    { id: 'manage', name: 'Manage & Configure', count: 3, color: 'amber' },
+    { id: 'build', name: 'Build & Create', count: 3, color: 'indigo' },
+  ];
+
+  const quickActionTags = [
+    { id: 'learn', label: 'Learning', icon: '📚' },
+    { id: 'deploy', label: 'Deployment', icon: '🚀' },
+    { id: 'analyze', label: 'Analysis', icon: '📊' },
+    { id: 'manage', label: 'Management', icon: '⚙️' },
+    { id: 'build', label: 'Building', icon: '⚡' },
+  ];
+
+  const allQuickActions = [
+    { id: 1, category: "Learn", title: "Quick summary of Copado", description: "Get a comprehensive overview of Copado features and capabilities", remixCount: 2500, favoriteCount: 3200, tags: ['learn'], dateAdded: '2025-11-01' },
+    { id: 2, category: "Deploy", title: "Create a deployment plan", description: "Build a structured deployment strategy with automated validation", remixCount: 1800, favoriteCount: 2400, tags: ['deploy'], dateAdded: '2025-11-01' },
+    { id: 3, category: "Analyze", title: "Analyze my org health", description: "Run comprehensive health checks across your Salesforce org", remixCount: 2100, favoriteCount: 2800, tags: ['analyze'], dateAdded: '2025-11-01' },
+    { id: 4, category: "Manage", title: "Help with user management", description: "Manage users, permissions, and access controls efficiently", remixCount: 1600, favoriteCount: 2100, tags: ['manage'], dateAdded: '2025-11-01' },
+    { id: 5, category: "Analyze", title: "Review code changes", description: "Automated code review with best practice recommendations", remixCount: 1900, favoriteCount: 2500, tags: ['analyze', 'build'], dateAdded: '2025-11-01' },
+    { id: 6, category: "Build", title: "Set up automation", description: "Create workflow rules, flows, and process automation", remixCount: 1700, favoriteCount: 2300, tags: ['build'], dateAdded: '2025-11-01' },
+    { id: 7, category: "Manage", title: "Configure permissions", description: "Set up and manage permission sets and profiles", remixCount: 1400, favoriteCount: 1900, tags: ['manage'], dateAdded: '2025-11-01' },
+    { id: 8, category: "Build", title: "Generate test cases", description: "Auto-generate comprehensive test coverage for your code", remixCount: 1500, favoriteCount: 2000, tags: ['build'], dateAdded: '2025-11-01' },
+    { id: 9, category: "Analyze", title: "Optimize performance", description: "Identify and resolve performance bottlenecks", remixCount: 1300, favoriteCount: 1800, tags: ['analyze'], dateAdded: '2025-11-01' },
+    { id: 10, category: "Build", title: "Create documentation", description: "Auto-generate comprehensive documentation for your org", remixCount: 1200, favoriteCount: 1600, tags: ['build'], dateAdded: '2025-11-01' },
+    { id: 11, category: "Deploy", title: "Schedule deployment window", description: "Plan and schedule optimal deployment times", remixCount: 1100, favoriteCount: 1500, tags: ['deploy'], dateAdded: '2025-11-01' },
+    { id: 12, category: "Learn", title: "Explore best practices", description: "Learn Salesforce and Copado best practices", remixCount: 2000, favoriteCount: 2600, tags: ['learn'], dateAdded: '2025-11-01' },
+    { id: 13, category: "Manage", title: "Audit security settings", description: "Review and enhance org security configurations", remixCount: 900, favoriteCount: 1300, tags: ['manage', 'analyze'], dateAdded: '2025-11-01' },
+    { id: 14, category: "Deploy", title: "Rollback deployment", description: "Safely rollback deployments with automated testing", remixCount: 800, favoriteCount: 1200, tags: ['deploy'], dateAdded: '2025-11-01' },
+    { id: 15, category: "Learn", title: "Training resources", description: "Access curated training materials and guides", remixCount: 1800, favoriteCount: 2300, tags: ['learn'], dateAdded: '2025-11-01' },
+  ];
+
+  // Use appropriate data based on mode
+  const categories = mode === 'quick-actions' ? quickActionCategories : templateCategories;
+  const allItems = mode === 'quick-actions' ? allQuickActions : allTemplates;
+  const itemTags = mode === 'quick-actions' ? quickActionTags : templateTags;
+  const modalTitle = mode === 'quick-actions' ? 'Customize Quick Actions' : 'Find Templates';
+  const modalSubtitle = mode === 'quick-actions' ? 'Pick your top 4 quick actions to display' : 'Browse and select from our curated templates';
+
   const toggleTag = (tagId: string) => {
     setSelectedTags(prev =>
       prev.includes(tagId)
@@ -343,7 +388,7 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
     );
   };
 
-  const filteredTemplates = allTemplates
+  const filteredTemplates = allItems
     .filter(template => {
       const matchesSearch = template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            template.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -358,7 +403,7 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
         case 'popular':
           return (b.favoriteCount || 0) - (a.favoriteCount || 0);
         case 'hours':
-          return (b.savedHours || 0) - (a.savedHours || 0);
+          return ('savedHours' in b ? b.savedHours || 0 : 0) - ('savedHours' in a ? a.savedHours || 0 : 0);
         case 'newest':
           return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime();
         default:
@@ -383,9 +428,9 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
               <div>
                 <DialogTitle className="text-2xl font-bold text-slate-900">
-                  Find Templates
+                  {modalTitle}
                 </DialogTitle>
-                <p className="text-sm text-slate-600">Discover time-saving templates for your projects</p>
+                <p className="text-sm text-slate-600">{modalSubtitle}</p>
               </div>
               <button
                 onClick={onClose}
@@ -413,7 +458,7 @@ const FindTemplatesModal: React.FC<FindTemplatesModalProps> = ({
           {/* Quick Filter Tags */}
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-sm font-medium text-slate-600">Quick filters:</span>
-            {tags.map((tag) => (
+            {itemTags.map((tag) => (
               <button
                 key={tag.id}
                 onClick={() => toggleTag(tag.id)}

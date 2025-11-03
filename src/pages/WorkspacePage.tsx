@@ -10,6 +10,7 @@ interface WorkspacePageProps {
   workspaceTitle?: string;
   workspaceTopic?: string; // e.g., "Deploy", "Analyze", "Learn"
   initialPrompt?: string;
+  environment?: string; // Selected environment for Make mode workspaces
   onNavigateHome?: () => void;
   onBack?: () => void;
   onSaveWorkspace?: (title: string, workspaceData: any) => void;
@@ -20,6 +21,7 @@ const WorkspacePage = ({
   workspaceTitle = 'Workspace',
   workspaceTopic = 'General',
   initialPrompt = '',
+  environment,
   onNavigateHome,
   onBack,
   onSaveWorkspace,
@@ -33,28 +35,17 @@ const WorkspacePage = ({
   const [leftPanelWidth, setLeftPanelWidth] = useState(75); // percentage - 3/4 of page by default
   const [isResizing, setIsResizing] = useState(false);
 
-  // Determine primary action based on workspace type
+  // Determine primary action - always "Save Workspace"
   const getPrimaryAction = () => {
-    switch (workspaceType) {
-      case 'library-item':
-        return { label: 'Save', icon: '💾' };
-      case 'artifact':
-        return { label: 'Deploy', icon: '🚀' };
-      case 'chat':
-      default:
-        return { label: 'Share', icon: '↗' };
-    }
+    return { label: 'Save Workspace', icon: '💾' };
   };
 
   const primaryAction = getPrimaryAction();
 
   const handlePrimaryAction = () => {
-    if (workspaceType === 'library-item') {
-      setSaveTitle(workspaceTitle);
-      setShowSaveModal(true);
-    } else {
-      console.log(`Primary action: ${primaryAction.label}`);
-    }
+    // Always show save modal for all workspace types
+    setSaveTitle(workspaceTitle);
+    setShowSaveModal(true);
   };
 
   const handleSaveWorkspace = () => {
@@ -183,9 +174,19 @@ const WorkspacePage = ({
 
           {/* Center: Title with Item Label */}
           <div className="flex-1 flex items-center justify-center mx-8">
-            <h1 className="text-xl font-bold text-slate-900">
-              <span className="text-slate-500 font-normal">{workspaceTopic}:</span> {workspaceTitle}
-            </h1>
+            <div className="text-center">
+              <h1 className="text-xl font-bold text-slate-900">
+                <span className="text-slate-500 font-normal">{workspaceTopic}:</span> {workspaceTitle}
+              </h1>
+              {environment && (
+                <div className="mt-1 flex items-center justify-center gap-2">
+                  <span className="text-xs text-slate-500">Environment:</span>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 rounded-full border border-green-300 text-xs font-medium text-slate-700">
+                    {environment}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Right: Favorite + Primary Action */}
@@ -202,6 +203,16 @@ const WorkspacePage = ({
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => console.log('Share workspace')}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              title="Share workspace"
+            >
+              <svg className="w-5 h-5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
             </button>
 

@@ -36,6 +36,7 @@ function App() {
     title: string;
     topic: string;
     initialPrompt: string;
+    environment?: string;
   } | null>(null);
   
   // User data (could be moved to context in future)
@@ -317,6 +318,7 @@ function App() {
     title: string;
     topic: string;
     initialPrompt: string;
+    environment?: string;
   }) => {
     setWorkspaceConfig(config);
     setCurrentView('workspace');
@@ -406,6 +408,7 @@ function App() {
         workspaceTitle={workspaceConfig.title}
         workspaceTopic={workspaceConfig.topic}
         initialPrompt={workspaceConfig.initialPrompt}
+        environment={workspaceConfig.environment}
         onNavigateHome={() => setCurrentView('home')}
         onBack={() => setCurrentView('home')}
         onSaveWorkspace={handleSaveWorkspace}
@@ -424,9 +427,11 @@ function App() {
     return (
       <DashboardPage
         userName={userName}
-        projects={activeProjects}
+        recentItems={recentItems}
+        favoritedItems={favoritedTemplates}
+        artifacts={[]}
         stats={dashboardStats}
-        onViewProject={handleViewTemplate}
+        onViewItem={handleViewTemplate}
         onAvatarClick={() => setCurrentView('home')}
         salesforceOrg={{
           name: 'Acme Corp',

@@ -4,7 +4,7 @@
  * This component renders differently based on three key factors:
  * 1. Authentication Status (isLoggedIn: boolean)
  * 2. Page Context (pageContext: 'home' | 'workspace' | 'context')
- * 3. Interaction State (viewState: 'default' | 'focused' | 'focused-with-conversation')
+ * 3. Interaction State (viewState: 'default' | 'focused')
  * 
  * STATE COMBINATIONS:
  * 
@@ -42,7 +42,7 @@ import { Send, Plus, Settings, Paperclip, MessageSquare, Ticket, Grid, Cloud } f
 import { TabToggle } from './TabToggle';
 
 type PageContext = 'home' | 'workspace' | 'context';
-type ViewState = 'default' | 'focused' | 'focused-with-conversation';
+type ViewState = 'default' | 'focused';
 
 export interface ConversationMessage {
   id: string;
@@ -79,6 +79,9 @@ interface AIInputProps {
     topic: string;
     initialPrompt: string;
   }) => void;
+  // Mode configuration
+  defaultMode?: 'ask' | 'make'; // Default mode for this instance
+  availableModes?: ('ask' | 'make')[]; // Which modes are available (both by default)
 }
 
 interface CodeSnippet {
@@ -105,12 +108,13 @@ const AIInput: React.FC<AIInputProps> = ({
   autoFocus = false,
   isLoggedIn = false,
   pageContext = 'home',
-  hasConversation = false,
   messages = [],
   showTypingIndicator = false,
   isSalesforceConnected = false,
   connectedSandbox: _connectedSandbox = null,
   onNavigateToWorkspace,
+  defaultMode = 'ask',
+  availableModes = ['ask', 'make'],
 }) => {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -119,21 +123,20 @@ const AIInput: React.FC<AIInputProps> = ({
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const menuCloseTimeoutRef = useRef<number | null>(null);
   
-  // Mode toggle state with localStorage persistence
+  // Mode toggle state - Use defaultMode from props, respect availableModes
   const [inputMode, setInputMode] = useState<'ask' | 'make'>(() => {
-    const saved = localStorage.getItem('aiInput-mode');
-    return (saved === 'ask' || saved === 'make') ? saved : 'ask';
+    // Check if defaultMode is available
+    if (availableModes.includes(defaultMode)) {
+      return defaultMode;
+    }
+    // Fallback to first available mode
+    return availableModes[0] || 'ask';
   });
 
   // Track if "Press enter to submit" tip has been shown (one-time only)
   const [hasShownEnterTip, setHasShownEnterTip] = useState(() => {
     return localStorage.getItem('aiInput-enterTipShown') === 'true';
   });
-
-  // Update localStorage when mode changes
-  useEffect(() => {
-    localStorage.setItem('aiInput-mode', inputMode);
-  }, [inputMode]);
 
   // Show tip once and mark as shown
   useEffect(() => {
@@ -323,9 +326,8 @@ const AIInput: React.FC<AIInputProps> = ({
     return type ? info[type] : null;
   };
 
-  // Determine current view state
+  // Determine current view state - Simplified to just default and focused
   const getViewState = (): ViewState => {
-    if (isFocused && hasConversation) return 'focused-with-conversation';
     if (isFocused || hasBeenFocused || value.trim()) return 'focused';
     return 'default';
   };
@@ -354,77 +356,45 @@ const AIInput: React.FC<AIInputProps> = ({
     };
 
     // MAKE MODE - Different styling
-    if (inputMode === 'make') {
-      // Logged Out - Make Mode
-      if (!isLoggedIn && pageContext === 'home') {
-        if (viewState === 'default') {
-          return {
-            ...baseStyles,
-            shadow: 'shadow-xl',
-            borderColor: 'border-indigo-600',
-            bgColor: 'bg-white',
-            height: '120px', // Taller default for Make mode
-            padding: '20px',
-            borderRadius: 'rounded-3xl',
-            borderWidth: 'border',
-            textColor: 'text-slate-900',
-          };
-        }
-        if (viewState === 'focused' || viewState === 'focused-with-conversation') {
-          return {
-            ...baseStyles,
-            borderColor: 'border-indigo-600',
-            borderWidth: 'border-2',
-            shadow: 'shadow-xl',
-            bgColor: 'bg-white',
-            height: '200px', // Much taller for focused Make mode
-            padding: '24px',
-            textColor: 'text-slate-950', // Darker text when focused
-          };
-        }
+    if (inputMode === 'make' && pageContext === 'home') {
+      if (viewState === 'default') {
+        // Default Make mode: Taller, centered
+        return {
+          ...baseStyles,
+          shadow: 'shadow-xl',
+          borderColor: 'border-indigo-600',
+          bgColor: 'bg-white',
+          height: '120px', // Taller default for Make mode
+          padding: '20px',
+          borderRadius: 'rounded-3xl',
+          borderWidth: 'border',
+          textColor: 'text-slate-900',
+        };
       }
-      
-      // Logged In - Make Mode
-      if (isLoggedIn && pageContext === 'home') {
-        if (viewState === 'default') {
-          return {
-            ...baseStyles,
-            shadow: 'shadow-xl',
-            borderColor: 'border-indigo-600',
-            borderWidth: 'border',
-            bgColor: 'bg-white',
-            height: '120px', // Taller default for Make mode
-            padding: '20px',
-            borderRadius: 'rounded-3xl',
-            textColor: 'text-slate-900',
-          };
-        }
-        if (viewState === 'focused' || viewState === 'focused-with-conversation') {
-          return {
-            ...baseStyles,
-            borderColor: 'border-indigo-600',
-            borderWidth: 'border-2',
-            shadow: 'shadow-xl',
-            bgColor: 'bg-white',
-            height: '200px', // Much taller for focused Make mode
-            padding: '24px',
-            textColor: 'text-slate-950', // Darker text when focused
-          };
-        }
+      if (viewState === 'focused') {
+        // Focused Make mode: Much taller, darker text, actions on right
+        return {
+          ...baseStyles,
+          borderColor: 'border-indigo-600',
+          borderWidth: 'border-2',
+          shadow: 'shadow-xl',
+          bgColor: 'bg-white',
+          height: '200px', // Much taller for focused Make mode
+          padding: '24px',
+          textColor: 'text-slate-950', // Darker text when focused
+        };
       }
     }
 
     // ASK MODE - Original styling
-    // Logged Out States - Home Page (Landing/Intro)
-    if (!isLoggedIn && pageContext === 'home') {
+    if (pageContext === 'home') {
       if (viewState === 'default') {
-        // Default state: Shorter, centered placeholder, light stroke
+        // Default Ask mode: Shorter, centered placeholder, light stroke
         return {
           ...baseStyles,
           shadow: 'shadow-xl',
           borderColor: 'border-indigo-600',
           bgColor: 'bg-white',
-          containerScale: 'scale-100',
           height: '56px', // Shorter default state
           padding: '16px',
           borderRadius: 'rounded-3xl',
@@ -435,79 +405,15 @@ const AIInput: React.FC<AIInputProps> = ({
         };
       }
       if (viewState === 'focused') {
-        // Text entry state: Taller, left-aligned
+        // Focused Ask mode: Taller, left-aligned
         return {
           ...baseStyles,
-          containerScale: 'scale-100', // Keep same width (no scale)
           borderColor: 'border-indigo-600',
           borderWidth: 'border-2', // 2px border
           shadow: 'shadow-xl',
-          ring: '',
           bgColor: 'bg-white',
           height: '100px',
           padding: '20px',
-          textColor: 'text-slate-900',
-        };
-      }
-      if (viewState === 'focused-with-conversation') {
-        // Maximum expansion when conversation is active
-        return {
-          ...baseStyles,
-          containerScale: 'scale-100', // Keep same width (no scale)
-          borderColor: 'border-indigo-600',
-          borderWidth: 'border-2', // 2px border
-          shadow: 'shadow-xl',
-          ring: '',
-          bgColor: 'bg-white',
-          height: '120px',
-          padding: '24px',
-          textColor: 'text-slate-900',
-        };
-      }
-    }
-
-    // Logged In States - Ask Mode
-    if (isLoggedIn && pageContext === 'home') {
-      if (viewState === 'default') {
-        // Default state: Shorter, centered placeholder, light stroke
-        return {
-          ...baseStyles,
-          shadow: 'shadow-xl',
-          borderColor: 'border-indigo-600',
-          borderWidth: 'border', // Light 1px border
-          bgColor: 'bg-white',
-          height: '56px', // Shorter default state
-          padding: '16px',
-          borderRadius: 'rounded-3xl',
-          containerPadding: 'p-3',
-          gap: 'gap-3',
-          textColor: 'text-slate-900',
-        };
-      }
-      if (viewState === 'focused') {
-        // Text entry state: Taller, left-aligned
-        return {
-          ...baseStyles,
-          containerScale: 'scale-100',
-          borderColor: 'border-indigo-600',
-          borderWidth: 'border-2',
-          shadow: 'shadow-xl',
-          ring: '',
-          height: '100px',
-          padding: '20px',
-          textColor: 'text-slate-900',
-        };
-      }
-      if (viewState === 'focused-with-conversation') {
-        return {
-          ...baseStyles,
-          containerScale: 'scale-100',
-          borderColor: 'border-indigo-600',
-          borderWidth: 'border-2',
-          shadow: 'shadow-xl',
-          ring: '',
-          height: '120px',
-          padding: '24px',
           textColor: 'text-slate-900',
         };
       }
@@ -521,17 +427,19 @@ const AIInput: React.FC<AIInputProps> = ({
           shadow: 'shadow-md',
           borderColor: 'border-slate-300',
           bgColor: 'bg-white/95',
+          textColor: 'text-slate-900',
         };
       }
-      if (viewState === 'focused' || viewState === 'focused-with-conversation') {
+      if (viewState === 'focused') {
         return {
           ...baseStyles,
           borderColor: 'border-blue-400',
           shadow: 'shadow-lg',
           ring: 'ring-2 ring-blue-200',
           bgColor: 'bg-white',
-          height: viewState === 'focused-with-conversation' ? '120px' : '80px',
-          padding: viewState === 'focused-with-conversation' ? '20px' : '16px',
+          height: '80px',
+          padding: '16px',
+          textColor: 'text-slate-900',
         };
       }
     }
@@ -805,19 +713,26 @@ Can you help me with any questions I have about this setup?`
         </div>
       )}
 
-      {/* Mode Toggle - Above input, centered */}
-      <div className="mb-3 flex justify-center items-center gap-3">
-        <TabToggle
-          tabs={[
-            { id: 'ask', label: 'Ask' },
-            { id: 'make', label: 'Make' },
-          ]}
-          activeTab={inputMode}
-          onTabChange={(id) => setInputMode(id as 'ask' | 'make')}
-          size="sm"
-          variant="default"
-        />
-      </div>
+      {/* Mode Toggle - Above input, centered - Only show if multiple modes available */}
+      {availableModes.length > 1 && (
+        <div className="mb-3 flex justify-center items-center gap-3">
+          <TabToggle
+            tabs={availableModes.map(mode => ({
+              id: mode,
+              label: mode === 'ask' ? 'Ask' : 'Make'
+            }))}
+            activeTab={inputMode}
+            onTabChange={(id) => {
+              const mode = id as 'ask' | 'make';
+              if (availableModes.includes(mode)) {
+                setInputMode(mode);
+              }
+            }}
+            size="sm"
+            variant="default"
+          />
+        </div>
+      )}
 
       {/* AI Input Field */}
       <div 
@@ -904,7 +819,7 @@ Can you help me with any questions I have about this setup?`
           </div>
         )}
 
-        <div className={`flex flex-col ${stateStyles.containerPadding} ${stateStyles.gap}`}>
+        <div className={`flex ${inputMode === 'make' && viewState === 'focused' ? 'flex-row' : 'flex-col'} ${stateStyles.containerPadding} ${stateStyles.gap}`}>
           {/* Textarea - always visible and functional */}
           <textarea
             ref={textareaRef}
@@ -917,7 +832,7 @@ Can you help me with any questions I have about this setup?`
             placeholder={effectivePlaceholder}
             disabled={disabled || loading}
             autoFocus={autoFocus}
-            className={`w-full px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out ${isCenteredPlaceholder ? 'text-center placeholder:text-center' : 'text-left placeholder:text-left'} ${stateStyles.textColor} placeholder-slate-600`}
+            className={`${inputMode === 'make' && viewState === 'focused' ? 'flex-1' : 'w-full'} px-6 bg-transparent outline-none resize-none transition-all duration-500 ease-out ${isCenteredPlaceholder ? 'text-center placeholder:text-center' : 'text-left placeholder:text-left'} ${stateStyles.textColor} placeholder-slate-600`}
             style={{
               paddingTop: stateStyles.padding,
               paddingBottom: stateStyles.padding,
@@ -936,10 +851,98 @@ Can you help me with any questions I have about this setup?`
             rows={1}
           />
 
-          {/* Context Chips - Show uploaded files and connected sandboxes ABOVE actions */}
-          {(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
-            <div className="bg-slate-50 px-6 py-3 border-t border-slate-200">
-              <div className="flex flex-wrap gap-2">
+          {/* Actions on the right side in Make mode (focused) */}
+          {inputMode === 'make' && viewState === 'focused' && (
+            <div className="flex flex-col gap-2 items-center justify-start pt-2">
+              {/* Send button */}
+              <button 
+                type="button"
+                onClick={handleSubmit}
+                disabled={(!value.trim() && codeSnippets.length === 0) || disabled || loading}
+                className={`p-3.5 rounded-xl transition-all duration-200 ${
+                  (value.trim() || codeSnippets.length > 0) && !disabled && !loading
+                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
+                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                }`}
+                title="Send message"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+
+              {/* Settings Button */}
+              {isLoggedIn && (
+                <button
+                  type="button"
+                  onClick={() => setShowSettingsModal(true)}
+                  className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
+                  title="Settings"
+                >
+                  <Settings className="w-5 h-5" />
+                </button>
+              )}
+
+              {/* Salesforce Cloud Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (salesforceConnected) {
+                    setShowManageConnectionModal(true);
+                  } else {
+                    setShowSalesforceModal(true);
+                    setSalesforceAuthStep('login');
+                  }
+                }}
+                className={`p-2 rounded bg-white border-0 transition-colors flex items-center justify-center ${
+                  salesforceConnected ? 'text-blue-600 hover:text-blue-700' : 'text-slate-500 hover:text-indigo-600'
+                }`}
+                title={salesforceConnected ? "Manage Salesforce connection" : "Connect Salesforce"}
+              >
+                <Cloud className="w-5 h-5" />
+              </button>
+
+              {/* Plus Button */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onMouseEnter={(e) => {
+                    if (menuCloseTimeoutRef.current) {
+                      clearTimeout(menuCloseTimeoutRef.current);
+                      menuCloseTimeoutRef.current = null;
+                    }
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setMenuPosition({ 
+                      top: rect.top - 8, 
+                      left: rect.left 
+                    });
+                    setShowContextMenu(true);
+                  }}
+                  onMouseLeave={() => {
+                    menuCloseTimeoutRef.current = setTimeout(() => {
+                      setShowContextMenu(false);
+                    }, 300);
+                  }}
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setMenuPosition({ 
+                      top: rect.top - 8, 
+                      left: rect.left 
+                    });
+                    setShowContextMenu(!showContextMenu);
+                  }}
+                  className="p-2 rounded bg-white border-0 text-slate-500 hover:text-indigo-600 transition-colors flex items-center justify-center"
+                  title="Add context"
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Context Chips - Show uploaded files and connected sandboxes */}
+        {!(inputMode === 'make' && viewState === 'focused') && (uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
+          <div className="bg-slate-50 px-6 py-3 border-t border-slate-200">
+            <div className="flex flex-wrap gap-2">
                 {/* Uploaded Files */}
                 {uploadedFiles.map((file) => (
                   <div
@@ -1000,9 +1003,10 @@ Can you help me with any questions I have about this setup?`
                 })}
               </div>
             </div>
-          )}
+        )}
 
-          {/* Actions Row */}
+        {/* Actions Row - Hidden in Make mode focused state */}
+        {!(inputMode === 'make' && viewState === 'focused') && (
           <div className="flex flex-row justify-between items-center bg-white relative">
             {/* Action Left: Plus and Settings Buttons */}
             <div className="flex flex-row items-center gap-2 px-2">
@@ -1179,7 +1183,39 @@ Can you help me with any questions I have about this setup?`
               )}
             </button>
           </div>
-        </div>
+          )}
+
+        {/* Environment Section - Show connected Salesforce sandboxes in Make mode */}
+        {inputMode === 'make' && viewState === 'focused' && salesforceConnected && selectedSandboxes.length > 0 && (
+          <div className="border-t border-slate-200 px-6 py-3 bg-white">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-slate-700">Environment:</span>
+              <div className="flex flex-wrap gap-2">
+                {selectedSandboxes.map((sandboxId) => {
+                  const sandbox = [
+                    { id: 'prod', name: 'Production' },
+                    { id: 'dev', name: 'Dev Sandbox' },
+                    { id: 'qa', name: 'QA Sandbox' },
+                    { id: 'staging', name: 'Staging Sandbox' },
+                    { id: 'uat', name: 'UAT Sandbox' },
+                    { id: 'demo', name: 'Demo Sandbox' },
+                  ].find(s => s.id === sandboxId);
+                  
+                  return sandbox ? (
+                    <div
+                      key={sandboxId}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 rounded-full border border-green-300 text-xs"
+                    >
+                      <span className="text-slate-700 font-medium">
+                        Sandbox: {sandbox.name}
+                      </span>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Character count for long messages */}
         {value.length > 200 && (

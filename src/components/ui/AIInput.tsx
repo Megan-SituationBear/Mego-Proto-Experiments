@@ -999,13 +999,13 @@ const AIInput: React.FC<AIInputProps> = ({
 
       {/* Context Chips - Show uploaded files and connected sandboxes BELOW actions */}
       {(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
-        <div className="bg-slate-50 px-4 py-3 rounded-b-2xl border border-t-0 border-slate-200">
+        <div className="bg-white px-6 py-3 rounded-b-2xl border border-t-0 border-slate-200">
           <div className="flex flex-wrap gap-2">
             {/* Uploaded Files */}
             {uploadedFiles.map((file) => (
               <div
                 key={file.id}
-                className="inline-flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-slate-50 rounded-full border border-slate-200 text-xs transition-colors group"
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 rounded-full border border-slate-200 text-xs transition-colors group"
               >
                 <span className="text-slate-700">
                   <span className="font-medium capitalize">{file.type}</span>: {file.name}
@@ -1036,7 +1036,7 @@ const AIInput: React.FC<AIInputProps> = ({
               return sandbox ? (
                 <div
                   key={sandboxId}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-slate-50 rounded-full border border-slate-200 text-xs transition-colors group"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 rounded-full border border-slate-200 text-xs transition-colors group"
                 >
                   <span className="text-slate-700">
                     <span className="font-medium">Sandbox</span>: {sandbox.name}

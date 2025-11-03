@@ -341,36 +341,63 @@ const WorkspacePage = ({
                       </p>
                     </div>
 
-                    {/* Actionable Items */}
+                    {/* Highlights / Steps */}
                     <div className="bg-white border border-slate-200 rounded-xl p-6">
                       <h4 className="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
                         <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                         </svg>
-                        Actionable Items
+                        Key Highlights
                       </h4>
-                      <div className="space-y-3">
-                        <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                          <div className="w-5 h-5 rounded border-2 border-slate-300 mt-0.5 flex-shrink-0"></div>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => handleSendMessage("Tell me about Copado's deployment features")}
+                          className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                        >
+                          <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-900">Review generated user story requirements</p>
-                            <p className="text-xs text-slate-600 mt-1">Ensure acceptance criteria are complete</p>
+                            <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Deployment Automation</p>
+                            <p className="text-xs text-slate-600 mt-1">Learn about automated deployment pipelines</p>
                           </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                          <div className="w-5 h-5 rounded border-2 border-slate-300 mt-0.5 flex-shrink-0"></div>
+                        </button>
+                        <button
+                          onClick={() => handleSendMessage("Explain Copado's testing capabilities")}
+                          className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                        >
+                          <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-900">Test code in Dev Sandbox</p>
-                            <p className="text-xs text-slate-600 mt-1">Run unit tests before deployment</p>
+                            <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Quality Testing</p>
+                            <p className="text-xs text-slate-600 mt-1">Automated testing and quality gates</p>
                           </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                          <div className="w-5 h-5 rounded border-2 border-slate-300 mt-0.5 flex-shrink-0"></div>
+                        </button>
+                        <button
+                          onClick={() => handleSendMessage("How does Copado integrate with Salesforce?")}
+                          className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                        >
+                          <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-900">Update documentation</p>
-                            <p className="text-xs text-slate-600 mt-1">Document API changes and usage examples</p>
+                            <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Salesforce Integration</p>
+                            <p className="text-xs text-slate-600 mt-1">Native integration with Salesforce orgs</p>
                           </div>
-                        </div>
+                        </button>
+                        <button
+                          onClick={() => handleSendMessage("Show me Copado's collaboration features")}
+                          className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                        >
+                          <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Team Collaboration</p>
+                            <p className="text-xs text-slate-600 mt-1">Work together with your team in real-time</p>
+                          </div>
+                        </button>
                       </div>
                     </div>
 

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import TopNav from '../components/ui/TopNav';
 import AIInput from '../components/ui/AIInput';
 import { TabToggle } from '../components/ui/TabToggle';
 import type { ConversationMessage } from '../components/ui/AIInput';
@@ -12,7 +11,6 @@ interface WorkspacePageProps {
   workspaceTitle?: string;
   workspaceTopic?: string; // e.g., "Deploy", "Analyze", "Learn"
   initialPrompt?: string;
-  userName?: string;
   onNavigateHome?: () => void;
   onBack?: () => void;
 }
@@ -22,13 +20,11 @@ const WorkspacePage = ({
   workspaceTitle = 'Workspace',
   workspaceTopic = 'General',
   initialPrompt = '',
-  userName = 'You',
   onNavigateHome,
   onBack,
 }: WorkspacePageProps) => {
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'work' | 'summary' | 'output'>('work');
 
@@ -104,31 +100,6 @@ const WorkspacePage = ({
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Top Navigation */}
-      <TopNav
-        showLogo={true}
-        logoText="+ COPADO AI"
-        onLogoClick={onNavigateHome || (() => {
-          const url = window.location.pathname.includes('copado-home-page') 
-            ? '/Mego-Proto-Experiments/copado-home-page.html?view=home'
-            : '/Mego-Proto-Experiments/app.html?view=home';
-          window.location.href = url;
-        })}
-        onAvatarClick={() => setShowMenu(!showMenu)}
-        userName={userName}
-        isLoggedIn={true}
-        connectedIntegrations={{
-          salesforce: true,
-          slack: false,
-          jira: false,
-          github: false,
-        }}
-        salesforceOrg={{
-          name: 'Acme Corp',
-          sandbox: 'dev-sandbox-01',
-        }}
-      />
-
       {/* Workspace Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="max-w-full mx-auto flex items-center justify-between">
@@ -337,32 +308,6 @@ const WorkspacePage = ({
           </div>
         </div>
       </div>
-
-      {/* Slide-out Menu (if needed) */}
-      {showMenu && (
-        <>
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={() => setShowMenu(false)}
-          />
-          <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-semibold text-slate-900">Menu</h3>
-                <button
-                  onClick={() => setShowMenu(false)}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              {/* Menu content can be added here */}
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 };

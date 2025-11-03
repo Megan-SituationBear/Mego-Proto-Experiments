@@ -387,7 +387,6 @@ function App() {
         workspaceTitle={workspaceConfig.title}
         workspaceTopic={workspaceConfig.topic}
         initialPrompt={workspaceConfig.initialPrompt}
-        userName={userName}
         onNavigateHome={() => setCurrentView('home')}
         onBack={() => setCurrentView('home')}
       />

@@ -1195,8 +1195,14 @@ const AIInput: React.FC<AIInputProps> = ({
           }}
         >
           <div 
-            className={`bg-white rounded-2xl shadow-2xl w-full animate-in fade-in zoom-in-95 duration-200 relative ${
-              salesforceAuthStep === 'login' ? 'max-w-md' : 'max-w-lg p-8'
+            className={`rounded-2xl shadow-2xl w-full animate-in fade-in zoom-in-95 duration-200 relative ${
+              salesforceAuthStep === 'login' 
+                ? 'max-w-md bg-white' 
+                : salesforceAuthStep === 'auth'
+                ? 'max-w-md bg-[#F4F6F9]'
+                : salesforceAuthStep === 'thinking'
+                ? 'max-w-md bg-white p-8'
+                : 'max-w-lg p-8 bg-white'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -1274,58 +1280,67 @@ const AIInput: React.FC<AIInputProps> = ({
               </div>
             )}
 
-            {/* Auth Screen */}
+            {/* Auth Screen - Salesforce OAuth style */}
             {salesforceAuthStep === 'auth' && (
-              <>
+              <div className="p-8">
+                {/* Salesforce Logo */}
                 <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Cloud className="w-8 h-8 text-blue-600" />
+                  <div className="inline-block bg-[#00A1E0] rounded-lg p-3 mb-4">
+                    <svg width="100" height="50" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M56 25c0-6.9-5.6-12.5-12.5-12.5-2.8 0-5.3.9-7.4 2.4-1.1-3.3-4.2-5.7-7.9-5.7-4.6 0-8.3 3.7-8.3 8.3 0 .5 0 1 .1 1.5-2 .8-3.4 2.8-3.4 5.1 0 3.1 2.5 5.6 5.6 5.6h30c4.1 0 7.5-3.4 7.5-7.5z" fill="white"/>
+                      <path d="M70 31c0-5.2-4.2-9.4-9.4-9.4-2.1 0-4 .7-5.5 1.8-.9-2.6-3.3-4.5-6.2-4.5-3.6 0-6.5 2.9-6.5 6.5 0 .4 0 .8.1 1.1-1.5.8-2.5 2.4-2.5 4.2 0 2.6 2.1 4.8 4.8 4.8h22.5c3.1 0 5.6-2.5 5.6-5.6z" fill="white"/>
+                      <path d="M84 28c0-3.5-2.8-6.3-6.3-6.3-1.4 0-2.7.4-3.7 1.2-.7-2-2.6-3.5-4.8-3.5-2.7 0-4.9 2.2-4.9 4.9 0 .3 0 .5.1.8-1 .5-1.7 1.6-1.7 2.8 0 1.8 1.4 3.2 3.2 3.2h15c2.1 0 3.8-1.7 3.8-3.8z" fill="white"/>
+                    </svg>
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2">Connect to Salesforce</h3>
-                  <p className="text-sm text-slate-600">
-                    Connect your Salesforce org to enable seamless collaboration and deployment
+                  <h3 className="text-xl font-semibold text-slate-800 mb-4">Allow Access?</h3>
+                </div>
+
+                {/* White card with permissions */}
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+                  <p className="text-sm font-semibold text-slate-700 mb-3">Copado is asking to:</p>
+                  <ul className="space-y-2 mb-4">
+                    <li className="flex items-start gap-2 text-sm text-slate-600">
+                      <span className="text-slate-400 mt-0.5">•</span>
+                      <span>Access and manage your data</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-slate-600">
+                      <span className="text-slate-400 mt-0.5">•</span>
+                      <span>Provide access to your data via the Web</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-slate-600">
+                      <span className="text-slate-400 mt-0.5">•</span>
+                      <span>Perform requests on your behalf at any time</span>
+                    </li>
+                  </ul>
+                  <p className="text-sm text-slate-700 font-medium">
+                    Do you want to allow access for Copado AI?
                   </p>
                 </div>
 
-                <div className="bg-slate-50 rounded-lg p-4 mb-6 space-y-3 text-sm">
-                  <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-slate-700">Access your sandboxes and production environments</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-slate-700">Deploy changes directly from the AI</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-slate-700">Get real-time org data and metadata</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
+                {/* Buttons */}
+                <div className="flex gap-3 mb-4">
                   <button
                     onClick={() => setSalesforceAuthStep('login')}
-                    className="flex-1 px-4 py-3 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
+                    className="flex-1 px-4 py-2.5 bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-50 font-medium transition-colors text-sm"
                   >
-                    Back
+                    Deny
                   </button>
                   <button
                     onClick={() => {
                       setSalesforceAuthStep('thinking');
                       setTimeout(() => setSalesforceAuthStep('sandboxes'), 2000);
                     }}
-                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+                    className="flex-1 px-4 py-2.5 bg-[#0176D3] text-white rounded hover:bg-[#014f92] font-medium transition-colors text-sm"
                   >
-                    Connect
+                    Allow
                   </button>
                 </div>
-              </>
+
+                {/* Footer text */}
+                <p className="text-xs text-slate-500 text-center">
+                  To revoke access at any time, go to your personal settings.
+                </p>
+              </div>
             )}
 
             {/* Thinking Screen */}

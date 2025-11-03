@@ -39,9 +39,9 @@ const HomePage: React.FC<HomePageProps> = ({
   // UI state
   const [showCustomizeActionsModal, setShowCustomizeActionsModal] = useState(false);
   const [selectedQuickActions, setSelectedQuickActions] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<'recent' | 'saved' | 'artifacts'>(
+  const [activeTab, setActiveTab] = useState<'recent' | 'pinned' | 'artifacts'>(
     recentItems.length > 0 ? 'recent' : 
-    favoritedTemplates.length > 0 ? 'saved' : 
+    favoritedTemplates.length > 0 ? 'pinned' : 
     'artifacts'
   );
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
@@ -284,17 +284,17 @@ const HomePage: React.FC<HomePageProps> = ({
               )}
             </div>
             
-            {/* Saved */}
+            {/* Pinned */}
             <div className="px-6 py-3">
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => {
                     setShowMenu(false);
-                    setActiveTab('saved');
+                    setActiveTab('pinned');
                   }}
                   className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
-                  Saved
+                  Pinned
                 </button>
                 {favoritedTemplates.length > 0 && (
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
@@ -489,11 +489,11 @@ const HomePage: React.FC<HomePageProps> = ({
               <TabToggle
                 tabs={[
                   { id: 'recent', label: 'Recent', count: recentItems.length },
-                  { id: 'saved', label: 'Saved', count: favoritedTemplates.length },
+                  { id: 'pinned', label: 'Pinned', count: favoritedTemplates.length },
                   { id: 'artifacts', label: 'Artifacts' }
                 ]}
                 activeTab={activeTab}
-                onTabChange={(id) => setActiveTab(id as 'recent' | 'saved' | 'artifacts')}
+                onTabChange={(id) => setActiveTab(id as 'recent' | 'pinned' | 'artifacts')}
                 size="default"
                 variant="blue"
               />
@@ -509,9 +509,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     title={item.title}
                     description={item.description || 'Recently accessed'}
                     remixCount={item.views || 0}
-                    favoriteCount={item.favorites || 0}
                     variant="standard"
-                    isFavorited={favoritedTemplates.some(t => t.title === item.title)}
                     onClick={() => {
                       onNavigateToWorkspace?.({
                         type: 'library-item',
@@ -542,18 +540,16 @@ const HomePage: React.FC<HomePageProps> = ({
                   </button>
                 </div>
               )
-            ) : activeTab === 'saved' ? (
+            ) : activeTab === 'pinned' ? (
               favoritedTemplates.length > 0 ? (
                 favoritedTemplates.map((template, index) => (
                   <TemplateCard
-                    key={`saved-${index}`}
+                    key={`pinned-${index}`}
                     category={template.category}
                     title={template.title}
                     description={template.description}
                     remixCount={template.views || 0}
-                    favoriteCount={template.favorites || 0}
                     variant="standard"
-                    isFavorited={true}
                     onClick={() => {
                       onNavigateToWorkspace?.({
                         type: 'library-item',
@@ -566,7 +562,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-slate-500">No saved items yet. Bookmark items to save them here!</p>
+                  <p className="text-slate-500">No pinned items yet. Pin items to save them here!</p>
                 </div>
               )
             ) : (

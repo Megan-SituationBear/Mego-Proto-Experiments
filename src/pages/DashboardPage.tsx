@@ -68,7 +68,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
   onPricingClick,
   onIntegrationClick,
 }) => {
-  const [activeTab, setActiveTab] = useState<'recent' | 'saved' | 'artifacts'>('recent');
+  const [activeTab, setActiveTab] = useState<'recent' | 'pinned' | 'artifacts'>('recent');
   
   const {
     totalTimeSaved = 0,
@@ -104,7 +104,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
         userName={userName}
         isLoggedIn={true}
         onLearnClick={onLearnClick}
-        onIntegrationsClick={onIntegrationsClick}
         onPricingClick={onPricingClick}
         salesforceOrg={salesforceOrg}
         connectedIntegrations={connectedIntegrations}
@@ -159,11 +158,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
             <TabToggle
               tabs={[
                 { id: 'recent', label: 'Recent', count: sortedRecentItems.length },
-                { id: 'saved', label: 'Saved', count: favoritedItems.length },
+                { id: 'pinned', label: 'Pinned', count: favoritedItems.length },
                 { id: 'artifacts', label: 'Artifacts', count: sortedArtifacts.length }
               ]}
               activeTab={activeTab}
-              onTabChange={(id) => setActiveTab(id as 'recent' | 'saved' | 'artifacts')}
+              onTabChange={(id) => setActiveTab(id as 'recent' | 'pinned' | 'artifacts')}
               size="default"
               variant="blue"
             />
@@ -204,12 +203,12 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
                       </td>
                     </tr>
                   ))}
-                  {activeTab === 'saved' && favoritedItems.map((item) => (
+                  {activeTab === 'pinned' && favoritedItems.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => onViewItem?.(item)}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <svg className="w-4 h-4 text-green-500 fill-current" viewBox="0 0 24 24">
-                            <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                           </svg>
                           <div className="text-sm font-medium text-slate-900">{item.title}</div>
                         </div>
@@ -260,9 +259,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
                   <p className="text-slate-500">No recent items yet. Start working to see them here!</p>
                 </div>
               )}
-              {activeTab === 'saved' && favoritedItems.length === 0 && (
+              {activeTab === 'pinned' && favoritedItems.length === 0 && (
                 <div className="py-12 text-center">
-                  <p className="text-slate-500">No saved items yet. Bookmark items to save them here!</p>
+                  <p className="text-slate-500">No pinned items yet. Pin items to save them here!</p>
                 </div>
               )}
               {activeTab === 'artifacts' && sortedArtifacts.length === 0 && (

@@ -28,7 +28,7 @@ const WorkspacePage = ({
 }: WorkspacePageProps) => {
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
   const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'preview' | 'code' | 'artifacts'>('overview');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [saveTitle, setSaveTitle] = useState(workspaceTitle);
@@ -272,7 +272,7 @@ const WorkspacePage = ({
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Workspace Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
+      <div className="bg-white border-b border-slate-200 shadow-sm px-6 py-4">
         <div className="max-w-full mx-auto flex items-center justify-between">
           {/* Left: Back Button */}
           <button
@@ -305,18 +305,18 @@ const WorkspacePage = ({
           {/* Right: Bookmark (Save) + Share + Primary Action */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setIsSaved(!isSaved)}
+              onClick={() => setIsPinned(!isPinned)}
               className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-              title={isSaved ? 'Remove from saved' : 'Save'}
+              title={isPinned ? 'Unpin' : 'Pin'}
             >
               <svg 
-                className={`w-5 h-5 ${isSaved ? 'fill-green-500 text-green-500' : 'text-slate-400'}`} 
-                fill={isSaved ? 'currentColor' : 'none'} 
+                className={`w-5 h-5 ${isPinned ? 'fill-green-500 text-green-500' : 'text-slate-400'}`} 
+                fill={isPinned ? 'currentColor' : 'none'} 
                 stroke="currentColor" 
                 strokeWidth={2}
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
             </button>
 

@@ -33,27 +33,17 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: new-proto/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./new-proto
         run: npm ci
 
-      - name: Build
-        working-directory: ./new-proto
-        run: npm run build
-        
-      - name: Setup deployment files
-        run: |
-          cp index.html new-proto/dist/
-          cp new-proto/dist/app.html new-proto/dist/copado-home-page.html
-          echo "Files prepared for deployment"
-          ls -la new-proto/dist/
+      - name: Build with all pages
+        run: npm run build:pages
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./new-proto/dist
+          path: ./dist
 
   deploy:
     needs: build

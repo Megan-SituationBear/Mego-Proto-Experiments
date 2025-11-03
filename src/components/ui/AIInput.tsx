@@ -696,9 +696,15 @@ const AIInput: React.FC<AIInputProps> = ({
         )}
       </div>
 
-      {/* Wrapper for input + attachments */}
+      {/* AI Input Field */}
       <div 
-        className={`${(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) ? '' : stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} ${isDragging ? 'border-blue-500' : stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.ring} rounded-2xl`}
+        className={`relative ${stateStyles.bgColor} ${(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) ? 'rounded-t-2xl' : stateStyles.borderRadius} ${stateStyles.borderWidth || 'border'} ${isDragging ? 'border-blue-500 bg-blue-50' : stateStyles.borderColor} ${stateStyles.shadow} ${stateStyles.ring}`}
+        style={{
+          transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflow: 'hidden',
+          transform: 'scale(1)', // Lock width at 100% - no scaling
+          transformOrigin: 'top center',
+        }}
         onDragOver={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -758,20 +764,10 @@ const AIInput: React.FC<AIInputProps> = ({
               type: type
             };
             
-          setUploadedFiles(prev => [...prev, newFile]);
-        });
-      }}
+            setUploadedFiles(prev => [...prev, newFile]);
+          });
+        }}
       >
-        {/* AI Input Field */}
-        <div 
-          className={`relative ${stateStyles.bgColor} ${(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) ? 'rounded-t-2xl' : 'rounded-2xl'}`}
-          style={{
-            transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-            overflow: 'hidden',
-            transform: 'scale(1)', // Lock width at 100% - no scaling
-            transformOrigin: 'top center',
-          }}
-        >
         {/* Drag Overlay */}
         {isDragging && (
           <div className="absolute inset-0 bg-blue-50/90 backdrop-blur-sm z-10 flex items-center justify-center pointer-events-none">
@@ -999,11 +995,11 @@ const AIInput: React.FC<AIInputProps> = ({
             {value.length} characters
           </div>
         )}
-        </div>
+      </div>
 
-        {/* Context Chips - Show uploaded files and connected sandboxes BELOW actions */}
-        {(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
-          <div className="bg-white px-6 py-3 rounded-b-2xl border-t border-slate-200">
+      {/* Context Chips - Show uploaded files and connected sandboxes BELOW actions */}
+      {(uploadedFiles.length > 0 || (salesforceConnected && selectedSandboxes.length > 0)) && (
+        <div className="bg-white px-6 py-3 rounded-b-2xl border border-t-0 border-slate-200">
           <div className="flex flex-wrap gap-2">
             {/* Uploaded Files */}
             {uploadedFiles.map((file) => (
@@ -1065,8 +1061,7 @@ const AIInput: React.FC<AIInputProps> = ({
             })}
           </div>
         </div>
-        )}
-      </div>
+      )}
 
       {/* Upload Modal - Rendered via Portal */}
       {showUploadModal && createPortal(

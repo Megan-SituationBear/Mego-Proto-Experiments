@@ -36,6 +36,7 @@ const WorkspacePage = ({
   const [isResizing, setIsResizing] = useState(false);
   const [pinnedMessages, setPinnedMessages] = useState<ConversationMessage[]>([]);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+  const [mobileActiveTab, setMobileActiveTab] = useState<'work' | 'highlights' | 'code' | 'artifacts'>('work');
 
   // Determine which tabs to show based on topic
   const topicsWithoutCode = ['Strategy', 'Planning', 'Learn'];
@@ -272,12 +273,12 @@ const WorkspacePage = ({
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Workspace Header */}
-      <div className="bg-white border-b border-slate-200 shadow-sm px-6 py-4">
+      <div className="bg-white border-b border-slate-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4">
         <div className="max-w-full mx-auto flex items-center justify-between">
           {/* Left: Back Button */}
           <button
             onClick={onBack || onNavigateHome || (() => window.history.back())}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0"
             title="Go back"
           >
             <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,14 +287,15 @@ const WorkspacePage = ({
           </button>
 
           {/* Center: Title with Item Label */}
-          <div className="flex-1 flex items-center justify-center mx-8">
-            <div className="text-center">
-              <h1 className="text-xl font-bold text-slate-900">
-                <span className="text-slate-500 font-normal">{workspaceTopic}:</span> {workspaceTitle}
+          <div className="flex-1 flex items-center justify-center mx-2 sm:mx-8 overflow-hidden">
+            <div className="text-center overflow-hidden">
+              <h1 className="text-base sm:text-xl font-bold text-slate-900 truncate">
+                <span className="text-slate-500 font-normal hidden sm:inline">{workspaceTopic}:</span>
+                <span className="sm:hidden text-slate-500 font-normal">{workspaceTopic.substring(0, 4)}:</span> {workspaceTitle}
               </h1>
               {environment && (
                 <div className="mt-1 flex items-center justify-center gap-2">
-                  <span className="text-xs text-slate-500">Environment:</span>
+                  <span className="text-xs text-slate-500 hidden sm:inline">Environment:</span>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 rounded-full border border-green-300 text-xs font-medium text-slate-700">
                     {environment}
                   </span>
@@ -303,14 +305,14 @@ const WorkspacePage = ({
           </div>
 
           {/* Right: Bookmark (Save) + Share + Primary Action */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             <button
               onClick={() => setIsPinned(!isPinned)}
-              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors"
               title={isPinned ? 'Unpin' : 'Pin'}
             >
               <svg 
-                className={`w-5 h-5 ${isPinned ? 'fill-green-500 text-green-500' : 'text-slate-400'}`} 
+                className={`w-4 h-4 sm:w-5 sm:h-5 ${isPinned ? 'fill-green-500 text-green-500' : 'text-slate-400'}`} 
                 fill={isPinned ? 'currentColor' : 'none'} 
                 stroke="currentColor" 
                 strokeWidth={2}
@@ -322,7 +324,7 @@ const WorkspacePage = ({
 
             <button
               onClick={() => console.log('Share workspace')}
-              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors hidden sm:block"
               title="Share workspace"
             >
               <svg className="w-5 h-5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -332,25 +334,76 @@ const WorkspacePage = ({
 
             <button
               onClick={handlePrimaryAction}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm flex items-center gap-2"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
             >
-              {primaryAction.label}
+              <span className="hidden sm:inline">{primaryAction.label}</span>
+              <span className="sm:hidden">{primaryAction.icon}</span>
             </button>
           </div>
         </div>
       </div>
 
+      {/* Mobile Tabs - Only visible on mobile */}
+      <div className="lg:hidden bg-white border-b border-slate-200 overflow-x-auto">
+        <div className="flex gap-1 px-4 py-2">
+          <button
+            onClick={() => setMobileActiveTab('work')}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
+              mobileActiveTab === 'work'
+                ? 'bg-blue-600 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            Work
+          </button>
+          <button
+            onClick={() => setMobileActiveTab('highlights')}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
+              mobileActiveTab === 'highlights'
+                ? 'bg-blue-600 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            Highlights
+          </button>
+          {showCodeTab && (
+            <button
+              onClick={() => setMobileActiveTab('code')}
+              className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
+                mobileActiveTab === 'code'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              Code
+            </button>
+          )}
+          <button
+            onClick={() => setMobileActiveTab('artifacts')}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
+              mobileActiveTab === 'artifacts'
+                ? 'bg-blue-600 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            Artifacts
+          </button>
+        </div>
+      </div>
+
       {/* Main Content Area - Full Width */}
       <div className="flex-1 bg-white overflow-hidden flex flex-col">
-        {/* Split Layout: Conversation (Left) + Tabbed Panel (Right) */}
+        {/* Split Layout: Conversation (Left) + Tabbed Panel (Right) - Desktop Only */}
         <div className="flex-1 flex overflow-hidden work-container">
-            {/* Left: Conversation Area */}
+            {/* Left: Conversation Area - Desktop: resizable, Mobile: conditional */}
             <div 
-              className="flex flex-col border-r border-slate-200"
-              style={{ width: `${leftPanelWidth}%` }}
+              className={`flex flex-col lg:border-r border-slate-200 ${
+                mobileActiveTab !== 'work' ? 'hidden lg:flex' : 'flex'
+              }`}
+              style={{ width: window.innerWidth >= 1024 ? `${leftPanelWidth}%` : '100%' }}
             >
               {/* Conversation Messages */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4">
                 {conversationMessages.length > 0 ? (
                   conversationMessages.map((msg) => {
                     const isPinned = pinnedMessages.some(m => m.id === msg.id);
@@ -361,9 +414,9 @@ const WorkspacePage = ({
                           onMouseEnter={() => !msg.isUser && setHoveredMessageId(msg.id)}
                           onMouseLeave={() => setHoveredMessageId(null)}
                         >
-                          <div className="flex items-start gap-2 max-w-[80%]">
+                          <div className="flex items-start gap-2 max-w-[95%] sm:max-w-[80%]">
                             <div 
-                              className={`px-4 py-3 rounded-2xl ${
+                              className={`px-3 sm:px-4 py-2 sm:py-3 rounded-2xl ${
                                 msg.isUser 
                                   ? 'bg-slate-100 text-slate-900' 
                                   : 'bg-blue-600 text-white'
@@ -444,7 +497,7 @@ const WorkspacePage = ({
               </div>
 
               {/* AI Input - Locked at Bottom */}
-              <div className="border-t border-slate-200 p-4 bg-white sticky bottom-0">
+              <div className="border-t border-slate-200 p-3 sm:p-4 bg-white sticky bottom-0">
                 <AIInput
                   onSendMessage={handleSendMessage}
                   placeholder="your move ..."
@@ -459,22 +512,24 @@ const WorkspacePage = ({
               </div>
             </div>
 
-            {/* Resizable Divider */}
+            {/* Resizable Divider - Desktop Only */}
             <div
-              className={`w-1 bg-slate-200 hover:bg-blue-400 cursor-col-resize flex-shrink-0 transition-colors ${
+              className={`hidden lg:block w-1 bg-slate-200 hover:bg-blue-400 cursor-col-resize flex-shrink-0 transition-colors ${
                 isResizing ? 'bg-blue-500' : ''
               }`}
               onMouseDown={handleMouseDown}
               style={{ userSelect: 'none' }}
             />
 
-            {/* Right: Tabbed Panel */}
+            {/* Right: Tabbed Panel - Desktop: always visible, Mobile: conditional */}
             <div 
-              className="flex flex-col bg-slate-50"
-              style={{ width: `${100 - leftPanelWidth}%` }}
+              className={`flex-col bg-slate-50 ${
+                mobileActiveTab === 'work' ? 'hidden lg:flex' : 'flex'
+              }`}
+              style={{ width: window.innerWidth >= 1024 ? `${100 - leftPanelWidth}%` : '100%' }}
             >
-              {/* Tabs Header */}
-              <div className="flex items-center gap-1 px-4 py-3 border-b border-slate-200 bg-white">
+              {/* Tabs Header - Desktop Only */}
+              <div className="hidden lg:flex items-center gap-1 px-4 py-3 border-b border-slate-200 bg-white">
                 <button 
                   onClick={() => setActiveRightPanelTab('overview')}
                   className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
@@ -521,8 +576,8 @@ const WorkspacePage = ({
               </div>
               
               {/* Tab Content */}
-              <div className="flex-1 overflow-auto p-6">
-                {activeRightPanelTab === 'overview' && (
+              <div className="flex-1 overflow-auto p-4 sm:p-6">
+                {(activeRightPanelTab === 'overview' || mobileActiveTab === 'highlights') && (
                   <div className="space-y-4">
                     {/* Key Metrics - Moved to Top */}
                     <div className="grid grid-cols-3 gap-3">
@@ -704,8 +759,8 @@ const WorkspacePage = ({
                   </div>
                 )}
 
-                {activeRightPanelTab === 'preview' && (
-                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center h-full flex items-center justify-center">
+                {(activeRightPanelTab === 'preview') && (
+                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 sm:p-12 text-center h-full flex items-center justify-center">
                     <div>
                       <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -719,8 +774,8 @@ const WorkspacePage = ({
                   </div>
                 )}
 
-                {activeRightPanelTab === 'code' && (
-                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center h-full flex items-center justify-center">
+                {(activeRightPanelTab === 'code' || mobileActiveTab === 'code') && (
+                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 sm:p-12 text-center h-full flex items-center justify-center">
                     <div>
                       <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
@@ -733,7 +788,7 @@ const WorkspacePage = ({
                   </div>
                 )}
 
-                {activeRightPanelTab === 'artifacts' && (
+                {(activeRightPanelTab === 'artifacts' || mobileActiveTab === 'artifacts') && (
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-lg font-semibold text-slate-900 mb-2">Artifacts</h3>

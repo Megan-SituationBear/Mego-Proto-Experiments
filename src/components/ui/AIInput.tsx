@@ -474,7 +474,7 @@ const AIInput: React.FC<AIInputProps> = ({
   }, [autoFocus]);
 
   const handleSubmit = () => {
-    if ((value.trim() || codeSnippets.length > 0) && onSendMessage && !disabled && !loading) {
+    if ((value.trim() || codeSnippets.length > 0) && !disabled && !loading) {
       // Combine text and code snippets
       let messageContent = value.trim();
       if (codeSnippets.length > 0) {
@@ -484,15 +484,36 @@ const AIInput: React.FC<AIInputProps> = ({
         messageContent = messageContent ? messageContent + snippetsText : snippetsText;
       }
       
-      // Prepend mode prefix to message based on selected mode
-      // This allows the backend/handler to differentiate between "ask" and "make" modes
-      const modePrefix = inputMode === 'make' ? '[MAKE] ' : '[ASK] ';
-      messageContent = modePrefix + messageContent;
+      // MAKE MODE: First submission creates a workspace
+      if (inputMode === 'make' && pageContext === 'home' && messages.length === 0 && onNavigateToWorkspace) {
+        // Generate summary title (first 60 chars or until punctuation)
+        const summary = messageContent.split(/[.!?]/)[0].substring(0, 60).trim();
+        const workspaceTitle = `Make: ${summary}${messageContent.length > 60 ? '...' : ''}`;
+        
+        onNavigateToWorkspace({
+          type: 'artifact',
+          title: workspaceTitle,
+          topic: 'Make',
+          initialPrompt: messageContent
+        });
+        
+        setValue('');
+        setCodeSnippets([]);
+        setHasBeenFocused(false);
+        return;
+      }
       
-      onSendMessage(messageContent);
-      setValue('');
-      setCodeSnippets([]);
-      setHasBeenFocused(false);
+      // ASK MODE or subsequent messages: Normal conversation flow
+      if (onSendMessage) {
+        // Prepend mode prefix to message based on selected mode
+        const modePrefix = inputMode === 'make' ? '[MAKE] ' : '[ASK] ';
+        const prefixedMessage = modePrefix + messageContent;
+        
+        onSendMessage(prefixedMessage);
+        setValue('');
+        setCodeSnippets([]);
+        setHasBeenFocused(false);
+      }
     }
   };
   

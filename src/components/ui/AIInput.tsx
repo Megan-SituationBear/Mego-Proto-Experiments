@@ -156,6 +156,7 @@ const AIInput: React.FC<AIInputProps> = ({
   const [salesforceAuthStep, setSalesforceAuthStep] = useState<'login' | 'auth' | 'thinking' | 'sandboxes' | 'connected'>('login');
   const [salesforceConnected, setSalesforceConnected] = useState(false);
   const [selectedSandboxes, setSelectedSandboxes] = useState<string[]>([]);
+  const [selectedAgents, setSelectedAgents] = useState<string[]>(['salesforce-expert']); // Default: Salesforce Expert
   const [longTermMemory, setLongTermMemory] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{id: string, name: string, type: 'document' | 'image' | 'code'}>>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -1314,8 +1315,52 @@ const AIInput: React.FC<AIInputProps> = ({
               {/* Agents Section */}
               <div className="mb-6">
                 <h4 className="text-base font-semibold text-slate-700 mb-3">Agents</h4>
-                <div className="bg-slate-50 rounded-lg p-6 text-center text-sm text-slate-500">
-                  No agents configured yet
+                <p className="text-xs text-slate-500 mb-4">Select the agents that will assist you</p>
+                <div className="space-y-3">
+                  {[
+                    { id: 'salesforce-expert', name: 'Salesforce Expert', description: 'Deep Salesforce knowledge' },
+                    { id: 'support-ninja', name: 'Support Ninja', description: 'Customer support specialist' },
+                    { id: 'strategy-boss', name: 'Strategy & Plan Boss', description: 'Strategic planning expert' },
+                    { id: 'maker-madman', name: 'Maker Madman', description: 'Building & creation expert' },
+                  ].map((agent) => (
+                    <button
+                      key={agent.id}
+                      onClick={() => {
+                        if (selectedAgents.includes(agent.id)) {
+                          setSelectedAgents(selectedAgents.filter(id => id !== agent.id));
+                        } else {
+                          setSelectedAgents([...selectedAgents, agent.id]);
+                        }
+                      }}
+                      className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                        selectedAgents.includes(agent.id)
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-slate-200 bg-white hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          {/* Space reserved for personality icon */}
+                          <div className="h-8 mb-2">
+                            {/* Icon will go here */}
+                          </div>
+                          <div className="font-semibold text-slate-900">{agent.name}</div>
+                          <div className="text-sm text-slate-600">{agent.description}</div>
+                        </div>
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ml-4 ${
+                          selectedAgents.includes(agent.id)
+                            ? 'border-blue-600 bg-blue-600'
+                            : 'border-slate-300'
+                        }`}>
+                          {selectedAgents.includes(agent.id) && (
+                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
 

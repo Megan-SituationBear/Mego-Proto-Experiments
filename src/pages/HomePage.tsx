@@ -217,12 +217,7 @@ const HomePage: React.FC<HomePageProps> = ({
         }}
         onLearnClick={() => console.log('Learn clicked')}
         onIntegrationsClick={() => console.log('Integrations clicked')}
-        onPricingClick={() => {
-          const url = window.location.pathname.includes('copado-home-page') 
-            ? '/Mego-Proto-Experiments/copado-home-page.html?view=pricing'
-            : '/Mego-Proto-Experiments/app.html?view=pricing';
-          window.location.href = url;
-        }}
+        onPricingClick={() => console.log('Pricing clicked')}
         onSearchClick={() => console.log('Search clicked')}
         onDashboardClick={() => {
           if (onNavigateToDashboard) {
@@ -471,11 +466,10 @@ const HomePage: React.FC<HomePageProps> = ({
                 <p className="text-xs font-medium text-slate-700 mb-2 text-center">Quick actions:</p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {[
-                    "Show me my Salesforce projects",
+                    "Quick summary of Copado",
                     "Create a deployment plan",
                     "Analyze my org health",
-                    "Help with user management",
-                    "Create Automation"
+                    "Help with user management"
                   ].map((action, index) => (
                     <button
                       key={index}

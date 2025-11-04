@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import AIInput from '../components/ui/AIInput';
 import PricingModal from '../components/ui/PricingModal';
 import type { ConversationMessage } from '../components/ui/AIInput';
+import { meganConversation } from '../conversations';
 
 type WorkspaceType = 'chat' | 'library-item' | 'artifact';
 
@@ -104,35 +105,9 @@ const WorkspacePage = ({
   // Initialize conversation with the initial prompt if provided
   useState(() => {
     if (initialPrompt && conversationMessages.length === 0) {
-      // Special conversation for "What did Megan do?"
+      // Load conversation from separate file for "What did Megan do?"
       if (workspaceTitle === "What did Megan do?") {
-        const meganConversation: ConversationMessage[] = [
-          {
-            id: '1',
-            content: "What did Megan do?",
-            isUser: true,
-            timestamp: new Date()
-          },
-          {
-            id: '2',
-            content: "I'll analyze Megan's recent work across all your connected systems. Let me pull that together for you...",
-            isUser: false,
-            timestamp: new Date()
-          },
-          {
-            id: '3',
-            content: "Here's what Megan accomplished:\n\n**This Week:**\n• Redesigned the AI input component with Ask/Make modes\n• Implemented environment selection for Make mode\n• Built out workspace navigation system\n• Created dashboard with Recent/Saved/Artifacts tabs\n\n**Key Contributions:**\n• Replaced Favorites with Saved (bookmark icon)\n• Added conversation tracking (5-item recent cap)\n• Integrated FindTemplatesModal for quick actions\n• Improved dashboard layout with inline stats\n\nWould you like me to drill into any specific area?",
-            isUser: false,
-            timestamp: new Date(),
-            options: [
-              "Tell me about the AI Input redesign",
-              "Tell me about Dashboard improvements",
-              "Tell me about Environment selection",
-              "I don't care"
-            ]
-          }
-        ];
-        setConversationMessages(meganConversation);
+        setConversationMessages(meganConversation.initialMessages);
         return;
       }
       
@@ -175,66 +150,29 @@ const WorkspacePage = ({
     setConversationMessages(prev => [...prev, userMessage]);
     setShowTyping(true);
 
-    // Special responses for "What did Megan do?" workspace
-    if (workspaceTitle === "What did Megan do?") {
-      // Handle "Tell me about X" responses
-      if (text.startsWith("Tell me about")) {
-        setTimeout(() => {
+    // Use conversation handler for "What did Megan do?" workspace
+    if (workspaceTitle === "What did Megan do?" && meganConversation.handleResponse) {
+      setTimeout(() => {
+        const response = meganConversation.handleResponse!(text, conversationMessages);
+        
+        if (response) {
+          // Handle single or multiple messages
+          const messages = Array.isArray(response) ? response : [response];
+          setConversationMessages(prev => [...prev, ...messages]);
+        } else {
+          // Fallback response if conversation doesn't handle this input
           const aiMessage: ConversationMessage = {
             id: (Date.now() + 1).toString(),
-            content: `Great question! One of the key improvements is the ability to get back to artifacts.\n\nNow you can easily access your saved artifacts from:\n• The home page Recent tab\n• The dashboard Artifacts tab\n• Any workspace you've created\n\nThis makes it simple to find and continue work on any generated output.\n\nWant to know more about finding artifacts?`,
-            isUser: false,
-            timestamp: new Date(),
-            options: ["Yes", "No"]
-          };
-          setConversationMessages(prev => [...prev, aiMessage]);
-          setShowTyping(false);
-        }, 1500);
-        return;
-      }
-      
-      // Handle Yes/No responses
-      if (text === "Yes") {
-        setTimeout(() => {
-          const aiMessage: ConversationMessage = {
-            id: (Date.now() + 1).toString(),
-            content: `Awesome! Here's how the artifact system works:\n\n**Finding Artifacts:**\n• All artifacts are automatically saved\n• Access them from the Artifacts tab on the home page\n• Each artifact shows when it was created and what type it is\n• You can favorite (bookmark) artifacts for quick access\n\n**Working with Artifacts:**\n• Click any artifact to open it in a workspace\n• Download artifacts with one click\n• Share artifacts with your team\n• Apply changes directly from the workspace\n\nThe system tracks everything so you never lose your work!`,
+            content: `Here's my response to: "${text}"`,
             isUser: false,
             timestamp: new Date()
           };
           setConversationMessages(prev => [...prev, aiMessage]);
-          setShowTyping(false);
-        }, 1500);
-        return;
-      }
-      
-      if (text === "No") {
-        setTimeout(() => {
-          const aiMessage: ConversationMessage = {
-            id: (Date.now() + 1).toString(),
-            content: `No problem! Is there anything else you'd like to know about Megan's work?`,
-            isUser: false,
-            timestamp: new Date()
-          };
-          setConversationMessages(prev => [...prev, aiMessage]);
-          setShowTyping(false);
-        }, 1500);
-        return;
-      }
-      
-      if (text === "I don't care") {
-        setTimeout(() => {
-          const aiMessage: ConversationMessage = {
-            id: (Date.now() + 1).toString(),
-            content: `Got it! Let me know if you need anything else. 👍`,
-            isUser: false,
-            timestamp: new Date()
-          };
-          setConversationMessages(prev => [...prev, aiMessage]);
-          setShowTyping(false);
-        }, 1000);
-        return;
-      }
+        }
+        
+        setShowTyping(false);
+      }, 1500);
+      return;
     }
 
     // Default response for other workspaces

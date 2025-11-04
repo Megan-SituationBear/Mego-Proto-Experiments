@@ -1,10 +1,33 @@
 import { ConversationConfig, ConversationMessage } from './types';
 
 export const meganConversation: ConversationConfig = {
+  // Core details
+  title: "What did Megan do?",
+  theme: "Team Progress Review",
+  agent: {
+    name: "Copado AI",
+    role: "General Assistant",
+    personality: "Helpful and informative"
+  },
+  
+  // Dates
+  dateCreated: new Date('2024-11-04'),
+  dateModified: new Date('2024-11-04'),
+  
+  // Authentication - requires login for work data
+  authentication: {
+    required: true,
+    guestMode: false,
+    gateMessage: "Please sign in to view team member activity and work history."
+  },
+  
+  // Metadata
   metadata: {
     topic: 'Strategy',
     difficulty: 'intermediate',
     category: 'general',
+    estimatedTime: '5 minutes',
+    prerequisites: []
   },
   
   initialMessages: [
@@ -34,7 +57,7 @@ export const meganConversation: ConversationConfig = {
     }
   ],
   
-  handleResponse: (userText: string): ConversationMessage | ConversationMessage[] | null => {
+  handleResponse: (userText: string, currentMessages, context, isAuthenticated = true): ConversationMessage | ConversationMessage[] | null => {
     // Handle "Tell me about X" responses
     if (userText.startsWith("Tell me about")) {
       return {

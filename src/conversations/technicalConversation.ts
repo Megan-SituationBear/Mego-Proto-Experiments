@@ -1,11 +1,29 @@
 import { ConversationConfig } from './types';
 
 export const technicalConversation: ConversationConfig = {
+  title: "Technical Implementation Help",
+  theme: "Advanced Technical",
+  agent: {
+    name: "Technical Expert",
+    role: "Salesforce Expert",
+    personality: "Precise and technical"
+  },
+  dateCreated: new Date('2024-11-04'),
+  dateModified: new Date('2024-11-04'),
+  authentication: {
+    required: true,
+    guestMode: false,
+    gateMessage: "Technical implementations require authentication to access your connected environments. Please sign in."
+  },
   metadata: {
     topic: 'Deploy',
     difficulty: 'expert',
     category: 'technical',
+    estimatedTime: '30 minutes',
+    prerequisites: ['Technical knowledge', 'Salesforce org access']
   },
+  context: { images: [], documents: [], connectedOrgs: [] },
+  artifacts: [],
   
   initialMessages: [
     {
@@ -19,14 +37,11 @@ export const technicalConversation: ConversationConfig = {
       content: "I'm here to help with technical implementations. Let me know what you're working on...\n\n[TO BE DESIGNED]",
       isUser: false,
       timestamp: new Date(),
-      options: [
-        // Add conversation options here
-      ]
+      options: []
     }
   ],
   
-  handleResponse: (userText: string) => {
-    // Conversation logic to be added
+  handleResponse: (userText: string, currentMessages, context, isAuthenticated = true) => {
     return null;
   }
 };

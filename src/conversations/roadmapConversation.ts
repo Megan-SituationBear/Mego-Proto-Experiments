@@ -1,4 +1,4 @@
-import { ConversationConfig } from './types';
+import type { ConversationConfig } from './types';
 
 export const roadmapConversation: ConversationConfig = {
   title: "Strategize Roadmap",
@@ -43,7 +43,7 @@ export const roadmapConversation: ConversationConfig = {
     }
   ],
   
-  handleResponse: (userText: string, currentMessages, context, isAuthenticated = false) => {
+  handleResponse: (_userText: string, _currentMessages, _context, _isAuthenticated = false) => {
     return null;
   }
 };

@@ -1,4 +1,4 @@
-import { ConversationConfig } from './types';
+import type { ConversationConfig } from './types';
 
 export const codeConversation: ConversationConfig = {
   title: "Code Generation Help",
@@ -43,7 +43,7 @@ export const codeConversation: ConversationConfig = {
     }
   ],
   
-  handleResponse: (userText: string, currentMessages, context, isAuthenticated = false) => {
+  handleResponse: (_userText: string, _currentMessages, _context, _isAuthenticated = false) => {
     // Conversation logic to be added
     return null;
   }

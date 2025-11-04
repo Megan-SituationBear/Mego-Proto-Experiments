@@ -1,4 +1,4 @@
-import { ConversationConfig } from './types';
+import type { ConversationConfig } from './types';
 
 export const technicalConversation: ConversationConfig = {
   title: "Technical Implementation Help",
@@ -41,7 +41,7 @@ export const technicalConversation: ConversationConfig = {
     }
   ],
   
-  handleResponse: (userText: string, currentMessages, context, isAuthenticated = true) => {
+  handleResponse: (_userText: string, _currentMessages, _context, _isAuthenticated = true) => {
     return null;
   }
 };

@@ -1,4 +1,4 @@
-import { ConversationConfig, ConversationMessage } from './types';
+import type { ConversationConfig, ConversationMessage } from './types';
 
 export const meganConversation: ConversationConfig = {
   // Core details
@@ -57,7 +57,7 @@ export const meganConversation: ConversationConfig = {
     }
   ],
   
-  handleResponse: (userText: string, currentMessages, context, isAuthenticated = true): ConversationMessage | ConversationMessage[] | null => {
+  handleResponse: (userText: string, _currentMessages, _context, _isAuthenticated = true): ConversationMessage | ConversationMessage[] | null => {
     // Handle "Tell me about X" responses
     if (userText.startsWith("Tell me about")) {
       return {

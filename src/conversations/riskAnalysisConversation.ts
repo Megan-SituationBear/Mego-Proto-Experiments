@@ -1,4 +1,4 @@
-import { ConversationConfig } from './types';
+import type { ConversationConfig } from './types';
 
 export const riskAnalysisConversation: ConversationConfig = {
   title: "Analyze Users for Risk and Deprecate",
@@ -41,7 +41,7 @@ export const riskAnalysisConversation: ConversationConfig = {
     }
   ],
   
-  handleResponse: (userText: string, currentMessages, context, isAuthenticated = true) => {
+  handleResponse: (_userText: string, _currentMessages, _context, _isAuthenticated = true) => {
     return null;
   }
 };

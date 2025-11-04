@@ -1,4 +1,4 @@
-import { ConversationConfig } from './types';
+import type { ConversationConfig } from './types';
 
 export const copadoTodayConversation: ConversationConfig = {
   // Core details
@@ -90,7 +90,7 @@ export const copadoTodayConversation: ConversationConfig = {
     }
   ],
   
-  handleResponse: (userText: string, currentMessages, context, isAuthenticated = false) => {
+  handleResponse: (userText: string, currentMessages, _context, isAuthenticated = false) => {
     // Check if we need to show auth gate
     // Count AI messages (not user messages) to determine if we've hit the gate
     const aiMessageCount = currentMessages.filter(m => !m.isUser).length;

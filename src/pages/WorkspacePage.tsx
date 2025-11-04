@@ -19,14 +19,14 @@ interface WorkspacePageProps {
 }
 
 const WorkspacePage = ({
-  workspaceType = 'chat',
+  workspaceType: _workspaceType = 'chat',
   workspaceTitle = 'Workspace',
   workspaceTopic = 'General',
   initialPrompt = '',
   environment,
   onNavigateHome,
   onBack,
-  onSaveWorkspace,
+  onSaveWorkspace: _onSaveWorkspace,
 }: WorkspacePageProps) => {
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);

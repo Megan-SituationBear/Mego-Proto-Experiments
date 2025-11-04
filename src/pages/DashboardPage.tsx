@@ -64,7 +64,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
   onSearchClick,
   onDashboardClick,
   onLearnClick,
-  onIntegrationsClick,
+  onIntegrationsClick: _onIntegrationsClick,
   onPricingClick,
   onIntegrationClick,
 }) => {

@@ -4,7 +4,7 @@ export interface ConversationMessage {
   id: string;
   content: string;
   isUser: boolean;
-  timestamp: Date;
+  timestamp?: Date;
   options?: string[]; // Multiple choice options
   requiresAction?: boolean; // Does user need to complete something to proceed?
   actionType?: 'upload' | 'connect' | 'select' | 'configure'; // Type of action required

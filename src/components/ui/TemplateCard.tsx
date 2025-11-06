@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { getCategoryColor } from '../../utils/categoryColors';
 
 export interface TemplateCardProps {
@@ -7,10 +7,10 @@ export interface TemplateCardProps {
   title: string;
   description: string;
   remixCount?: number;
-  favoriteCount?: number;
-  variant?: 'customizable' | 'standard'; // customizable = magic star, standard = favorite star
-  isFavorited?: boolean;
-  onFavoriteClick?: (e: React.MouseEvent) => void;
+  favoriteCount?: number; // kept for backwards compatibility but not displayed
+  variant?: 'customizable' | 'standard'; // customizable = magic star, standard = no icon
+  isFavorited?: boolean; // kept for backwards compatibility but not used
+  onFavoriteClick?: (e: React.MouseEvent) => void; // kept for backwards compatibility but not used
   onClick?: () => void;
 }
 
@@ -19,20 +19,10 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
   title,
   description,
   remixCount = 0,
-  favoriteCount = 0,
   variant = 'customizable',
-  isFavorited = false,
-  onFavoriteClick,
   onClick,
 }) => {
   const colors = getCategoryColor(category);
-
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onFavoriteClick) {
-      onFavoriteClick(e);
-    }
-  };
 
   return (
     <div
@@ -46,25 +36,12 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
           {category}
         </span>
         
-        {/* Star Icon - Top Right */}
-        <div className="flex-shrink-0">
-          {variant === 'customizable' ? (
+        {/* Icon - Top Right (only for customizable variant) */}
+        {variant === 'customizable' && (
+          <div className="flex-shrink-0">
             <Sparkles className="w-5 h-5 text-slate-400" />
-          ) : (
-            <button
-              onClick={handleFavoriteClick}
-              className="p-0.5 hover:bg-slate-100 rounded transition-colors"
-            >
-              <Star
-                className={`w-5 h-5 ${
-                  isFavorited
-                    ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-slate-300 hover:text-yellow-400'
-                } transition-colors`}
-              />
-            </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -80,19 +57,12 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
         </p>
       </div>
 
-      {/* Stats at Bottom - Remixed and Favorited */}
-      {(remixCount > 0 || favoriteCount > 0) && (
+      {/* Stats at Bottom - Remixed only */}
+      {remixCount > 0 && (
         <div className="flex gap-4 items-center pt-2 border-t border-slate-100 text-xs text-slate-500">
-          {remixCount > 0 && (
-            <span>
-              <span className="font-medium text-slate-700">{remixCount.toLocaleString()}</span> remixed
-            </span>
-          )}
-          {favoriteCount > 0 && (
-            <span>
-              <span className="font-medium text-slate-700">{favoriteCount.toLocaleString()}</span> favorited
-            </span>
-          )}
+          <span>
+            <span className="font-medium text-slate-700">{remixCount.toLocaleString()}</span> remixed
+          </span>
         </div>
       )}
     </div>

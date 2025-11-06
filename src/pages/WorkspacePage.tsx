@@ -292,7 +292,7 @@ const WorkspacePage = ({
             </div>
           </div>
 
-          {/* Right: Bookmark (Save) + Share + Primary Action */}
+          {/* Right: Pin + Share + Primary Action */}
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             <button
               onClick={() => setIsPinned(!isPinned)}

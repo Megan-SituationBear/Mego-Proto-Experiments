@@ -45,9 +45,9 @@ interface TopNavProps {
     text: string;
     color?: 'green' | 'blue' | 'purple' | 'amber' | 'slate' | 'orange';
   };
-  onFavorite?: () => void;
+  onPin?: () => void;
   isPinned?: boolean;
-  showFavorite?: boolean;
+  showPin?: boolean;
   primaryAction?: {
     label: string;
     onClick: () => void;
@@ -91,9 +91,9 @@ const TopNav: React.FC<TopNavProps> = ({
   title,
   subtitle,
   categoryBadge,
-  onFavorite,
+  onPin,
   isPinned = false,
-  showFavorite = false,
+  showPin = false,
   primaryAction,
   showAuthButtons = false,
   onLogin,
@@ -493,10 +493,10 @@ const TopNav: React.FC<TopNavProps> = ({
               </>
             )}
             
-            {/* Legacy Pin */}
-            {showFavorite && onFavorite && (
+            {/* Pin Button */}
+            {showPin && onPin && (
               <button
-                onClick={onFavorite}
+                onClick={onPin}
                 className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                 aria-label={isPinned ? 'Unpin' : 'Pin'}
               >

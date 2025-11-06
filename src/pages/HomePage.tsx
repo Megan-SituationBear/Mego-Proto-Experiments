@@ -505,24 +505,36 @@ const HomePage: React.FC<HomePageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {activeTab === 'recent' ? (
               recentItems.length > 0 ? (
-                recentItems.map((item, index) => (
-                  <TemplateCard
-                    key={`recent-${index}`}
-                    category={item.category || 'Recent Item'}
-                    title={item.title}
-                    description={item.description || 'Recently accessed'}
-                    remixCount={item.views || 0}
-                    variant="standard"
-                    onClick={() => {
-                      onNavigateToWorkspace?.({
-                        type: 'library-item',
-                        title: item.title,
-                        topic: item.category || 'Template',
-                        initialPrompt: `I want to use the "${item.title}" template. ${item.description || ''}`
-                      });
-                    }}
-                  />
-                ))
+                <>
+                  {recentItems.slice(0, 3).map((item, index) => (
+                    <TemplateCard
+                      key={`recent-${index}`}
+                      category={item.category || 'Recent Item'}
+                      title={item.title}
+                      description={item.description || 'Recently accessed'}
+                      remixCount={item.views || 0}
+                      variant="standard"
+                      onClick={() => {
+                        onNavigateToWorkspace?.({
+                          type: 'library-item',
+                          title: item.title,
+                          topic: item.category || 'Template',
+                          initialPrompt: `I want to use the "${item.title}" template. ${item.description || ''}`
+                        });
+                      }}
+                    />
+                  ))}
+                  {recentItems.length > 3 && (
+                    <div className="col-span-full text-center mt-4">
+                      <button
+                        onClick={onNavigateToDashboard}
+                        className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+                      >
+                        View all ({recentItems.length})
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="col-span-full text-center py-12">
                   <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -545,24 +557,36 @@ const HomePage: React.FC<HomePageProps> = ({
               )
             ) : activeTab === 'pinned' ? (
               pinnedTemplates.length > 0 ? (
-                pinnedTemplates.map((template, index) => (
-                  <TemplateCard
-                    key={`pinned-${index}`}
-                    category={template.category}
-                    title={template.title}
-                    description={template.description}
-                    remixCount={template.views || 0}
-                    variant="standard"
-                    onClick={() => {
-                      onNavigateToWorkspace?.({
-                        type: 'library-item',
-                        title: template.title,
-                        topic: template.category,
-                        initialPrompt: `I want to use the "${template.title}" template. ${template.description}`
-                      });
-                    }}
-                  />
-                ))
+                <>
+                  {pinnedTemplates.slice(0, 3).map((template, index) => (
+                    <TemplateCard
+                      key={`pinned-${index}`}
+                      category={template.category}
+                      title={template.title}
+                      description={template.description}
+                      remixCount={template.views || 0}
+                      variant="standard"
+                      onClick={() => {
+                        onNavigateToWorkspace?.({
+                          type: 'library-item',
+                          title: template.title,
+                          topic: template.category,
+                          initialPrompt: `I want to use the "${template.title}" template. ${template.description}`
+                        });
+                      }}
+                    />
+                  ))}
+                  {pinnedTemplates.length > 3 && (
+                    <div className="col-span-full text-center mt-4">
+                      <button
+                        onClick={onNavigateToDashboard}
+                        className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+                      >
+                        View all ({pinnedTemplates.length})
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="col-span-full text-center py-12">
                   <p className="text-slate-500">No pinned items yet. Pin items to save them here!</p>
@@ -571,24 +595,36 @@ const HomePage: React.FC<HomePageProps> = ({
             ) : (
               // Artifacts
               artifacts.length > 0 ? (
-                artifacts.map((artifact, index) => (
-                  <TemplateCard
-                    key={`artifact-${index}`}
-                    category={artifact.category || artifact.type}
-                    title={artifact.title}
-                    description={artifact.description || `Created from ${artifact.workspaceTitle || 'workspace'}`}
-                    remixCount={0}
-                    variant="standard"
-                    onClick={() => {
-                      onNavigateToWorkspace?.({
-                        type: 'artifact',
-                        title: artifact.title,
-                        topic: artifact.category || 'Artifact',
-                        initialPrompt: `Show me the artifact: "${artifact.title}"`
-                      });
-                    }}
-                  />
-                ))
+                <>
+                  {artifacts.slice(0, 3).map((artifact, index) => (
+                    <TemplateCard
+                      key={`artifact-${index}`}
+                      category={artifact.category || artifact.type}
+                      title={artifact.title}
+                      description={artifact.description || `Created from ${artifact.workspaceTitle || 'workspace'}`}
+                      remixCount={0}
+                      variant="standard"
+                      onClick={() => {
+                        onNavigateToWorkspace?.({
+                          type: 'artifact',
+                          title: artifact.title,
+                          topic: artifact.category || 'Artifact',
+                          initialPrompt: `Show me the artifact: "${artifact.title}"`
+                        });
+                      }}
+                    />
+                  ))}
+                  {artifacts.length > 3 && (
+                    <div className="col-span-full text-center mt-4">
+                      <button
+                        onClick={onNavigateToDashboard}
+                        className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+                      >
+                        View all ({artifacts.length})
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="col-span-full">
                   <div className="text-center py-12">

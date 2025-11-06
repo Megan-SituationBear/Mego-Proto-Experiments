@@ -218,9 +218,9 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           title={templateData.title || 'Appointment Handler Class'}
           subtitle="Code | Last Modified"
           onBack={onBack}
-          showFavorite={true}
+          showPin={true}
           isPinned={isPinned}
-          onFavorite={handleTogglePin}
+          onPin={handleTogglePin}
           primaryAction={{
             label: 'Download',
             onClick: () => {
@@ -336,9 +336,9 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           title={templateData.title}
           subtitle={`Template Duplicate | ${getRelativeTime()}`}
           onBack={onBack}
-          showFavorite={true}
+          showPin={true}
           isPinned={isPinned}
-          onFavorite={handleTogglePin}
+          onPin={handleTogglePin}
           primaryAction={{
             label: 'Share',
             onClick: () => console.log('Share clicked'),
@@ -489,7 +489,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                 </h1>
               </div>
 
-              {/* Right: Share and Favorite */}
+              {/* Right: Share and Pin */}
               <div className="flex items-center gap-2">
                 <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
                   <Share2 className="w-5 h-5 text-slate-600" />
@@ -573,9 +573,9 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               : 'slate'
           }}
           onBack={onBack}
-          showFavorite={true}
+          showPin={true}
           isPinned={isPinned}
-          onFavorite={handleTogglePin}
+          onPin={handleTogglePin}
           primaryAction={{
             label: 'Run',
             onClick: () => onUseTemplate?.(), // Opens pricing page when not logged in
@@ -783,9 +783,9 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               : 'slate'
           }}
           onBack={onBack}
-          showFavorite={true}
+          showPin={true}
           isPinned={isPinned}
-          onFavorite={handleTogglePin}
+          onPin={handleTogglePin}
           primaryAction={{
             label: 'Set up sandboxes to run',
             onClick: () => setShowSalesforceAuthModal(true),

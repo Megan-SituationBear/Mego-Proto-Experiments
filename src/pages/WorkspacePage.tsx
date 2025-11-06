@@ -645,35 +645,48 @@ const WorkspacePage = ({
                         {workspaceTitle === "What can Copado do?" ? (
                           <>
                             <div className="space-y-3">
-                              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                                <h5 className="text-sm font-semibold text-slate-900 mb-2">Why Copado is different</h5>
+                              <button
+                                onClick={() => handleSendMessage("Show me why Copado is different")}
+                                className="w-full bg-slate-50 rounded-lg p-4 border border-slate-200 hover:bg-blue-50 hover:border-blue-200 transition-all text-left group"
+                              >
+                                <h5 className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 mb-2">Why Copado is different</h5>
                                 <ul className="text-xs text-slate-600 space-y-1">
                                   <li>• Lorem ipsum dolor sit amet consectetur adipiscing elit</li>
                                   <li>• Sed do eiusmod tempor incididunt ut labore et dolore magna</li>
                                   <li>• Ut enim ad minim veniam quis nostrud exercitation</li>
                                   <li>• Duis aute irure dolor in reprehenderit in voluptate</li>
                                 </ul>
-                              </div>
+                              </button>
                               
-                              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                                <h5 className="text-sm font-semibold text-slate-900 mb-2">Make it work for you</h5>
+                              <button
+                                onClick={() => handleSendMessage("Make it work for you")}
+                                className="w-full bg-slate-50 rounded-lg p-4 border border-slate-200 hover:bg-blue-50 hover:border-blue-200 transition-all text-left group"
+                              >
+                                <h5 className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 mb-2">Make it work for you</h5>
                                 <p className="text-xs text-slate-600 mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                              </div>
+                              </button>
                               
-                              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                                <h5 className="text-sm font-semibold text-slate-900 mb-2">Keep it dynamic</h5>
+                              <button
+                                onClick={() => handleSendMessage("Keep it dynamic")}
+                                className="w-full bg-slate-50 rounded-lg p-4 border border-slate-200 hover:bg-blue-50 hover:border-blue-200 transition-all text-left group"
+                              >
+                                <h5 className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 mb-2">Keep it dynamic</h5>
                                 <p className="text-xs text-slate-600 mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                              </div>
+                              </button>
                               
-                              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                                <h5 className="text-sm font-semibold text-slate-900 mb-2">Set it up</h5>
+                              <button
+                                onClick={() => handleSendMessage("Set it up")}
+                                className="w-full bg-slate-50 rounded-lg p-4 border border-slate-200 hover:bg-blue-50 hover:border-blue-200 transition-all text-left group"
+                              >
+                                <h5 className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 mb-2">Set it up</h5>
                                 <div className="space-y-2 mt-3">
                                   {tasks.map((task) => (
                                     <div key={task.id} className="flex items-center gap-2">
                                       <input
                                         type="checkbox"
                                         checked={task.completed}
-                                        onChange={() => {
+                                        onChange={(e) => {
+                                          e.stopPropagation();
                                           setTasks(tasks.map(t => 
                                             t.id === task.id ? { ...t, completed: !t.completed } : t
                                           ));
@@ -686,7 +699,7 @@ const WorkspacePage = ({
                                     </div>
                                   ))}
                                 </div>
-                              </div>
+                              </button>
                             </div>
                           </>
                         ) : workspaceTitle === "What did Megan do?" ? (

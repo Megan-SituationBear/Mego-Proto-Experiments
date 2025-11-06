@@ -55,6 +55,43 @@ export const copadoCanDoConversation: ConversationConfig = {
       ["Super techy", "Somewhat technical", "Not technical at all", "I just want it to work"].includes(m.content)
     );
     
+    // Highlight clicks - display their content in work area
+    if (userText === "Show me why Copado is different") {
+      return {
+        id: Date.now().toString(),
+        content: `**Why Copado is different**\n\nHere are the key differentiators:\n\n• Lorem ipsum dolor sit amet consectetur adipiscing elit\n• Sed do eiusmod tempor incididunt ut labore et dolore magna\n• Ut enim ad minim veniam quis nostrud exercitation\n• Duis aute irure dolor in reprehenderit in voluptate\n\nWant to dive deeper into any of these?`,
+        isUser: false,
+        timestamp: new Date()
+      };
+    }
+    
+    if (userText === "Make it work for you") {
+      return {
+        id: Date.now().toString(),
+        content: `**Make it work for you**\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.\n\nCopado adapts to your workflow and team structure. Let me know if you'd like to see specific examples!`,
+        isUser: false,
+        timestamp: new Date()
+      };
+    }
+    
+    if (userText === "Keep it dynamic") {
+      return {
+        id: Date.now().toString(),
+        content: `**Keep it dynamic**\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.\n\nCopado evolves with your needs. What would you like to explore next?`,
+        isUser: false,
+        timestamp: new Date()
+      };
+    }
+    
+    if (userText === "Set it up") {
+      return {
+        id: Date.now().toString(),
+        content: `**Set it up**\n\nGreat! Let's get you started. Complete these tasks:\n\n✓ Connect your Salesforce org\n✓ Set up your first project\n✓ Configure deployment pipeline\n✓ Invite your team members\n\nCheck the tasks on the right and mark them off as you go!`,
+        isUser: false,
+        timestamp: new Date()
+      };
+    }
+    
     // Question 1: What to speed up
     if (["Planning", "Strategy", "Boring org stuff", "Deploying over the weekend"].includes(userText)) {
       return {

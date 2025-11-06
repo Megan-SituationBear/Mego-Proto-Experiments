@@ -9,9 +9,9 @@ interface DashboardPageProps {
     type?: string;
     category?: string;
     lastModified?: string;
-    isFavorited?: boolean;
+    isPinned?: boolean;
   }>;
-  favoritedItems?: Array<{
+  pinnedItems?: Array<{
     id: string;
     title: string;
     type?: string;
@@ -53,7 +53,7 @@ interface DashboardPageProps {
 const DashboardPage: React.FC<DashboardPageProps> = ({
   userName = 'User',
   recentItems = [],
-  favoritedItems = [],
+  pinnedItems = [],
   artifacts = [],
   stats = {},
   onViewItem,
@@ -158,7 +158,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
             <TabToggle
               tabs={[
                 { id: 'recent', label: 'Recent', count: sortedRecentItems.length },
-                { id: 'pinned', label: 'Pinned', count: favoritedItems.length },
+                { id: 'pinned', label: 'Pinned', count: pinnedItems.length },
                 { id: 'artifacts', label: 'Artifacts', count: sortedArtifacts.length }
               ]}
               activeTab={activeTab}
@@ -203,7 +203,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
                       </td>
                     </tr>
                   ))}
-                  {activeTab === 'pinned' && favoritedItems.map((item) => (
+                  {activeTab === 'pinned' && pinnedItems.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => onViewItem?.(item)}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
@@ -259,7 +259,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
                   <p className="text-slate-500">No recent items yet. Start working to see them here!</p>
                 </div>
               )}
-              {activeTab === 'pinned' && favoritedItems.length === 0 && (
+              {activeTab === 'pinned' && pinnedItems.length === 0 && (
                 <div className="py-12 text-center">
                   <p className="text-slate-500">No pinned items yet. Pin items to save them here!</p>
                 </div>

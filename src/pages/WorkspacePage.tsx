@@ -637,8 +637,8 @@ const WorkspacePage = ({
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Favorites → Saved</p>
-                                <p className="text-xs text-slate-600 mt-1">Green bookmark icon with toggle behavior</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Favorites → Pinned</p>
+                                <p className="text-xs text-slate-600 mt-1">Green pin icon with toggle behavior</p>
                               </div>
                             </button>
                             <button

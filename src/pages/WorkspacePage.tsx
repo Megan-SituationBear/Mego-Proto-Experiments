@@ -606,51 +606,75 @@ const WorkspacePage = ({
                         {workspaceTitle === "What did Megan do?" ? (
                           <>
                             <button
-                              onClick={() => handleSendMessage("Tell me more about the AI input redesign")}
+                              onClick={() => handleSendMessage("Tell me about Chat Design 1")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">AI Input Redesign</p>
-                                <p className="text-xs text-slate-600 mt-1">Ask/Make modes with environment selection</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Chat Design 1</p>
+                                <p className="text-xs text-slate-600 mt-1">Self contained, contextual chat component to embed anywhere</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Show me the dashboard improvements")}
+                              onClick={() => handleSendMessage("Tell me about Chat Design 2")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Dashboard Enhancements</p>
-                                <p className="text-xs text-slate-600 mt-1">Table views with Recent/Saved/Artifacts tabs</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Chat Design 2: Make Mode</p>
+                                <p className="text-xs text-slate-600 mt-1">Why?</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Explain the Saved feature changes")}
+                              onClick={() => handleSendMessage("Tell me about Chat Design 3")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Favorites → Pinned</p>
-                                <p className="text-xs text-slate-600 mt-1">Green pin icon with toggle behavior</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Chat Design 3: Moving Items</p>
+                                <p className="text-xs text-slate-600 mt-1">Moving items to chat does what?</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("What's the recent items tracking system?")}
+                              onClick={() => handleSendMessage("Tell me about Onboarding")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Recent Tracking</p>
-                                <p className="text-xs text-slate-600 mt-1">All clicks tracked, 5-item cap across pages</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Onboarding</p>
+                                <p className="text-xs text-slate-600 mt-1">Integrations and Salesforce w/in chat, Quick start - tell me about these</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("Tell me about Access w/o overbuilding")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Access w/o Overbuilding</p>
+                                <p className="text-xs text-slate-600 mt-1">Use Pins for timely recapture, Pin anything - a chat sentence, artifact, instruction</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("Tell me about Information Architecture")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Information Architecture</p>
+                                <p className="text-xs text-slate-600 mt-1">All work the same - Why do that?</p>
                               </div>
                             </button>
                           </>

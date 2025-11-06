@@ -115,7 +115,7 @@ export const meganConversation: ConversationConfig = {
       
       return {
         id: Date.now().toString(),
-        content: `**Chat Design 3: Moving Items to Chat**\n\nDrag & drop or attach items (images, docs, code) and they become context chips below the input.\n\n**What it does:**\n• Items show as removable chips\n• AI uses them as context for responses\n• Works in both Ask and Make modes\n• Persists across the conversation\n\n**Why chips?** Claude-style design - clear, removable, visual feedback that context is active.\n\n${remainingTopics > 0 ? `🔍 ${remainingTopics} topic${remainingTopics > 1 ? 's' : ''} left to discover!` : '🏆 Full tour complete!'}`,
+        content: `**Chat Design 3: Moving Items to Chat**\n\nDrag & drop or attach items (images, docs, code) and they become context chips below the input.\n\n**What it does:**\n• Items show as removable chips\n• AI uses them as context for responses\n• Works in both Ask and Make modes\n• Persists across the conversation\n\n**Why chips?** Claude-style design - clear, removable, visual feedback that context is active.\n\n**The architectural win:**\nBy keeping context *with* the chat, you don't need:\n• Sidebar panels for files\n• Dedicated document viewers\n• Context switchers in the nav\n\n**This frees up the UI.** For example, having docs with the chat means we can completely re-do the top nav without worrying about context management. The chat is self-contained.\n\n${remainingTopics > 0 ? `🔍 ${remainingTopics} topic${remainingTopics > 1 ? 's' : ''} left to discover!` : '🏆 Full tour complete!'}`,
         isUser: false,
         timestamp: new Date(),
         options: nextOptions

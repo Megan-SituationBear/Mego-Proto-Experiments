@@ -1,4 +1,4 @@
-import { Search, Star, ChevronDown, Check } from 'lucide-react';
+import { Search, ChevronDown, Check } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 interface TopNavProps {
@@ -45,7 +45,7 @@ interface TopNavProps {
     color?: 'green' | 'blue' | 'purple' | 'amber' | 'slate' | 'orange';
   };
   onFavorite?: () => void;
-  isFavorited?: boolean;
+  isPinned?: boolean;
   showFavorite?: boolean;
   primaryAction?: {
     label: string;
@@ -91,7 +91,7 @@ const TopNav: React.FC<TopNavProps> = ({
   subtitle,
   categoryBadge,
   onFavorite,
-  isFavorited = false,
+  isPinned = false,
   showFavorite = false,
   primaryAction,
   showAuthButtons = false,
@@ -491,20 +491,26 @@ const TopNav: React.FC<TopNavProps> = ({
               </>
             )}
             
-            {/* Legacy Favorite */}
+            {/* Legacy Pin */}
             {showFavorite && onFavorite && (
               <button
                 onClick={onFavorite}
                 className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                aria-label={isPinned ? 'Unpin' : 'Pin'}
               >
-                <Star
+                <svg 
                   className={`w-5 h-5 ${
-                    isFavorited
-                      ? 'fill-yellow-400 text-yellow-400'
+                    isPinned
+                      ? 'fill-green-500 text-green-500'
                       : 'text-slate-400'
                   }`}
-                />
+                  fill={isPinned ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  strokeWidth={isPinned ? 0 : 1.5}
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
             )}
             

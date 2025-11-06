@@ -42,7 +42,7 @@ function App() {
   // User data (could be moved to context in future)
   const [userName, setUserName] = useState('Jill');
   const [hasProjects, setHasProjects] = useState(false);
-  const [favoritedTemplates, setFavoritedTemplates] = useState<any[]>([]);
+  const [pinnedTemplates, setPinnedTemplates] = useState<any[]>([]);
   const [activeProjects, setActiveProjects] = useState<any[]>([]);
   const [recentItems, setRecentItems] = useState<any[]>([]); // Track recent work items
   
@@ -211,7 +211,7 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setHasProjects(false);
-    setFavoritedTemplates([]);
+    setPinnedTemplates([]);
     setActiveProjects([]);
     setConversationMessages([]);
     setUserMessageCount(0);
@@ -248,18 +248,18 @@ function App() {
     });
   };
 
-  const handleToggleFavorite = (template: any, isFavorited: boolean) => {
-    if (isFavorited) {
-      // Add to favorites
-      setFavoritedTemplates(prev => [...prev, template]);
+  const handleToggleFavorite = (template: any, isPinned: boolean) => {
+    if (isPinned) {
+      // Add to pinned
+      setPinnedTemplates(prev => [...prev, template]);
       setHasProjects(true);
     } else {
-      // Remove from favorites
-      setFavoritedTemplates(prev => 
+      // Remove from pinned
+      setPinnedTemplates(prev => 
         prev.filter(t => t.title !== template.title)
       );
-      // If no more favorites, hide "Your Work" tab
-      if (favoritedTemplates.length === 1) {
+      // If no more pinned items, hide "Your Work" tab
+      if (pinnedTemplates.length === 1) {
         setHasProjects(false);
       }
     }
@@ -403,7 +403,7 @@ function App() {
       <HomePage 
         userName={userName}
         hasProjects={hasProjects}
-        favoritedTemplates={favoritedTemplates}
+        pinnedTemplates={pinnedTemplates}
         activeProjects={activeProjects}
         recentItems={recentItems}
         onCreateProject={handleCreateProject}
@@ -446,7 +446,7 @@ function App() {
       <DashboardPage
         userName={userName}
         recentItems={recentItems}
-        favoritedItems={favoritedTemplates}
+        pinnedItems={pinnedTemplates}
         artifacts={[]}
         stats={dashboardStats}
         onViewItem={handleViewTemplate}
@@ -480,7 +480,7 @@ function App() {
 
   if (currentView === 'work-item') {
     // Check if current template is favorited
-    const isFavorited = favoritedTemplates.some(t => t.title === selectedTemplate?.title);
+    const isPinned = pinnedTemplates.some(t => t.title === selectedTemplate?.title);
     // Check if this is a new project created from conversation
     const isNewProject = hasStarted && conversationMessages.length >= 2;
     
@@ -489,7 +489,7 @@ function App() {
         type={workItemType}
         isLoggedIn={isLoggedIn}
         templateData={selectedTemplate}
-        initialIsFavorite={isFavorited}
+        initialIsPinned={isPinned}
         isNewProject={isNewProject}
         isDuplicatedTemplate={isDuplicatedTemplate}
         onBack={() => {
@@ -501,7 +501,7 @@ function App() {
           setCurrentView(isLoggedIn ? 'home' : 'intro');
         }}
         onUseTemplate={handleUseTemplate}
-        onToggleFavorite={(isFavorited) => handleToggleFavorite(selectedTemplate, isFavorited)}
+        onToggleFavorite={(isPinned) => handleToggleFavorite(selectedTemplate, isPinned)}
         onSignIn={handleLogin}
         conversationMessages={conversationMessages}
         onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator, true)}

@@ -45,7 +45,7 @@ export const meganConversation: ConversationConfig = {
     },
     {
       id: '3',
-      content: "Here's what Megan accomplished:\n\n**This Week:**\n• Redesigned the AI input component with Ask/Make modes\n• Implemented environment selection for Make mode\n• Built out workspace navigation system\n• Created dashboard with Recent/Pinned/Artifacts tabs\n\n**Key Contributions:**\n• Replaced Favorites with Pinned (bookmark icon)\n• Added conversation tracking (5-item recent cap)\n• Integrated FindTemplatesModal for quick actions\n• Improved dashboard layout with inline stats\n\nWould you like me to drill into any specific area?",
+      content: "Here's what Megan accomplished:\n\n**This Week:**\n• Redesigned the AI input component with Ask/Make modes\n• Implemented environment selection for Make mode\n• Built out workspace navigation system\n• Created dashboard with Recent/Pinned/Artifacts tabs\n\n**Key Contributions:**\n• Replaced Favorites with Pinned (pin icon)\n• Added conversation tracking (5-item recent cap)\n• Integrated FindTemplatesModal for quick actions\n• Improved dashboard layout with inline stats\n\nWould you like me to drill into any specific area?",
       isUser: false,
       timestamp: new Date(),
       options: [

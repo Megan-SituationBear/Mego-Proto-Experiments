@@ -7,7 +7,7 @@ import { generateAIResponse } from '../utils/aiMessageGenerator';
 interface HomePageProps {
   userName?: string;
   hasProjects?: boolean;
-  favoritedTemplates?: any[];
+  pinnedTemplates?: any[];
   activeProjects?: any[];
   recentItems?: any[];
   onCreateProject?: (title?: string) => void;
@@ -28,7 +28,7 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({
   userName = 'User',
   hasProjects: _hasProjects = false,
-  favoritedTemplates = [],
+  pinnedTemplates = [],
   activeProjects: _activeProjects = [],
   recentItems = [],
   onCreateProject,
@@ -41,7 +41,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const [selectedQuickActions, setSelectedQuickActions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'recent' | 'pinned' | 'artifacts'>(
     recentItems.length > 0 ? 'recent' : 
-    favoritedTemplates.length > 0 ? 'pinned' : 
+    pinnedTemplates.length > 0 ? 'pinned' : 
     'artifacts'
   );
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
@@ -297,9 +297,9 @@ const HomePage: React.FC<HomePageProps> = ({
                 >
                   Pinned
                 </button>
-                {favoritedTemplates.length > 0 && (
+                {pinnedTemplates.length > 0 && (
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
-                    {favoritedTemplates.length}
+                    {pinnedTemplates.length}
                   </span>
                 )}
               </div>
@@ -490,7 +490,7 @@ const HomePage: React.FC<HomePageProps> = ({
               <TabToggle
                 tabs={[
                   { id: 'recent', label: 'Recent', count: recentItems.length },
-                  { id: 'pinned', label: 'Pinned', count: favoritedTemplates.length },
+                  { id: 'pinned', label: 'Pinned', count: pinnedTemplates.length },
                   { id: 'artifacts', label: 'Artifacts' }
                 ]}
                 activeTab={activeTab}
@@ -542,8 +542,8 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
               )
             ) : activeTab === 'pinned' ? (
-              favoritedTemplates.length > 0 ? (
-                favoritedTemplates.map((template, index) => (
+              pinnedTemplates.length > 0 ? (
+                pinnedTemplates.map((template, index) => (
                   <TemplateCard
                     key={`pinned-${index}`}
                     category={template.category}

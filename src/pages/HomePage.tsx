@@ -104,7 +104,19 @@ const HomePage: React.FC<HomePageProps> = ({
     // Simulate AI response
     setTimeout(() => {
       const response = generateAIResponse(text, newUserMessageCount);
-      // Use the response message as-is (it already has proper MessageContent format)
+      
+      // For first response in 'ask' mode, don't add to conversation yet
+      // It will be shown as a placeholder/suggestion below input
+      if (newUserMessageCount === 1) {
+        // Hide typing indicator
+        if (setTypingIndicator) {
+          setTypingIndicator(false);
+        }
+        // Don't add to conversation messages - will be shown as placeholder
+        return;
+      }
+      
+      // For subsequent responses, add to conversation normally
       const aiMessage: ConversationMessage = {
         id: response.conversationMessage.id,
         content: typeof response.conversationMessage.content === 'string'
@@ -401,20 +413,6 @@ const HomePage: React.FC<HomePageProps> = ({
 
           {/* Conversation Section */}
           <div className="mb-4 sm:mb-6">
-            {/* Conversation Messages */}
-            <div className="mb-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
-              {conversationMessages.length > 0 && (
-                <>
-                  <Conversation
-                    messages={conversationMessages}
-                    showTypingIndicator={showCopadoTyping}
-                    onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
-                  />
-                  <div ref={messagesEndRef} />
-                </>
-              )}
-            </div>
-
             {/* AI Input */}
             <div className="mb-4">
               <AIInput
@@ -431,7 +429,7 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             {/* Quick Actions - Below AI Input */}
-            {conversationMessages.length === 0 && (
+            {conversationMessages.length === 0 && userMessageCount === 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-medium text-slate-700 mb-2 text-center">Quick actions:</p>
                 <div className="flex flex-wrap gap-2 justify-center">
@@ -466,6 +464,43 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
               </div>
             )}
+
+            {/* Copado's First Response as Placeholder Suggestions */}
+            {userMessageCount === 1 && conversationMessages.length === 1 && (
+              <div className="space-y-3 mt-4">
+                <div className="text-center">
+                  <p className="text-xs font-medium text-slate-500 mb-3">Copado asks:</p>
+                </div>
+                <button
+                  onClick={() => handleSendMessage("Tell me about the business case", setShowCopadoTyping)}
+                  className="w-full p-4 bg-blue-50 text-blue-900 border border-blue-200 rounded-xl hover:bg-blue-100 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md text-left group"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
+                      <span className="text-white text-sm font-semibold">C</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-blue-900 mb-1">Tell me about the business case</p>
+                      <p className="text-xs text-blue-700">Is it for a customer? Internal? What do you want it to do?</p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            )}
+
+            {/* Conversation Messages - Below Input */}
+            <div className="mt-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
+              {conversationMessages.length > 0 && (
+                <>
+                  <Conversation
+                    messages={conversationMessages}
+                    showTypingIndicator={showCopadoTyping}
+                    onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
+                  />
+                  <div ref={messagesEndRef} />
+                </>
+              )}
+            </div>
             
             {/* Show "Creating workspace..." message after second user message */}
             {userMessageCount === 2 && (

@@ -63,9 +63,15 @@ const HomePage: React.FC<HomePageProps> = ({
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-  // Scroll to bottom when new messages arrive
+  // Scroll to bottom when new messages arrive (within conversation container only)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'nearest',
+        inline: 'nearest'
+      });
+    }
   }, [conversationMessages]);
 
   // Helper function to clean AIInput messages (handles mode prefixes automatically)

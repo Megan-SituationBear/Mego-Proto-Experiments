@@ -1,5 +1,6 @@
 import { Search, ChevronDown, Check } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import LearnTopicModal from './LearnTopicModal';
 
 interface TopNavProps {
   // Left side - Logo and nav items
@@ -127,6 +128,7 @@ const TopNav: React.FC<TopNavProps> = ({
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [learnOpen, setLearnOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
+  const [showLearnTopicModal, setShowLearnTopicModal] = useState(false);
   const integrationsRef = useRef<HTMLDivElement>(null);
   const learnRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -341,7 +343,7 @@ const TopNav: React.FC<TopNavProps> = ({
                             <button
                               key={video.id}
                               onClick={() => {
-                                onLearnClick();
+                                setShowLearnTopicModal(true);
                                 setLearnOpen(false);
                               }}
                               className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
@@ -361,7 +363,7 @@ const TopNav: React.FC<TopNavProps> = ({
                             <button
                               key={howTo.id}
                               onClick={() => {
-                                onLearnClick();
+                                setShowLearnTopicModal(true);
                                 setLearnOpen(false);
                               }}
                               className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
@@ -380,7 +382,7 @@ const TopNav: React.FC<TopNavProps> = ({
                             <button
                               key={item.id}
                               onClick={() => {
-                                onLearnClick();
+                                setShowLearnTopicModal(true);
                                 setLearnOpen(false);
                               }}
                               className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
@@ -531,6 +533,12 @@ const TopNav: React.FC<TopNavProps> = ({
           </div>
         </div>
       </div>
+      
+      {/* Learn Topic Modal */}
+      <LearnTopicModal
+        isOpen={showLearnTopicModal}
+        onClose={() => setShowLearnTopicModal(false)}
+      />
     </nav>
   );
 };

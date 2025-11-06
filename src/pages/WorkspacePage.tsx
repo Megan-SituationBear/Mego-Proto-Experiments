@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import AIInput from '../components/ui/AIInput';
 import PricingModal from '../components/ui/PricingModal';
 import type { ConversationMessage } from '../components/ui/AIInput';
-import { meganConversation } from '../conversations';
+import { meganConversation, copadoCanDoConversation } from '../conversations';
 
 type WorkspaceType = 'chat' | 'library-item' | 'artifact';
 
@@ -38,6 +38,14 @@ const WorkspacePage = ({
   const [pinnedMessages, setPinnedMessages] = useState<ConversationMessage[]>([]);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
   const [mobileActiveTab, setMobileActiveTab] = useState<'work' | 'highlights' | 'code' | 'artifacts'>('work');
+  
+  // Tasks state for "What can Copado do?" workspace
+  const [tasks, setTasks] = useState([
+    { id: 1, text: "Connect your Salesforce org", completed: false },
+    { id: 2, text: "Set up your first project", completed: false },
+    { id: 3, text: "Configure deployment pipeline", completed: false },
+    { id: 4, text: "Invite your team members", completed: false }
+  ]);
   
   // Refs for scrolling to messages
   const messageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
@@ -111,6 +119,12 @@ const WorkspacePage = ({
         return;
       }
       
+      // Load conversation for "What can Copado do?"
+      if (workspaceTitle === "What can Copado do?") {
+        setConversationMessages(copadoCanDoConversation.initialMessages);
+        return;
+      }
+      
       // Default conversation for other prompts
       const userMessage: ConversationMessage = {
         id: Date.now().toString(),
@@ -154,6 +168,31 @@ const WorkspacePage = ({
     if (workspaceTitle === "What did Megan do?" && meganConversation.handleResponse) {
       setTimeout(() => {
         const response = meganConversation.handleResponse!(text, conversationMessages);
+        
+        if (response) {
+          // Handle single or multiple messages
+          const messages = Array.isArray(response) ? response : [response];
+          setConversationMessages(prev => [...prev, ...messages]);
+        } else {
+          // Fallback response if conversation doesn't handle this input
+          const aiMessage: ConversationMessage = {
+            id: (Date.now() + 1).toString(),
+            content: `Here's my response to: "${text}"`,
+            isUser: false,
+            timestamp: new Date()
+          };
+          setConversationMessages(prev => [...prev, aiMessage]);
+        }
+        
+        setShowTyping(false);
+      }, 1500);
+      return;
+    }
+    
+    // Use conversation handler for "What can Copado do?" workspace
+    if (workspaceTitle === "What can Copado do?" && copadoCanDoConversation.handleResponse) {
+      setTimeout(() => {
+        const response = copadoCanDoConversation.handleResponse!(text, conversationMessages);
         
         if (response) {
           // Handle single or multiple messages
@@ -594,63 +633,134 @@ const WorkspacePage = ({
                       </div>
                     )}
 
-                    {/* Highlights / Steps */}
+                    {/* Highlights / Steps / Tasks */}
                     <div className="bg-white border border-slate-200 rounded-xl p-6">
                       <h4 className="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
                         <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                         </svg>
-                        Key Highlights
+                        {workspaceTitle === "What can Copado do?" ? "Key Highlights" : "Key Highlights"}
                       </h4>
                       <div className="space-y-2">
-                        {workspaceTitle === "What did Megan do?" ? (
+                        {workspaceTitle === "What can Copado do?" ? (
+                          <>
+                            <div className="space-y-3">
+                              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                <h5 className="text-sm font-semibold text-slate-900 mb-2">Why Copado is different</h5>
+                                <ul className="text-xs text-slate-600 space-y-1">
+                                  <li>• Lorem ipsum dolor sit amet consectetur adipiscing elit</li>
+                                  <li>• Sed do eiusmod tempor incididunt ut labore et dolore magna</li>
+                                  <li>• Ut enim ad minim veniam quis nostrud exercitation</li>
+                                  <li>• Duis aute irure dolor in reprehenderit in voluptate</li>
+                                </ul>
+                              </div>
+                              
+                              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                <h5 className="text-sm font-semibold text-slate-900 mb-2">Make it work for you</h5>
+                                <p className="text-xs text-slate-600 mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                              </div>
+                              
+                              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                <h5 className="text-sm font-semibold text-slate-900 mb-2">Keep it dynamic</h5>
+                                <p className="text-xs text-slate-600 mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                              </div>
+                              
+                              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                <h5 className="text-sm font-semibold text-slate-900 mb-2">Set it up</h5>
+                                <div className="space-y-2 mt-3">
+                                  {tasks.map((task) => (
+                                    <div key={task.id} className="flex items-center gap-2">
+                                      <input
+                                        type="checkbox"
+                                        checked={task.completed}
+                                        onChange={() => {
+                                          setTasks(tasks.map(t => 
+                                            t.id === task.id ? { ...t, completed: !t.completed } : t
+                                          ));
+                                        }}
+                                        className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                                      />
+                                      <label className={`text-xs ${task.completed ? 'line-through text-slate-400' : 'text-slate-700'}`}>
+                                        {task.text}
+                                      </label>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        ) : workspaceTitle === "What did Megan do?" ? (
                           <>
                             <button
-                              onClick={() => handleSendMessage("Tell me more about the AI input redesign")}
+                              onClick={() => handleSendMessage("Tell me about Chat Design 1")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">AI Input Redesign</p>
-                                <p className="text-xs text-slate-600 mt-1">Ask/Make modes with environment selection</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Chat Design 1</p>
+                                <p className="text-xs text-slate-600 mt-1">Self contained, contextual chat component to embed anywhere</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Show me the dashboard improvements")}
+                              onClick={() => handleSendMessage("Tell me about Chat Design 2")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Dashboard Enhancements</p>
-                                <p className="text-xs text-slate-600 mt-1">Table views with Recent/Saved/Artifacts tabs</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Chat Design 2: Make Mode</p>
+                                <p className="text-xs text-slate-600 mt-1">Why?</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Explain the Saved feature changes")}
+                              onClick={() => handleSendMessage("Tell me about Chat Design 3")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Favorites → Pinned</p>
-                                <p className="text-xs text-slate-600 mt-1">Green pin icon with toggle behavior</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Chat Design 3: Moving Items</p>
+                                <p className="text-xs text-slate-600 mt-1">Moving items to chat does what?</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("What's the recent items tracking system?")}
+                              onClick={() => handleSendMessage("Tell me about Onboarding")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Recent Tracking</p>
-                                <p className="text-xs text-slate-600 mt-1">All clicks tracked, 5-item cap across pages</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Onboarding</p>
+                                <p className="text-xs text-slate-600 mt-1">Integrations and Salesforce w/in chat, Quick start - tell me about these</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("Tell me about Access w/o overbuilding")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Access w/o Overbuilding</p>
+                                <p className="text-xs text-slate-600 mt-1">Use Pins for timely recapture, Pin anything - a chat sentence, artifact, instruction</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("Tell me about Information Architecture")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Information Architecture</p>
+                                <p className="text-xs text-slate-600 mt-1">All work the same - Why do that?</p>
                               </div>
                             </button>
                           </>

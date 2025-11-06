@@ -31,8 +31,15 @@ const WorkspacePage = ({
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
-  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'preview' | 'code' | 'artifacts'>('overview');
+  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'steps' | 'code' | 'artifacts'>('overview');
   const [showPricingModal, setShowPricingModal] = useState(false);
+  const [steps, setSteps] = useState<Array<{ id: string; text: string; completed: boolean }>>([
+    { id: '1', text: 'Review current org configuration', completed: false },
+    { id: '2', text: 'Run dependency analysis', completed: false },
+    { id: '3', text: 'Create deployment package', completed: false },
+    { id: '4', text: 'Execute pre-deployment tests', completed: false },
+    { id: '5', text: 'Deploy to staging environment', completed: false }
+  ]);
   const [leftPanelWidth, setLeftPanelWidth] = useState(75); // percentage - 3/4 of page by default
   const [isResizing, setIsResizing] = useState(false);
   const [pinnedMessages, setPinnedMessages] = useState<ConversationMessage[]>([]);
@@ -214,6 +221,49 @@ const WorkspacePage = ({
       return;
     }
 
+    // Handle step completion responses
+    if (text.includes('Yes, completed')) {
+      setTimeout(() => {
+        const aiMessage: ConversationMessage = {
+          id: (Date.now() + 1).toString(),
+          content: `✅ Great! I've marked that step as complete. Keep up the momentum!`,
+          isUser: false,
+          timestamp: new Date()
+        };
+        setConversationMessages(prev => [...prev, aiMessage]);
+        setShowTyping(false);
+      }, 800);
+      return;
+    }
+    
+    if (text.includes('No, not yet')) {
+      setTimeout(() => {
+        const aiMessage: ConversationMessage = {
+          id: (Date.now() + 1).toString(),
+          content: `No worries! Take your time. I'm here if you need help with this step. Just click it again when you're ready.`,
+          isUser: false,
+          timestamp: new Date()
+        };
+        setConversationMessages(prev => [...prev, aiMessage]);
+        setShowTyping(false);
+      }, 800);
+      return;
+    }
+    
+    if (text.includes('Pin this as next to do')) {
+      setTimeout(() => {
+        const aiMessage: ConversationMessage = {
+          id: (Date.now() + 1).toString(),
+          content: `📌 Pinned! This step is now saved as your next priority. You'll find it in your highlights.`,
+          isUser: false,
+          timestamp: new Date()
+        };
+        setConversationMessages(prev => [...prev, aiMessage]);
+        setShowTyping(false);
+      }, 800);
+      return;
+    }
+
     // Default response for other workspaces
     setTimeout(() => {
       const aiMessage: ConversationMessage = {
@@ -225,6 +275,33 @@ const WorkspacePage = ({
       setConversationMessages(prev => [...prev, aiMessage]);
       setShowTyping(false);
     }, 1500);
+  };
+
+  const handleStepClick = (step: { id: string; text: string; completed: boolean }) => {
+    // Add user message clicking the step
+    const userMessage: ConversationMessage = {
+      id: Date.now().toString(),
+      content: `Tell me about: ${step.text}`,
+      isUser: true,
+      timestamp: new Date()
+    };
+    setConversationMessages(prev => [...prev, userMessage]);
+    
+    // Show typing indicator
+    setShowTyping(true);
+    
+    // After a delay, add Copado's explanation
+    setTimeout(() => {
+      const copadoMessage: ConversationMessage = {
+        id: (Date.now() + 1).toString(),
+        content: `Let me explain **${step.text}**:\n\nThis step involves checking your current configuration and ensuring all components are properly set up. You'll want to verify:\n\n• All required fields are configured\n• Dependencies are resolved\n• Permissions are set correctly\n\nReady to proceed?`,
+        isUser: false,
+        timestamp: new Date(),
+        options: ['✅ Yes, completed', '❌ No, not yet', '📌 Pin this as next to do']
+      };
+      setConversationMessages(prev => [...prev, copadoMessage]);
+      setShowTyping(false);
+    }, 1200);
   };
 
   const handlePinMessage = (message: ConversationMessage) => {
@@ -533,14 +610,14 @@ const WorkspacePage = ({
                 </button>
                 {!showCodeTab ? (
                   <button 
-                    onClick={() => setActiveRightPanelTab('preview')}
+                    onClick={() => setActiveRightPanelTab('steps')}
                     className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
-                      activeRightPanelTab === 'preview' 
+                      activeRightPanelTab === 'steps' 
                         ? 'text-blue-600 bg-blue-50' 
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
-                    Preview
+                    Steps
                   </button>
                 ) : (
                   <button 
@@ -834,18 +911,53 @@ const WorkspacePage = ({
                   </div>
                 )}
 
-                {(activeRightPanelTab === 'preview') && (
-                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 sm:p-12 text-center h-full flex items-center justify-center">
+                {(activeRightPanelTab === 'steps') && (
+                  <div className="space-y-4">
                     <div>
-                      <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Preview</h3>
-                      <p className="text-sm text-slate-600">
-                        Visual preview will appear here
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Steps</h3>
+                      <p className="text-sm text-slate-600 mb-4">
+                        Click any step to get guidance and mark it complete
                       </p>
                     </div>
+
+                    {/* Steps List */}
+                    <div className="space-y-2">
+                      {steps.map((step) => (
+                        <button
+                          key={step.id}
+                          onClick={() => handleStepClick(step)}
+                          className="w-full bg-white rounded-lg p-4 border border-slate-200 hover:bg-blue-50 hover:border-blue-200 transition-all text-left group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={step.completed}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                setSteps(steps.map(s => 
+                                  s.id === step.id ? { ...s, completed: !s.completed } : s
+                                ));
+                              }}
+                              className="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                            />
+                            <span className={`text-sm ${step.completed ? 'line-through text-slate-400' : 'text-slate-900 group-hover:text-blue-700'}`}>
+                              {step.text}
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Automate Button */}
+                    <button
+                      onClick={() => console.log('Automate clicked')}
+                      className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg hover:from-indigo-700 hover:to-blue-700 transition-all font-medium text-sm flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Automate These Steps
+                    </button>
                   </div>
                 )}
 

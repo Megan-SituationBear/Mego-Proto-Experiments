@@ -45,6 +45,26 @@ function App() {
   const [pinnedTemplates, setPinnedTemplates] = useState<any[]>([]);
   const [activeProjects, setActiveProjects] = useState<any[]>([]);
   const [recentItems, setRecentItems] = useState<any[]>([]); // Track recent work items
+  const [artifacts] = useState<any[]>([ // Track created artifacts
+    {
+      id: 'artifact-1',
+      title: 'User Story: Team Performance Dashboard',
+      type: 'User Story',
+      category: 'Planning',
+      description: 'As a sales manager, I want to view team performance metrics in real-time',
+      dateCreated: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+      workspaceTitle: 'Create a deployment plan'
+    },
+    {
+      id: 'artifact-2',
+      title: 'PerformanceMetricsController.cls',
+      type: 'Apex Class',
+      category: 'Code',
+      description: 'Controller class for retrieving team performance metrics',
+      dateCreated: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+      workspaceTitle: 'Create a deployment plan'
+    }
+  ]);
   
   // Selected item state
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
@@ -406,6 +426,7 @@ function App() {
         pinnedTemplates={pinnedTemplates}
         activeProjects={activeProjects}
         recentItems={recentItems}
+        artifacts={artifacts}
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}
         onNavigateToDashboard={() => setCurrentView('dashboard')}
@@ -447,7 +468,7 @@ function App() {
         userName={userName}
         recentItems={recentItems}
         pinnedItems={pinnedTemplates}
-        artifacts={[]}
+        artifacts={artifacts}
         stats={dashboardStats}
         onViewItem={handleViewTemplate}
         onAvatarClick={() => setCurrentView('home')}

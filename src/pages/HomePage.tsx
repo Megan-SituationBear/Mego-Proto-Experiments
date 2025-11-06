@@ -203,23 +203,24 @@ const HomePage: React.FC<HomePageProps> = ({
         <>
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+            className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 transition-all duration-300"
             onClick={() => setShowMenu(false)}
           />
           
           {/* Drawer Panel */}
           <div 
-            className={`fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+            className={`fixed top-0 right-0 h-full w-96 bg-white border-l border-slate-200 shadow-xl z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
               showMenu ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
             {/* Close Button */}
-            <div className="flex items-center justify-start p-6">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <h2 className="text-lg font-semibold text-slate-900">Menu</h2>
               <button
                 onClick={() => setShowMenu(false)}
-                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-600">
                   <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round"/>
                   <line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round"/>
                 </svg>
@@ -227,33 +228,33 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             {/* Free Plan Banner */}
-            <div className="mx-6 mb-6 p-4 bg-cyan-100 rounded text-center">
-              <p className="text-sm font-semibold text-slate-800">YOU'RE ON THE FREE PLAN</p>
-              <button className="text-sm text-blue-600 font-semibold hover:underline">
-                UPGRADE TO USE TEMPLATES
+            <div className="mx-6 mt-6 mb-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-lg text-center">
+              <p className="text-sm font-semibold text-slate-900 mb-1">Free Plan</p>
+              <button className="text-sm text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                Upgrade to unlock templates →
               </button>
             </div>
 
             {/* Recent */}
-            <div className="px-6 py-3">
-              <div className="flex items-center justify-between mb-2">
+            <div className="px-6 py-4">
+              <div className="flex items-center justify-between mb-3">
                 <button
                   onClick={() => {
                     setShowMenu(false);
                     setActiveTab('recent');
                   }}
-                  className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
+                  className="text-base font-semibold text-slate-900 hover:text-blue-600 transition-colors"
                 >
                   Recent
                 </button>
                 {recentItems.length > 0 && (
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
+                  <span className="text-xs bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-medium">
                     {recentItems.length}
                   </span>
                 )}
               </div>
               {recentItems.length > 0 && (
-                <div className="ml-2 mt-2 space-y-1">
+                <div className="space-y-1">
                   {recentItems.slice(0, 5).map((item, index) => (
                     <button
                       key={item.id || index}
@@ -266,9 +267,9 @@ const HomePage: React.FC<HomePageProps> = ({
                           initialPrompt: `I want to use the "${item.title}" template. ${item.description || ''}`
                         });
                       }}
-                      className="w-full text-left py-2 px-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded transition-colors"
+                      className="w-full text-left py-2.5 px-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                     >
-                      {item.isWorkingOn && <span className="text-green-600 mr-1">●</span>}
+                      {item.isWorkingOn && <span className="text-green-500 mr-2">●</span>}
                       {item.title.substring(0, 35)}{item.title.length > 35 ? '...' : ''}
                     </button>
                   ))}
@@ -278,7 +279,7 @@ const HomePage: React.FC<HomePageProps> = ({
                         setShowMenu(false);
                         setActiveTab('recent');
                       }}
-                      className="w-full text-left py-2 px-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                      className="w-full text-left py-2.5 px-3 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg font-medium transition-colors"
                     >
                       View all {recentItems.length} items →
                     </button>
@@ -288,19 +289,19 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
             
             {/* Pinned */}
-            <div className="px-6 py-3">
+            <div className="px-6 py-4">
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => {
                     setShowMenu(false);
                     setActiveTab('pinned');
                   }}
-                  className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
+                  className="text-base font-semibold text-slate-900 hover:text-blue-600 transition-colors"
                 >
                   Pinned
                 </button>
                 {pinnedTemplates.length > 0 && (
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
+                  <span className="text-xs bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-medium">
                     {pinnedTemplates.length}
                   </span>
                 )}
@@ -308,27 +309,29 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
             
             {/* Artifacts */}
-            <button
-              onClick={() => {
-                setShowMenu(false);
-                setActiveTab('artifacts');
-              }}
-              className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
-            >
-              Artifacts
-            </button>
+            <div className="px-6 py-4">
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  setActiveTab('artifacts');
+                }}
+                className="text-base font-semibold text-slate-900 hover:text-blue-600 transition-colors"
+              >
+                Artifacts
+              </button>
+            </div>
 
             {/* Divider */}
-            <div className="border-t border-slate-200 my-4"></div>
+            <div className="border-t border-slate-100 my-2"></div>
 
             {/* Account Section */}
-            <div className="px-6 space-y-1">
+            <div className="px-6 py-2 space-y-0.5">
               <button
                 onClick={() => {
                   setShowMenu(false);
                   // Navigate to account
                 }}
-                className="w-full text-left py-3 text-base text-slate-900 hover:text-blue-600 transition-colors"
+                className="w-full text-left py-2.5 px-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
               >
                 My Account
               </button>
@@ -338,7 +341,7 @@ const HomePage: React.FC<HomePageProps> = ({
                   setShowMenu(false);
                   // Navigate to billing
                 }}
-                className="w-full text-left py-3 text-base text-slate-900 hover:text-blue-600 transition-colors"
+                className="w-full text-left py-2.5 px-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
               >
                 Billing & Subscriptions
               </button>
@@ -348,23 +351,23 @@ const HomePage: React.FC<HomePageProps> = ({
                   setShowMenu(false);
                   // Navigate to settings
                 }}
-                className="w-full text-left py-3 text-base text-slate-900 hover:text-blue-600 transition-colors"
+                className="w-full text-left py-2.5 px-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
               >
                 Settings
               </button>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-slate-200 my-4"></div>
+            <div className="border-t border-slate-100 my-2"></div>
 
             {/* Logout */}
-            <div className="px-6 pb-6">
+            <div className="px-6 py-4">
               <button
                 onClick={() => {
                   setShowMenu(false);
                   onLogout?.();
                 }}
-                className="w-full text-left py-3 text-base text-slate-900 hover:text-red-600 transition-colors"
+                className="w-full text-left py-2.5 px-3 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors font-medium"
               >
                 Log Out
               </button>

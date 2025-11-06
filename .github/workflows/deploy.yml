@@ -7,6 +7,7 @@ on:
       - master
       - Q4
       - tonight-work
+      - megan-conversation-design
   workflow_dispatch: {}
 
 permissions:

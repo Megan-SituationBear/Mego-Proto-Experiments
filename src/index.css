@@ -31,6 +31,25 @@ body {
   background-color: #f8fafc;
 }
 
+/* Cursor styles for all interactive elements */
+a, button, [role="button"], [onclick], .cursor-pointer {
+  cursor: pointer;
+}
+
+button:disabled, [aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* Global icon styles - all icons slate-500, hover indigo-600 */
+svg {
+  color: rgb(100 116 139); /* slate-500 */
+  transition: color 0.2s ease;
+}
+
+button:hover svg, a:hover svg, [role="button"]:hover svg {
+  color: rgb(79 70 229); /* indigo-600 */
+}
+
 #root {
   min-height: 100vh;
 }
@@ -108,4 +127,16 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(10px);
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Hide textarea scrollbar */
+textarea::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+textarea {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
 }

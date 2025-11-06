@@ -40,17 +40,12 @@ export function AIInputContextPageExample() {
     }, 1200);
   };
 
-  const handleIntegrationsClick = () => {
-    console.log('Integrations modal opened');
-    // You can trigger your integrations modal here
-  };
 
   return (
     <div className="w-full p-6">
       <AIInput
         placeholder="Continue the conversation..."
         onSendMessage={handleSendMessage}
-        onIntegrationsClick={handleIntegrationsClick}
         messages={messages}
         showTypingIndicator={isTyping}
         isLoggedIn={true}

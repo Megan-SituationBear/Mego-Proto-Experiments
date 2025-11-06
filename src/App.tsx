@@ -6,6 +6,7 @@ import OnboardingFlow from './pages/OnboardingFlow';
 import TemplatePage from './pages/TemplatePage';
 import PricingPage from './pages/PricingPage';
 import WorkItemPage from './pages/WorkItemPage';
+import WorkspacePage from './pages/WorkspacePage';
 import type { ConversationMessage } from './components/Conversation';
 import './App.css';
 
@@ -23,16 +24,25 @@ function App() {
   const initialView = viewParam === 'home' ? 'home' : viewParam === 'dashboard' ? 'dashboard' : 'intro';
   
   // Navigation state
-  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'dashboard' | 'onboarding' | 'template' | 'pricing' | 'work-item'>(initialView);
+  const [currentView, setCurrentView] = useState<'intro' | 'home' | 'dashboard' | 'onboarding' | 'template' | 'pricing' | 'work-item' | 'workspace'>(initialView);
   
   // Auth state - if starting at home, treat as logged in
   const [isLoggedIn, setIsLoggedIn] = useState(initialView === 'home');
   const [isSignUpFlow, setIsSignUpFlow] = useState(true); // Track if user is signing up vs logging in
   
+  // Workspace state
+  const [workspaceConfig, setWorkspaceConfig] = useState<{
+    type: 'chat' | 'library-item' | 'artifact';
+    title: string;
+    topic: string;
+    initialPrompt: string;
+    environment?: string;
+  } | null>(null);
+  
   // User data (could be moved to context in future)
   const [userName, setUserName] = useState('Jill');
   const [hasProjects, setHasProjects] = useState(false);
-  const [favoritedTemplates, setFavoritedTemplates] = useState<any[]>([]);
+  const [pinnedTemplates, setPinnedTemplates] = useState<any[]>([]);
   const [activeProjects, setActiveProjects] = useState<any[]>([]);
   const [recentItems, setRecentItems] = useState<any[]>([]); // Track recent work items
   
@@ -201,7 +211,7 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setHasProjects(false);
-    setFavoritedTemplates([]);
+    setPinnedTemplates([]);
     setActiveProjects([]);
     setConversationMessages([]);
     setUserMessageCount(0);
@@ -216,32 +226,40 @@ function App() {
   // ============ Template & Project Handlers ============
   
   const handleViewTemplate = (template: any) => {
-    setSelectedTemplate(template);
-    setWorkItemType('project'); // Templates are always 'project' type
-    setIsDuplicatedTemplate(false); // Reset duplicated state when viewing a template
-    
-    // Add to recent items when viewing
-    const templateWithTimestamp = {
-      ...template,
-      lastAccessed: new Date(),
+    // Add to recent items when viewing (cap at 5)
+    const recentItem = {
+      id: template.id,
+      title: template.title,
+      type: template.type || 'chat',
+      category: template.category || 'General',
+      lastModified: new Date().toLocaleDateString(),
     };
-    setRecentItems(prev => [templateWithTimestamp, ...prev.filter(item => item.id !== template.id)].slice(0, 10));
+    setRecentItems(prev => {
+      const filtered = prev.filter(item => item.title !== template.title);
+      return [recentItem, ...filtered].slice(0, 5);
+    });
     
-    setCurrentView('work-item'); // Navigate to work item template page
+    // Navigate to workspace using the new layout
+    handleNavigateToWorkspace({
+      type: template.type || 'chat',
+      title: template.title,
+      topic: template.category || 'General',
+      initialPrompt: template.title
+    });
   };
 
-  const handleToggleFavorite = (template: any, isFavorited: boolean) => {
-    if (isFavorited) {
-      // Add to favorites
-      setFavoritedTemplates(prev => [...prev, template]);
+  const handleToggleFavorite = (template: any, isPinned: boolean) => {
+    if (isPinned) {
+      // Add to pinned
+      setPinnedTemplates(prev => [...prev, template]);
       setHasProjects(true);
     } else {
-      // Remove from favorites
-      setFavoritedTemplates(prev => 
+      // Remove from pinned
+      setPinnedTemplates(prev => 
         prev.filter(t => t.title !== template.title)
       );
-      // If no more favorites, hide "Your Work" tab
-      if (favoritedTemplates.length === 1) {
+      // If no more pinned items, hide "Your Work" tab
+      if (pinnedTemplates.length === 1) {
         setHasProjects(false);
       }
     }
@@ -263,8 +281,8 @@ function App() {
       setActiveProjects(prev => [...prev, newProject]);
       setHasProjects(true);
       
-      // Add to recent items (shows in hamburger menu)
-      setRecentItems(prev => [newProject, ...prev.filter(item => item.id !== newProject.id)].slice(0, 10)); // Keep last 10
+      // Add to recent items (shows in hamburger menu, cap at 5)
+      setRecentItems(prev => [newProject, ...prev.filter(item => item.id !== newProject.id)].slice(0, 5));
       
       // Set as current template and mark as duplicated
       setSelectedTemplate(newProject);
@@ -303,6 +321,48 @@ function App() {
     }
   };
 
+  const handleNavigateToWorkspace = (config: {
+    type: 'chat' | 'library-item' | 'artifact';
+    title: string;
+    topic: string;
+    initialPrompt: string;
+    environment?: string;
+  }) => {
+    // Add to recent items with timestamp (cap at 5)
+    const recentItem = {
+      id: Date.now().toString(),
+      title: config.title,
+      type: config.type,
+      category: config.topic,
+      lastModified: new Date().toISOString(),
+    };
+    setRecentItems(prev => [recentItem, ...prev.filter(item => item.title !== config.title)].slice(0, 5));
+    
+    setWorkspaceConfig(config);
+    setCurrentView('workspace');
+  };
+
+  const handleSaveWorkspace = (title: string, workspaceData: any) => {
+    // Create a new item for saved workspace
+    const savedWorkspace = {
+      id: Date.now().toString(),
+      title: title,
+      category: workspaceData.topic || 'Workspace',
+      type: workspaceData.type,
+      savedHours: 0,
+      startedAt: workspaceData.createdAt || new Date(),
+      lastAccessed: new Date(),
+      conversationMessages: workspaceData.conversationMessages || [],
+    };
+
+    // Add to active projects (shows in "My Work" on dashboard)
+    setActiveProjects(prev => [savedWorkspace, ...prev]);
+    setHasProjects(true);
+
+    // Add to recent items (shows in hamburger menu on home page, cap at 5)
+    setRecentItems(prev => [savedWorkspace, ...prev.filter(item => item.id !== savedWorkspace.id)].slice(0, 5));
+  };
+
   // ============ Render Views ============
 
   if (currentView === 'intro') {
@@ -310,7 +370,6 @@ function App() {
       <IntroPage 
         onLogin={handleLogin}
         onSignUp={handleSignUp}
-        onViewTemplate={handleViewTemplate}
         onViewPricing={() => setCurrentView('pricing')}
       />
     );
@@ -344,12 +403,33 @@ function App() {
       <HomePage 
         userName={userName}
         hasProjects={hasProjects}
-        favoritedTemplates={favoritedTemplates}
+        pinnedTemplates={pinnedTemplates}
         activeProjects={activeProjects}
         recentItems={recentItems}
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}
-        onViewTemplate={handleViewTemplate}
+        onNavigateToDashboard={() => setCurrentView('dashboard')}
+        onNavigateToWorkspace={handleNavigateToWorkspace}
+      />
+    );
+  }
+
+  if (currentView === 'workspace') {
+    if (!workspaceConfig) {
+      setCurrentView('home');
+      return null;
+    }
+
+    return (
+      <WorkspacePage
+        workspaceType={workspaceConfig.type}
+        workspaceTitle={workspaceConfig.title}
+        workspaceTopic={workspaceConfig.topic}
+        initialPrompt={workspaceConfig.initialPrompt}
+        environment={workspaceConfig.environment}
+        onNavigateHome={() => setCurrentView('home')}
+        onBack={() => setCurrentView('home')}
+        onSaveWorkspace={handleSaveWorkspace}
       />
     );
   }
@@ -365,9 +445,11 @@ function App() {
     return (
       <DashboardPage
         userName={userName}
-        projects={activeProjects}
+        recentItems={recentItems}
+        pinnedItems={pinnedTemplates}
+        artifacts={[]}
         stats={dashboardStats}
-        onViewProject={handleViewTemplate}
+        onViewItem={handleViewTemplate}
         onAvatarClick={() => setCurrentView('home')}
         salesforceOrg={{
           name: 'Acme Corp',
@@ -398,7 +480,7 @@ function App() {
 
   if (currentView === 'work-item') {
     // Check if current template is favorited
-    const isFavorited = favoritedTemplates.some(t => t.title === selectedTemplate?.title);
+    const isPinned = pinnedTemplates.some(t => t.title === selectedTemplate?.title);
     // Check if this is a new project created from conversation
     const isNewProject = hasStarted && conversationMessages.length >= 2;
     
@@ -407,7 +489,7 @@ function App() {
         type={workItemType}
         isLoggedIn={isLoggedIn}
         templateData={selectedTemplate}
-        initialIsFavorite={isFavorited}
+        initialIsPinned={isPinned}
         isNewProject={isNewProject}
         isDuplicatedTemplate={isDuplicatedTemplate}
         onBack={() => {
@@ -419,7 +501,7 @@ function App() {
           setCurrentView(isLoggedIn ? 'home' : 'intro');
         }}
         onUseTemplate={handleUseTemplate}
-        onToggleFavorite={(isFavorited) => handleToggleFavorite(selectedTemplate, isFavorited)}
+        onToggleFavorite={(isPinned) => handleToggleFavorite(selectedTemplate, isPinned)}
         onSignIn={handleLogin}
         conversationMessages={conversationMessages}
         onSendMessage={(text, setTypingIndicator) => handleSendMessage(text, setTypingIndicator, true)}

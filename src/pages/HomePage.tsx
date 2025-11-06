@@ -7,12 +7,18 @@ import { generateAIResponse } from '../utils/aiMessageGenerator';
 interface HomePageProps {
   userName?: string;
   hasProjects?: boolean;
-  favoritedTemplates?: any[];
+  pinnedTemplates?: any[];
   activeProjects?: any[];
   recentItems?: any[];
   onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
-  onViewTemplate?: (template: any) => void;
+  onNavigateToDashboard?: () => void;
+  onNavigateToWorkspace?: (config: {
+    type: 'chat' | 'library-item' | 'artifact';
+    title: string;
+    topic: string;
+    initialPrompt: string;
+  }) => void;
 }
 
 /**
@@ -22,20 +28,21 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({
   userName = 'User',
   hasProjects: _hasProjects = false,
-  favoritedTemplates = [],
+  pinnedTemplates = [],
   activeProjects: _activeProjects = [],
   recentItems = [],
   onCreateProject,
   onLogout,
-  onViewTemplate,
+  onNavigateToDashboard,
+  onNavigateToWorkspace,
 }) => {
   // UI state
-  const [showFindTemplatesModal, setShowFindTemplatesModal] = useState(false);
-  const [selectedGoalsForTemplates, setSelectedGoalsForTemplates] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<'recent' | 'favorites' | 'suggested' | 'work' | 'templates'>(
+  const [showCustomizeActionsModal, setShowCustomizeActionsModal] = useState(false);
+  const [selectedQuickActions, setSelectedQuickActions] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'recent' | 'pinned' | 'artifacts'>(
     recentItems.length > 0 ? 'recent' : 
-    favoritedTemplates.length > 0 ? 'favorites' : 
-    'suggested'
+    pinnedTemplates.length > 0 ? 'pinned' : 
+    'artifacts'
   );
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -43,63 +50,8 @@ const HomePage: React.FC<HomePageProps> = ({
   // Conversation state - managed internally
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [userMessageCount, setUserMessageCount] = useState(0);
-
-  const recommendedTemplates = [
-    {
-      category: "Deploy",
-      categoryColor: "slate" as const,
-      savedHours: 35,
-      title: "Schedule Work Analyze & Fix Before Each Deployment",
-      description: "Automate pre-deployment checks and fixes to catch issues before they reach production. Saves an average of 35 hours per deployment cycle.",
-      favorites: 1234,
-      views: 154
-    },
-    {
-      category: "Test",
-      categoryColor: "green" as const,
-      savedHours: 28,
-      title: "Automated Test Coverage Analysis",
-      description: "Identify gaps in test coverage and generate automated test scripts for your Salesforce org. Ensures 95%+ coverage before deployment.",
-      favorites: 892,
-      views: 89
-    },
-    {
-      category: "Org Magic",
-      categoryColor: "purple" as const,
-      savedHours: 42,
-      title: "Permission Set Audit & Remediation",
-      description: "Review and fix permission set misconfigurations automatically. Reduces security risks while maintaining user access requirements.",
-      favorites: 567,
-      views: 203
-    },
-    {
-      category: "Build",
-      categoryColor: "amber" as const,
-      savedHours: 51,
-      title: "Data Cleanup & Validation Workflow",
-      description: "Automate data quality checks and cleanup processes. Identifies duplicates, missing fields, and validation errors across your org.",
-      favorites: 1089,
-      views: 312
-    },
-    {
-      category: "Plan",
-      categoryColor: "slate" as const,
-      savedHours: 19,
-      title: "API Integration Health Monitor",
-      description: "Track and optimize API usage across your Salesforce org. Prevents limit exceptions and identifies optimization opportunities.",
-      favorites: 723,
-      views: 145
-    },
-    {
-      category: "Org Magic",
-      categoryColor: "indigo" as const,
-      savedHours: 63,
-      title: "Query Optimization & Indexing",
-      description: "Analyze and optimize slow queries in your org. Automatically suggests indexes and query improvements to boost performance.",
-      favorites: 1445,
-      views: 278
-    },
-  ];
+  const [showBuildingWorkspace, setShowBuildingWorkspace] = useState(false);
+  const [workspaceAction, setWorkspaceAction] = useState('');
 
   // Auto-scroll to bottom of conversation
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -205,6 +157,7 @@ const HomePage: React.FC<HomePageProps> = ({
       <TopNav
         showLogo={true}
         logoText="+ COPADO AI"
+        isHomePage={true}
         onLogoClick={() => {
           // Navigate to home - could use window.location for now
           if (window.location.pathname.includes('copado-home-page') || window.location.pathname.includes('app.html')) {
@@ -214,15 +167,18 @@ const HomePage: React.FC<HomePageProps> = ({
           }
         }}
         onLearnClick={() => console.log('Learn clicked')}
-        onIntegrationsClick={() => console.log('Integrations clicked')}
         onPricingClick={() => console.log('Pricing clicked')}
         onSearchClick={() => console.log('Search clicked')}
         onDashboardClick={() => {
-          // Navigate to dashboard - would use proper router in production
-          const url = window.location.pathname.includes('copado-home-page') 
-            ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
-            : '/Mego-Proto-Experiments/app.html?view=dashboard';
-          window.location.href = url;
+          if (onNavigateToDashboard) {
+            onNavigateToDashboard();
+          } else {
+            // Fallback navigation
+            const url = window.location.pathname.includes('copado-home-page') 
+              ? '/Mego-Proto-Experiments/copado-home-page.html?view=dashboard'
+              : '/Mego-Proto-Experiments/app.html?view=dashboard';
+            window.location.href = url;
+          }
         }}
         onAvatarClick={() => setShowMenu(!showMenu)}
         userName={userName}
@@ -282,7 +238,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 <button
                   onClick={() => {
                     setShowMenu(false);
-                    setActiveTab('work');
+                    setActiveTab('recent');
                   }}
                   className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
@@ -301,7 +257,12 @@ const HomePage: React.FC<HomePageProps> = ({
                       key={item.id || index}
                       onClick={() => {
                         setShowMenu(false);
-                        onViewTemplate?.(item);
+                        onNavigateToWorkspace?.({
+                          type: 'library-item',
+                          title: item.title,
+                          topic: item.category || 'Template',
+                          initialPrompt: `I want to use the "${item.title}" template. ${item.description || ''}`
+                        });
                       }}
                       className="w-full text-left py-2 px-3 text-sm text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded transition-colors"
                     >
@@ -313,7 +274,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     <button
                       onClick={() => {
                         setShowMenu(false);
-                        setActiveTab('work');
+                        setActiveTab('recent');
                       }}
                       className="w-full text-left py-2 px-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
                     >
@@ -324,35 +285,35 @@ const HomePage: React.FC<HomePageProps> = ({
               )}
             </div>
             
-            {/* Favorite */}
+            {/* Pinned */}
             <div className="px-6 py-3">
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => {
                     setShowMenu(false);
-                    setActiveTab('work');
+                    setActiveTab('pinned');
                   }}
                   className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
-                  Favorite
+                  Pinned
                 </button>
-                {favoritedTemplates.length > 0 && (
+                {pinnedTemplates.length > 0 && (
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
-                    {favoritedTemplates.length}
+                    {pinnedTemplates.length}
                   </span>
                 )}
               </div>
             </div>
             
-            {/* Templates */}
+            {/* Artifacts */}
             <button
               onClick={() => {
                 setShowMenu(false);
-                setActiveTab('templates');
+                setActiveTab('artifacts');
               }}
               className="w-full text-left px-6 py-3 text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
             >
-              Templates
+              Artifacts
             </button>
 
             {/* Divider */}
@@ -411,20 +372,30 @@ const HomePage: React.FC<HomePageProps> = ({
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-[calc(100vh-120px)] flex flex-col justify-center">
-        <div className="max-w-4xl mx-auto w-full">
-          {/* Welcome Heading */}
-          <div className="text-center mb-8 sm:mb-10">
-            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4 sm:mb-6">
-              Great work comes alive here
-            </h1>
-            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
-              Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
-            </p>
-          </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 relative">
+        {/* Gradient Background */}
+        <div 
+          className="absolute inset-0 top-0 pointer-events-none overflow-hidden"
+          style={{
+            background: 'radial-gradient(ellipse 800px 600px at 50% 0%, rgba(99, 102, 241, 0.15), transparent 50%), radial-gradient(ellipse 600px 400px at 80% 20%, rgba(168, 85, 247, 0.1), transparent 50%)',
+            filter: 'blur(60px)',
+            opacity: 0.7,
+          }}
+        />
+        
+        <div className="max-w-4xl mx-auto w-full relative z-10">
+        {/* Welcome Heading */}
+        <div className="text-center mb-3 py-2">
+          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mb-2 sm:mb-3">
+            Welcome, <span className="text-blue-600">{userName}</span>. Let's go!
+          </p>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900">
+            Great work comes alive here
+          </h1>
+        </div>
 
           {/* Conversation Section */}
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-4 sm:mb-6">
             {/* Conversation Messages */}
             <div className="mb-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
               {conversationMessages.length > 0 && (
@@ -444,34 +415,47 @@ const HomePage: React.FC<HomePageProps> = ({
               <AIInput
                 placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : "Start a conversation or pick up where you left off"}
                 onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
-                onIntegrationsClick={() => console.log('Integrations clicked')}
                 autoFocus={false}
                 isLoggedIn={true}
                 pageContext="home"
                 hasConversation={conversationMessages.length > 0}
                 messages={[]}
                 showTypingIndicator={showCopadoTyping}
+                onNavigateToWorkspace={onNavigateToWorkspace}
               />
             </div>
 
             {/* Quick Actions - Below AI Input */}
             {conversationMessages.length === 0 && (
-              <div className="space-y-3">
-                <p className="text-sm font-medium text-slate-700 mb-4 text-center">Quick actions:</p>
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-slate-700 mb-2 text-center">Quick actions:</p>
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {[
-                    "Show me my Salesforce projects",
-                    "Create a deployment plan",
-                    "Analyze my org health",
-                    "Help with user management",
-                    "Create Automation"
-                  ].map((action, index) => (
+          {[
+            { text: "What did Megan do?", topic: "Strategy" },
+            { text: "What can Copado do?", topic: "Learn" },
+            { text: "Create a deployment plan", topic: "Deploy" },
+            { text: "Analyze my org health", topic: "Analyze" }
+          ].map((action, index) => (
                     <button
                       key={index}
-                      onClick={() => handleSendMessage(action, setShowCopadoTyping)}
-                      className="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-sm"
+                      onClick={() => {
+                        setWorkspaceAction(action.text);
+                        setShowBuildingWorkspace(true);
+                        // After 2 seconds, navigate to workspace page
+                        setTimeout(() => {
+                          if (onNavigateToWorkspace) {
+                            onNavigateToWorkspace({
+                              type: 'chat',
+                              title: action.text,
+                              topic: action.topic,
+                              initialPrompt: action.text
+                            });
+                          }
+                        }, 2000);
+                      }}
+                      className="px-3 py-1.5 bg-white text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md text-xs sm:text-sm"
                     >
-                      {action}
+                      {action.text}
                     </button>
                   ))}
                 </div>
@@ -506,21 +490,14 @@ const HomePage: React.FC<HomePageProps> = ({
               <TabToggle
                 tabs={[
                   { id: 'recent', label: 'Recent', count: recentItems.length },
-                  { id: 'favorites', label: 'Favorites', count: favoritedTemplates.length },
-                  { id: 'suggested', label: 'Suggested Templates' }
+                  { id: 'pinned', label: 'Pinned', count: pinnedTemplates.length },
+                  { id: 'artifacts', label: 'Artifacts' }
                 ]}
                 activeTab={activeTab}
-                onTabChange={(id) => setActiveTab(id as 'recent' | 'favorites' | 'suggested' | 'work' | 'templates')}
+                onTabChange={(id) => setActiveTab(id as 'recent' | 'pinned' | 'artifacts')}
                 size="default"
                 variant="blue"
               />
-              
-              <button
-                onClick={() => setShowFindTemplatesModal(true)}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
-              >
-                Find Templates
-              </button>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -533,72 +510,116 @@ const HomePage: React.FC<HomePageProps> = ({
                     title={item.title}
                     description={item.description || 'Recently accessed'}
                     remixCount={item.views || 0}
-                    favoriteCount={item.favorites || 0}
                     variant="standard"
-                    isFavorited={favoritedTemplates.some(t => t.title === item.title)}
-                    onClick={() => onViewTemplate?.(item)}
+                    onClick={() => {
+                      onNavigateToWorkspace?.({
+                        type: 'library-item',
+                        title: item.title,
+                        topic: item.category || 'Template',
+                        initialPrompt: `I want to use the "${item.title}" template. ${item.description || ''}`
+                      });
+                    }}
                   />
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-slate-500">No recent items yet. Start working on templates to see them here!</p>
+                  <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">No Recent Items Yet</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    Start working on quick actions or templates to see them here
+                  </p>
+                  <button
+                    onClick={() => setShowCustomizeActionsModal(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Customize Quick Actions
+                  </button>
                 </div>
               )
-            ) : activeTab === 'favorites' ? (
-              favoritedTemplates.length > 0 ? (
-                favoritedTemplates.map((template, index) => (
+            ) : activeTab === 'pinned' ? (
+              pinnedTemplates.length > 0 ? (
+                pinnedTemplates.map((template, index) => (
                   <TemplateCard
-                    key={`favorite-${index}`}
+                    key={`pinned-${index}`}
                     category={template.category}
                     title={template.title}
                     description={template.description}
                     remixCount={template.views || 0}
-                    favoriteCount={template.favorites || 0}
                     variant="standard"
-                    isFavorited={true}
-                    onClick={() => onViewTemplate?.(template)}
+                    onClick={() => {
+                      onNavigateToWorkspace?.({
+                        type: 'library-item',
+                        title: template.title,
+                        topic: template.category,
+                        initialPrompt: `I want to use the "${template.title}" template. ${template.description}`
+                      });
+                    }}
                   />
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-slate-500">No favorites yet. Star templates to save them here!</p>
+                  <p className="text-slate-500">No pinned items yet. Pin items to save them here!</p>
                 </div>
               )
             ) : (
-              // Suggested Templates
-              recommendedTemplates.map((template, index) => (
-                <TemplateCard
-                  key={`suggested-${index}`}
-                  category={template.category}
-                  title={template.title}
-                  description={template.description}
-                  remixCount={template.views || 0}
-                  favoriteCount={template.favorites || 0}
-                  variant="standard"
-                  isFavorited={false}
-                  onClick={() => onViewTemplate?.(template)}
-                />
-              ))
+              // Artifacts
+              <div className="col-span-full">
+                <div className="text-center py-12">
+                  <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">No Artifacts Yet</h3>
+                  <p className="text-sm text-slate-600">
+                    Artifacts generated from your workspaces will appear here
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </div>
 
       </main>
 
-      {/* Find Templates Modal - Logged in users get direct access */}
+      {/* Customize Quick Actions Modal - using FindTemplatesModal */}
       <FindTemplatesModal
-        isOpen={showFindTemplatesModal}
+        isOpen={showCustomizeActionsModal}
         onClose={() => {
-          setShowFindTemplatesModal(false);
-          setSelectedGoalsForTemplates([]);
+          setShowCustomizeActionsModal(false);
+          setSelectedQuickActions([]);
         }}
-        onSelectTemplate={(template) => {
-          setShowFindTemplatesModal(false);
-          setSelectedGoalsForTemplates([]);
-          onViewTemplate?.(template);
+        onSelectTemplate={(action) => {
+          setShowCustomizeActionsModal(false);
+          setSelectedQuickActions([]);
+          // Handle quick action selection
+          console.log('Selected action:', action);
         }}
-        initialGoals={selectedGoalsForTemplates}
+        initialGoals={selectedQuickActions}
+        mode="quick-actions"
       />
+
+      {/* Building Workspace Modal */}
+      {showBuildingWorkspace && (
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-2xl p-12 max-w-md w-full mx-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="text-center">
+              {/* Animated spinner */}
+              <div className="relative mb-6">
+                <div className="w-16 h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">Building workspace</h3>
+              <p className="text-slate-600 text-sm">
+                Setting up your {workspaceAction.toLowerCase()} workspace...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

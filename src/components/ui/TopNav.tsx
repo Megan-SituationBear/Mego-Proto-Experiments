@@ -1,11 +1,13 @@
-import { Search, Star, ChevronDown, Check } from 'lucide-react';
+import { Search, ChevronDown, Check } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import LearnTopicModal from './LearnTopicModal';
 
 interface TopNavProps {
   // Left side - Logo and nav items
   showLogo?: boolean;
   logoText?: string;
   onLogoClick?: () => void;
+  isHomePage?: boolean; // If true, shows Copado logo instead of back arrow
   
   // Navigation items
   onProductsClick?: () => void;
@@ -44,7 +46,7 @@ interface TopNavProps {
     color?: 'green' | 'blue' | 'purple' | 'amber' | 'slate' | 'orange';
   };
   onFavorite?: () => void;
-  isFavorited?: boolean;
+  isPinned?: boolean;
   showFavorite?: boolean;
   primaryAction?: {
     label: string;
@@ -62,6 +64,7 @@ const TopNav: React.FC<TopNavProps> = ({
   showLogo = true,
   logoText = '+ COPADO AI',
   onLogoClick,
+  isHomePage = false,
   
   // Navigation items
   onProductsClick,
@@ -89,7 +92,7 @@ const TopNav: React.FC<TopNavProps> = ({
   subtitle,
   categoryBadge,
   onFavorite,
-  isFavorited = false,
+  isPinned = false,
   showFavorite = false,
   primaryAction,
   showAuthButtons = false,
@@ -124,10 +127,14 @@ const TopNav: React.FC<TopNavProps> = ({
   // Dropdown state
   const [integrationsOpen, setIntegrationsOpen] = useState(false);
   const [learnOpen, setLearnOpen] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
+  const [showLearnTopicModal, setShowLearnTopicModal] = useState(false);
   const integrationsRef = useRef<HTMLDivElement>(null);
   const learnRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   
-  // Close dropdowns when clicking outside
+  // Close dropdowns and search when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (integrationsRef.current && !integrationsRef.current.contains(event.target as Node)) {
@@ -136,11 +143,21 @@ const TopNav: React.FC<TopNavProps> = ({
       if (learnRef.current && !learnRef.current.contains(event.target as Node)) {
         setLearnOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setSearchExpanded(false);
+      }
     };
     
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  
+  // Focus input when search expands
+  useEffect(() => {
+    if (searchExpanded && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [searchExpanded]);
   
   const integrations = [
     { id: 'salesforce' as const, name: 'Salesforce', icon: '🏢' },
@@ -168,7 +185,7 @@ const TopNav: React.FC<TopNavProps> = ({
   ];
 
   return (
-    <nav className="bg-white border-b border-slate-100 sticky top-0 z-50">
+    <nav className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Left Side - Logo + Products + Learn OR Legacy Back + Logo */}
@@ -191,11 +208,20 @@ const TopNav: React.FC<TopNavProps> = ({
               <button
                 onClick={onLogoClick}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                title={isHomePage ? "Copado AI" : "Back to Home"}
               >
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  {isHomePage ? (
+                    // Copado logo for home page
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ) : (
+                    // Back arrow for other pages
+                    <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" fill="white" />
+                    </svg>
+                  )}
                 </div>
                 <span className="text-base font-semibold text-slate-900 hidden sm:inline">{logoText}</span>
               </button>
@@ -232,11 +258,11 @@ const TopNav: React.FC<TopNavProps> = ({
                       setIntegrationsOpen(!integrationsOpen);
                       setLearnOpen(false);
                     }}
-                    className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden md:flex py-1 group"
+                    className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden md:flex py-1 group"
                   >
                     Integrations
                     <ChevronDown 
-                      className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-500 group-hover:text-slate-700 ${
+                      className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-500 group-hover:text-indigo-600 ${
                         integrationsOpen ? 'transform rotate-180' : ''
                       }`} 
                     />
@@ -297,11 +323,11 @@ const TopNav: React.FC<TopNavProps> = ({
                       setLearnOpen(!learnOpen);
                       setIntegrationsOpen(false);
                     }}
-                    className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden md:flex py-1 group"
+                    className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden md:flex py-1 group"
                   >
                     Learn
                     <ChevronDown 
-                      className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-500 group-hover:text-slate-700 ${
+                      className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-500 group-hover:text-indigo-600 ${
                         learnOpen ? 'transform rotate-180' : ''
                       }`} 
                     />
@@ -317,7 +343,7 @@ const TopNav: React.FC<TopNavProps> = ({
                             <button
                               key={video.id}
                               onClick={() => {
-                                onLearnClick();
+                                setShowLearnTopicModal(true);
                                 setLearnOpen(false);
                               }}
                               className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
@@ -337,7 +363,7 @@ const TopNav: React.FC<TopNavProps> = ({
                             <button
                               key={howTo.id}
                               onClick={() => {
-                                onLearnClick();
+                                setShowLearnTopicModal(true);
                                 setLearnOpen(false);
                               }}
                               className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
@@ -356,7 +382,7 @@ const TopNav: React.FC<TopNavProps> = ({
                             <button
                               key={item.id}
                               onClick={() => {
-                                onLearnClick();
+                                setShowLearnTopicModal(true);
                                 setLearnOpen(false);
                               }}
                               className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
@@ -377,7 +403,7 @@ const TopNav: React.FC<TopNavProps> = ({
               {onPricingClick && (
                 <button
                   onClick={onPricingClick}
-                  className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden md:block py-1"
+                  className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden md:block py-1"
                 >
                   Pricing
                 </button>
@@ -387,19 +413,44 @@ const TopNav: React.FC<TopNavProps> = ({
 
           {/* Right Side - Search + Dashboard + Avatar */}
           <div className="flex items-center gap-3">
-            {/* Search */}
+            {/* Expandable Search */}
             {onSearchClick && (
-              <button
-                onClick={onSearchClick}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-sm text-slate-600 hover:text-slate-900"
-                title="Search (⌘K)"
-              >
-                <Search className="w-4 h-4" />
-                <span className="hidden sm:inline">Search</span>
-                <kbd className="hidden md:inline-flex items-center px-1.5 py-0.5 text-xs font-semibold text-slate-500 bg-slate-100 border border-slate-200 rounded">
-                  ⌘K
-                </kbd>
-              </button>
+              <div ref={searchRef} className="relative">
+                <div 
+                  className={`flex items-center gap-2 rounded-lg border border-slate-200 bg-white transition-all duration-300 ease-in-out overflow-hidden ${
+                    searchExpanded ? 'w-64' : 'w-10'
+                  }`}
+                >
+                  <button
+                    onClick={() => {
+                      if (!searchExpanded) {
+                        setSearchExpanded(true);
+                      }
+                    }}
+                    className="p-2 text-slate-600 hover:text-slate-900 transition-colors flex-shrink-0"
+                    title="Search (⌘K)"
+                  >
+                    <Search className="w-4 h-4" />
+                  </button>
+                  {searchExpanded && (
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      placeholder="Search..."
+                      className="flex-1 outline-none text-sm text-slate-900 placeholder-slate-500 pr-3 bg-transparent"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          onSearchClick();
+                          setSearchExpanded(false);
+                        }
+                        if (e.key === 'Escape') {
+                          setSearchExpanded(false);
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
             )}
             
             {/* My Dashboard Button */}
@@ -442,20 +493,26 @@ const TopNav: React.FC<TopNavProps> = ({
               </>
             )}
             
-            {/* Legacy Favorite */}
+            {/* Legacy Pin */}
             {showFavorite && onFavorite && (
               <button
                 onClick={onFavorite}
                 className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                aria-label={isPinned ? 'Unpin' : 'Pin'}
               >
-                <Star
+                <svg 
                   className={`w-5 h-5 ${
-                    isFavorited
-                      ? 'fill-yellow-400 text-yellow-400'
+                    isPinned
+                      ? 'fill-green-500 text-green-500'
                       : 'text-slate-400'
                   }`}
-                />
+                  fill={isPinned ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  strokeWidth={isPinned ? 0 : 1.5}
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
               </button>
             )}
             
@@ -476,6 +533,12 @@ const TopNav: React.FC<TopNavProps> = ({
           </div>
         </div>
       </div>
+      
+      {/* Learn Topic Modal */}
+      <LearnTopicModal
+        isOpen={showLearnTopicModal}
+        onClose={() => setShowLearnTopicModal(false)}
+      />
     </nav>
   );
 };

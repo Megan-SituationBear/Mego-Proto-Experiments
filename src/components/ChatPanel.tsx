@@ -45,10 +45,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, hasStart
     // TODO: Implement Confluence integration
   };
 
-  const handleIntegrationsClick = () => {
-    console.log('Integrations clicked');
-    // TODO: Implement integrations modal
-  };
 
   const quickActions = [
     "Show me my Salesforce projects",
@@ -128,7 +124,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, hasStart
           onUploadDoc={handleUploadDoc}
           onExamineSlack={handleExamineSlack}
           onAddConfluence={handleAddConfluence}
-          onIntegrationsClick={handleIntegrationsClick}
           isLoggedIn={true}
           pageContext="workspace"
           hasConversation={messages.length > 0}

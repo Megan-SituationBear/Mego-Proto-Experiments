@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Star, Eye, Clock, Share2, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Eye, Clock, Share2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { AIInput, TopNav } from '../components/ui';
@@ -12,17 +12,17 @@ import { AIInput, TopNav } from '../components/ui';
  * 1. TEMPLATE: NOT LOGGED IN
  *    - User viewing a pre-built template from gallery without being signed in
  *    - Shows: Template details, "View Pricing Plans" CTA, "Sign in" link
- *    - Cannot: Favorite, use template, start conversation
+ *    - Cannot: Pin, use template, start conversation
  * 
  * 2. TEMPLATE: LOGGED IN
  *    - User viewing a pre-built template from gallery while signed in
- *    - Shows: Template details, "Remix" button (opens rename modal), favorite button
- *    - Can: Favorite template, remix to create new project from template
+ *    - Shows: Template details, "Remix" button (opens rename modal), pin button
+ *    - Can: Pin template, remix to create new project from template
  * 
  * 3. PROJECT FROM TEMPLATE: NOT LOGGED IN
  *    - User viewing a shared project (that was created from a template) without being signed in
  *    - Shows: Project details (read-only), "Sign up" CTA
- *    - Cannot: Edit, favorite, or interact with project
+ *    - Cannot: Edit, pin, or interact with project
  * 
  * 4. PROJECT FROM TEMPLATE: LOGGED IN (isDuplicatedTemplate = true)
  *    - User working on their own project created from a template
@@ -44,13 +44,13 @@ import { AIInput, TopNav } from '../components/ui';
 interface WorkItemTemplateProps {
   type: 'project' | 'artifact';
   isLoggedIn?: boolean;
-  initialIsFavorite?: boolean;
+  initialIsPinned?: boolean;
   isNewProject?: boolean;
   isDuplicatedTemplate?: boolean;
   onBack?: () => void;
   onUseTemplate?: (customName?: string) => void;
   onSignIn?: () => void;
-  onToggleFavorite?: (isFavorited: boolean) => void;
+  onToggleFavorite?: (isPinned: boolean) => void;
   onSendMessage?: (text: string, setTypingIndicator?: (show: boolean) => void) => void;
   templateData?: any; // Can pass custom template data
   conversationMessages?: any[];
@@ -60,7 +60,7 @@ interface WorkItemTemplateProps {
 const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   type,
   isLoggedIn = false,
-  initialIsFavorite = false,
+  initialIsPinned = false,
   isNewProject = false,
   isDuplicatedTemplate = false,
   onBack,
@@ -71,7 +71,7 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   templateData: customTemplateData,
   conversationMessages = [],
 }) => {
-  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+  const [isPinned, setIsPinned] = useState(initialIsPinned);
   const [showAllSteps, setShowAllSteps] = useState(false);
   const [showCopadoTyping, setShowCopadoTyping] = useState(false);
   const [selectedContent, setSelectedContent] = useState<{type: 'output' | 'highlight', title: string, content: string} | null>(null);
@@ -80,11 +80,11 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
   const [activeTab, setActiveTab] = useState<'steps' | 'highlights' | 'output'>('steps');
   const [showSalesforceAuthModal, setShowSalesforceAuthModal] = useState(false);
 
-  const handleToggleFavorite = () => {
-    const newFavoriteState = !isFavorite;
-    setIsFavorite(newFavoriteState);
+  const handleTogglePin = () => {
+    const newPinnedState = !isPinned;
+    setIsPinned(newPinnedState);
     if (onToggleFavorite) {
-      onToggleFavorite(newFavoriteState);
+      onToggleFavorite(newPinnedState);
     }
   };
 
@@ -219,8 +219,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           subtitle="Code | Last Modified"
           onBack={onBack}
           showFavorite={true}
-          isFavorited={isFavorite}
-          onFavorite={handleToggleFavorite}
+          isPinned={isPinned}
+          onFavorite={handleTogglePin}
           primaryAction={{
             label: 'Download',
             onClick: () => {
@@ -337,8 +337,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           subtitle={`Template Duplicate | ${getRelativeTime()}`}
           onBack={onBack}
           showFavorite={true}
-          isFavorited={isFavorite}
-          onFavorite={handleToggleFavorite}
+          isPinned={isPinned}
+          onFavorite={handleTogglePin}
           primaryAction={{
             label: 'Share',
             onClick: () => console.log('Share clicked'),
@@ -380,7 +380,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                       onSendMessage(text, setShowCopadoTyping);
                     }
                   }}
-                  onIntegrationsClick={() => console.log('Integrations clicked')}
                   autoFocus={false}
                   isLoggedIn={true}
                   pageContext="workspace"
@@ -495,9 +494,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                 <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
                   <Share2 className="w-5 h-5 text-slate-600" />
                 </button>
-                <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                  <Star className="w-5 h-5 text-slate-600" />
-                </button>
               </div>
             </div>
           </div>
@@ -531,7 +527,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                   onSendMessage(text, setShowCopadoTyping);
                 }
               }}
-              onIntegrationsClick={() => console.log('Integrations clicked')}
               autoFocus={false}
               isLoggedIn={true}
               pageContext="workspace"
@@ -579,8 +574,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           }}
           onBack={onBack}
           showFavorite={true}
-          isFavorited={isFavorite}
-          onFavorite={handleToggleFavorite}
+          isPinned={isPinned}
+          onFavorite={handleTogglePin}
           primaryAction={{
             label: 'Run',
             onClick: () => onUseTemplate?.(), // Opens pricing page when not logged in
@@ -637,10 +632,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                     <>
                       {/* Stats */}
                       <div className="flex items-center gap-4 text-sm text-slate-600 mb-6">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4" />
-                          <span>{templateData.favorites.toLocaleString()}</span>
-                        </div>
                         <div className="flex items-center gap-1">
                           <Eye className="w-4 h-4" />
                           <span>{templateData.views} views</span>
@@ -793,8 +784,8 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
           }}
           onBack={onBack}
           showFavorite={true}
-          isFavorited={isFavorite}
-          onFavorite={handleToggleFavorite}
+          isPinned={isPinned}
+          onFavorite={handleTogglePin}
           primaryAction={{
             label: 'Set up sandboxes to run',
             onClick: () => setShowSalesforceAuthModal(true),
@@ -815,7 +806,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
                 console.log('Template preview message:', text);
                 // Could show a preview of how the template works
               }}
-              onIntegrationsClick={() => console.log('Integrations clicked')}
               autoFocus={false}
               isLoggedIn={true}
               pageContext="workspace"
@@ -831,10 +821,6 @@ const WorkItemTemplate: React.FC<WorkItemTemplateProps> = ({
               <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
                 {/* Stats */}
                 <div className="flex items-center gap-4 text-sm text-slate-600 mb-6">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4" />
-                    <span>{templateData.favorites.toLocaleString()}</span>
-                  </div>
                   <div className="flex items-center gap-1">
                     <Eye className="w-4 h-4" />
                     <span>{templateData.views} views</span>

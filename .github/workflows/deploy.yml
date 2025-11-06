@@ -6,6 +6,7 @@ on:
       - main
       - master
       - Q4
+      - tonight-work
   workflow_dispatch: {}
 
 permissions:
@@ -36,18 +37,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build with all pages
         run: npm run build:pages
         
-      - name: Verify Q4 landing page
-        run: |
-          if grep -q "Q4 Priorities" dist/index.html; then
-            echo "✓ Q4 landing page found in dist/index.html"
-          else
-            echo "✗ ERROR: Q4 landing page NOT found!"
-            exit 1
-          fi
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

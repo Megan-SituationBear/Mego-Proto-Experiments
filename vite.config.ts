@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   // Use repo path for GitHub Pages, but relative for flexibility
   // GitHub Pages URL: https://megan-situationbear.github.io/Mego-Proto-Experiments/
-  base: process.env.NODE_ENV === 'production' ? '/Mego-Proto-Experiments/' : './',
+  base: process.env.NODE_ENV === 'production' ? '/Mego-Proto-Experiments/' : '/',
   // Use app.html as the entry point for both dev and build
   root: '.',
   publicDir: 'public',

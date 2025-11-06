@@ -300,7 +300,7 @@ const HomePage: React.FC<HomePageProps> = ({
               )}
             </div>
             
-            {/* Pinned */}
+            {/* Saved */}
             <div className="px-6 py-4">
               <div className="flex items-center justify-between">
                 <button
@@ -310,7 +310,7 @@ const HomePage: React.FC<HomePageProps> = ({
                   }}
                   className="text-base font-semibold text-slate-900 hover:text-blue-600 transition-colors"
                 >
-                  Pinned
+                  Saved
                 </button>
                 {pinnedTemplates.length > 0 && (
                   <span className="text-xs bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-medium">
@@ -530,7 +530,7 @@ const HomePage: React.FC<HomePageProps> = ({
               <TabToggle
                 tabs={[
                   { id: 'recent', label: 'Recent', count: recentItems.length },
-                  { id: 'pinned', label: 'Pinned', count: pinnedTemplates.length },
+                  { id: 'pinned', label: 'Saved', count: pinnedTemplates.length },
                   { id: 'artifacts', label: 'Artifacts' }
                 ]}
                 activeTab={activeTab}
@@ -627,7 +627,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 </>
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-slate-500">No pinned items yet. Pin items to save them here!</p>
+                  <p className="text-slate-500">No saved items yet. Save items to find them here!</p>
                 </div>
               )
             ) : (

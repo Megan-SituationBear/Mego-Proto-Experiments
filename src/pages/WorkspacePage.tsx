@@ -56,6 +56,11 @@ const WorkspacePage = ({
   
   // Refs for scrolling to messages
   const messageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const conversationContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Scroll state for "back to latest" indicator
+  const [isScrolledUp, setIsScrolledUp] = useState(false);
+  const [showBackToLatest, setShowBackToLatest] = useState(false);
 
   // Determine which tabs to show based on topic
   const topicsWithoutCode = ['Strategy', 'Planning', 'Learn'];
@@ -116,6 +121,58 @@ const WorkspacePage = ({
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isResizing]);
+  
+  // Scroll detection - show "back to latest" button when scrolled up
+  useEffect(() => {
+    const container = conversationContainerRef.current;
+    if (!container) return;
+    
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+      
+      // If scrolled up more than 100px from bottom, show back to latest button
+      const scrolledUp = distanceFromBottom > 100;
+      setIsScrolledUp(scrolledUp);
+      
+      // Add a slight delay before showing the button for better UX
+      if (scrolledUp) {
+        setTimeout(() => setShowBackToLatest(true), 300);
+      } else {
+        setShowBackToLatest(false);
+      }
+    };
+    
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  // Auto-scroll to latest message with smooth animation
+  useEffect(() => {
+    if (conversationMessages.length > 0 && !isScrolledUp) {
+      const container = conversationContainerRef.current;
+      if (container) {
+        // Smooth scroll to bottom with parallax-like easing
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [conversationMessages.length]);
+  
+  // Scroll to latest message handler
+  const scrollToLatest = () => {
+    const container = conversationContainerRef.current;
+    if (container) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth'
+      });
+      setIsScrolledUp(false);
+      setShowBackToLatest(false);
+    }
+  };
 
   // Initialize conversation with the initial prompt if provided
   useState(() => {
@@ -468,14 +525,48 @@ const WorkspacePage = ({
               style={{ width: window.innerWidth >= 1024 ? `${leftPanelWidth}%` : '100%' }}
             >
               {/* Conversation Messages */}
-              <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4">
+              <div 
+                ref={conversationContainerRef}
+                className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4 relative scroll-smooth"
+                style={{
+                  scrollBehavior: 'smooth',
+                }}
+              >
+                {/* Next Step Suggestion - Show if no messages or first message is old */}
+                {conversationMessages.length === 0 && steps.some(s => !s.completed) && (
+                  <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-blue-900 mb-1">Next Step</p>
+                          <p className="text-sm text-blue-800">
+                            {steps.find(s => !s.completed)?.text}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 {conversationMessages.length > 0 ? (
-                  conversationMessages.map((msg) => {
+                  conversationMessages.map((msg, index) => {
                     const isPinned = pinnedMessages.some(m => m.id === msg.id);
+                    const isLatest = index === conversationMessages.length - 1;
                     return (
                       <div 
                         key={msg.id}
                         ref={(el) => { messageRefs.current[msg.id] = el; }}
+                        className={`animate-in fade-in slide-in-from-bottom-4 duration-500 ${
+                          isLatest ? 'ease-out' : ''
+                        }`}
+                        style={{
+                          animationDelay: isLatest ? '0ms' : `${index * 50}ms`,
+                        }}
                       >
                         <div 
                           className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} group`}
@@ -561,6 +652,25 @@ const WorkspacePage = ({
                       </div>
                     </div>
                   </div>
+                )}
+                
+                {/* Back to Latest Button - Floating */}
+                {showBackToLatest && (
+                  <button
+                    onClick={scrollToLatest}
+                    className="fixed bottom-24 right-8 p-3 bg-blue-600 text-white rounded-full shadow-2xl hover:bg-blue-700 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 z-10 group"
+                    title="Jump to latest message"
+                  >
+                    <svg 
+                      className="w-5 h-5 transition-transform group-hover:translate-y-0.5" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                      strokeWidth={2.5}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                  </button>
                 )}
               </div>
 

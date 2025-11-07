@@ -375,7 +375,7 @@ const AIInput: React.FC<AIInputProps> = ({
         return {
           ...baseStyles,
           shadow: 'shadow-xl',
-          borderColor: 'border-indigo-600',
+          borderColor: 'border-slate-300/50',
           bgColor: 'bg-white',
           height: '120px', // Taller default for Make mode
           padding: '20px',
@@ -388,7 +388,7 @@ const AIInput: React.FC<AIInputProps> = ({
         // Focused Make mode: Much taller, darker text, actions on right
         return {
           ...baseStyles,
-          borderColor: 'border-indigo-600',
+          borderColor: 'border-blue-600',
           borderWidth: 'border-2',
           shadow: 'shadow-xl',
           bgColor: 'bg-white',
@@ -406,7 +406,7 @@ const AIInput: React.FC<AIInputProps> = ({
         return {
           ...baseStyles,
           shadow: 'shadow-xl',
-          borderColor: 'border-indigo-600',
+          borderColor: 'border-slate-300/50',
           bgColor: 'bg-white',
           height: '56px', // Shorter default state
           padding: '16px',
@@ -421,7 +421,7 @@ const AIInput: React.FC<AIInputProps> = ({
         // Focused Ask mode: Taller, left-aligned
         return {
           ...baseStyles,
-          borderColor: 'border-indigo-600',
+          borderColor: 'border-blue-600',
           borderWidth: 'border-2', // 2px border
           shadow: 'shadow-xl',
           bgColor: 'bg-white',
@@ -556,8 +556,8 @@ const AIInput: React.FC<AIInputProps> = ({
   
   // Update placeholder based on mode
   const modePlaceholder = inputMode === 'make' 
-    ? 'Make Mode - Great for long instructions, copy and pasting code - press button to submit'
-    : 'How can I help you today?  |  Press \'enter\' to send';
+    ? 'What do you want to create or automate today? Type away, copy + paste large amounts of code. Tip: press \'submit\' to submit.'
+    : 'How do you want to streamline work today? Tip (I won\'t show this again): You\'re in Ask mode, where pressing \'enter\' submits your question.';
   
   // Use custom placeholder if provided (e.g., "Continue the conversation..."), otherwise use mode-based placeholder
   const effectivePlaceholder = placeholder || modePlaceholder;

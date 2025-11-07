@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { AIInput, TemplateCard, TopNav, TabToggle } from '../components/ui';
 import FindTemplatesModal from '../components/ui/FindTemplatesModal';
 import Conversation, { type ConversationMessage } from '../components/Conversation';
-import { generateAIResponse } from '../utils/aiMessageGenerator';
 
 interface HomePageProps {
   userName?: string;
@@ -111,97 +110,34 @@ const HomePage: React.FC<HomePageProps> = ({
       setTypingIndicator(true);
     }
 
-    // Simulate AI response
-    setTimeout(() => {
-      // First response: Ask for more details
-      if (newUserMessageCount === 1) {
-        const aiMessage: ConversationMessage = {
-          id: (Date.now() + 1).toString(),
-          content: {
-            type: 'text',
-            content: `You said "${cleanText}". Got it. Tell me a little more about this, please. What use case are you solving for? Is it for a client or internal project?`
-          },
-          isUser: false,
-          timestamp: new Date()
-        };
-        setConversationMessages(prev => [...prev, aiMessage]);
-        
-        // Hide typing indicator
-        if (setTypingIndicator) {
-          setTypingIndicator(false);
+    // Hide typing indicator
+    if (setTypingIndicator) {
+      setTypingIndicator(false);
+    }
+
+    // Immediately navigate to pricing or workspace on any send
+    if (!isLoggedIn) {
+      // Not logged in - go to pricing
+      if (onNavigateToPricing) {
+        onNavigateToPricing();
+      }
+    } else {
+      // Logged in - show building workspace modal then workspace
+      setShowBuildingWorkspace(true);
+      setWorkspaceAction(cleanText);
+      
+      // Then navigate to workspace
+      setTimeout(() => {
+        if (onNavigateToWorkspace) {
+          onNavigateToWorkspace({
+            type: 'chat',
+            title: `Chat: ${cleanText}`,
+            topic: 'Chat',
+            initialPrompt: cleanText
+          });
         }
-        return;
-      }
-      
-      // Second response: Building workspace
-      if (newUserMessageCount === 2) {
-        const aiMessage: ConversationMessage = {
-          id: (Date.now() + 1).toString(),
-          content: {
-            type: 'text',
-            content: `Understood. Building out a workspace for you for this work...`
-          },
-          isUser: false,
-          timestamp: new Date()
-        };
-        setConversationMessages(prev => [...prev, aiMessage]);
-        
-        // Hide typing indicator
-        if (setTypingIndicator) {
-          setTypingIndicator(false);
-        }
-        
-        // After brief delay, navigate to pricing or workspace
-        setTimeout(() => {
-          if (!isLoggedIn) {
-            // Not logged in - go to pricing
-            if (onNavigateToPricing) {
-              onNavigateToPricing();
-            }
-          } else {
-            // Logged in - show building workspace modal then workspace
-            setShowBuildingWorkspace(true);
-            setWorkspaceAction(conversationMessages[0]?.content?.content || cleanText);
-            
-            // Then navigate to workspace
-            setTimeout(() => {
-              if (onNavigateToWorkspace) {
-                const firstUserMessage = conversationMessages.find(m => m.isUser)?.content;
-                const initialPrompt = typeof firstUserMessage === 'string' 
-                  ? firstUserMessage 
-                  : firstUserMessage?.content || cleanText;
-                
-                onNavigateToWorkspace({
-                  type: 'chat',
-                  title: `Chat: ${initialPrompt}`,
-                  topic: 'Chat',
-                  initialPrompt: initialPrompt
-                });
-              }
-            }, 2000);
-          }
-        }, 1000);
-        
-        return;
-      }
-      
-      // Default response for any other messages
-      const response = generateAIResponse(text, newUserMessageCount);
-      const aiMessage: ConversationMessage = {
-        id: response.conversationMessage.id,
-        content: typeof response.conversationMessage.content === 'string'
-          ? { type: 'text', content: response.conversationMessage.content }
-          : response.conversationMessage.content,
-        isUser: false,
-        timestamp: response.conversationMessage.timestamp
-      };
-      setConversationMessages(prev => [...prev, aiMessage]);
-      
-      // Hide typing indicator
-      if (setTypingIndicator) {
-        setTypingIndicator(false);
-      }
-    }, 1200);
+      }, 2000);
+    }
   };
 
   return (

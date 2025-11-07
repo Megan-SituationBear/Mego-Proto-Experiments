@@ -919,7 +919,7 @@ Can you help me with any questions I have about this setup?`
                 disabled={(!value.trim() && codeSnippets.length === 0) || disabled || loading}
                 className={`p-3.5 rounded-xl transition-all duration-200 ${
                   (value.trim() || codeSnippets.length > 0) && !disabled && !loading
-                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
+                    ? 'bg-blue-600 text-white hover:bg-indigo-600 shadow-lg hover:shadow-xl' 
                     : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                 }`}
                 title="Send message"
@@ -1315,7 +1315,7 @@ Can you help me with any questions I have about this setup?`
                 !disabled && 
                 !loading && 
                 !(inputMode === 'make' && pageContext === 'home' && !selectedEnvironment)
-                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
+                  ? 'bg-blue-600 text-white hover:bg-indigo-600 shadow-lg hover:shadow-xl' 
                   : 'bg-slate-100 text-slate-400 cursor-not-allowed'
               }`}
               title={inputMode === 'make' && pageContext === 'home' && !selectedEnvironment ? "Select an environment to continue" : "Send message"}

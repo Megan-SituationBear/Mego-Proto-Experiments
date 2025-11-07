@@ -33,7 +33,7 @@ const HomePage: React.FC<HomePageProps> = ({
   activeProjects: _activeProjects = [],
   recentItems = [],
   artifacts = [],
-  onCreateProject,
+  onCreateProject: _onCreateProject,
   onLogout,
   onNavigateToDashboard,
   onNavigateToWorkspace,
@@ -109,20 +109,72 @@ const HomePage: React.FC<HomePageProps> = ({
 
     // Simulate AI response
     setTimeout(() => {
-      const response = generateAIResponse(text, newUserMessageCount);
-      
-      // For first response in 'ask' mode, don't add to conversation yet
-      // It will be shown as a placeholder/suggestion below input
+      // First response: Ask for more details
       if (newUserMessageCount === 1) {
+        const aiMessage: ConversationMessage = {
+          id: (Date.now() + 1).toString(),
+          content: {
+            type: 'text',
+            content: `You said "${cleanText}". Got it. Tell me a little more about this, please. What use case are you solving for? Is it for a client or internal project?`
+          },
+          isUser: false,
+          timestamp: new Date()
+        };
+        setConversationMessages(prev => [...prev, aiMessage]);
+        
         // Hide typing indicator
         if (setTypingIndicator) {
           setTypingIndicator(false);
         }
-        // Don't add to conversation messages - will be shown as placeholder
         return;
       }
       
-      // For subsequent responses, add to conversation normally
+      // Second response: Building workspace
+      if (newUserMessageCount === 2) {
+        const aiMessage: ConversationMessage = {
+          id: (Date.now() + 1).toString(),
+          content: {
+            type: 'text',
+            content: `Understood. Building out a workspace for you for this work...`
+          },
+          isUser: false,
+          timestamp: new Date()
+        };
+        setConversationMessages(prev => [...prev, aiMessage]);
+        
+        // Hide typing indicator
+        if (setTypingIndicator) {
+          setTypingIndicator(false);
+        }
+        
+        // After brief delay, show building workspace modal
+        setTimeout(() => {
+          setShowBuildingWorkspace(true);
+          setWorkspaceAction(conversationMessages[0]?.content?.content || cleanText);
+          
+          // Then navigate to workspace
+          setTimeout(() => {
+            if (onNavigateToWorkspace) {
+              const firstUserMessage = conversationMessages.find(m => m.isUser)?.content;
+              const initialPrompt = typeof firstUserMessage === 'string' 
+                ? firstUserMessage 
+                : firstUserMessage?.content || cleanText;
+              
+              onNavigateToWorkspace({
+                type: 'chat',
+                title: `Chat: ${initialPrompt}`,
+                topic: 'Chat',
+                initialPrompt: initialPrompt
+              });
+            }
+          }, 2000);
+        }, 1000);
+        
+        return;
+      }
+      
+      // Default response for any other messages
+      const response = generateAIResponse(text, newUserMessageCount);
       const aiMessage: ConversationMessage = {
         id: response.conversationMessage.id,
         content: typeof response.conversationMessage.content === 'string'
@@ -136,13 +188,6 @@ const HomePage: React.FC<HomePageProps> = ({
       // Hide typing indicator
       if (setTypingIndicator) {
         setTypingIndicator(false);
-      }
-
-      // After second exchange, create project
-      if (newUserMessageCount === 2 && onCreateProject) {
-        setTimeout(() => {
-          onCreateProject(cleanText);
-        }, 1500);
       }
     }, 1200);
   };
@@ -422,7 +467,7 @@ const HomePage: React.FC<HomePageProps> = ({
             {/* AI Input */}
             <div className="mb-4">
               <AIInput
-                placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : "Start a conversation or pick up where you left off"}
+                placeholder={userMessageCount >= 1 ? "Your move" : "Start a conversation or pick up where you left off"}
                 onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
                 autoFocus={false}
                 isLoggedIn={true}
@@ -471,54 +516,15 @@ const HomePage: React.FC<HomePageProps> = ({
               </div>
             )}
 
-            {/* Copado's First Response as Placeholder Suggestions */}
-            {userMessageCount === 1 && conversationMessages.length === 1 && (
-              <div className="space-y-3 mt-4">
-                <div className="text-center">
-                  <p className="text-xs font-medium text-slate-500 mb-3">Copado asks:</p>
-                </div>
-                <button
-                  onClick={() => handleSendMessage("Tell me about the business case", setShowCopadoTyping)}
-                  className="w-full p-4 bg-blue-50 text-blue-900 border border-blue-200 rounded-xl hover:bg-blue-100 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md text-left group"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-                      <span className="text-white text-sm font-semibold">C</span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-blue-900 mb-1">Tell me about the business case</p>
-                      <p className="text-xs text-blue-700">Is it for a customer? Internal? What do you want it to do?</p>
-                    </div>
-                  </div>
-                </button>
-              </div>
-            )}
-
-            {/* Conversation Messages - Below Input */}
-            <div className="mt-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
-              {conversationMessages.length > 0 && (
-                <>
-                  <Conversation
-                    messages={conversationMessages}
-                    showTypingIndicator={showCopadoTyping}
-                    onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
-                  />
-                  <div ref={messagesEndRef} />
-                </>
-              )}
-            </div>
-            
-            {/* Show "Creating workspace..." message after second user message */}
-            {userMessageCount === 2 && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                <div className="flex items-center justify-center gap-2 text-blue-700">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                  </div>
-                  <span className="font-medium">Creating workspace...</span>
-                </div>
+            {/* Conversation Messages - Below Input (connected look) */}
+            {conversationMessages.length > 0 && (
+              <div className="mt-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-4">
+                <Conversation
+                  messages={conversationMessages}
+                  showTypingIndicator={showCopadoTyping}
+                  onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
+                />
+                <div ref={messagesEndRef} />
               </div>
             )}
           </div>

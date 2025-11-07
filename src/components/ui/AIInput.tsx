@@ -2139,10 +2139,18 @@ Can you help me with any questions I have about this setup?`
 
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setSalesforceAuthStep('auth')}
+                    onClick={() => {
+                      // If already connected, just close modal (they came from "Add More")
+                      // Otherwise, go back to auth step
+                      if (salesforceConnected) {
+                        setShowSalesforceModal(false);
+                      } else {
+                        setSalesforceAuthStep('auth');
+                      }
+                    }}
                     className="flex-1 px-4 py-3 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
                   >
-                    Back
+                    {salesforceConnected ? 'Cancel' : 'Back'}
                   </button>
                   <button
                     onClick={() => {
@@ -2152,7 +2160,7 @@ Can you help me with any questions I have about this setup?`
                     disabled={selectedSandboxes.length === 0}
                     className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Connect ({selectedSandboxes.length})
+                    {salesforceConnected ? `Save Changes (${selectedSandboxes.length})` : `Connect (${selectedSandboxes.length})`}
                   </button>
                 </div>
               </>
@@ -2231,28 +2239,42 @@ Can you help me with any questions I have about this setup?`
                 ].filter(sandbox => selectedSandboxes.includes(sandbox.id)).map((sandbox) => (
                   <div
                     key={sandbox.id}
-                    className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200"
+                    className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200 group"
                   >
                     <div>
                       <div className="font-medium text-slate-900 text-sm">{sandbox.name}</div>
                       <div className="text-xs text-slate-600">{sandbox.type}</div>
                     </div>
-                    <div className="w-2 h-2 bg-green-500 rounded-full" title="Connected"></div>
+                    <button
+                      onClick={() => {
+                        const newSandboxes = selectedSandboxes.filter(id => id !== sandbox.id);
+                        setSelectedSandboxes(newSandboxes);
+                        // If no sandboxes left, disconnect
+                        if (newSandboxes.length === 0) {
+                          setSalesforceConnected(false);
+                          setShowManageConnectionModal(false);
+                        }
+                      }}
+                      className="px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                      title="Disconnect this environment"
+                    >
+                      Disconnect
+                    </button>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Disconnect Button */}
+            {/* Add More Button */}
             <button
               onClick={() => {
-                setSalesforceConnected(false);
-                setSelectedSandboxes([]);
                 setShowManageConnectionModal(false);
+                setShowSalesforceModal(true);
+                setSalesforceAuthStep('sandboxes');
               }}
-              className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors"
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
             >
-              Disconnect All
+              Add More Sandboxes
             </button>
           </div>
         </div>,

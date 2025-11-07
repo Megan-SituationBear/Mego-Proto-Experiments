@@ -11,9 +11,11 @@ interface HomePageProps {
   activeProjects?: any[];
   recentItems?: any[];
   artifacts?: any[];
+  isLoggedIn?: boolean;
   onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
   onNavigateToDashboard?: () => void;
+  onNavigateToPricing?: () => void;
   onNavigateToWorkspace?: (config: {
     type: 'chat' | 'library-item' | 'artifact';
     title: string;
@@ -33,9 +35,11 @@ const HomePage: React.FC<HomePageProps> = ({
   activeProjects: _activeProjects = [],
   recentItems = [],
   artifacts = [],
+  isLoggedIn = true,
   onCreateProject: _onCreateProject,
   onLogout,
   onNavigateToDashboard,
+  onNavigateToPricing,
   onNavigateToWorkspace,
 }) => {
   // UI state
@@ -147,27 +151,35 @@ const HomePage: React.FC<HomePageProps> = ({
           setTypingIndicator(false);
         }
         
-        // After brief delay, show building workspace modal
+        // After brief delay, navigate to pricing or workspace
         setTimeout(() => {
-          setShowBuildingWorkspace(true);
-          setWorkspaceAction(conversationMessages[0]?.content?.content || cleanText);
-          
-          // Then navigate to workspace
-          setTimeout(() => {
-            if (onNavigateToWorkspace) {
-              const firstUserMessage = conversationMessages.find(m => m.isUser)?.content;
-              const initialPrompt = typeof firstUserMessage === 'string' 
-                ? firstUserMessage 
-                : firstUserMessage?.content || cleanText;
-              
-              onNavigateToWorkspace({
-                type: 'chat',
-                title: `Chat: ${initialPrompt}`,
-                topic: 'Chat',
-                initialPrompt: initialPrompt
-              });
+          if (!isLoggedIn) {
+            // Not logged in - go to pricing
+            if (onNavigateToPricing) {
+              onNavigateToPricing();
             }
-          }, 2000);
+          } else {
+            // Logged in - show building workspace modal then workspace
+            setShowBuildingWorkspace(true);
+            setWorkspaceAction(conversationMessages[0]?.content?.content || cleanText);
+            
+            // Then navigate to workspace
+            setTimeout(() => {
+              if (onNavigateToWorkspace) {
+                const firstUserMessage = conversationMessages.find(m => m.isUser)?.content;
+                const initialPrompt = typeof firstUserMessage === 'string' 
+                  ? firstUserMessage 
+                  : firstUserMessage?.content || cleanText;
+                
+                onNavigateToWorkspace({
+                  type: 'chat',
+                  title: `Chat: ${initialPrompt}`,
+                  topic: 'Chat',
+                  initialPrompt: initialPrompt
+                });
+              }
+            }, 2000);
+          }
         }, 1000);
         
         return;
@@ -232,7 +244,11 @@ const HomePage: React.FC<HomePageProps> = ({
           }
         }}
         onLearnClick={() => console.log('Learn clicked')}
-        onPricingClick={() => console.log('Pricing clicked')}
+        onPricingClick={() => {
+          if (onNavigateToPricing) {
+            onNavigateToPricing();
+          }
+        }}
         onSearchClick={() => console.log('Search clicked')}
         onDashboardClick={() => {
           if (onNavigateToDashboard) {

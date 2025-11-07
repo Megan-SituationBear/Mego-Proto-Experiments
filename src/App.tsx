@@ -333,14 +333,6 @@ function App() {
     setCurrentView('work-item');
   };
 
-  const handleSelectPlan = (plan: string) => {
-    if (plan === 'Free') {
-      handleLogin();
-    } else {
-      setCurrentView('onboarding');
-    }
-  };
-
   const handleNavigateToWorkspace = (config: {
     type: 'chat' | 'library-item' | 'artifact';
     title: string;
@@ -412,8 +404,11 @@ function App() {
   if (currentView === 'pricing') {
     return (
       <PricingPage
-        onBack={handleBackToIntro}
-        onSelectPlan={handleSelectPlan}
+        onNavigateHome={() => setCurrentView(isLoggedIn ? 'home' : 'intro')}
+        onNavigateToSignup={() => {
+          setIsSignUpFlow(true);
+          setCurrentView('onboarding');
+        }}
       />
     );
   }
@@ -427,10 +422,12 @@ function App() {
         activeProjects={activeProjects}
         recentItems={recentItems}
         artifacts={artifacts}
+        isLoggedIn={isLoggedIn}
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}
         onNavigateToDashboard={() => setCurrentView('dashboard')}
         onNavigateToWorkspace={handleNavigateToWorkspace}
+        onNavigateToPricing={() => setCurrentView('pricing')}
       />
     );
   }

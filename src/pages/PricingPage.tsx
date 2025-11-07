@@ -1,297 +1,216 @@
-import { useState } from 'react';
+import React from 'react';
 
 interface PricingPageProps {
-  onBack: () => void;
-  onSelectPlan: (plan: string) => void;
+  onNavigateHome?: () => void;
+  onNavigateToSignup?: () => void;
 }
 
-const PricingPage: React.FC<PricingPageProps> = ({ onBack, onSelectPlan }) => {
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
-
+const PricingPage: React.FC<PricingPageProps> = ({ 
+  onNavigateHome,
+  onNavigateToSignup 
+}) => {
   const plans = [
     {
       name: 'Free',
-      description: 'Get started with essential features at no cost',
-      monthlyPrice: 0,
-      annualPrice: 0,
+      price: '$0',
+      period: 'forever',
+      description: 'Try Copado AI and explore the basics',
       features: [
-        '3 projects per month',
+        '5 conversations per month',
         'Basic AI assistance',
-        'Community templates',
         'Community support',
+        'Limited templates'
       ],
-      cta: 'Get Started Free',
-      highlighted: false,
+      cta: 'Start Free',
+      highlighted: false
     },
     {
-      name: 'Starter',
-      description: 'Perfect for individuals and small teams getting started',
-      monthlyPrice: 29,
-      annualPrice: 290,
+      name: 'Pro',
+      price: '$29',
+      period: 'per user/month',
+      description: 'Everything you need to supercharge your Salesforce work',
       features: [
-        '5 projects per month',
-        'Basic AI assistance',
-        'Standard templates',
-        'Email support',
-        'Community access',
-      ],
-      cta: 'Start Free Trial',
-      highlighted: false,
-    },
-    {
-      name: 'Projects + Templates',
-      description: 'For growing teams that need advanced features',
-      monthlyPrice: 79,
-      annualPrice: 790,
-      features: [
-        'Unlimited projects',
+        'Unlimited conversations',
         'Advanced AI assistance',
-        'All premium templates',
         'Priority support',
-        'Custom integrations',
-        'Team collaboration',
-        'Advanced analytics',
+        'All templates & quick actions',
+        'Download artifacts',
+        'Pin & save items',
+        'Custom workspaces',
+        'Integration with Salesforce'
       ],
-      cta: 'Start Free Trial',
-      highlighted: true,
+      cta: 'Start 14-day Trial',
+      highlighted: true
     },
     {
       name: 'Enterprise',
-      description: 'For large organizations with custom needs',
-      monthlyPrice: null,
-      annualPrice: null,
+      price: 'Custom',
+      period: 'contact us',
+      description: 'For teams that need advanced features and support',
       features: [
-        'Everything in Professional',
+        'Everything in Pro',
         'Dedicated account manager',
-        'Custom template creation',
-        'SSO & advanced security',
-        'SLA guarantees',
-        'Onboarding & training',
-        'API access',
+        'Custom integrations',
+        'Advanced security',
+        'SLA guarantee',
+        'Team collaboration',
+        'Custom AI training',
+        'Audit logs'
       ],
       cta: 'Contact Sales',
-      highlighted: false,
-    },
+      highlighted: false
+    }
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Top Navigation */}
-      <nav className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Left: Back button and Logo */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={onBack}
-                className="p-2 rounded hover:bg-slate-100 transition-colors"
-                aria-label="Back"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18.178 8.00001C16.412 6.23401 13.549 6.23401 11.784 8.00001L12 8.21601L12.216 8.00001C13.982 6.23401 16.845 6.23401 18.611 8.00001C20.377 9.76601 20.377 12.629 18.611 14.394C16.845 16.16 13.982 16.16 12.216 14.394L12 14.178L11.784 14.394C10.018 16.16 7.15497 16.16 5.38897 14.394C3.62297 12.628 3.62297 9.76601 5.38897 8.00001C7.15497 6.23401 10.018 6.23401 11.784 8.00001L12 8.21601L11.784 8.00001C10.018 6.23401 7.15497 6.23401 5.38897 8.00001C3.62297 9.76601 3.62297 12.629 5.38897 14.394C7.15497 16.16 10.018 16.16 11.784 14.394L12 14.178L12.216 14.394C13.982 16.16 16.845 16.16 18.611 14.394C20.377 12.628 20.377 9.76601 18.611 8.00001C16.845 6.23401 13.982 6.23401 12.216 8.00001" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+      {/* Header */}
+      <div className="bg-white border-b border-slate-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={onNavigateHome}
+              className="flex items-center gap-2 text-slate-900 hover:text-blue-600 transition-colors"
+            >
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-bold">C</span>
               </div>
-              <span className="text-lg font-bold text-slate-900">Copado AI</span>
-            </div>
+              <span className="font-bold text-lg">+ COPADO AI</span>
+            </button>
+            
+            <button
+              onClick={onNavigateHome}
+              className="text-slate-600 hover:text-slate-900 text-sm font-medium"
+            >
+              Back to Home
+            </button>
           </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <h1 className="text-5xl font-bold text-slate-900 mb-4">
-          Choose Your Plan
-        </h1>
-        <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
-          Start saving time today with Copado AI. All plans include a 14-day free trial.
-        </p>
-
-        {/* Billing Toggle */}
-        <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
-          <button
-            onClick={() => setBillingCycle('monthly')}
-            className={`px-6 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
-              billingCycle === 'monthly'
-                ? 'bg-blue-600 text-white shadow-sm hover:bg-indigo-600 hover:shadow-md'
-                : 'text-slate-700 hover:bg-slate-50'
-            }`}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setBillingCycle('annual')}
-            className={`px-6 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
-              billingCycle === 'annual'
-                ? 'bg-blue-600 text-white shadow-sm hover:bg-indigo-600 hover:shadow-md'
-                : 'text-slate-700 hover:bg-slate-50'
-            }`}
-          >
-            Annual
-            <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-              Save 17%
-            </span>
-          </button>
         </div>
       </div>
 
+      {/* Hero Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 mb-4">
+          Choose Your Plan
+        </h1>
+        <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
+          Get started with Copado AI and transform the way you work with Salesforce
+        </p>
+      </div>
+
       {/* Pricing Cards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {plans.map((plan, index) => (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          {plans.map((plan) => (
             <div
-              key={index}
-              className={`relative bg-white rounded-2xl shadow-lg overflow-hidden transition-all hover:shadow-2xl ${
-                plan.highlighted ? 'ring-2 ring-blue-600 scale-105' : ''
+              key={plan.name}
+              className={`rounded-2xl p-8 ${
+                plan.highlighted
+                  ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-2xl scale-105 border-4 border-blue-400'
+                  : 'bg-white border-2 border-slate-200 shadow-lg'
               }`}
             >
-              {/* Popular Badge */}
               {plan.highlighted && (
-                <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-semibold px-4 py-1 rounded-bl-lg">
-                  Most Popular
+                <div className="inline-block px-3 py-1 bg-yellow-400 text-blue-900 text-xs font-bold rounded-full mb-4">
+                  MOST POPULAR
                 </div>
               )}
-
-              <div className="p-8">
-                {/* Plan Name */}
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                  {plan.name}
-                </h3>
-                <p className="text-sm text-slate-600 mb-6">
-                  {plan.description}
-                </p>
-
-                {/* Price */}
-                <div className="mb-6">
-                  {plan.monthlyPrice !== null ? (
-                    <div>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-5xl font-bold text-slate-900">
-                          ${plan.monthlyPrice === 0 ? '0' : (billingCycle === 'monthly' ? plan.monthlyPrice : Math.floor(plan.annualPrice / 12))}
-                        </span>
-                        <span className="text-slate-600">/month</span>
-                      </div>
-                      {billingCycle === 'annual' && plan.monthlyPrice > 0 && (
-                        <p className="text-sm text-slate-500 mt-1">
-                          ${plan.annualPrice} billed annually
-                        </p>
-                      )}
-                      {plan.monthlyPrice === 0 && (
-                        <p className="text-sm text-slate-500 mt-1">
-                          Forever free
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-3xl font-bold text-slate-900">
-                      Custom Pricing
-                    </div>
-                  )}
-                </div>
-
-                {/* CTA Button */}
-                <button
-                  onClick={() => onSelectPlan(plan.name)}
-                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-all mb-6 cursor-pointer ${
-                    plan.highlighted
-                      ? 'bg-blue-600 text-white shadow-sm hover:bg-indigo-600 hover:shadow-md'
-                      : 'bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50'
-                  }`}
-                >
-                  {plan.cta}
-                </button>
-
-                {/* Features List */}
-                <div className="space-y-3">
-                  <p className="text-sm font-semibold text-slate-900 mb-3">
-                    What's included:
-                  </p>
-                  {plan.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-start gap-3">
-                      <svg
-                        className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <span className="text-sm text-slate-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
+              
+              <h3 className={`text-2xl font-bold mb-2 ${plan.highlighted ? 'text-white' : 'text-slate-900'}`}>
+                {plan.name}
+              </h3>
+              
+              <div className="mb-4">
+                <span className={`text-4xl font-bold ${plan.highlighted ? 'text-white' : 'text-slate-900'}`}>
+                  {plan.price}
+                </span>
+                <span className={`text-sm ml-2 ${plan.highlighted ? 'text-blue-100' : 'text-slate-500'}`}>
+                  {plan.period}
+                </span>
               </div>
+              
+              <p className={`text-sm mb-6 ${plan.highlighted ? 'text-blue-100' : 'text-slate-600'}`}>
+                {plan.description}
+              </p>
+              
+              <button
+                onClick={() => {
+                  if (plan.name === 'Free' || plan.name === 'Pro') {
+                    onNavigateToSignup?.();
+                  } else {
+                    window.open('mailto:sales@copado.com', '_blank');
+                  }
+                }}
+                className={`w-full py-3 px-6 rounded-lg font-semibold text-sm transition-all mb-6 ${
+                  plan.highlighted
+                    ? 'bg-white text-blue-600 hover:bg-blue-50 shadow-lg'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                {plan.cta}
+              </button>
+              
+              <ul className="space-y-3">
+                {plan.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <svg
+                      className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                        plan.highlighted ? 'text-blue-200' : 'text-green-500'
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span className={`text-sm ${plan.highlighted ? 'text-blue-100' : 'text-slate-600'}`}>
+                      {feature}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
       </div>
 
       {/* FAQ Section */}
-      <div className="bg-slate-50 border-t border-slate-200 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                Can I switch plans later?
-              </h3>
-              <p className="text-slate-600">
-                Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                What payment methods do you accept?
-              </h3>
-              <p className="text-slate-600">
-                We accept all major credit cards, PayPal, and wire transfers for Enterprise customers.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                Is there a free trial?
-              </h3>
-              <p className="text-slate-600">
-                Yes! All plans come with a 14-day free trial. No credit card required to start.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                What happens after my trial ends?
-              </h3>
-              <p className="text-slate-600">
-                You'll be automatically enrolled in your selected plan. You can cancel anytime before the trial ends with no charges.
-              </p>
-            </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
+        <h2 className="text-3xl font-bold text-slate-900 text-center mb-12">
+          Frequently Asked Questions
+        </h2>
+        
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+              Can I switch plans later?
+            </h3>
+            <p className="text-slate-600">
+              Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.
+            </p>
           </div>
-        </div>
-      </div>
-
-      {/* Footer CTA */}
-      <div className="bg-white border-t border-slate-200 py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">
-            Still have questions?
-          </h2>
-          <p className="text-slate-600 mb-6">
-            Our team is here to help you find the perfect plan for your needs.
-          </p>
-          <div className="flex justify-center gap-4">
-            <button className="px-6 py-2 rounded border border-slate-300 text-slate-900 text-sm font-medium hover:bg-slate-50 transition-colors cursor-pointer">
-              Contact Sales
-            </button>
-            <button className="px-6 py-2 rounded bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-600 hover:shadow-md transition-all cursor-pointer">
-              Schedule a Demo
-            </button>
+          
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+              What happens after my trial ends?
+            </h3>
+            <p className="text-slate-600">
+              Your 14-day Pro trial is completely free. After it ends, you'll be moved to the Free plan unless you choose to subscribe.
+            </p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+              Do you offer refunds?
+            </h3>
+            <p className="text-slate-600">
+              Yes, we offer a 30-day money-back guarantee. If you're not satisfied, contact us for a full refund.
+            </p>
           </div>
         </div>
       </div>

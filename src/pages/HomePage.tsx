@@ -404,6 +404,68 @@ const HomePage: React.FC<HomePageProps> = ({
         />
         
         <div className="max-w-4xl mx-auto w-full relative z-10">
+        {/* Animated Logo */}
+        <div className="flex justify-center mb-6">
+          <div className="group cursor-pointer">
+            <svg 
+              width="80" 
+              height="80" 
+              viewBox="0 0 80 80" 
+              className="transition-transform duration-300 group-hover:scale-105"
+            >
+              <defs>
+                {/* Gradient for the circle */}
+                <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: '#3b82f6', stopOpacity: 1 }} />
+                  <stop offset="50%" style={{ stopColor: '#6366f1', stopOpacity: 1 }} />
+                  <stop offset="100%" style={{ stopColor: '#8b5cf6', stopOpacity: 1 }} />
+                </linearGradient>
+              </defs>
+              
+              {/* Circle background */}
+              <circle 
+                cx="40" 
+                cy="40" 
+                r="36" 
+                fill="url(#logoGradient)"
+                className="transition-all duration-300"
+              />
+              
+              {/* Eyes - Normal state */}
+              <g className="group-hover:opacity-0 transition-opacity duration-300">
+                {/* Left eye */}
+                <circle cx="28" cy="35" r="4" fill="white" />
+                {/* Right eye */}
+                <circle cx="52" cy="35" r="4" fill="white" />
+              </g>
+              
+              {/* Winking eye - Hover state */}
+              <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {/* Left eye winking (curved line) */}
+                <path 
+                  d="M 23 35 Q 28 38 33 35" 
+                  stroke="white" 
+                  strokeWidth="2.5" 
+                  strokeLinecap="round"
+                  fill="none"
+                />
+                {/* Right eye open */}
+                <circle cx="52" cy="35" r="4" fill="white" />
+              </g>
+              
+              {/* Smile */}
+              <path 
+                d="M 25 50 Q 40 60 55 50" 
+                stroke="white" 
+                strokeWidth="3" 
+                strokeLinecap="round"
+                fill="none"
+                className="transition-all duration-300 group-hover:translate-y-0.5"
+              />
+            </svg>
+          </div>
+        </div>
+        
         {/* Welcome Heading */}
         <div className="text-center mb-3 py-2">
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mb-2 sm:mb-3">

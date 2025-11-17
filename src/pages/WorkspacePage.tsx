@@ -453,7 +453,7 @@ const WorkspacePage = ({
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Workspace Header */}
-      <div className="bg-white border-b border-slate-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4">
+      <div className="bg-white border-b border-slate-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-50">
         <div className="max-w-full mx-auto flex items-center justify-between">
           {/* Left: Back Button */}
           <button

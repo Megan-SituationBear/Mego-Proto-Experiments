@@ -39,37 +39,18 @@ export const meganConversation: ConversationConfig = {
     },
     {
       id: '2',
-      content: "I'll analyze Megan's recent work across all your connected systems. Let me pull that together for you...",
-      isUser: false,
-      timestamp: new Date()
-    },
-    {
-      id: '3',
-      content: "Here's what Megan accomplished:\n\n**This Week:**\n• Redesigned the AI input component with Ask/Make modes\n• Implemented environment selection for Make mode\n• Built out workspace navigation system\n• Created dashboard with Recent/Pinned/Artifacts tabs\n\n**Key Contributions:**\n• Replaced Favorites with Pinned (pin icon)\n• Added conversation tracking (5-item recent cap)\n• Integrated FindTemplatesModal for quick actions\n• Improved dashboard layout with inline stats\n\nWould you like me to drill into any specific area?",
+      content: "First off, in this effort, Megan:\n\n• Redesigned the AI input component with Ask/Make modes\n• Moved settings that pertain to chat to the AI component\n• Made the AI input self contained and contextual\n• Adjusted the information architecture to be more intuitive\n• Gave people a way to get to things quickly by bookmarking\n• Added Learn and Pricing to top center on main pages\n• Added Dashboard next to a person's name (it's my stuff!)",
       isUser: false,
       timestamp: new Date(),
       options: [
-        "Tell me about the AI Input redesign",
-        "Tell me about Dashboard improvements",
-        "Tell me about Environment selection",
-        "I don't care"
+        "Why??",
+        "What is the result of making the AI component self contained?",
+        "I'm so bored: entertain me"
       ]
     }
   ],
   
-  handleResponse: (userText: string, currentMessages, _context, _isAuthenticated = true): ConversationMessage | ConversationMessage[] | null => {
-    // Track which topics have been explored
-    const exploredTopics = new Set<string>();
-    currentMessages.forEach(msg => {
-      if (msg.content.includes("Chat Design 1")) exploredTopics.add("chat1");
-      if (msg.content.includes("Chat Design 2")) exploredTopics.add("chat2");
-      if (msg.content.includes("Chat Design 3")) exploredTopics.add("chat3");
-      if (msg.content.includes("Onboarding")) exploredTopics.add("onboarding");
-      if (msg.content.includes("Access w/o Overbuilding")) exploredTopics.add("access");
-      if (msg.content.includes("Information Architecture")) exploredTopics.add("ia");
-    });
-    
-    const remainingTopics = 6 - exploredTopics.size;
+  handleResponse: (userText: string, _currentMessages, _context, _isAuthenticated = true): ConversationMessage | ConversationMessage[] | null => {
     
     // Chat Design 1: Self-contained contextual chat
     if (userText === "Tell me about Chat Design 1") {

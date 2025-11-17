@@ -178,10 +178,10 @@ const TopNav: React.FC<TopNavProps> = ({
     { id: 'testing', title: 'Testing Best Practices' },
   ];
   
-  const learnLibrary = [
-    { id: 'template1', title: 'Salesforce Project Template' },
-    { id: 'template2', title: 'CI/CD Pipeline Setup' },
-    { id: 'template3', title: 'Org Health Checklist' },
+  const forYouItems = [
+    { id: 'orgs', title: 'Set Up Your Orgs', highlighted: true },
+    { id: 'template1', title: 'Salesforce Project Template', highlighted: false },
+    { id: 'template2', title: 'CI/CD Pipeline Setup', highlighted: false },
   ];
 
   return (
@@ -336,6 +336,33 @@ const TopNav: React.FC<TopNavProps> = ({
                   {learnOpen && (
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-[700px] bg-white rounded-xl shadow-2xl border border-slate-200 p-6 z-50">
                       <div className="grid grid-cols-3 gap-6">
+                        {/* For You Column - FIRST */}
+                        <div className="flex flex-col gap-3">
+                          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">For You</h3>
+                          {forYouItems.map((item) => (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                setShowLearnTopicModal(true);
+                                setLearnOpen(false);
+                              }}
+                              className={`text-left p-3 rounded-lg border transition-all group ${
+                                item.highlighted
+                                  ? 'bg-green-50 border-green-200 hover:bg-green-100 hover:border-green-300'
+                                  : 'bg-slate-50 border-slate-100 hover:bg-slate-100 hover:border-slate-200'
+                              }`}
+                            >
+                              <div className={`font-medium text-sm transition-colors ${
+                                item.highlighted
+                                  ? 'text-green-900 group-hover:text-green-700'
+                                  : 'text-slate-900 group-hover:text-blue-600'
+                              }`}>
+                                {item.title}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        
                         {/* Videos Column */}
                         <div className="flex flex-col gap-3">
                           <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Videos</h3>
@@ -370,25 +397,6 @@ const TopNav: React.FC<TopNavProps> = ({
                             >
                               <div className="font-medium text-sm text-slate-900 group-hover:text-blue-600 transition-colors">
                                 {howTo.title}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                        
-                        {/* Library Items For You Column */}
-                        <div className="flex flex-col gap-3">
-                          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Library Items For You</h3>
-                          {learnLibrary.map((item) => (
-                            <button
-                              key={item.id}
-                              onClick={() => {
-                                setShowLearnTopicModal(true);
-                                setLearnOpen(false);
-                              }}
-                              className="text-left p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all group"
-                            >
-                              <div className="font-medium text-sm text-slate-900 group-hover:text-blue-600 transition-colors">
-                                {item.title}
                               </div>
                             </button>
                           ))}

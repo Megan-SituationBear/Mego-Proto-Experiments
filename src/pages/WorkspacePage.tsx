@@ -4,7 +4,7 @@ import PricingModal from '../components/ui/PricingModal';
 import type { ConversationMessage } from '../components/ui/AIInput';
 import { meganConversation, copadoCanDoConversation } from '../conversations';
 
-type WorkspaceType = 'chat' | 'library-item' | 'artifact';
+type WorkspaceType = 'chat' | 'library-item' | 'artifact' | 'code';
 
 interface WorkspacePageProps {
   workspaceType?: WorkspaceType;
@@ -19,7 +19,7 @@ interface WorkspacePageProps {
 }
 
 const WorkspacePage = ({
-  workspaceType: _workspaceType = 'chat',
+  workspaceType = 'chat',
   workspaceTitle = 'Workspace',
   workspaceTopic = 'General',
   initialPrompt = '',
@@ -31,6 +31,7 @@ const WorkspacePage = ({
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
   const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'steps' | 'code' | 'artifacts'>('overview');
   const [showPricingModal, setShowPricingModal] = useState(false);
   const [steps, setSteps] = useState<Array<{ id: string; text: string; completed: boolean }>>([
@@ -61,13 +62,49 @@ const WorkspacePage = ({
   // Scroll state for "back to latest" indicator
   const [isScrolledUp, setIsScrolledUp] = useState(false);
   const [showBackToLatest, setShowBackToLatest] = useState(false);
+  
+  // Sample code for code workspaces
+  const [codeContent] = useState(`public class AccountTriggerHandler {
+    public static void handleBeforeInsert(List<Account> newAccounts) {
+        for (Account acc : newAccounts) {
+            if (acc.Type == null) {
+                acc.Type = 'Prospect';
+            }
+            if (acc.Industry == null) {
+                acc.Industry = 'Other';
+            }
+        }
+    }
+    
+    public static void handleAfterInsert(List<Account> newAccounts) {
+        List<Contact> contactsToInsert = new List<Contact>();
+        
+        for (Account acc : newAccounts) {
+            Contact primaryContact = new Contact(
+                FirstName = 'Primary',
+                LastName = 'Contact',
+                AccountId = acc.Id,
+                Email = 'primary@' + acc.Name.deleteWhitespace().toLowerCase() + '.com'
+            );
+            contactsToInsert.add(primaryContact);
+        }
+        
+        if (!contactsToInsert.isEmpty()) {
+            insert contactsToInsert;
+        }
+    }
+}`);
 
   // Determine which tabs to show based on topic
   const topicsWithoutCode = ['Strategy', 'Planning', 'Learn'];
   const showCodeTab = !topicsWithoutCode.includes(workspaceTopic);
 
-  // Determine primary action based on topic
+  // Determine primary action based on workspace type and topic
   const getPrimaryAction = () => {
+    // Code workspaces always show Download
+    if (workspaceType === 'code') {
+      return { label: 'Download', icon: '↓' };
+    }
     const topicsWithDownload = ['Learn', 'Strategy', 'Planning'];
     if (topicsWithDownload.includes(workspaceTopic)) {
       return { label: 'Download', icon: '↓' };
@@ -76,6 +113,13 @@ const WorkspacePage = ({
   };
 
   const primaryAction = getPrimaryAction();
+  
+  // Copy code handler
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(codeContent);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
 
   const handlePrimaryAction = () => {
     // Show pricing modal for all primary actions
@@ -533,7 +577,7 @@ const WorkspacePage = ({
                 }}
               >
                 {/* Next Step Suggestion - Show if no messages or first message is old */}
-                {conversationMessages.length === 0 && steps.some(s => !s.completed) && (
+                {conversationMessages.length === 0 && steps.some(s => !s.completed) && workspaceType !== 'code' && (
                   <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
                     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 shadow-sm">
                       <div className="flex items-start gap-3">
@@ -548,6 +592,48 @@ const WorkspacePage = ({
                             {steps.find(s => !s.completed)?.text}
                           </p>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Code Display - For code workspaces */}
+                {workspaceType === 'code' && (
+                  <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                      {/* Copy Button Header */}
+                      <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
+                        <span className="text-xs font-medium text-slate-600">AccountTriggerHandler.cls</span>
+                        <button
+                          onClick={handleCopyCode}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                            copiedCode 
+                              ? 'bg-green-100 text-green-700' 
+                              : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400'
+                          }`}
+                        >
+                          {copiedCode ? (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                              Copy
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      {/* Code Content */}
+                      <div className="p-4 bg-slate-900 overflow-x-auto">
+                        <pre className="text-sm text-slate-100 font-mono leading-relaxed">
+                          <code>{codeContent}</code>
+                        </pre>
                       </div>
                     </div>
                   </div>

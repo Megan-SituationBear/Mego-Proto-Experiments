@@ -198,14 +198,17 @@ const WorkspacePage = ({
     if (conversationMessages.length > 0 && !isScrolledUp) {
       const container = conversationContainerRef.current;
       if (container) {
-        // Smooth scroll to bottom with parallax-like easing
-        container.scrollTo({
-          top: container.scrollHeight,
-          behavior: 'smooth'
-        });
+        // Delay slightly to allow message animation to start
+        setTimeout(() => {
+          // Smooth scroll to bottom with graceful easing
+          container.scrollTo({
+            top: container.scrollHeight,
+            behavior: 'smooth'
+          });
+        }, 150);
       }
     }
-  }, [conversationMessages.length]);
+  }, [conversationMessages.length, isScrolledUp]);
   
   // Scroll to latest message handler
   const scrollToLatest = () => {
@@ -649,11 +652,11 @@ const WorkspacePage = ({
                       <div 
                         key={msg.id}
                         ref={(el) => { messageRefs.current[msg.id] = el; }}
-                        className={`animate-in fade-in slide-in-from-bottom-4 duration-500 ${
-                          isLatest ? 'ease-out' : ''
+                        className={`animate-in fade-in slide-in-from-bottom-8 duration-700 ${
+                          isLatest ? 'ease-[cubic-bezier(0.34,1.56,0.64,1)]' : ''
                         }`}
                         style={{
-                          animationDelay: isLatest ? '0ms' : `${index * 50}ms`,
+                          animationDelay: isLatest ? '100ms' : `${index * 30}ms`,
                         }}
                       >
                         <div 
@@ -762,8 +765,8 @@ const WorkspacePage = ({
                 )}
               </div>
 
-              {/* AI Input - Locked at Bottom */}
-              <div className="border-t border-slate-200 p-3 sm:p-4 bg-white sticky bottom-0">
+              {/* AI Input - Sticky at Bottom Left */}
+              <div className="border-t border-slate-200 p-3 sm:p-4 bg-white sticky bottom-0 z-10">
                 <AIInput
                   onSendMessage={handleSendMessage}
                   placeholder="your move ..."

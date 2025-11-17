@@ -35,11 +35,13 @@ const WorkspacePage = ({
   const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'steps' | 'code' | 'artifacts'>('overview');
   const [showPricingModal, setShowPricingModal] = useState(false);
   const [steps, setSteps] = useState<Array<{ id: string; text: string; completed: boolean }>>([
-    { id: '1', text: 'Review current org configuration', completed: false },
-    { id: '2', text: 'Run dependency analysis', completed: false },
-    { id: '3', text: 'Create deployment package', completed: false },
-    { id: '4', text: 'Execute pre-deployment tests', completed: false },
-    { id: '5', text: 'Deploy to staging environment', completed: false }
+    { id: '1', text: 'Analyzed current architecture issues', completed: true },
+    { id: '2', text: 'Designed to be where people work', completed: true },
+    { id: '3', text: 'Considered accessibility, readability and concepts for a MVP', completed: true },
+    { id: '4', text: 'Made component designs using Tailwinds in Figma and some in code (there\'s a reason)', completed: true },
+    { id: '5', text: 'Worked AI first on designs with Tiger Team. Learned from them. Has takeaways for hybrid AI - Human centered design process', completed: true },
+    { id: '6', text: 'Failed to catch up with team in motion - AI vs Figma tension', completed: true },
+    { id: '7', text: 'Prototyped : interacting before logging in, pricing flow, conversation vs make, AI component ability to get back to artifacts and anything', completed: true }
   ]);
   const [leftPanelWidth, setLeftPanelWidth] = useState(75); // percentage - 3/4 of page by default
   const [isResizing, setIsResizing] = useState(false);

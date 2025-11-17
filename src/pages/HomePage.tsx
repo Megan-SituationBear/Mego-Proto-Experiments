@@ -408,8 +408,8 @@ const HomePage: React.FC<HomePageProps> = ({
         <div className="flex justify-center mb-6">
           <div className="group cursor-pointer">
             <svg 
-              width="80" 
-              height="80" 
+              width="120" 
+              height="120" 
               viewBox="0 0 80 80" 
               className="transition-transform duration-300 group-hover:scale-105"
             >
@@ -545,7 +545,7 @@ const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         {/* Pick up these Section - Below Conversation */}
-        <div className="mb-12 mt-[50vh]">
+        <div className="mb-12 mt-20">
           <div className="text-center mb-6">
             <h2 className="text-3xl font-bold text-slate-900 mb-6">
               Pick up these

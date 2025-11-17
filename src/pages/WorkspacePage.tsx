@@ -103,14 +103,23 @@ const WorkspacePage = ({
 
   // Determine primary action based on workspace type and topic
   const getPrimaryAction = () => {
-    // Code workspaces always show Download
-    if (workspaceType === 'code') {
+    // Strategy and Plan -> Share
+    if (workspaceTopic === 'Strategy' || workspaceTopic === 'Plan' || workspaceTopic === 'Planning') {
+      return { label: 'Share', icon: '↗' };
+    }
+    
+    // Code workspaces -> Download
+    if (workspaceType === 'code' || workspaceTopic === 'Code') {
       return { label: 'Download', icon: '↓' };
     }
-    const topicsWithDownload = ['Learn', 'Strategy', 'Planning'];
-    if (topicsWithDownload.includes(workspaceTopic)) {
-      return { label: 'Download', icon: '↓' };
+    
+    // User Story, Develop, Test, Build -> Automate
+    const automateTopics = ['User Story', 'Develop', 'Test', 'Build'];
+    if (automateTopics.includes(workspaceTopic)) {
+      return { label: 'Automate', icon: '⚡' };
     }
+    
+    // Default fallback
     return { label: 'Apply', icon: '✓' };
   };
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import AIInput from '../components/ui/AIInput';
 import PricingModal from '../components/ui/PricingModal';
+import ShareModal from '../components/ui/ShareModal';
 import type { ConversationMessage } from '../components/ui/AIInput';
 import { meganConversation, copadoCanDoConversation } from '../conversations';
 
@@ -34,6 +35,7 @@ const WorkspacePage = ({
   const [copiedCode, setCopiedCode] = useState(false);
   const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'steps' | 'code' | 'artifacts'>('overview');
   const [showPricingModal, setShowPricingModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [steps, setSteps] = useState<Array<{ id: string; text: string; completed: boolean }>>([
     { id: '1', text: 'Analyzed current architecture issues', completed: true },
     { id: '2', text: 'Designed to be where people work', completed: true },
@@ -103,8 +105,8 @@ const WorkspacePage = ({
 
   // Determine primary action based on workspace type and topic
   const getPrimaryAction = () => {
-    // Strategy and Plan -> Share
-    if (workspaceTopic === 'Strategy' || workspaceTopic === 'Plan' || workspaceTopic === 'Planning') {
+    // Strategy, Plan, and Learn -> Share
+    if (workspaceTopic === 'Strategy' || workspaceTopic === 'Plan' || workspaceTopic === 'Planning' || workspaceTopic === 'Learn') {
       return { label: 'Share', icon: '↗' };
     }
     
@@ -133,8 +135,13 @@ const WorkspacePage = ({
   };
 
   const handlePrimaryAction = () => {
-    // Show pricing modal for all primary actions
-    setShowPricingModal(true);
+    // If action is Share, show share modal
+    if (primaryAction.label === 'Share') {
+      setShowShareModal(true);
+    } else {
+      // Show pricing modal for other primary actions
+      setShowPricingModal(true);
+    }
   };
 
   // Handle panel resizing
@@ -1327,6 +1334,17 @@ const WorkspacePage = ({
         isOpen={showPricingModal}
         onClose={() => setShowPricingModal(false)}
         feature="saving workspaces and applying changes"
+      />
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        onJoinTeams={() => {
+          setShowShareModal(false);
+          setShowPricingModal(true);
+        }}
+        workspaceTitle={workspaceTitle}
       />
     </div>
   );

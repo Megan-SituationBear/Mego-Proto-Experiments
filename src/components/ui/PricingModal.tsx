@@ -1,18 +1,54 @@
 import { useState } from 'react';
+import MatchingModal from './MatchingModal';
+import NameCollectionModal from './NameCollectionModal';
+import BuildingModal from './BuildingModal';
 
 interface PricingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSignupComplete?: (userName: string) => void;
   feature?: string; // e.g., "downloads and pinning"
 }
 
 const PricingModal: React.FC<PricingModalProps> = ({ 
   isOpen, 
-  onClose
+  onClose,
+  onSignupComplete
 }) => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [showMatchingModal, setShowMatchingModal] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [showBuildingModal, setShowBuildingModal] = useState(false);
+  const [userName, setUserName] = useState('');
 
   if (!isOpen) return null;
+
+  const handleQuestionsComplete = () => {
+    setShowMatchingModal(false);
+    setShowNameModal(true);
+  };
+
+  const handleNameSubmit = (name: string) => {
+    setUserName(name);
+    setShowNameModal(false);
+    setShowBuildingModal(true);
+  };
+
+  const handleBuildingComplete = () => {
+    setShowBuildingModal(false);
+    onClose();
+    if (onSignupComplete) {
+      onSignupComplete(userName);
+    }
+  };
+
+  const handleGetStarted = (planName: string) => {
+    if (planName === 'Enterprise') {
+      window.open('mailto:sales@copado.com', '_blank');
+    } else {
+      setShowMatchingModal(true);
+    }
+  };
 
   const plans = [
     {
@@ -28,7 +64,7 @@ const PricingModal: React.FC<PricingModalProps> = ({
         'Standard templates',
         'Email support',
       ],
-      cta: 'Start Free Trial',
+      cta: 'Get Started For Free',
       highlighted: false,
     },
     {
@@ -44,7 +80,7 @@ const PricingModal: React.FC<PricingModalProps> = ({
         'Team collaboration',
         'Advanced analytics',
       ],
-      cta: 'Start Free Trial',
+      cta: 'Get Started For Free',
       highlighted: true,
     },
     {
@@ -178,9 +214,7 @@ const PricingModal: React.FC<PricingModalProps> = ({
 
                   {/* CTA Button */}
                   <button
-                    onClick={() => {
-                      console.log('Select plan:', plan.name);
-                    }}
+                    onClick={() => handleGetStarted(plan.name)}
                     className={`w-full py-2 px-4 rounded-lg font-semibold text-sm transition-all mb-3 ${
                       plan.highlighted
                         ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
@@ -222,6 +256,24 @@ const PricingModal: React.FC<PricingModalProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Signup Flow Modals */}
+      <MatchingModal
+        isOpen={showMatchingModal}
+        onClose={() => setShowMatchingModal(false)}
+        onComplete={handleQuestionsComplete}
+        onBrowseTemplates={() => handleQuestionsComplete()}
+      />
+
+      <NameCollectionModal
+        isOpen={showNameModal}
+        onSubmit={handleNameSubmit}
+      />
+
+      <BuildingModal
+        isOpen={showBuildingModal}
+        onComplete={handleBuildingComplete}
+      />
     </div>
   );
 };

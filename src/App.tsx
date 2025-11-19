@@ -405,9 +405,12 @@ function App() {
     return (
       <PricingPage
         onNavigateHome={() => setCurrentView(isLoggedIn ? 'home' : 'intro')}
-        onNavigateToSignup={() => {
-          setIsSignUpFlow(true);
-          setCurrentView('onboarding');
+        onSignupComplete={(name: string) => {
+          if (name) {
+            setUserName(name);
+          }
+          setIsLoggedIn(true);
+          setCurrentView('home');
         }}
       />
     );

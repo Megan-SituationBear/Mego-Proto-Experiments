@@ -75,7 +75,7 @@ const BuildingModal: React.FC<BuildingModalProps> = ({ isOpen, onComplete }) => 
 
           {/* Building Text */}
           <h2 className="text-2xl font-semibold text-center text-slate-900 mb-3">
-            Building Your Copado
+            Building your Copado AI platform
           </h2>
 
           {/* Animated Status Text */}

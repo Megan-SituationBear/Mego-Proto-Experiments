@@ -1,14 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
+import MatchingModal from '../components/ui/MatchingModal';
+import NameCollectionModal from '../components/ui/NameCollectionModal';
+import BuildingModal from '../components/ui/BuildingModal';
 
 interface PricingPageProps {
   onNavigateHome?: () => void;
-  onNavigateToSignup?: () => void;
+  onSignupComplete?: (userName: string) => void;
 }
 
 const PricingPage: React.FC<PricingPageProps> = ({ 
   onNavigateHome,
-  onNavigateToSignup 
+  onSignupComplete
 }) => {
+  const [showMatchingModal, setShowMatchingModal] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [showBuildingModal, setShowBuildingModal] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  const handleQuestionsComplete = () => {
+    setShowMatchingModal(false);
+    setShowNameModal(true);
+  };
+
+  const handleNameSubmit = (name: string) => {
+    setUserName(name);
+    setShowNameModal(false);
+    setShowBuildingModal(true);
+  };
+
+  const handleBuildingComplete = () => {
+    setShowBuildingModal(false);
+    if (onSignupComplete) {
+      onSignupComplete(userName);
+    }
+  };
+
+  const handleGetStarted = (planName: string) => {
+    if (planName === 'Enterprise') {
+      window.open('mailto:sales@copado.com', '_blank');
+    } else {
+      setShowMatchingModal(true);
+    }
+  };
   const plans = [
     {
       name: 'Starter',
@@ -23,7 +56,7 @@ const PricingPage: React.FC<PricingPageProps> = ({
         'Standard templates',
         'Email support',
       ],
-      cta: 'Start Free Trial',
+      cta: 'Get Started For Free',
       highlighted: false
     },
     {
@@ -41,7 +74,7 @@ const PricingPage: React.FC<PricingPageProps> = ({
         'Shared workspaces',
         'Team templates'
       ],
-      cta: 'Start 14-day Trial',
+      cta: 'Get Started For Free',
       highlighted: true
     },
     {
@@ -136,13 +169,7 @@ const PricingPage: React.FC<PricingPageProps> = ({
               </p>
               
               <button
-                onClick={() => {
-                  if (plan.name === 'Starter' || plan.name === 'Team') {
-                    onNavigateToSignup?.();
-                  } else {
-                    window.open('mailto:sales@copado.com', '_blank');
-                  }
-                }}
+                onClick={() => handleGetStarted(plan.name)}
                 className={`w-full py-2.5 px-6 rounded-lg font-semibold text-sm transition-all mb-5 ${
                   plan.highlighted
                     ? 'bg-white text-blue-600 hover:bg-blue-50 shadow-lg'
@@ -216,6 +243,24 @@ const PricingPage: React.FC<PricingPageProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Signup Flow Modals */}
+      <MatchingModal
+        isOpen={showMatchingModal}
+        onClose={() => setShowMatchingModal(false)}
+        onComplete={handleQuestionsComplete}
+        onBrowseTemplates={() => handleQuestionsComplete()}
+      />
+
+      <NameCollectionModal
+        isOpen={showNameModal}
+        onSubmit={handleNameSubmit}
+      />
+
+      <BuildingModal
+        isOpen={showBuildingModal}
+        onComplete={handleBuildingComplete}
+      />
     </div>
   );
 };

@@ -54,7 +54,7 @@ export interface ConversationMessage {
 
 interface AIInputProps {
   placeholder?: string;
-  onSendMessage?: (text: string) => void;
+  onSendMessage?: (text: string, mode: 'ask' | 'make') => void;
   onUploadImage?: () => void;
   onUploadDoc?: () => void;
   onExamineSlack?: () => void;
@@ -542,11 +542,8 @@ const AIInput: React.FC<AIInputProps> = ({
       
       // ASK MODE or subsequent messages: Normal conversation flow
       if (onSendMessage) {
-        // Prepend mode prefix to message based on selected mode
-        const modePrefix = inputMode === 'make' ? '[MAKE] ' : '[ASK] ';
-        const prefixedMessage = modePrefix + messageContent;
-        
-        onSendMessage(prefixedMessage);
+        // Send message with mode
+        onSendMessage(messageContent, inputMode);
         setValue('');
         setCodeSnippets([]);
         setHasBeenFocused(false);

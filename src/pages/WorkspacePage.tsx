@@ -279,7 +279,7 @@ const WorkspacePage = ({
     }
   });
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = (text: string, _mode: 'ask' | 'make' = 'ask') => {
     if (!text.trim()) return;
 
     // Add user message

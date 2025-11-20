@@ -77,27 +77,81 @@ const HomePage: React.FC<HomePageProps> = ({
     }
   }, [conversationMessages]);
 
-  // Helper function to clean AIInput messages (handles mode prefixes automatically)
-  const cleanAIInputMessage = (text: string): string => {
-    // Remove mode prefixes like [ASK] or [MAKE] that AIInput adds
-    return text.replace(/^\[(ASK|MAKE)\]\s*/i, '').trim();
-  };
+  const handleSendMessage = (text: string, mode: 'ask' | 'make', setTypingIndicator?: (show: boolean) => void) => {
+    if (!text.trim()) return;
 
-  const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void) => {
-    // Clean the message from AIInput (removes mode prefixes)
-    const cleanText = cleanAIInputMessage(text);
-    if (!cleanText) return;
+    // MAKE MODE: Immediately create workspace
+    if (mode === 'make') {
+      if (!isLoggedIn) {
+        // Not logged in - go to pricing
+        if (onNavigateToPricing) {
+          onNavigateToPricing();
+        }
+      } else {
+        // Logged in - show building workspace modal then workspace
+        setShowBuildingWorkspace(true);
+        setWorkspaceAction(text);
+        
+        // Then navigate to workspace
+        setTimeout(() => {
+          if (onNavigateToWorkspace) {
+            onNavigateToWorkspace({
+              type: 'chat',
+              title: `Chat: ${text}`,
+              topic: 'Chat',
+              initialPrompt: text
+            });
+          }
+        }, 2000);
+      }
+      return;
+    }
+
+    // ASK MODE: Start/continue conversation
+    // Handle responses to "Continue?" question
+    if (text === 'Yes, let\'s create a project') {
+      // User wants to create a project
+      const originalPrompt = conversationMessages[0]?.content.content || text;
+      
+      if (!isLoggedIn) {
+        if (onNavigateToPricing) {
+          onNavigateToPricing();
+        }
+      } else {
+        setShowBuildingWorkspace(true);
+        setWorkspaceAction(originalPrompt);
+        
+        setTimeout(() => {
+          if (onNavigateToWorkspace) {
+            onNavigateToWorkspace({
+              type: 'chat',
+              title: `Chat: ${originalPrompt}`,
+              topic: 'Chat',
+              initialPrompt: originalPrompt
+            });
+          }
+        }, 2000);
+      }
+      return;
+    }
+
+    if (text === 'No, clear') {
+      // User wants to clear conversation
+      setConversationMessages([]);
+      setUserMessageCount(0);
+      return;
+    }
 
     // Increment user message count
     const newUserMessageCount = userMessageCount + 1;
     setUserMessageCount(newUserMessageCount);
 
-    // Create user conversation message with proper format
+    // Create user conversation message
     const userConversationMessage: ConversationMessage = {
       id: Date.now().toString(),
       content: {
         type: 'text',
-        content: cleanText
+        content: text
       },
       isUser: true,
       timestamp: new Date()
@@ -110,34 +164,42 @@ const HomePage: React.FC<HomePageProps> = ({
       setTypingIndicator(true);
     }
 
-    // Hide typing indicator
-    if (setTypingIndicator) {
-      setTypingIndicator(false);
-    }
+    // Generate Copado's response after a short delay
+    setTimeout(() => {
+      let copadoResponse = '';
+      let options: string[] | undefined = undefined;
 
-    // Immediately navigate to pricing or workspace on any send
-    if (!isLoggedIn) {
-      // Not logged in - go to pricing
-      if (onNavigateToPricing) {
-        onNavigateToPricing();
+      if (newUserMessageCount === 1) {
+        // First response: Ask for more details
+        copadoResponse = `You said "${text}". Got it. Tell me a little more about this, please. What use case are you solving for? Is it for a client or internal project?`;
+      } else if (newUserMessageCount === 2) {
+        // Second response: Offer to continue or clear
+        copadoResponse = `Understood. I have enough context now.`;
+        options = ['Yes, let\'s create a project', 'No, clear'];
+      } else {
+        // Additional responses
+        copadoResponse = `I understand. Thanks for clarifying.`;
+        options = ['Yes, let\'s create a project', 'No, clear'];
       }
-    } else {
-      // Logged in - show building workspace modal then workspace
-      setShowBuildingWorkspace(true);
-      setWorkspaceAction(cleanText);
+
+      const copadoMessage: ConversationMessage = {
+        id: (Date.now() + 1).toString(),
+        content: {
+          type: 'text',
+          content: copadoResponse
+        },
+        isUser: false,
+        timestamp: new Date(),
+        options: options
+      };
+
+      setConversationMessages(prev => [...prev, copadoMessage]);
       
-      // Then navigate to workspace
-      setTimeout(() => {
-        if (onNavigateToWorkspace) {
-          onNavigateToWorkspace({
-            type: 'chat',
-            title: `Chat: ${cleanText}`,
-            topic: 'Chat',
-            initialPrompt: cleanText
-          });
-        }
-      }, 2000);
-    }
+      // Hide typing indicator
+      if (setTypingIndicator) {
+        setTypingIndicator(false);
+      }
+    }, 1500);
   };
 
   return (
@@ -482,7 +544,7 @@ const HomePage: React.FC<HomePageProps> = ({
             <div className="mb-4">
               <AIInput
                 placeholder={userMessageCount >= 1 ? "Your move" : undefined}
-                onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
+                onSendMessage={(text, mode) => handleSendMessage(text, mode, setShowCopadoTyping)}
                 autoFocus={false}
                 isLoggedIn={true}
                 pageContext="home"
@@ -536,7 +598,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 <Conversation
                   messages={conversationMessages}
                   showTypingIndicator={showCopadoTyping}
-                  onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
+                  onQuestionClick={(question) => handleSendMessage(question, 'ask', setShowCopadoTyping)}
                 />
                 <div ref={messagesEndRef} />
               </div>

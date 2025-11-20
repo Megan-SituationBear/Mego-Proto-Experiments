@@ -556,8 +556,8 @@ const AIInput: React.FC<AIInputProps> = ({
   
   // Update placeholder based on mode
   const modePlaceholder = inputMode === 'make' 
-    ? 'What do you want to create or automate today? Type away, copy + paste large amounts of code. Tip: press \'submit\' to submit.'
-    : 'How do you want to streamline work today? Tip (I won\'t show this again): You\'re in Ask mode, where pressing \'enter\' submits your question.';
+    ? 'create new rules, tests, applications, salesforce work items. Type away, copy + paste large amounts of code. Press button to submit.'
+    : 'What can I help you with today? Press \'enter\' to submit.';
   
   // Use custom placeholder if provided (e.g., "Continue the conversation..."), otherwise use mode-based placeholder
   const effectivePlaceholder = placeholder || modePlaceholder;

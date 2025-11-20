@@ -481,7 +481,7 @@ const HomePage: React.FC<HomePageProps> = ({
             {/* AI Input */}
             <div className="mb-4">
               <AIInput
-                placeholder={userMessageCount >= 1 ? "Your move" : "Start a conversation or pick up where you left off"}
+                placeholder={userMessageCount >= 1 ? "Your move" : undefined}
                 onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
                 autoFocus={false}
                 isLoggedIn={true}

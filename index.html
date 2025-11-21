@@ -42,36 +42,17 @@
     
     <!-- Situation Bear Logo + Header -->
     <div class="flex flex-col items-center space-y-3 sm:space-y-4">
-      <!-- Animated Logo -->
+      <!-- Situation Bear Logo -->
       <div class="flex justify-center mb-2">
         <div class="group cursor-pointer">
-          <svg 
-            width="120" 
-            height="120" 
-            viewBox="0 0 80 80" 
-            class="transition-transform duration-300 group-hover:scale-105"
-          >
-            <defs>
-              <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color: #3b82f6; stop-opacity: 1" />
-                <stop offset="50%" style="stop-color: #6366f1; stop-opacity: 1" />
-                <stop offset="100%" style="stop-color: #8b5cf6; stop-opacity: 1" />
-              </linearGradient>
-            </defs>
-            <circle cx="40" cy="40" r="36" fill="url(#logoGradient)" class="transition-all duration-300"/>
-            <!-- Normal eyes (visible by default) -->
-            <g class="group-hover:opacity-0 transition-opacity duration-300">
-              <circle cx="28" cy="35" r="4" fill="white" />
-              <circle cx="52" cy="35" r="4" fill="white" />
-            </g>
-            <!-- Winking eye (visible on hover) -->
-            <g class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <path d="M 23 35 Q 28 38 33 35" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-              <circle cx="52" cy="35" r="4" fill="white" />
-            </g>
-            <!-- Smile -->
-            <path d="M 25 50 Q 40 60 55 50" stroke="white" stroke-width="3" stroke-linecap="round" fill="none" class="transition-all duration-300 group-hover:translate-y-0.5"/>
-          </svg>
+          <div class="w-[120px] h-[120px] rounded-full overflow-hidden bg-white/10 backdrop-blur-sm transition-transform duration-300 group-hover:scale-105">
+            <img 
+              src="https://raw.githubusercontent.com/Megan-SituationBear/Mego-Proto-Experiments/main/situation-bear-logo.png" 
+              alt="Situation Bear Logo"
+              class="w-full h-full object-cover"
+              onError="this.onerror=null; this.parentElement.innerHTML='<div class=&quot;w-full h-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center text-white text-3xl font-bold&quot;>SB</div>';"
+            />
+          </div>
         </div>
       </div>
 
@@ -104,16 +85,24 @@
         CREATE PATHWAYS TO EMBED COPADO CAPABILITIES WHERE PEOPLE WORK.
       </p>
       <p class="text-slate-400 text-xs sm:text-sm mt-4 tracking-wide group-hover:text-slate-300 transition-colors">
-        LOGGED OUT VIEW · LOGGED IN, NEW USER · WITH QUICK ACTIONS<br class="hidden sm:block" />
-        CONTEXTUAL, SELF-CONTAINED AI INPUT
+        LOGGED OUT VIEW · LOGGED IN, NEW USER<br class="hidden sm:block" />
+        CONTEXTUAL, SELF-CONTAINED AI INPUT WITH QUICK ACTIONS<br class="hidden sm:block" />
+        LIGHTWEIGHT PROMPT IDEA MODAL
       </p>
     </a>
 
-    <!-- CTA Button -->
-    <div class="animate-fade-in-delay">
+    <!-- CTA Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 animate-fade-in-delay">
+      <a 
+        href="app.html?view=intro"
+        class="bg-slate-700 hover:bg-slate-600 text-white px-8 sm:px-12 py-3 sm:py-4 rounded text-sm sm:text-base font-medium transition-all duration-200 border border-slate-600 hover:border-slate-500 shadow-lg hover:shadow-xl transform hover:scale-105 text-center"
+        style="letter-spacing: -0.02em"
+      >
+        Logged Out State
+      </a>
       <a 
         href="app.html?view=home"
-        class="bg-[#193cb8] hover:bg-[#1e4dd8] text-white px-8 sm:px-12 py-3 sm:py-4 rounded text-sm sm:text-base font-medium transition-all duration-200 border border-[#193cb8] hover:border-[#1e4dd8] shadow-lg hover:shadow-xl transform hover:scale-105 inline-block"
+        class="bg-[#193cb8] hover:bg-[#1e4dd8] text-white px-8 sm:px-12 py-3 sm:py-4 rounded text-sm sm:text-base font-medium transition-all duration-200 border border-[#193cb8] hover:border-[#1e4dd8] shadow-lg hover:shadow-xl transform hover:scale-105 text-center"
         style="letter-spacing: -0.02em"
       >
         Full Proto

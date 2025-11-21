@@ -54,7 +54,7 @@ export interface ConversationMessage {
 
 interface AIInputProps {
   placeholder?: string;
-  onSendMessage?: (text: string) => void;
+  onSendMessage?: (text: string, mode: 'ask' | 'make') => void;
   onUploadImage?: () => void;
   onUploadDoc?: () => void;
   onExamineSlack?: () => void;
@@ -375,7 +375,7 @@ const AIInput: React.FC<AIInputProps> = ({
         return {
           ...baseStyles,
           shadow: 'shadow-xl',
-          borderColor: 'border-indigo-600',
+          borderColor: 'border-slate-300/50',
           bgColor: 'bg-white',
           height: '120px', // Taller default for Make mode
           padding: '20px',
@@ -388,7 +388,7 @@ const AIInput: React.FC<AIInputProps> = ({
         // Focused Make mode: Much taller, darker text, actions on right
         return {
           ...baseStyles,
-          borderColor: 'border-indigo-600',
+          borderColor: 'border-blue-600',
           borderWidth: 'border-2',
           shadow: 'shadow-xl',
           bgColor: 'bg-white',
@@ -406,7 +406,7 @@ const AIInput: React.FC<AIInputProps> = ({
         return {
           ...baseStyles,
           shadow: 'shadow-xl',
-          borderColor: 'border-indigo-600',
+          borderColor: 'border-slate-300/50',
           bgColor: 'bg-white',
           height: '56px', // Shorter default state
           padding: '16px',
@@ -421,7 +421,7 @@ const AIInput: React.FC<AIInputProps> = ({
         // Focused Ask mode: Taller, left-aligned
         return {
           ...baseStyles,
-          borderColor: 'border-indigo-600',
+          borderColor: 'border-blue-600',
           borderWidth: 'border-2', // 2px border
           shadow: 'shadow-xl',
           bgColor: 'bg-white',
@@ -542,11 +542,8 @@ const AIInput: React.FC<AIInputProps> = ({
       
       // ASK MODE or subsequent messages: Normal conversation flow
       if (onSendMessage) {
-        // Prepend mode prefix to message based on selected mode
-        const modePrefix = inputMode === 'make' ? '[MAKE] ' : '[ASK] ';
-        const prefixedMessage = modePrefix + messageContent;
-        
-        onSendMessage(prefixedMessage);
+        // Send message with mode
+        onSendMessage(messageContent, inputMode);
         setValue('');
         setCodeSnippets([]);
         setHasBeenFocused(false);
@@ -556,8 +553,8 @@ const AIInput: React.FC<AIInputProps> = ({
   
   // Update placeholder based on mode
   const modePlaceholder = inputMode === 'make' 
-    ? 'Make Mode - Great for long instructions, copy and pasting code - press button to submit'
-    : 'How can I help you today?  |  Press \'enter\' to send';
+    ? 'What do you want to create today? Copy and paste long bits of code and instructions here. Press button to submit.'
+    : 'What can I help you with today? Press \'enter\' to submit.';
   
   // Use custom placeholder if provided (e.g., "Continue the conversation..."), otherwise use mode-based placeholder
   const effectivePlaceholder = placeholder || modePlaceholder;
@@ -919,12 +916,12 @@ Can you help me with any questions I have about this setup?`
                 disabled={(!value.trim() && codeSnippets.length === 0) || disabled || loading}
                 className={`p-3.5 rounded-xl transition-all duration-200 ${
                   (value.trim() || codeSnippets.length > 0) && !disabled && !loading
-                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
-                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                    ? 'bg-blue-600 hover:bg-indigo-600 shadow-lg hover:shadow-xl' 
+                    : 'bg-slate-100 cursor-not-allowed'
                 }`}
                 title="Send message"
               >
-                <Send className="w-5 h-5" />
+                <Send className={`w-5 h-5 ${(value.trim() || codeSnippets.length > 0) && !disabled && !loading ? 'text-white' : 'text-slate-400'}`} />
               </button>
 
               {/* Settings Button */}
@@ -1315,14 +1312,28 @@ Can you help me with any questions I have about this setup?`
                 !disabled && 
                 !loading && 
                 !(inputMode === 'make' && pageContext === 'home' && !selectedEnvironment)
-                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl' 
-                  : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                  ? 'bg-blue-600 hover:bg-indigo-600 shadow-lg hover:shadow-xl' 
+                  : 'bg-slate-100 cursor-not-allowed'
               }`}
               title={inputMode === 'make' && pageContext === 'home' && !selectedEnvironment ? "Select an environment to continue" : "Send message"}
             >
-              <Send className="w-5 h-5" />
+              <Send className={`w-5 h-5 ${
+                (value.trim() || codeSnippets.length > 0) && 
+                !disabled && 
+                !loading && 
+                !(inputMode === 'make' && pageContext === 'home' && !selectedEnvironment)
+                  ? 'text-white' 
+                  : 'text-slate-400'
+              }`} />
               {inputMode === 'make' && (
-                <span className="font-medium text-sm">Submit</span>
+                <span className={`font-medium text-sm ${
+                  (value.trim() || codeSnippets.length > 0) && 
+                  !disabled && 
+                  !loading && 
+                  !(inputMode === 'make' && pageContext === 'home' && !selectedEnvironment)
+                    ? 'text-white' 
+                    : 'text-slate-400'
+                }`}>Submit</span>
               )}
             </button>
           </div>
@@ -2139,10 +2150,18 @@ Can you help me with any questions I have about this setup?`
 
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setSalesforceAuthStep('auth')}
+                    onClick={() => {
+                      // If already connected, just close modal (they came from "Add More")
+                      // Otherwise, go back to auth step
+                      if (salesforceConnected) {
+                        setShowSalesforceModal(false);
+                      } else {
+                        setSalesforceAuthStep('auth');
+                      }
+                    }}
                     className="flex-1 px-4 py-3 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition-colors"
                   >
-                    Back
+                    {salesforceConnected ? 'Cancel' : 'Back'}
                   </button>
                   <button
                     onClick={() => {
@@ -2152,7 +2171,7 @@ Can you help me with any questions I have about this setup?`
                     disabled={selectedSandboxes.length === 0}
                     className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Connect ({selectedSandboxes.length})
+                    {salesforceConnected ? `Save Changes (${selectedSandboxes.length})` : `Connect (${selectedSandboxes.length})`}
                   </button>
                 </div>
               </>
@@ -2231,28 +2250,42 @@ Can you help me with any questions I have about this setup?`
                 ].filter(sandbox => selectedSandboxes.includes(sandbox.id)).map((sandbox) => (
                   <div
                     key={sandbox.id}
-                    className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200"
+                    className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200 group"
                   >
                     <div>
                       <div className="font-medium text-slate-900 text-sm">{sandbox.name}</div>
                       <div className="text-xs text-slate-600">{sandbox.type}</div>
                     </div>
-                    <div className="w-2 h-2 bg-green-500 rounded-full" title="Connected"></div>
+                    <button
+                      onClick={() => {
+                        const newSandboxes = selectedSandboxes.filter(id => id !== sandbox.id);
+                        setSelectedSandboxes(newSandboxes);
+                        // If no sandboxes left, disconnect
+                        if (newSandboxes.length === 0) {
+                          setSalesforceConnected(false);
+                          setShowManageConnectionModal(false);
+                        }
+                      }}
+                      className="px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                      title="Disconnect this environment"
+                    >
+                      Disconnect
+                    </button>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Disconnect Button */}
+            {/* Add More Button */}
             <button
               onClick={() => {
-                setSalesforceConnected(false);
-                setSelectedSandboxes([]);
                 setShowManageConnectionModal(false);
+                setShowSalesforceModal(true);
+                setSalesforceAuthStep('sandboxes');
               }}
-              className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors"
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
             >
-              Disconnect All
+              Add More Sandboxes
             </button>
           </div>
         </div>,

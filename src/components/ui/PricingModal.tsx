@@ -1,36 +1,56 @@
 import { useState } from 'react';
+import MatchingModal from './MatchingModal';
+import NameCollectionModal from './NameCollectionModal';
+import BuildingModal from './BuildingModal';
 
 interface PricingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSignupComplete?: (userName: string) => void;
   feature?: string; // e.g., "downloads and pinning"
 }
 
 const PricingModal: React.FC<PricingModalProps> = ({ 
   isOpen, 
   onClose,
-  feature = "downloads and pinning"
+  onSignupComplete
 }) => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [showMatchingModal, setShowMatchingModal] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [showBuildingModal, setShowBuildingModal] = useState(false);
+  const [userName, setUserName] = useState('');
 
   if (!isOpen) return null;
 
+  const handleQuestionsComplete = () => {
+    setShowMatchingModal(false);
+    setShowNameModal(true);
+  };
+
+  const handleNameSubmit = (name: string) => {
+    setUserName(name);
+    setShowNameModal(false);
+    setShowBuildingModal(true);
+  };
+
+  const handleBuildingComplete = () => {
+    setShowBuildingModal(false);
+    onClose();
+    if (onSignupComplete) {
+      onSignupComplete(userName);
+    }
+  };
+
+  const handleGetStarted = (planName: string) => {
+    if (planName === 'Enterprise') {
+      window.open('mailto:sales@copado.com', '_blank');
+    } else {
+      setShowMatchingModal(true);
+    }
+  };
+
   const plans = [
-    {
-      name: 'Free',
-      description: 'Get started with essential features',
-      monthlyPrice: 0,
-      annualPrice: 0,
-      features: [
-        '3 projects per month',
-        'Basic AI assistance',
-        'Community templates',
-        'Community support',
-      ],
-      cta: 'Current Plan',
-      highlighted: false,
-      isFree: true,
-    },
     {
       name: 'Starter',
       description: 'Perfect for individuals getting started',
@@ -44,12 +64,11 @@ const PricingModal: React.FC<PricingModalProps> = ({
         'Standard templates',
         'Email support',
       ],
-      cta: 'Start Free Trial',
-      highlighted: true,
-      isFree: false,
+      cta: 'Get Started For Free',
+      highlighted: false,
     },
     {
-      name: 'Pro',
+      name: 'Team',
       description: 'For professionals and growing teams',
       monthlyPrice: 79,
       annualPrice: 790,
@@ -61,9 +80,24 @@ const PricingModal: React.FC<PricingModalProps> = ({
         'Team collaboration',
         'Advanced analytics',
       ],
-      cta: 'Start Free Trial',
+      cta: 'Get Started For Free',
+      highlighted: true,
+    },
+    {
+      name: 'Enterprise',
+      description: 'For large teams needing advanced features',
+      monthlyPrice: null,
+      annualPrice: null,
+      features: [
+        'Everything in Team',
+        'Dedicated account manager',
+        'Custom AI training',
+        'Advanced security & SSO',
+        'SLA guarantee',
+        'Audit logs',
+      ],
+      cta: 'Contact Sales',
       highlighted: false,
-      isFree: false,
     },
   ];
 
@@ -74,7 +108,7 @@ const PricingModal: React.FC<PricingModalProps> = ({
         onClick={onClose}
       />
       
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -87,13 +121,13 @@ const PricingModal: React.FC<PricingModalProps> = ({
         </button>
 
         {/* Header */}
-        <div className="px-8 pt-8 pb-6 border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
+        <div className="px-6 pt-8 pb-6 border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-slate-900 mb-3">
-              Upgrade for {feature}
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">
+              Work is Team Work
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Choose a plan to unlock premium features. All plans include a 14-day free trial.
+            <p className="text-sm text-slate-600 max-w-2xl mx-auto">
+              Save, share, create team templates for salesforce work items, discuss and collaborate.
             </p>
           </div>
 
@@ -102,7 +136,7 @@ const PricingModal: React.FC<PricingModalProps> = ({
             <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
               <button
                 onClick={() => setBillingCycle('monthly')}
-                className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                   billingCycle === 'monthly'
                     ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-700 hover:bg-slate-50'
@@ -112,7 +146,7 @@ const PricingModal: React.FC<PricingModalProps> = ({
               </button>
               <button
                 onClick={() => setBillingCycle('annual')}
-                className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
                   billingCycle === 'annual'
                     ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-700 hover:bg-slate-50'
@@ -128,70 +162,61 @@ const PricingModal: React.FC<PricingModalProps> = ({
         </div>
 
         {/* Pricing Cards */}
-        <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {plans.map((plan, index) => (
               <div
                 key={index}
                 className={`relative bg-white rounded-xl border-2 overflow-hidden transition-all hover:shadow-lg ${
                   plan.highlighted 
-                    ? 'border-blue-600 shadow-md scale-105' 
+                    ? 'border-blue-600 shadow-md' 
                     : 'border-slate-200'
                 }`}
               >
                 {/* Recommended Badge */}
                 {plan.highlighted && (
-                  <div className="absolute top-0 left-0 right-0 bg-blue-600 text-white text-xs font-semibold py-2 text-center">
+                  <div className="absolute top-0 left-0 right-0 bg-blue-600 text-white text-xs font-semibold py-1.5 text-center">
                     RECOMMENDED
                   </div>
                 )}
 
-                <div className={`p-6 ${plan.highlighted ? 'pt-12' : ''}`}>
+                <div className={`p-5 ${plan.highlighted ? 'pt-9' : ''}`}>
                   {/* Plan Name */}
-                  <h3 className="text-xl font-bold text-slate-900 mb-1">
+                  <h3 className="text-lg font-bold text-slate-900 mb-1">
                     {plan.name}
                   </h3>
-                  <p className="text-sm text-slate-600 mb-4">
+                  <p className="text-xs text-slate-600 mb-3">
                     {plan.description}
                   </p>
 
                   {/* Price */}
-                  <div className="mb-4">
+                  <div className="mb-3">
                     {plan.monthlyPrice !== null ? (
                       <div>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-4xl font-bold text-slate-900">
-                            ${plan.monthlyPrice === 0 ? '0' : (billingCycle === 'monthly' ? plan.monthlyPrice : Math.floor(plan.annualPrice / 12))}
+                          <span className="text-3xl font-bold text-slate-900">
+                            ${billingCycle === 'monthly' ? plan.monthlyPrice : Math.floor(plan.annualPrice / 12)}
                           </span>
-                          <span className="text-slate-600 text-sm">/month</span>
+                          <span className="text-slate-600 text-xs">/month</span>
                         </div>
-                        {billingCycle === 'annual' && plan.monthlyPrice > 0 && (
+                        {billingCycle === 'annual' && (
                           <p className="text-xs text-slate-500 mt-1">
                             ${plan.annualPrice} billed annually
                           </p>
                         )}
-                        {plan.monthlyPrice === 0 && (
-                          <p className="text-xs text-slate-500 mt-1">
-                            Forever free
-                          </p>
-                        )}
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className="text-2xl font-bold text-slate-900">
+                        Custom
+                      </div>
+                    )}
                   </div>
 
                   {/* CTA Button */}
                   <button
-                    onClick={() => {
-                      if (!plan.isFree) {
-                        console.log('Upgrade to:', plan.name);
-                        // Handle upgrade
-                      }
-                    }}
-                    disabled={plan.isFree}
-                    className={`w-full py-2.5 px-4 rounded-lg font-semibold text-sm transition-all mb-4 ${
-                      plan.isFree
-                        ? 'bg-slate-100 text-slate-500 cursor-not-allowed'
-                        : plan.highlighted
+                    onClick={() => handleGetStarted(plan.name)}
+                    className={`w-full py-2 px-4 rounded-lg font-semibold text-sm transition-all mb-3 ${
+                      plan.highlighted
                         ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
                         : 'bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50'
                     }`}
@@ -200,7 +225,7 @@ const PricingModal: React.FC<PricingModalProps> = ({
                   </button>
 
                   {/* Features List */}
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {plan.features.map((feature, featureIndex) => (
                       <div key={featureIndex} className="flex items-start gap-2">
                         <svg
@@ -224,16 +249,33 @@ const PricingModal: React.FC<PricingModalProps> = ({
           </div>
 
           {/* Footer Note */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-slate-600">
+          <div className="mt-4 text-center">
+            <p className="text-xs text-slate-600">
               Questions? <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">Contact our sales team</a>
             </p>
           </div>
         </div>
       </div>
+
+      {/* Signup Flow Modals */}
+      <MatchingModal
+        isOpen={showMatchingModal}
+        onClose={() => setShowMatchingModal(false)}
+        onComplete={handleQuestionsComplete}
+        onBrowseTemplates={() => handleQuestionsComplete()}
+      />
+
+      <NameCollectionModal
+        isOpen={showNameModal}
+        onSubmit={handleNameSubmit}
+      />
+
+      <BuildingModal
+        isOpen={showBuildingModal}
+        onComplete={handleBuildingComplete}
+      />
     </div>
   );
 };
 
 export default PricingModal;
-

@@ -158,7 +158,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
             <TabToggle
               tabs={[
                 { id: 'recent', label: 'Recent', count: sortedRecentItems.length },
-                { id: 'pinned', label: 'Pinned', count: pinnedItems.length },
+                { id: 'pinned', label: 'Saved', count: pinnedItems.length },
                 { id: 'artifacts', label: 'Artifacts', count: sortedArtifacts.length }
               ]}
               activeTab={activeTab}
@@ -261,7 +261,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
               )}
               {activeTab === 'pinned' && pinnedItems.length === 0 && (
                 <div className="py-12 text-center">
-                  <p className="text-slate-500">No pinned items yet. Pin items to save them here!</p>
+                  <p className="text-slate-500">No saved items yet. Save items to find them here!</p>
                 </div>
               )}
               {activeTab === 'artifacts' && sortedArtifacts.length === 0 && (

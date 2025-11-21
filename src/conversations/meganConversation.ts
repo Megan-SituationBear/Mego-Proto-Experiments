@@ -39,204 +39,151 @@ export const meganConversation: ConversationConfig = {
     },
     {
       id: '2',
-      content: "I'll analyze Megan's recent work across all your connected systems. Let me pull that together for you...",
-      isUser: false,
-      timestamp: new Date()
-    },
-    {
-      id: '3',
-      content: "Here's what Megan accomplished:\n\n**This Week:**\n• Redesigned the AI input component with Ask/Make modes\n• Implemented environment selection for Make mode\n• Built out workspace navigation system\n• Created dashboard with Recent/Pinned/Artifacts tabs\n\n**Key Contributions:**\n• Replaced Favorites with Pinned (pin icon)\n• Added conversation tracking (5-item recent cap)\n• Integrated FindTemplatesModal for quick actions\n• Improved dashboard layout with inline stats\n\nWould you like me to drill into any specific area?",
+      content: "First off, in this effort, Megan:\n\n• Redesigned the AI input component with Ask/Make modes\n• Moved settings that pertain to chat to the AI component\n• Made the AI input self contained and contextual\n• Adjusted the information architecture to be more intuitive\n• Gave people a way to get to things quickly by bookmarking\n• Added Learn and Pricing to top center on main pages\n• Added Dashboard next to a person's name (it's my stuff!)",
       isUser: false,
       timestamp: new Date(),
       options: [
-        "Tell me about the AI Input redesign",
-        "Tell me about Dashboard improvements",
-        "Tell me about Environment selection",
-        "I don't care"
+        "Why??",
+        "What is the result of making the AI component self contained?",
+        "I'm so bored: entertain me"
       ]
     }
   ],
   
-  handleResponse: (userText: string, currentMessages, _context, _isAuthenticated = true): ConversationMessage | ConversationMessage[] | null => {
-    // Track which topics have been explored
-    const exploredTopics = new Set<string>();
-    currentMessages.forEach(msg => {
-      if (msg.content.includes("Chat Design 1")) exploredTopics.add("chat1");
-      if (msg.content.includes("Chat Design 2")) exploredTopics.add("chat2");
-      if (msg.content.includes("Chat Design 3")) exploredTopics.add("chat3");
-      if (msg.content.includes("Onboarding")) exploredTopics.add("onboarding");
-      if (msg.content.includes("Access w/o Overbuilding")) exploredTopics.add("access");
-      if (msg.content.includes("Information Architecture")) exploredTopics.add("ia");
-    });
+  handleResponse: (userText: string, _currentMessages, _context, _isAuthenticated = true): ConversationMessage | ConversationMessage[] | null => {
     
-    const remainingTopics = 6 - exploredTopics.size;
-    
-    // Chat Design 1: Self-contained contextual chat
-    if (userText === "Tell me about Chat Design 1") {
-      const nextOptions = [];
-      if (!exploredTopics.has("chat3")) nextOptions.push("How does moving items work with this?");
-      if (!exploredTopics.has("ia")) nextOptions.push("How does this fit the overall IA?");
-      if (!exploredTopics.has("onboarding")) nextOptions.push("How is onboarding integrated?");
-      if (nextOptions.length === 0) nextOptions.push("Explore another topic");
-      
+    // Question 1: Why??
+    if (userText === "Why??") {
       return {
         id: Date.now().toString(),
-        content: `**Chat Design 1: Self-Contained, Contextual Chat**\n\nThe AI input component is designed to be embedded anywhere - home page, workspaces, or even future integrations.\n\n**Key Features:**\n• Works standalone or contextual (adapts to where it lives)\n• Same component, different contexts\n• Can be "for this conversation" or "global"\n• Settings and integrations scoped to context\n\nThis means you can drop the chat anywhere and it just works, while being smart about its environment.\n\n${remainingTopics > 0 ? `💡 ${remainingTopics} more topic${remainingTopics > 1 ? 's' : ''} to explore!` : '🎉 All topics explored!'}`,
+        content: "Both ChatGPT and Claude say that the number one 'mistake' that happens in chat is pressing 'enter'. Some flow with it and some don't. It really depends what one is trying to do.\n\nIn Copado's sake, people may be either just chatting or building and we don't want to trip them up.\n\nAll features work for both modes. However, in 'make' mode one presses 'submit' to submit. This way they can type and type.\n\nAlso, try copy and pasting long code into either for fun!",
         isUser: false,
         timestamp: new Date(),
-        options: nextOptions
+        options: [
+          "Why a self-contained AI component is useful?",
+          "Move on"
+        ]
       };
     }
-
-    // Chat Design 2: Make Mode
-    if (userText === "Tell me about Chat Design 2") {
-      const nextOptions = [];
-      if (!exploredTopics.has("chat1")) nextOptions.push("How is this chat component designed?");
-      if (!exploredTopics.has("ia")) nextOptions.push("Does Make mode fit the IA pattern?");
-      if (!exploredTopics.has("access")) nextOptions.push("Can I pin things from Make mode?");
-      if (nextOptions.length === 0) nextOptions.push("Show me something else");
-      
+    
+    // Question 2: What is the result of making the AI component self contained?
+    if (userText === "What is the result of making the AI component self contained?" || 
+        userText === "Why a self-contained AI component is useful?") {
       return {
         id: Date.now().toString(),
-        content: `**Chat Design 2: Make Mode - Why?**\n\nMake mode solves a specific problem: generating artifacts requires different inputs than asking questions.\n\n**Why it exists:**\n• Separates "Ask" (quick back-and-forth) from "Make" (creating something)\n• Make mode has: larger input, environment selection, no Enter-to-send\n• Forces intentionality - you're building, not chatting\n• First submission creates a dedicated workspace\n\n**The benefit?** Clear mental model - Ask = conversation, Make = creation.\n\n${remainingTopics > 0 ? `⚡ ${remainingTopics} more design decision${remainingTopics > 1 ? 's' : ''} waiting!` : '✨ You\'ve seen it all!'}`,
+        content: "A self-contained AI input makes it possible to embed it, with its settings and integrations, etc. into apps you make: a chrome extension or an app exchange app that embeds where people work.\n\nIt also makes it more clear to the end user that is attached to the AI input. Rather than navigate to settings or integrations somewhere else it is all right there.\n\nSure, it saves your preferences. But if you want to add a Slack channel or confluence situation to a project, then it is more clear.",
         isUser: false,
         timestamp: new Date(),
-        options: nextOptions
+        options: [
+          "Blah, blah what can Copado do for me today?",
+          "What else did Megan do?"
+        ]
       };
     }
-
-    // Chat Design 3: Moving Items
-    if (userText === "Tell me about Chat Design 3") {
-      const nextOptions = [];
-      if (!exploredTopics.has("chat1")) nextOptions.push("Tell me about the chat component itself");
-      if (!exploredTopics.has("chat2")) nextOptions.push("How does this work in Make mode?");
-      if (nextOptions.length < 2 && !exploredTopics.has("access")) nextOptions.push("Can I pin these chips?");
-      if (nextOptions.length === 0) nextOptions.push("What else is there?");
-      
+    
+    // Question 3: I'm so bored
+    if (userText === "I'm so bored: entertain me") {
       return {
         id: Date.now().toString(),
-        content: `**Chat Design 3: Moving Items to Chat**\n\nDrag & drop or attach items (images, docs, code) and they become context chips below the input.\n\n**What it does:**\n• Items show as removable chips\n• AI uses them as context for responses\n• Works in both Ask and Make modes\n• Persists across the conversation\n\n**Why chips?** Claude-style design - clear, removable, visual feedback that context is active.\n\n**The architectural win:**\nBy keeping context *with* the chat, you don't need:\n• Sidebar panels for files\n• Dedicated document viewers\n• Context switchers in the nav\n\n**This frees up the UI.** For example, having docs with the chat means we can completely re-do the top nav without worrying about context management. The chat is self-contained.\n\n${remainingTopics > 0 ? `🔍 ${remainingTopics} topic${remainingTopics > 1 ? 's' : ''} left to discover!` : '🏆 Full tour complete!'}`,
+        content: "How to save Okra seeds:\n\n1. Let okra pods mature on the plant until they're brown and dry\n2. Harvest the pods when they start to split open\n3. Remove seeds from the pods\n4. Spread seeds out to dry completely (5-7 days)\n5. Store in a cool, dry place in an envelope or jar\n6. Label with variety and date\n7. Seeds remain viable for 2-4 years\n\n🌱 Pro tip: Only save seeds from heirloom/open-pollinated varieties, not hybrids!",
         isUser: false,
         timestamp: new Date(),
-        options: nextOptions
+        options: [
+          "That's actually interesting",
+          "What else did Megan do?"
+        ]
       };
     }
-
-    // Onboarding
-    if (userText === "Tell me about Onboarding") {
-      const nextOptions = [];
-      if (!exploredTopics.has("chat1")) nextOptions.push("How does the chat support this?");
-      if (!exploredTopics.has("chat3")) nextOptions.push("Can I attach files during onboarding?");
-      if (!exploredTopics.has("ia")) nextOptions.push("How does onboarding fit the IA?");
-      if (nextOptions.length === 0) nextOptions.push("Continue exploring");
-      
+    
+    // Navigation options
+    if (userText === "Move on" || userText === "What else did Megan do?" || userText === "That's actually interesting") {
       return {
         id: Date.now().toString(),
-        content: `**Onboarding: Integrations & Quick Start**\n\nOnboarding happens *inside the chat* - no separate screens.\n\n**Integrations:**\n• Salesforce auth flow happens in modals\n• Quick start questions guide setup\n• "Tell me about X" prompts for learning\n• Everything accessible from the + menu\n\n**Why in-chat?** Reduces friction. Users learn by doing, not by reading docs. The AI guides them through setup conversationally.\n\n${remainingTopics > 0 ? `📚 ${remainingTopics} more insight${remainingTopics > 1 ? 's' : ''} available!` : '🎓 You\'re a Copado expert now!'}`,
+        content: "Pick any topic from the highlights on the right to explore Megan's work in more detail! Each one is clickable.",
         isUser: false,
-        timestamp: new Date(),
-        options: nextOptions
+        timestamp: new Date()
       };
     }
-
-    // Access w/o Overbuilding
-    if (userText === "Tell me about Access w/o overbuilding") {
-      const nextOptions = [];
-      if (!exploredTopics.has("chat3")) nextOptions.push("What about those context chips?");
-      if (!exploredTopics.has("ia")) nextOptions.push("Where do pins show up?");
-      if (!exploredTopics.has("chat1")) nextOptions.push("Can I pin from anywhere?");
-      if (nextOptions.length === 0) nextOptions.push("Keep learning");
-      
+    
+    if (userText === "Blah, blah what can Copado do for me today?") {
       return {
         id: Date.now().toString(),
-        content: `**Access w/o Overbuilding: Use Pins**\n\nPins are the secret weapon for recapture without building complex features.\n\n**Pin anything:**\n• A specific chat message (the answer you need)\n• An artifact (code, document)\n• An instruction or template\n\n**Why it works:**\n• No folders, no complex organization\n• Fast recapture via Pinned tab\n• Works across the entire app\n• Simple mental model: "I'll need this later" → Pin it\n\nPins = bookmarks done right.\n\n${remainingTopics > 0 ? `💎 ${remainingTopics} gem${remainingTopics > 1 ? 's' : ''} still hidden!` : '💯 Perfect score!'}`,
+        content: "That would open the 'What can Copado do?' workspace - but you're already in a workspace! Navigate back to the home page to check it out.",
         isUser: false,
-        timestamp: new Date(),
-        options: nextOptions
+        timestamp: new Date()
       };
     }
-
-    // Information Architecture
-    if (userText === "Tell me about Information Architecture") {
-      const nextOptions = [];
-      if (!exploredTopics.has("chat2")) nextOptions.push("How does Make mode follow this?");
-      if (!exploredTopics.has("chat1")) nextOptions.push("Does the chat fit this pattern?");
-      if (!exploredTopics.has("onboarding")) nextOptions.push("How does onboarding use this?");
-      if (nextOptions.length === 0) nextOptions.push("See what's left");
-      
+    
+    // Highlight clicks - simple acknowledgments for now
+    if (userText.includes("Redesigned the AI input") || userText.includes("Ask/Make modes")) {
       return {
         id: Date.now().toString(),
-        content: `**Information Architecture: All Work the Same**\n\nWorkspaces, templates, quick actions - they all use the same structure.\n\n**Why consistency?**\n• Same left/right panel layout\n• Same nav pattern (back, title, actions)\n• Same tabs (Highlights, Code/Preview, Artifacts)\n• Reduces cognitive load\n\n**The benefit?** Learn it once, use it everywhere. Whether you're analyzing, deploying, or learning - the interface feels familiar.\n\nConsistency = speed.\n\n${remainingTopics > 0 ? `🎯 ${remainingTopics} concept${remainingTopics > 1 ? 's' : ''} remaining!` : '🌟 Journey complete!'}`,
+        content: "The AI input redesign with Ask/Make modes helps prevent the 'accidental enter' problem. Ask mode submits on Enter, while Make mode requires clicking Submit - perfect for long form content!",
         isUser: false,
-        timestamp: new Date(),
-        options: nextOptions
+        timestamp: new Date()
       };
     }
-
-    // Bridging questions - dynamically route to related topics
-    if (userText === "How does moving items work with this?" || userText === "What about those context chips?") {
-      return meganConversation.handleResponse!("Tell me about Chat Design 3", currentMessages, _context, _isAuthenticated);
+    
+    if (userText.includes("Moved settings") || userText.includes("chat to the AI component")) {
+      return {
+        id: Date.now().toString(),
+        content: "Moving settings directly to the AI component makes it self-contained and contextual. Everything you need is right where you're working!",
+        isUser: false,
+        timestamp: new Date()
+      };
     }
     
-    if (userText === "How does this fit the overall IA?" || userText === "Does Make mode fit the IA pattern?" || 
-        userText === "Where do pins show up?" || userText === "How does onboarding fit the IA?") {
-      return meganConversation.handleResponse!("Tell me about Information Architecture", currentMessages, _context, _isAuthenticated);
+    if (userText.includes("self contained") || userText.includes("contextual")) {
+      return {
+        id: Date.now().toString(),
+        content: "A self-contained AI component can be embedded anywhere - Chrome extensions, App Exchange apps, or anywhere people work. It brings the power with it!",
+        isUser: false,
+        timestamp: new Date()
+      };
     }
     
-    if (userText === "How is onboarding integrated?" || userText === "How does the chat support this?" || 
-        userText === "How does onboarding use this?") {
-      return meganConversation.handleResponse!("Tell me about Onboarding", currentMessages, _context, _isAuthenticated);
+    if (userText.includes("information architecture") || userText.includes("intuitive")) {
+      return {
+        id: Date.now().toString(),
+        content: "The IA improvements make navigation more intuitive - everything has its place and works consistently across the app.",
+        isUser: false,
+        timestamp: new Date()
+      };
     }
     
-    if (userText === "How is this chat component designed?" || userText === "Tell me about the chat component itself" || 
-        userText === "Does the chat fit this pattern?" || userText === "Can I pin from anywhere?") {
-      return meganConversation.handleResponse!("Tell me about Chat Design 1", currentMessages, _context, _isAuthenticated);
+    if (userText.includes("bookmarking") || userText.includes("quickly")) {
+      return {
+        id: Date.now().toString(),
+        content: "Quick access via bookmarking (now called 'pins') lets you save anything important for later - conversations, artifacts, templates. It's instant recapture!",
+        isUser: false,
+        timestamp: new Date()
+      };
     }
     
-    if (userText === "How does this work in Make mode?" || userText === "How does Make mode follow this?" || 
-        userText === "Can I pin things from Make mode?") {
-      return meganConversation.handleResponse!("Tell me about Chat Design 2", currentMessages, _context, _isAuthenticated);
+    if (userText.includes("Learn and Pricing") || userText.includes("top center") || userText.includes("top nav")) {
+      return {
+        id: Date.now().toString(),
+        content: "Adding Learn and Pricing to the top nav makes key resources easily accessible from anywhere in the app. No more hunting!",
+        isUser: false,
+        timestamp: new Date()
+      };
     }
     
-    if (userText === "Can I pin these chips?" || userText === "Can I attach files during onboarding?") {
-      return meganConversation.handleResponse!("Tell me about Access w/o overbuilding", currentMessages, _context, _isAuthenticated);
-    }
-
-    // Generic navigation prompts
-    if (userText === "Explore another topic" || userText === "Show me something else" || userText === "What else is there?" ||
-        userText === "Continue exploring" || userText === "Keep learning" || userText === "See what's left") {
-      const unexplored = [];
-      if (!exploredTopics.has("chat1")) unexplored.push("Chat Design 1");
-      if (!exploredTopics.has("chat2")) unexplored.push("Chat Design 2: Make Mode");
-      if (!exploredTopics.has("chat3")) unexplored.push("Chat Design 3: Moving Items");
-      if (!exploredTopics.has("onboarding")) unexplored.push("Onboarding");
-      if (!exploredTopics.has("access")) unexplored.push("Access w/o Overbuilding");
-      if (!exploredTopics.has("ia")) unexplored.push("Information Architecture");
-      
-      if (unexplored.length > 0) {
-        return {
-          id: Date.now().toString(),
-          content: `Check out these unexplored topics in the highlights:\n\n${unexplored.map(t => `• ${t}`).join('\n')}\n\nClick any one to continue your journey! 🗺️`,
-          isUser: false,
-          timestamp: new Date()
-        };
-      } else {
-        return {
-          id: Date.now().toString(),
-          content: "🎉 You've explored everything! You now have a complete understanding of Megan's design decisions. Feel free to revisit any topic from the highlights!",
-          isUser: false,
-          timestamp: new Date()
-        };
-      }
+    if (userText.includes("Dashboard") || userText.includes("my stuff")) {
+      return {
+        id: Date.now().toString(),
+        content: "The Dashboard next to your name is your personal hub - 'it's my stuff!' Quick access to recent work, saved items, and artifacts you've created.",
+        isUser: false,
+        timestamp: new Date()
+      };
     }
     
-    // Default response for other inputs
+    // Default response
     return {
       id: Date.now().toString(),
-      content: `${exploredTopics.size > 0 ? '👀 ' : ''}Pick any topic from the highlights on the right to explore! ${remainingTopics > 0 ? `${remainingTopics} topic${remainingTopics > 1 ? 's' : ''} waiting for you.` : 'Or revisit any you\'ve seen!'}`,
+      content: "Click any topic from the highlights on the right to learn more about what Megan built!",
       isUser: false,
       timestamp: new Date()
     };
   }
 };
-

@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import AIInput from '../components/ui/AIInput';
 import PricingModal from '../components/ui/PricingModal';
+import ShareModal from '../components/ui/ShareModal';
+import SaveModal from '../components/ui/SaveModal';
 import type { ConversationMessage } from '../components/ui/AIInput';
 import { meganConversation, copadoCanDoConversation } from '../conversations';
 
-type WorkspaceType = 'chat' | 'library-item' | 'artifact';
+type WorkspaceType = 'chat' | 'library-item' | 'artifact' | 'code';
 
 interface WorkspacePageProps {
   workspaceType?: WorkspaceType;
@@ -19,7 +21,7 @@ interface WorkspacePageProps {
 }
 
 const WorkspacePage = ({
-  workspaceType: _workspaceType = 'chat',
+  workspaceType = 'chat',
   workspaceTitle = 'Workspace',
   workspaceTopic = 'General',
   initialPrompt = '',
@@ -31,8 +33,20 @@ const WorkspacePage = ({
   const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
   const [showTyping, setShowTyping] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
-  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'preview' | 'code' | 'artifacts'>('overview');
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'steps' | 'code' | 'artifacts'>('overview');
   const [showPricingModal, setShowPricingModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [steps, setSteps] = useState<Array<{ id: string; text: string; completed: boolean }>>([
+    { id: '1', text: 'Analyzed current architecture issues', completed: true },
+    { id: '2', text: 'Designed to be where people work', completed: true },
+    { id: '3', text: 'Considered accessibility, readability and concepts for a MVP', completed: true },
+    { id: '4', text: 'Made component designs using Tailwinds in Figma and some in code (there\'s a reason)', completed: true },
+    { id: '5', text: 'Worked AI first on designs with Tiger Team. Learned from them. Has takeaways for hybrid AI - Human centered design process', completed: true },
+    { id: '6', text: 'Failed to catch up with team in motion - AI vs Figma tension', completed: true },
+    { id: '7', text: 'Prototyped : interacting before logging in, pricing flow, conversation vs make, AI component ability to get back to artifacts and anything', completed: true }
+  ]);
   const [leftPanelWidth, setLeftPanelWidth] = useState(75); // percentage - 3/4 of page by default
   const [isResizing, setIsResizing] = useState(false);
   const [pinnedMessages, setPinnedMessages] = useState<ConversationMessage[]>([]);
@@ -49,25 +63,104 @@ const WorkspacePage = ({
   
   // Refs for scrolling to messages
   const messageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const conversationContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Scroll state for "back to latest" indicator
+  const [isScrolledUp, setIsScrolledUp] = useState(false);
+  const [showBackToLatest, setShowBackToLatest] = useState(false);
+  
+  // Sample code for code workspaces
+  const [codeContent] = useState(`public class AccountTriggerHandler {
+    public static void handleBeforeInsert(List<Account> newAccounts) {
+        for (Account acc : newAccounts) {
+            if (acc.Type == null) {
+                acc.Type = 'Prospect';
+            }
+            if (acc.Industry == null) {
+                acc.Industry = 'Other';
+            }
+        }
+    }
+    
+    public static void handleAfterInsert(List<Account> newAccounts) {
+        List<Contact> contactsToInsert = new List<Contact>();
+        
+        for (Account acc : newAccounts) {
+            Contact primaryContact = new Contact(
+                FirstName = 'Primary',
+                LastName = 'Contact',
+                AccountId = acc.Id,
+                Email = 'primary@' + acc.Name.deleteWhitespace().toLowerCase() + '.com'
+            );
+            contactsToInsert.add(primaryContact);
+        }
+        
+        if (!contactsToInsert.isEmpty()) {
+            insert contactsToInsert;
+        }
+    }
+}`);
 
   // Determine which tabs to show based on topic
   const topicsWithoutCode = ['Strategy', 'Planning', 'Learn'];
   const showCodeTab = !topicsWithoutCode.includes(workspaceTopic);
 
-  // Determine primary action based on topic
+  // Determine primary action based on workspace type and topic
   const getPrimaryAction = () => {
-    const topicsWithDownload = ['Learn', 'Strategy', 'Planning'];
-    if (topicsWithDownload.includes(workspaceTopic)) {
+    // Learn, Chat, Plan -> Save
+    if (workspaceTopic === 'Learn' || workspaceTopic === 'Chat' || workspaceTopic === 'Plan' || workspaceTopic === 'Planning' || workspaceTopic === 'Strategy') {
+      return { label: 'Save', icon: '' }; // Icon will be rendered as SVG
+    }
+    
+    // Code workspaces -> Download
+    if (workspaceType === 'code' || workspaceTopic === 'Code') {
       return { label: 'Download', icon: '↓' };
     }
+    
+    // User Story, Develop, Test, Build -> Automate
+    const automateTopics = ['User Story', 'Develop', 'Test', 'Build'];
+    if (automateTopics.includes(workspaceTopic)) {
+      return { label: 'Automate', icon: '⚡' };
+    }
+    
+    // Default fallback
     return { label: 'Apply', icon: '✓' };
   };
 
   const primaryAction = getPrimaryAction();
+  
+  // Copy code handler
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(codeContent);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
 
   const handlePrimaryAction = () => {
-    // Show pricing modal for all primary actions
-    setShowPricingModal(true);
+    // If action is Save, show save modal
+    if (primaryAction.label === 'Save') {
+      setShowSaveModal(true);
+    } else if (primaryAction.label === 'Share') {
+      // If action is Share, show share modal
+      setShowShareModal(true);
+    } else {
+      // Show pricing modal for other primary actions
+      setShowPricingModal(true);
+    }
+  };
+
+  const handleSave = (title: string) => {
+    // Update the workspace title
+    if (_onSaveWorkspace) {
+      _onSaveWorkspace(title, {
+        workspaceType,
+        workspaceTopic,
+        initialPrompt,
+        environment
+      });
+    }
+    // Mark as pinned/saved
+    setIsPinned(true);
   };
 
   // Handle panel resizing
@@ -109,6 +202,61 @@ const WorkspacePage = ({
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isResizing]);
+  
+  // Scroll detection - show "back to latest" button when scrolled up
+  useEffect(() => {
+    const container = conversationContainerRef.current;
+    if (!container) return;
+    
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+      
+      // If scrolled up more than 100px from bottom, show back to latest button
+      const scrolledUp = distanceFromBottom > 100;
+      setIsScrolledUp(scrolledUp);
+      
+      // Add a slight delay before showing the button for better UX
+      if (scrolledUp) {
+        setTimeout(() => setShowBackToLatest(true), 300);
+      } else {
+        setShowBackToLatest(false);
+      }
+    };
+    
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  // Auto-scroll to latest message with smooth animation
+  useEffect(() => {
+    if (conversationMessages.length > 0 && !isScrolledUp) {
+      const container = conversationContainerRef.current;
+      if (container) {
+        // Delay slightly to allow message animation to start
+        setTimeout(() => {
+          // Smooth scroll to bottom with graceful easing
+          container.scrollTo({
+            top: container.scrollHeight,
+            behavior: 'smooth'
+          });
+        }, 150);
+      }
+    }
+  }, [conversationMessages.length, isScrolledUp]);
+  
+  // Scroll to latest message handler
+  const scrollToLatest = () => {
+    const container = conversationContainerRef.current;
+    if (container) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth'
+      });
+      setIsScrolledUp(false);
+      setShowBackToLatest(false);
+    }
+  };
 
   // Initialize conversation with the initial prompt if provided
   useState(() => {
@@ -150,7 +298,7 @@ const WorkspacePage = ({
     }
   });
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = (text: string, _mode: 'ask' | 'make' = 'ask') => {
     if (!text.trim()) return;
 
     // Add user message
@@ -214,6 +362,49 @@ const WorkspacePage = ({
       return;
     }
 
+    // Handle step completion responses
+    if (text.includes('Yes, completed')) {
+      setTimeout(() => {
+        const aiMessage: ConversationMessage = {
+          id: (Date.now() + 1).toString(),
+          content: `✅ Great! I've marked that step as complete. Keep up the momentum!`,
+          isUser: false,
+          timestamp: new Date()
+        };
+        setConversationMessages(prev => [...prev, aiMessage]);
+        setShowTyping(false);
+      }, 800);
+      return;
+    }
+    
+    if (text.includes('No, not yet')) {
+      setTimeout(() => {
+        const aiMessage: ConversationMessage = {
+          id: (Date.now() + 1).toString(),
+          content: `No worries! Take your time. I'm here if you need help with this step. Just click it again when you're ready.`,
+          isUser: false,
+          timestamp: new Date()
+        };
+        setConversationMessages(prev => [...prev, aiMessage]);
+        setShowTyping(false);
+      }, 800);
+      return;
+    }
+    
+    if (text.includes('Pin this as next to do')) {
+      setTimeout(() => {
+        const aiMessage: ConversationMessage = {
+          id: (Date.now() + 1).toString(),
+          content: `📌 Pinned! This step is now saved as your next priority. You'll find it in your highlights.`,
+          isUser: false,
+          timestamp: new Date()
+        };
+        setConversationMessages(prev => [...prev, aiMessage]);
+        setShowTyping(false);
+      }, 800);
+      return;
+    }
+
     // Default response for other workspaces
     setTimeout(() => {
       const aiMessage: ConversationMessage = {
@@ -225,6 +416,33 @@ const WorkspacePage = ({
       setConversationMessages(prev => [...prev, aiMessage]);
       setShowTyping(false);
     }, 1500);
+  };
+
+  const handleStepClick = (step: { id: string; text: string; completed: boolean }) => {
+    // Add user message clicking the step
+    const userMessage: ConversationMessage = {
+      id: Date.now().toString(),
+      content: `Tell me about: ${step.text}`,
+      isUser: true,
+      timestamp: new Date()
+    };
+    setConversationMessages(prev => [...prev, userMessage]);
+    
+    // Show typing indicator
+    setShowTyping(true);
+    
+    // After a delay, add Copado's explanation
+    setTimeout(() => {
+      const copadoMessage: ConversationMessage = {
+        id: (Date.now() + 1).toString(),
+        content: `Let me explain **${step.text}**:\n\nThis step involves checking your current configuration and ensuring all components are properly set up. You'll want to verify:\n\n• All required fields are configured\n• Dependencies are resolved\n• Permissions are set correctly\n\nReady to proceed?`,
+        isUser: false,
+        timestamp: new Date(),
+        options: ['✅ Yes, completed', '❌ No, not yet', '📌 Pin this as next to do']
+      };
+      setConversationMessages(prev => [...prev, copadoMessage]);
+      setShowTyping(false);
+    }, 1200);
   };
 
   const handlePinMessage = (message: ConversationMessage) => {
@@ -261,7 +479,7 @@ const WorkspacePage = ({
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Workspace Header */}
-      <div className="bg-white border-b border-slate-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4">
+      <div className="bg-white border-b border-slate-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-50">
         <div className="max-w-full mx-auto flex items-center justify-between">
           {/* Left: Back Button */}
           <button
@@ -294,21 +512,24 @@ const WorkspacePage = ({
 
           {/* Right: Pin + Share + Primary Action */}
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            <button
-              onClick={() => setIsPinned(!isPinned)}
-              className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors"
-              title={isPinned ? 'Unpin' : 'Pin'}
-            >
-              <svg 
-                className={`w-4 h-4 sm:w-5 sm:h-5 ${isPinned ? 'fill-green-500 text-green-500' : 'text-slate-400'}`} 
-                fill={isPinned ? 'currentColor' : 'none'} 
-                stroke="currentColor" 
-                strokeWidth={2}
-                viewBox="0 0 24 24"
+            {/* Hide bookmark icon for Learn, Chat, Plan workspaces (they use Save button instead) */}
+            {!(workspaceTopic === 'Learn' || workspaceTopic === 'Chat' || workspaceTopic === 'Plan' || workspaceTopic === 'Planning' || workspaceTopic === 'Strategy') && (
+              <button
+                onClick={() => setIsPinned(!isPinned)}
+                className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                title={isPinned ? 'Unpin' : 'Pin'}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-              </svg>
-            </button>
+                <svg 
+                  className={`w-4 h-4 sm:w-5 sm:h-5 ${isPinned ? 'fill-green-500 text-green-500' : 'text-slate-400'}`} 
+                  fill={isPinned ? 'currentColor' : 'none'} 
+                  stroke="currentColor" 
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+              </button>
+            )}
 
             <button
               onClick={() => console.log('Share workspace')}
@@ -324,8 +545,14 @@ const WorkspacePage = ({
               onClick={handlePrimaryAction}
               className="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
             >
-              <span className="hidden sm:inline">{primaryAction.label}</span>
-              <span className="sm:hidden">{primaryAction.icon}</span>
+              {primaryAction.label === 'Save' ? (
+                <span>{primaryAction.label}</span>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">{primaryAction.label}</span>
+                  <span className="sm:hidden">{primaryAction.icon}</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -391,14 +618,90 @@ const WorkspacePage = ({
               style={{ width: window.innerWidth >= 1024 ? `${leftPanelWidth}%` : '100%' }}
             >
               {/* Conversation Messages */}
-              <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4">
+              <div 
+                ref={conversationContainerRef}
+                className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4 relative scroll-smooth"
+                style={{
+                  scrollBehavior: 'smooth',
+                }}
+              >
+                {/* Next Step Suggestion - Show if no messages or first message is old */}
+                {conversationMessages.length === 0 && steps.some(s => !s.completed) && workspaceType !== 'code' && (
+                  <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-blue-900 mb-1">Next Step</p>
+                          <p className="text-sm text-blue-800">
+                            {steps.find(s => !s.completed)?.text}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Code Display - For code workspaces */}
+                {workspaceType === 'code' && (
+                  <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                      {/* Copy Button Header */}
+                      <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
+                        <span className="text-xs font-medium text-slate-600">AccountTriggerHandler.cls</span>
+                        <button
+                          onClick={handleCopyCode}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                            copiedCode 
+                              ? 'bg-green-100 text-green-700' 
+                              : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400'
+                          }`}
+                        >
+                          {copiedCode ? (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                              Copy
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      {/* Code Content */}
+                      <div className="p-4 bg-slate-900 overflow-x-auto">
+                        <pre className="text-sm text-slate-100 font-mono leading-relaxed">
+                          <code>{codeContent}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 {conversationMessages.length > 0 ? (
-                  conversationMessages.map((msg) => {
+                  conversationMessages.map((msg, index) => {
                     const isPinned = pinnedMessages.some(m => m.id === msg.id);
+                    const isLatest = index === conversationMessages.length - 1;
                     return (
                       <div 
                         key={msg.id}
                         ref={(el) => { messageRefs.current[msg.id] = el; }}
+                        className={`animate-in fade-in slide-in-from-bottom-8 duration-700 ${
+                          isLatest ? 'ease-[cubic-bezier(0.34,1.56,0.64,1)]' : ''
+                        }`}
+                        style={{
+                          animationDelay: isLatest ? '100ms' : `${index * 30}ms`,
+                        }}
                       >
                         <div 
                           className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} group`}
@@ -485,10 +788,29 @@ const WorkspacePage = ({
                     </div>
                   </div>
                 )}
+                
+                {/* Back to Latest Button - Floating */}
+                {showBackToLatest && (
+                  <button
+                    onClick={scrollToLatest}
+                    className="fixed bottom-24 right-8 p-3 bg-blue-600 text-white rounded-full shadow-2xl hover:bg-blue-700 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 z-10 group"
+                    title="Jump to latest message"
+                  >
+                    <svg 
+                      className="w-5 h-5 transition-transform group-hover:translate-y-0.5" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                      strokeWidth={2.5}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                  </button>
+                )}
               </div>
 
-              {/* AI Input - Locked at Bottom */}
-              <div className="border-t border-slate-200 p-3 sm:p-4 bg-white sticky bottom-0">
+              {/* AI Input - Sticky at Bottom Left */}
+              <div className="border-t border-slate-200 p-3 sm:p-4 bg-white sticky bottom-0 z-10">
                 <AIInput
                   onSendMessage={handleSendMessage}
                   placeholder="your move ..."
@@ -533,14 +855,14 @@ const WorkspacePage = ({
                 </button>
                 {!showCodeTab ? (
                   <button 
-                    onClick={() => setActiveRightPanelTab('preview')}
+                    onClick={() => setActiveRightPanelTab('steps')}
                     className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
-                      activeRightPanelTab === 'preview' 
+                      activeRightPanelTab === 'steps' 
                         ? 'text-blue-600 bg-blue-50' 
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
-                    Preview
+                    Steps
                   </button>
                 ) : (
                   <button 
@@ -705,75 +1027,80 @@ const WorkspacePage = ({
                         ) : workspaceTitle === "What did Megan do?" ? (
                           <>
                             <button
-                              onClick={() => handleSendMessage("Tell me about Chat Design 1")}
+                              onClick={() => handleSendMessage("Redesigned the AI input component with Ask/Make modes")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Chat Design 1</p>
-                                <p className="text-xs text-slate-600 mt-1">Self contained, contextual chat component to embed anywhere</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Redesigned AI input with Ask/Make modes</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Tell me about Chat Design 2")}
+                              onClick={() => handleSendMessage("Moved settings that pertain to chat to the AI component")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Chat Design 2: Make Mode</p>
-                                <p className="text-xs text-slate-600 mt-1">Why?</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Moved chat settings to AI component</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Tell me about Chat Design 3")}
+                              onClick={() => handleSendMessage("Made the AI input self contained and contextual")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Chat Design 3: Moving Items</p>
-                                <p className="text-xs text-slate-600 mt-1">Moving items to chat does what?</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Made AI input self-contained and contextual</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Tell me about Onboarding")}
+                              onClick={() => handleSendMessage("Adjusted the information architecture to be more intuitive")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Onboarding</p>
-                                <p className="text-xs text-slate-600 mt-1">Integrations and Salesforce w/in chat, Quick start - tell me about these</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Adjusted information architecture</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Tell me about Access w/o overbuilding")}
+                              onClick={() => handleSendMessage("Gave people a way to get to things quickly by bookmarking")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Access w/o Overbuilding</p>
-                                <p className="text-xs text-slate-600 mt-1">Use Pins for timely recapture, Pin anything - a chat sentence, artifact, instruction</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Added quick access via bookmarking</p>
                               </div>
                             </button>
                             <button
-                              onClick={() => handleSendMessage("Tell me about Information Architecture")}
+                              onClick={() => handleSendMessage("Added Learn and Pricing to top center on main pages")}
                               className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
                             >
                               <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
                               <div className="flex-1">
-                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Information Architecture</p>
-                                <p className="text-xs text-slate-600 mt-1">All work the same - Why do that?</p>
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Added Learn and Pricing to top nav</p>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleSendMessage("Added Dashboard next to a person's name (it's my stuff!)")}
+                              className="w-full flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all text-left group"
+                            >
+                              <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-slate-900 group-hover:text-blue-600">Added Dashboard (it's my stuff!)</p>
                               </div>
                             </button>
                           </>
@@ -834,18 +1161,53 @@ const WorkspacePage = ({
                   </div>
                 )}
 
-                {(activeRightPanelTab === 'preview') && (
-                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 sm:p-12 text-center h-full flex items-center justify-center">
+                {(activeRightPanelTab === 'steps') && (
+                  <div className="space-y-4">
                     <div>
-                      <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Preview</h3>
-                      <p className="text-sm text-slate-600">
-                        Visual preview will appear here
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Steps</h3>
+                      <p className="text-sm text-slate-600 mb-4">
+                        Click any step to get guidance and mark it complete
                       </p>
                     </div>
+
+                    {/* Steps List */}
+                    <div className="space-y-2">
+                      {steps.map((step) => (
+                        <button
+                          key={step.id}
+                          onClick={() => handleStepClick(step)}
+                          className="w-full bg-white rounded-lg p-4 border border-slate-200 hover:bg-blue-50 hover:border-blue-200 transition-all text-left group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={step.completed}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                setSteps(steps.map(s => 
+                                  s.id === step.id ? { ...s, completed: !s.completed } : s
+                                ));
+                              }}
+                              className="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                            />
+                            <span className={`text-sm ${step.completed ? 'line-through text-slate-400' : 'text-slate-900 group-hover:text-blue-700'}`}>
+                              {step.text}
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Automate Button */}
+                    <button
+                      onClick={() => console.log('Automate clicked')}
+                      className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg hover:from-indigo-700 hover:to-blue-700 transition-all font-medium text-sm flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Automate These Steps
+                    </button>
                   </div>
                 )}
 
@@ -1000,6 +1362,25 @@ const WorkspacePage = ({
         isOpen={showPricingModal}
         onClose={() => setShowPricingModal(false)}
         feature="saving workspaces and applying changes"
+      />
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        onJoinTeams={() => {
+          setShowShareModal(false);
+          setShowPricingModal(true);
+        }}
+        workspaceTitle={workspaceTitle}
+      />
+
+      {/* Save Modal */}
+      <SaveModal
+        isOpen={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={handleSave}
+        initialTitle={workspaceTitle}
       />
     </div>
   );

@@ -14,6 +14,7 @@ export interface ConversationMessage {
   content: MessageContent;
   isUser: boolean;
   timestamp: Date;
+  options?: string[]; // Optional pill button options for interactive responses
 }
 
 interface ConversationProps {

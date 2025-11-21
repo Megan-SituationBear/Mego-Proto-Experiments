@@ -159,7 +159,6 @@ const IntroPage: React.FC<IntroPageProps> = ({ onLogin, onSignUp, onViewTemplate
     setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
   };
 
-
   const handleSendMessageWithConversation = (text: string, setTypingIndicator?: (show: boolean) => void) => {
     handleSendMessage(text, setTypingIndicator);
   };

@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { AIInput, TemplateCard, TopNav, TabToggle } from '../components/ui';
 import FindTemplatesModal from '../components/ui/FindTemplatesModal';
 import Conversation, { type ConversationMessage } from '../components/Conversation';
-import { generateAIResponse } from '../utils/aiMessageGenerator';
 
 interface HomePageProps {
   userName?: string;
@@ -11,9 +10,11 @@ interface HomePageProps {
   activeProjects?: any[];
   recentItems?: any[];
   artifacts?: any[];
+  isLoggedIn?: boolean;
   onCreateProject?: (title?: string) => void;
   onLogout?: () => void;
   onNavigateToDashboard?: () => void;
+  onNavigateToPricing?: () => void;
   onNavigateToWorkspace?: (config: {
     type: 'chat' | 'library-item' | 'artifact';
     title: string;
@@ -33,9 +34,11 @@ const HomePage: React.FC<HomePageProps> = ({
   activeProjects: _activeProjects = [],
   recentItems = [],
   artifacts = [],
-  onCreateProject,
+  isLoggedIn = true,
+  onCreateProject: _onCreateProject,
   onLogout,
   onNavigateToDashboard,
+  onNavigateToPricing,
   onNavigateToWorkspace,
 }) => {
   // UI state
@@ -63,32 +66,92 @@ const HomePage: React.FC<HomePageProps> = ({
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-  // Scroll to bottom when new messages arrive
+  // Scroll to bottom when new messages arrive (within conversation container only)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'nearest',
+        inline: 'nearest'
+      });
+    }
   }, [conversationMessages]);
 
-  // Helper function to clean AIInput messages (handles mode prefixes automatically)
-  const cleanAIInputMessage = (text: string): string => {
-    // Remove mode prefixes like [ASK] or [MAKE] that AIInput adds
-    return text.replace(/^\[(ASK|MAKE)\]\s*/i, '').trim();
-  };
+  const handleSendMessage = (text: string, mode: 'ask' | 'make', setTypingIndicator?: (show: boolean) => void) => {
+    if (!text.trim()) return;
 
-  const handleSendMessage = (text: string, setTypingIndicator?: (show: boolean) => void) => {
-    // Clean the message from AIInput (removes mode prefixes)
-    const cleanText = cleanAIInputMessage(text);
-    if (!cleanText) return;
+    // MAKE MODE: Immediately create workspace
+    if (mode === 'make') {
+      if (!isLoggedIn) {
+        // Not logged in - go to pricing
+        if (onNavigateToPricing) {
+          onNavigateToPricing();
+        }
+      } else {
+        // Logged in - show building workspace modal then workspace
+        setShowBuildingWorkspace(true);
+        setWorkspaceAction(text);
+        
+        // Then navigate to workspace
+        setTimeout(() => {
+          if (onNavigateToWorkspace) {
+            onNavigateToWorkspace({
+              type: 'chat',
+              title: `Chat: ${text}`,
+              topic: 'Chat',
+              initialPrompt: text
+            });
+          }
+        }, 2000);
+      }
+      return;
+    }
+
+    // ASK MODE: Start/continue conversation
+    // Handle responses to "Continue?" question
+    if (text === 'Yes, let\'s create a project') {
+      // User wants to create a project
+      const originalPrompt = conversationMessages[0]?.content.content || text;
+      
+      if (!isLoggedIn) {
+        if (onNavigateToPricing) {
+          onNavigateToPricing();
+        }
+      } else {
+        setShowBuildingWorkspace(true);
+        setWorkspaceAction(originalPrompt);
+        
+        setTimeout(() => {
+          if (onNavigateToWorkspace) {
+            onNavigateToWorkspace({
+              type: 'chat',
+              title: `Chat: ${originalPrompt}`,
+              topic: 'Chat',
+              initialPrompt: originalPrompt
+            });
+          }
+        }, 2000);
+      }
+      return;
+    }
+
+    if (text === 'No, clear') {
+      // User wants to clear conversation
+      setConversationMessages([]);
+      setUserMessageCount(0);
+      return;
+    }
 
     // Increment user message count
     const newUserMessageCount = userMessageCount + 1;
     setUserMessageCount(newUserMessageCount);
 
-    // Create user conversation message with proper format
+    // Create user conversation message
     const userConversationMessage: ConversationMessage = {
       id: Date.now().toString(),
       content: {
         type: 'text',
-        content: cleanText
+        content: text
       },
       isUser: true,
       timestamp: new Date()
@@ -101,32 +164,42 @@ const HomePage: React.FC<HomePageProps> = ({
       setTypingIndicator(true);
     }
 
-    // Simulate AI response
+    // Generate Copado's response after a short delay
     setTimeout(() => {
-      const response = generateAIResponse(text, newUserMessageCount);
-      // Use the response message as-is (it already has proper MessageContent format)
-      const aiMessage: ConversationMessage = {
-        id: response.conversationMessage.id,
-        content: typeof response.conversationMessage.content === 'string'
-          ? { type: 'text', content: response.conversationMessage.content }
-          : response.conversationMessage.content,
+      let copadoResponse = '';
+      let options: string[] | undefined = undefined;
+
+      if (newUserMessageCount === 1) {
+        // First response: Ask for more details
+        copadoResponse = `You said "${text}". Got it. Tell me a little more about this, please. What use case are you solving for? Is it for a client or internal project?`;
+      } else if (newUserMessageCount === 2) {
+        // Second response: Offer to continue or clear
+        copadoResponse = `Understood. I have enough context now.`;
+        options = ['Yes, let\'s create a project', 'No, clear'];
+      } else {
+        // Additional responses
+        copadoResponse = `I understand. Thanks for clarifying.`;
+        options = ['Yes, let\'s create a project', 'No, clear'];
+      }
+
+      const copadoMessage: ConversationMessage = {
+        id: (Date.now() + 1).toString(),
+        content: {
+          type: 'text',
+          content: copadoResponse
+        },
         isUser: false,
-        timestamp: response.conversationMessage.timestamp
+        timestamp: new Date(),
+        options: options
       };
-      setConversationMessages(prev => [...prev, aiMessage]);
+
+      setConversationMessages(prev => [...prev, copadoMessage]);
       
       // Hide typing indicator
       if (setTypingIndicator) {
         setTypingIndicator(false);
       }
-
-      // After second exchange, create project
-      if (newUserMessageCount === 2 && onCreateProject) {
-        setTimeout(() => {
-          onCreateProject(cleanText);
-        }, 1500);
-      }
-    }, 1200);
+    }, 1500);
   };
 
   return (
@@ -169,7 +242,11 @@ const HomePage: React.FC<HomePageProps> = ({
           }
         }}
         onLearnClick={() => console.log('Learn clicked')}
-        onPricingClick={() => console.log('Pricing clicked')}
+        onPricingClick={() => {
+          if (onNavigateToPricing) {
+            onNavigateToPricing();
+          }
+        }}
         onSearchClick={() => console.log('Search clicked')}
         onDashboardClick={() => {
           if (onNavigateToDashboard) {
@@ -203,15 +280,13 @@ const HomePage: React.FC<HomePageProps> = ({
         <>
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 transition-all duration-300"
+            className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 animate-in fade-in duration-300"
             onClick={() => setShowMenu(false)}
           />
           
           {/* Drawer Panel */}
           <div 
-            className={`fixed top-0 right-0 h-full w-96 bg-white border-l border-slate-200 shadow-xl z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
-              showMenu ? 'translate-x-0' : 'translate-x-full'
-            }`}
+            className="fixed top-0 right-0 h-full w-96 bg-white border-l border-slate-200 shadow-2xl z-50 overflow-y-auto animate-in slide-in-from-right duration-300 ease-out"
           >
             {/* Close Button */}
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
@@ -288,7 +363,7 @@ const HomePage: React.FC<HomePageProps> = ({
               )}
             </div>
             
-            {/* Pinned */}
+            {/* Saved */}
             <div className="px-6 py-4">
               <div className="flex items-center justify-between">
                 <button
@@ -298,7 +373,7 @@ const HomePage: React.FC<HomePageProps> = ({
                   }}
                   className="text-base font-semibold text-slate-900 hover:text-blue-600 transition-colors"
                 >
-                  Pinned
+                  Saved
                 </button>
                 {pinnedTemplates.length > 0 && (
                   <span className="text-xs bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-medium">
@@ -389,6 +464,68 @@ const HomePage: React.FC<HomePageProps> = ({
         />
         
         <div className="max-w-4xl mx-auto w-full relative z-10">
+        {/* Animated Logo */}
+        <div className="flex justify-center mb-6">
+          <div className="group cursor-pointer">
+            <svg 
+              width="120" 
+              height="120" 
+              viewBox="0 0 80 80" 
+              className="transition-transform duration-300 group-hover:scale-105"
+            >
+              <defs>
+                {/* Gradient for the circle */}
+                <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: '#3b82f6', stopOpacity: 1 }} />
+                  <stop offset="50%" style={{ stopColor: '#6366f1', stopOpacity: 1 }} />
+                  <stop offset="100%" style={{ stopColor: '#8b5cf6', stopOpacity: 1 }} />
+                </linearGradient>
+              </defs>
+              
+              {/* Circle background */}
+              <circle 
+                cx="40" 
+                cy="40" 
+                r="36" 
+                fill="url(#logoGradient)"
+                className="transition-all duration-300"
+              />
+              
+              {/* Eyes - Normal state */}
+              <g className="group-hover:opacity-0 transition-opacity duration-300">
+                {/* Left eye */}
+                <circle cx="28" cy="35" r="4" fill="white" />
+                {/* Right eye */}
+                <circle cx="52" cy="35" r="4" fill="white" />
+              </g>
+              
+              {/* Winking eye - Hover state */}
+              <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {/* Left eye winking (curved line) */}
+                <path 
+                  d="M 23 35 Q 28 38 33 35" 
+                  stroke="white" 
+                  strokeWidth="2.5" 
+                  strokeLinecap="round"
+                  fill="none"
+                />
+                {/* Right eye open */}
+                <circle cx="52" cy="35" r="4" fill="white" />
+              </g>
+              
+              {/* Smile */}
+              <path 
+                d="M 25 50 Q 40 60 55 50" 
+                stroke="white" 
+                strokeWidth="3" 
+                strokeLinecap="round"
+                fill="none"
+                className="transition-all duration-300 group-hover:translate-y-0.5"
+              />
+            </svg>
+          </div>
+        </div>
+        
         {/* Welcome Heading */}
         <div className="text-center mb-3 py-2">
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mb-2 sm:mb-3">
@@ -401,25 +538,11 @@ const HomePage: React.FC<HomePageProps> = ({
 
           {/* Conversation Section */}
           <div className="mb-4 sm:mb-6">
-            {/* Conversation Messages */}
-            <div className="mb-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
-              {conversationMessages.length > 0 && (
-                <>
-                  <Conversation
-                    messages={conversationMessages}
-                    showTypingIndicator={showCopadoTyping}
-                    onQuestionClick={(question) => handleSendMessage(question, setShowCopadoTyping)}
-                  />
-                  <div ref={messagesEndRef} />
-                </>
-              )}
-            </div>
-
             {/* AI Input */}
             <div className="mb-4">
               <AIInput
-                placeholder={conversationMessages.length > 0 ? "Continue the conversation..." : "Start a conversation or pick up where you left off"}
-                onSendMessage={(text) => handleSendMessage(text, setShowCopadoTyping)}
+                placeholder={userMessageCount >= 1 ? "Your move" : undefined}
+                onSendMessage={(text, mode) => handleSendMessage(text, mode, setShowCopadoTyping)}
                 autoFocus={false}
                 isLoggedIn={true}
                 pageContext="home"
@@ -431,7 +554,7 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             {/* Quick Actions - Below AI Input */}
-            {conversationMessages.length === 0 && (
+            {conversationMessages.length === 0 && userMessageCount === 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-medium text-slate-700 mb-2 text-center">Quick actions:</p>
                 <div className="flex flex-wrap gap-2 justify-center">
@@ -466,25 +589,23 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
               </div>
             )}
-            
-            {/* Show "Creating workspace..." message after second user message */}
-            {userMessageCount === 2 && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                <div className="flex items-center justify-center gap-2 text-blue-700">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                  </div>
-                  <span className="font-medium">Creating workspace...</span>
-                </div>
+
+            {/* Conversation Messages - Below Input (connected look) */}
+            {conversationMessages.length > 0 && (
+              <div className="mt-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-4">
+                <Conversation
+                  messages={conversationMessages}
+                  showTypingIndicator={showCopadoTyping}
+                  onQuestionClick={(question) => handleSendMessage(question, 'ask', setShowCopadoTyping)}
+                />
+                <div ref={messagesEndRef} />
               </div>
             )}
           </div>
         </div>
 
         {/* Pick up these Section - Below Conversation */}
-        <div className="mb-12 mt-[50vh]">
+        <div className="mb-12 mt-20">
           <div className="text-center mb-6">
             <h2 className="text-3xl font-bold text-slate-900 mb-6">
               Pick up these
@@ -495,7 +616,7 @@ const HomePage: React.FC<HomePageProps> = ({
               <TabToggle
                 tabs={[
                   { id: 'recent', label: 'Recent', count: recentItems.length },
-                  { id: 'pinned', label: 'Pinned', count: pinnedTemplates.length },
+                  { id: 'pinned', label: 'Saved', count: pinnedTemplates.length },
                   { id: 'artifacts', label: 'Artifacts' }
                 ]}
                 activeTab={activeTab}
@@ -592,7 +713,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 </>
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-slate-500">No pinned items yet. Pin items to save them here!</p>
+                  <p className="text-slate-500">No saved items yet. Save items to find them here!</p>
                 </div>
               )
             ) : (

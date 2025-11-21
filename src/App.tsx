@@ -333,14 +333,6 @@ function App() {
     setCurrentView('work-item');
   };
 
-  const handleSelectPlan = (plan: string) => {
-    if (plan === 'Free') {
-      handleLogin();
-    } else {
-      setCurrentView('onboarding');
-    }
-  };
-
   const handleNavigateToWorkspace = (config: {
     type: 'chat' | 'library-item' | 'artifact';
     title: string;
@@ -367,13 +359,16 @@ function App() {
     const savedWorkspace = {
       id: Date.now().toString(),
       title: title,
-      category: workspaceData.topic || 'Workspace',
-      type: workspaceData.type,
+      category: workspaceData.workspaceTopic || 'Workspace',
+      type: workspaceData.workspaceType || 'chat',
       savedHours: 0,
       startedAt: workspaceData.createdAt || new Date(),
       lastAccessed: new Date(),
       conversationMessages: workspaceData.conversationMessages || [],
     };
+
+    // Add to pinned/saved templates (shows in "Saved" section on home page and dashboard)
+    setPinnedTemplates(prev => [savedWorkspace, ...prev.filter(item => item.id !== savedWorkspace.id)]);
 
     // Add to active projects (shows in "My Work" on dashboard)
     setActiveProjects(prev => [savedWorkspace, ...prev]);
@@ -412,8 +407,14 @@ function App() {
   if (currentView === 'pricing') {
     return (
       <PricingPage
-        onBack={handleBackToIntro}
-        onSelectPlan={handleSelectPlan}
+        onNavigateHome={() => setCurrentView(isLoggedIn ? 'home' : 'intro')}
+        onSignupComplete={(name: string) => {
+          if (name) {
+            setUserName(name);
+          }
+          setIsLoggedIn(true);
+          setCurrentView('home');
+        }}
       />
     );
   }
@@ -427,10 +428,12 @@ function App() {
         activeProjects={activeProjects}
         recentItems={recentItems}
         artifacts={artifacts}
+        isLoggedIn={isLoggedIn}
         onCreateProject={handleCreateProject}
         onLogout={handleLogout}
         onNavigateToDashboard={() => setCurrentView('dashboard')}
         onNavigateToWorkspace={handleNavigateToWorkspace}
+        onNavigateToPricing={() => setCurrentView('pricing')}
       />
     );
   }

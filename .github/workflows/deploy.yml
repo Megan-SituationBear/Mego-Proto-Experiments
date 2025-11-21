@@ -8,6 +8,7 @@ on:
       - Q4
       - tonight-work
       - megan-conversation-design
+      - ai-input-improvements
   workflow_dispatch: {}
 
 permissions:

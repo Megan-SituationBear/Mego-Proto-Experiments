@@ -359,13 +359,16 @@ function App() {
     const savedWorkspace = {
       id: Date.now().toString(),
       title: title,
-      category: workspaceData.topic || 'Workspace',
-      type: workspaceData.type,
+      category: workspaceData.workspaceTopic || 'Workspace',
+      type: workspaceData.workspaceType || 'chat',
       savedHours: 0,
       startedAt: workspaceData.createdAt || new Date(),
       lastAccessed: new Date(),
       conversationMessages: workspaceData.conversationMessages || [],
     };
+
+    // Add to pinned/saved templates (shows in "Saved" section on home page and dashboard)
+    setPinnedTemplates(prev => [savedWorkspace, ...prev.filter(item => item.id !== savedWorkspace.id)]);
 
     // Add to active projects (shows in "My Work" on dashboard)
     setActiveProjects(prev => [savedWorkspace, ...prev]);

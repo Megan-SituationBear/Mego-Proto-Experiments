@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import AIInput from '../components/ui/AIInput';
 import PricingModal from '../components/ui/PricingModal';
 import ShareModal from '../components/ui/ShareModal';
+import SaveModal from '../components/ui/SaveModal';
 import type { ConversationMessage } from '../components/ui/AIInput';
 import { meganConversation, copadoCanDoConversation } from '../conversations';
 
@@ -36,6 +37,7 @@ const WorkspacePage = ({
   const [activeRightPanelTab, setActiveRightPanelTab] = useState<'overview' | 'steps' | 'code' | 'artifacts'>('overview');
   const [showPricingModal, setShowPricingModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
   const [steps, setSteps] = useState<Array<{ id: string; text: string; completed: boolean }>>([
     { id: '1', text: 'Analyzed current architecture issues', completed: true },
     { id: '2', text: 'Designed to be where people work', completed: true },
@@ -105,9 +107,9 @@ const WorkspacePage = ({
 
   // Determine primary action based on workspace type and topic
   const getPrimaryAction = () => {
-    // Strategy, Plan, and Learn -> Share
-    if (workspaceTopic === 'Strategy' || workspaceTopic === 'Plan' || workspaceTopic === 'Planning' || workspaceTopic === 'Learn') {
-      return { label: 'Share', icon: '↗' };
+    // Learn, Chat, Plan -> Save
+    if (workspaceTopic === 'Learn' || workspaceTopic === 'Chat' || workspaceTopic === 'Plan' || workspaceTopic === 'Planning' || workspaceTopic === 'Strategy') {
+      return { label: 'Save', icon: '' }; // Icon will be rendered as SVG
     }
     
     // Code workspaces -> Download
@@ -135,13 +137,30 @@ const WorkspacePage = ({
   };
 
   const handlePrimaryAction = () => {
-    // If action is Share, show share modal
-    if (primaryAction.label === 'Share') {
+    // If action is Save, show save modal
+    if (primaryAction.label === 'Save') {
+      setShowSaveModal(true);
+    } else if (primaryAction.label === 'Share') {
+      // If action is Share, show share modal
       setShowShareModal(true);
     } else {
       // Show pricing modal for other primary actions
       setShowPricingModal(true);
     }
+  };
+
+  const handleSave = (title: string) => {
+    // Update the workspace title
+    if (_onSaveWorkspace) {
+      _onSaveWorkspace(title, {
+        workspaceType,
+        workspaceTopic,
+        initialPrompt,
+        environment
+      });
+    }
+    // Mark as pinned/saved
+    setIsPinned(true);
   };
 
   // Handle panel resizing
@@ -493,21 +512,24 @@ const WorkspacePage = ({
 
           {/* Right: Pin + Share + Primary Action */}
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            <button
-              onClick={() => setIsPinned(!isPinned)}
-              className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors"
-              title={isPinned ? 'Unpin' : 'Pin'}
-            >
-              <svg 
-                className={`w-4 h-4 sm:w-5 sm:h-5 ${isPinned ? 'fill-green-500 text-green-500' : 'text-slate-400'}`} 
-                fill={isPinned ? 'currentColor' : 'none'} 
-                stroke="currentColor" 
-                strokeWidth={2}
-                viewBox="0 0 24 24"
+            {/* Hide bookmark icon for Learn, Chat, Plan workspaces (they use Save button instead) */}
+            {!(workspaceTopic === 'Learn' || workspaceTopic === 'Chat' || workspaceTopic === 'Plan' || workspaceTopic === 'Planning' || workspaceTopic === 'Strategy') && (
+              <button
+                onClick={() => setIsPinned(!isPinned)}
+                className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                title={isPinned ? 'Unpin' : 'Pin'}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-              </svg>
-            </button>
+                <svg 
+                  className={`w-4 h-4 sm:w-5 sm:h-5 ${isPinned ? 'fill-green-500 text-green-500' : 'text-slate-400'}`} 
+                  fill={isPinned ? 'currentColor' : 'none'} 
+                  stroke="currentColor" 
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+              </button>
+            )}
 
             <button
               onClick={() => console.log('Share workspace')}
@@ -523,8 +545,14 @@ const WorkspacePage = ({
               onClick={handlePrimaryAction}
               className="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
             >
-              <span className="hidden sm:inline">{primaryAction.label}</span>
-              <span className="sm:hidden">{primaryAction.icon}</span>
+              {primaryAction.label === 'Save' ? (
+                <span>{primaryAction.label}</span>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">{primaryAction.label}</span>
+                  <span className="sm:hidden">{primaryAction.icon}</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -1345,6 +1373,14 @@ const WorkspacePage = ({
           setShowPricingModal(true);
         }}
         workspaceTitle={workspaceTitle}
+      />
+
+      {/* Save Modal */}
+      <SaveModal
+        isOpen={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={handleSave}
+        initialTitle={workspaceTitle}
       />
     </div>
   );

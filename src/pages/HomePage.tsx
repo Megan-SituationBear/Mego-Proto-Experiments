@@ -280,15 +280,13 @@ const HomePage: React.FC<HomePageProps> = ({
         <>
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 transition-all duration-300"
+            className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 animate-in fade-in duration-300"
             onClick={() => setShowMenu(false)}
           />
           
           {/* Drawer Panel */}
           <div 
-            className={`fixed top-0 right-0 h-full w-96 bg-white border-l border-slate-200 shadow-xl z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
-              showMenu ? 'translate-x-0' : 'translate-x-full'
-            }`}
+            className="fixed top-0 right-0 h-full w-96 bg-white border-l border-slate-200 shadow-2xl z-50 overflow-y-auto animate-in slide-in-from-right duration-300 ease-out"
           >
             {/* Close Button */}
             <div className="flex items-center justify-between p-6 border-b border-slate-100">

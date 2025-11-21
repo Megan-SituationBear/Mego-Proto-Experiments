@@ -269,7 +269,7 @@ const TopNav: React.FC<TopNavProps> = ({
                   </button>
                   
                   {integrationsOpen && (
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-[500px] bg-white rounded-xl shadow-2xl border border-slate-200 p-4 z-50">
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-[500px] bg-white rounded-xl shadow-2xl border border-slate-200 p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
                       <div className="grid grid-cols-2 gap-3">
                         {integrations.map((integration) => {
                           const isConnected = connectedIntegrations[integration.id];
@@ -334,7 +334,7 @@ const TopNav: React.FC<TopNavProps> = ({
                   </button>
                   
                   {learnOpen && (
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-[700px] bg-white rounded-xl shadow-2xl border border-slate-200 p-6 z-50">
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-[700px] bg-white rounded-xl shadow-2xl border border-slate-200 p-6 z-50 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
                       <div className="grid grid-cols-3 gap-6">
                         {/* For You Column - FIRST */}
                         <div className="flex flex-col gap-3">

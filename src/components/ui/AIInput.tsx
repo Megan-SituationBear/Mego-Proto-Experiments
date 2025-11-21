@@ -553,7 +553,7 @@ const AIInput: React.FC<AIInputProps> = ({
   
   // Update placeholder based on mode
   const modePlaceholder = inputMode === 'make' 
-    ? 'create new rules, tests, applications, salesforce work items. Type away, copy + paste large amounts of code. Press button to submit.'
+    ? 'What do you want to create today? Copy and paste long bits of code and instructions here. Press button to submit.'
     : 'What can I help you with today? Press \'enter\' to submit.';
   
   // Use custom placeholder if provided (e.g., "Continue the conversation..."), otherwise use mode-based placeholder
@@ -916,12 +916,12 @@ Can you help me with any questions I have about this setup?`
                 disabled={(!value.trim() && codeSnippets.length === 0) || disabled || loading}
                 className={`p-3.5 rounded-xl transition-all duration-200 ${
                   (value.trim() || codeSnippets.length > 0) && !disabled && !loading
-                    ? 'bg-blue-600 text-white hover:bg-indigo-600 shadow-lg hover:shadow-xl' 
-                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                    ? 'bg-blue-600 hover:bg-indigo-600 shadow-lg hover:shadow-xl' 
+                    : 'bg-slate-100 cursor-not-allowed'
                 }`}
                 title="Send message"
               >
-                <Send className="w-5 h-5" />
+                <Send className={`w-5 h-5 ${(value.trim() || codeSnippets.length > 0) && !disabled && !loading ? 'text-white' : 'text-slate-400'}`} />
               </button>
 
               {/* Settings Button */}
@@ -1312,14 +1312,28 @@ Can you help me with any questions I have about this setup?`
                 !disabled && 
                 !loading && 
                 !(inputMode === 'make' && pageContext === 'home' && !selectedEnvironment)
-                  ? 'bg-blue-600 text-white hover:bg-indigo-600 shadow-lg hover:shadow-xl' 
-                  : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                  ? 'bg-blue-600 hover:bg-indigo-600 shadow-lg hover:shadow-xl' 
+                  : 'bg-slate-100 cursor-not-allowed'
               }`}
               title={inputMode === 'make' && pageContext === 'home' && !selectedEnvironment ? "Select an environment to continue" : "Send message"}
             >
-              <Send className="w-5 h-5" />
+              <Send className={`w-5 h-5 ${
+                (value.trim() || codeSnippets.length > 0) && 
+                !disabled && 
+                !loading && 
+                !(inputMode === 'make' && pageContext === 'home' && !selectedEnvironment)
+                  ? 'text-white' 
+                  : 'text-slate-400'
+              }`} />
               {inputMode === 'make' && (
-                <span className="font-medium text-sm">Submit</span>
+                <span className={`font-medium text-sm ${
+                  (value.trim() || codeSnippets.length > 0) && 
+                  !disabled && 
+                  !loading && 
+                  !(inputMode === 'make' && pageContext === 'home' && !selectedEnvironment)
+                    ? 'text-white' 
+                    : 'text-slate-400'
+                }`}>Submit</span>
               )}
             </button>
           </div>

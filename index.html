@@ -1,288 +1,133 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Copado Q4 Priorities • Megan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-      .feature-showcase {
-        position: relative;
-        background: linear-gradient(to bottom, #f8fafc, #fff);
-        border: 2px solid #e2e8f0;
-        border-radius: 16px;
-        overflow: hidden;
-      }
-      .prototype-frame {
-        opacity: 0.3;
-        pointer-events: none;
-        filter: blur(2px);
-        transition: all 0.3s ease;
-      }
-      .feature-showcase:hover .prototype-frame {
-        opacity: 0.5;
-        filter: blur(1px);
-      }
-      .highlight-box {
-        position: absolute;
-        border: 3px solid #3b82f6;
-        border-radius: 12px;
-        background: rgba(59, 130, 246, 0.1);
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-        animation: pulse-border 2s ease-in-out infinite;
-        z-index: 10;
-      }
-      @keyframes pulse-border {
-        0%, 100% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); }
-        50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.3); }
-      }
-      .feature-notes {
-        background: white;
-        border: 2px solid #cbd5e1;
-        border-radius: 8px;
-        padding: 16px;
-        min-height: 120px;
-      }
-      .feature-notes:focus {
-        outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-      }
-      .feature-notes:empty:before {
-        content: attr(data-placeholder);
-        color: #94a3b8;
-      }
-    </style>
-  </head>
-  <body class="bg-white min-h-screen">
-    <!-- Top Bar -->
-    <header class="border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center">
-            <span class="text-white font-semibold">SB</span>
-          </div>
-          <div class="leading-tight">
-            <div class="text-sm text-slate-600">Megan for</div>
-            <div class="text-base font-semibold text-slate-900">Copado</div>
-          </div>
-        </div>
-        <nav class="flex items-center gap-3">
-          <a href="./copado-home-page.html?view=home" class="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Full Prototype Landing</a>
-          <a href="./card-library-public.html" class="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">Component Library</a>
-        </nav>
-      </div>
-    </header>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Copado AI • Situation Bear Design</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inria+Serif:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    .serif {
+      font-family: 'Inria Serif', serif;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 1s ease-out;
+    }
+    .animate-fade-in-delay {
+      animation: fadeIn 1s ease-out 0.3s both;
+    }
+  </style>
+</head>
+<body class="bg-[#0e0330] min-h-screen flex items-center justify-center p-4 sm:p-8 relative overflow-hidden">
+  
+  <!-- Subtle background pattern -->
+  <div class="absolute inset-0 opacity-5 pointer-events-none">
+    <div class="absolute inset-0" style="
+      background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0);
+      background-size: 32px 32px;
+    "></div>
+  </div>
 
-    <!-- Hero -->
-    <section class="bg-slate-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 class="text-4xl font-bold text-slate-900 mb-2">Q4 Priorities</h1>
-        <p class="text-slate-600">Clean, clickable overview. No flow redesign yet.</p>
-      </div>
-    </section>
-
-    <!-- Feature Showcases -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      
-      <!-- Showcase 1: AI Input Component -->
-      <section class="mb-12">
-        <div class="mb-4">
-          <div class="text-sm font-semibold text-blue-600 mb-1">Q4 • 1 • Feature Highlight</div>
-          <h2 class="text-2xl font-bold text-slate-900">AI Input Component</h2>
-          <p class="text-slate-600 mt-1">Contextual chat component with integrations clarity</p>
-        </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Left: Prototype Preview -->
-          <div class="feature-showcase" style="min-height: 600px;">
-            <div class="prototype-frame h-full">
-              <iframe 
-                src="./copado-home-page.html?view=home" 
-                class="w-full h-full border-0"
-                style="transform: scale(0.9); transform-origin: top left; width: 111%; height: 111%;"
-              ></iframe>
-            </div>
-            <!-- Highlight Box for AI Input (positioned over the input area) -->
-            <div class="highlight-box" style="bottom: 5%; left: 15%; right: 15%; height: 20%;"></div>
-          </div>
-          
-          <!-- Right: Feature Notes -->
-          <div>
-            <h3 class="text-lg font-semibold text-slate-900 mb-3">AI Input Features</h3>
-            <div 
-              class="feature-notes text-sm text-slate-700"
-              contenteditable="true"
-              data-placeholder="Type AI input features here... (Ask/Make modes, environment selection, file uploads, integrations, etc.)"
-            ></div>
-            
-            <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 class="text-sm font-semibold text-blue-900 mb-2">Key Areas:</h4>
-              <ul class="text-sm text-blue-800 space-y-1">
-                <li>• Ask/Make mode toggle</li>
-                <li>• Environment selection</li>
-                <li>• File uploads & context chips</li>
-                <li>• Salesforce integration</li>
-                <li>• Quick actions</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Showcase 2: Landing Page Elements -->
-      <section class="mb-12">
-        <div class="mb-4">
-          <div class="text-sm font-semibold text-blue-600 mb-1">Q4 • 2 • Feature Highlight</div>
-          <h2 class="text-2xl font-bold text-slate-900">Landing Page Architecture</h2>
-          <p class="text-slate-600 mt-1">Hero text, quick start actions, and integrations</p>
-        </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Left: Prototype Preview -->
-          <div class="feature-showcase" style="min-height: 600px;">
-            <div class="prototype-frame h-full">
-              <iframe 
-                src="./copado-home-page.html?view=home" 
-                class="w-full h-full border-0"
-                style="transform: scale(0.9); transform-origin: top left; width: 111%; height: 111%;"
-              ></iframe>
-            </div>
-            <!-- Highlight Box for Hero Text (top center) -->
-            <div class="highlight-box" style="top: 15%; left: 20%; right: 20%; height: 15%;"></div>
-            <!-- Highlight Box for Quick Actions (middle) -->
-            <div class="highlight-box" style="top: 35%; left: 25%; right: 25%; height: 12%;"></div>
-            <!-- Highlight Box for Salesforce Integration (in AI input area) -->
-            <div class="highlight-box" style="bottom: 8%; right: 17%; width: 15%; height: 15%;"></div>
-          </div>
-          
-          <!-- Right: Feature Notes -->
-          <div>
-            <h3 class="text-lg font-semibold text-slate-900 mb-3">Landing Page Features</h3>
-            <div 
-              class="feature-notes text-sm text-slate-700"
-              contenteditable="true"
-              data-placeholder="Type landing page features here... (Hero text, quick actions, navigation, branding, etc.)"
-            ></div>
-            
-            <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 class="text-sm font-semibold text-blue-900 mb-2">Key Areas:</h4>
-              <ul class="text-sm text-blue-800 space-y-1">
-                <li>• Hero text & gradient background</li>
-                <li>• Quick action buttons</li>
-                <li>• Salesforce cloud integration</li>
-                <li>• Recent/Pinned/Artifacts tabs</li>
-                <li>• Copado branding</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Original Orange Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-        <!-- 1. MVP Onboarding: Contextual Chat -->
-        <a href="./contextual-chat.html" class="block rounded-xl bg-orange-100 p-6 border border-orange-200 hover:shadow-md transition-shadow">
-          <div class="text-sm font-semibold text-orange-700 mb-1">Q4 • 1</div>
-          <h2 class="text-xl font-bold text-slate-900 mb-2">MVP Onboarding: Contextual Chat</h2>
-          <p class="text-sm text-slate-700">Self-contained chat component; integrations clarity; large paste; contextual containers; accessible; Salesforce org + sandbox connection clarity.</p>
-        </a>
-
-        <!-- 2. MVP Onboarding: Landing Page Architecture -->
-        <a href="#q4-2" class="block rounded-xl bg-orange-100 p-6 border border-orange-200 hover:shadow-md transition-shadow">
-          <div class="text-sm font-semibold text-orange-700 mb-1">Q4 • 2</div>
-          <h2 class="text-xl font-bold text-slate-900 mb-2">MVP Onboarding: Landing Page</h2>
-          <p class="text-sm text-slate-700">Start work quickly, learn and experiment, introduce branding, delightful and accessible. Scope: landing-visible items only.</p>
-        </a>
-
-        <!-- 3. MVP Onboarding: Integrations -->
-        <a href="#q4-3" class="block rounded-xl bg-orange-100 p-6 border border-orange-200 hover:shadow-md transition-shadow">
-          <div class="text-sm font-semibold text-orange-700 mb-1">Q4 • 3</div>
-          <h2 class="text-xl font-bold text-slate-900 mb-2">MVP Onboarding: Integrations</h2>
-          <p class="text-sm text-slate-700">Clarify what/when to integrate. Contextual guidance; reduce confusion for different roles (e.g., Team Leads).</p>
-        </a>
-
-        <!-- 4. Artifacts -->
-        <a href="#q4-4" class="block rounded-xl bg-orange-100 p-6 border border-orange-200 hover:shadow-md transition-shadow">
-          <div class="text-sm font-semibold text-orange-700 mb-1">Q4 • 4</div>
-          <h2 class="text-xl font-bold text-slate-900 mb-2">Artifacts</h2>
-          <p class="text-sm text-slate-700">Clear, concise architecture to return to artifacts; future-friendly for sharing and changes.</p>
-        </a>
-      </div>
-
-      <!-- Detail Anchors (lightweight placeholders, no flow design) -->
-      <div class="mt-12 space-y-10">
-
-        <section id="q4-2">
-          <h3 class="text-lg font-semibold text-slate-900 mb-2">2) MVP Onboarding: Landing Page</h3>
-          <p class="text-sm text-slate-700">Improve Copado first-run experience. Keep scope to landing items.</p>
-        </section>
-
-        <section id="q4-3">
-          <h3 class="text-lg font-semibold text-slate-900 mb-2">3) MVP Onboarding: Integrations</h3>
-          <p class="text-sm text-slate-700">Contextual integration guidance; role clarity; reduce setup friction.</p>
-        </section>
-
-        <section id="q4-4">
-          <h3 class="text-lg font-semibold text-slate-900 mb-2">4) Artifacts</h3>
-          <p class="text-sm text-slate-700">Architecture for returning to artifacts with clear paths to sharing/changing later.</p>
-        </section>
-
-        <section id="nice-to-haves" class="pt-2">
-          <h3 class="text-lg font-semibold text-slate-900 mb-2">Nice to Haves • WIP</h3>
-          <ul class="text-sm text-slate-700 list-disc ml-5 space-y-1">
-            <li>Starting a project, saving it, seeing contained items</li>
-            <li>Sharing (future) — architecture clarity</li>
-            <li>Using a template, making it your own</li>
-            <li>Getting to all your stuff</li>
-            <li>Full template library functionality</li>
-          </ul>
-        </section>
-      </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 mt-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-sm text-slate-600 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
-        <div>© Megan — Client: Copado</div>
-        <div class="flex gap-4">
-          <a class="text-blue-600 hover:underline" href="./copado-home-page.html?view=home">Full Prototype Landing</a>
-          <a class="text-blue-600 hover:underline" href="./card-library-public.html">Component Library</a>
-          <a class="text-blue-600 hover:underline" href="./launcher.html">Launcher</a>
+  <!-- Main Content Container -->
+  <div class="flex flex-col items-center justify-center space-y-8 sm:space-y-12 max-w-6xl mx-auto z-10 animate-fade-in">
+    
+    <!-- Situation Bear Logo + Header -->
+    <div class="flex flex-col items-center space-y-3 sm:space-y-4">
+      <!-- Animated Logo -->
+      <div class="flex justify-center mb-2">
+        <div class="group cursor-pointer">
+          <svg 
+            width="120" 
+            height="120" 
+            viewBox="0 0 80 80" 
+            class="transition-transform duration-300 group-hover:scale-105"
+          >
+            <defs>
+              <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color: #3b82f6; stop-opacity: 1" />
+                <stop offset="50%" style="stop-color: #6366f1; stop-opacity: 1" />
+                <stop offset="100%" style="stop-color: #8b5cf6; stop-opacity: 1" />
+              </linearGradient>
+            </defs>
+            <circle cx="40" cy="40" r="36" fill="url(#logoGradient)" class="transition-all duration-300"/>
+            <!-- Normal eyes (visible by default) -->
+            <g class="group-hover:opacity-0 transition-opacity duration-300">
+              <circle cx="28" cy="35" r="4" fill="white" />
+              <circle cx="52" cy="35" r="4" fill="white" />
+            </g>
+            <!-- Winking eye (visible on hover) -->
+            <g class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <path d="M 23 35 Q 28 38 33 35" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <circle cx="52" cy="35" r="4" fill="white" />
+            </g>
+            <!-- Smile -->
+            <path d="M 25 50 Q 40 60 55 50" stroke="white" stroke-width="3" stroke-linecap="round" fill="none" class="transition-all duration-300 group-hover:translate-y-0.5"/>
+          </svg>
         </div>
       </div>
-    </footer>
 
-    <!-- Script to save notes -->
-    <script>
-      // Load saved notes from localStorage
-      document.addEventListener('DOMContentLoaded', () => {
-        const noteAreas = document.querySelectorAll('.feature-notes');
-        noteAreas.forEach((area, index) => {
-          const savedContent = localStorage.getItem(`feature-notes-${index}`);
-          if (savedContent) {
-            area.innerHTML = savedContent;
-          }
-          
-          // Save content on blur
-          area.addEventListener('blur', () => {
-            localStorage.setItem(`feature-notes-${index}`, area.innerHTML);
-          });
-          
-          // Also save on input with debounce
-          let timeout;
-          area.addEventListener('input', () => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-              localStorage.setItem(`feature-notes-${index}`, area.innerHTML);
-            }, 500);
-          });
-        });
-      });
-    </script>
-  </body>
+      <!-- Brand Name -->
+      <div class="text-center">
+        <h1 class="text-white text-xl sm:text-2xl tracking-wider serif" style="letter-spacing: -0.05em; line-height: 1.44">
+          SITUATION BEAR DESIGN
+        </h1>
+        <p class="text-[#f6b380] text-xs sm:text-sm tracking-wide mt-1" style="letter-spacing: 0.02em; line-height: 0.784">
+          DESIGNS TO INFORM AN EASIER FUTURE
+        </p>
+      </div>
+    </div>
+
+    <!-- Large Client Name -->
+    <div class="text-center px-4 animate-fade-in-delay">
+      <h2 class="text-white text-5xl sm:text-7xl md:text-8xl serif tracking-tight" style="letter-spacing: -0.05em; line-height: 0.98">
+        COPADO
+      </h2>
+    </div>
+
+    <!-- Goals Text - Clickable -->
+    <a 
+      href="app.html"
+      class="text-center max-w-4xl px-4 hover:opacity-80 transition-opacity duration-200 cursor-pointer group animate-fade-in-delay"
+    >
+      <p class="text-slate-300 text-sm sm:text-base md:text-lg tracking-wide leading-relaxed group-hover:text-white transition-colors" style="letter-spacing: 0.02em">
+        GOALS: ADJUST INFORMATION ARCHITECTURE TO BE MORE INTUITIVE.<br class="hidden sm:block" />
+        STRIKE A BALANCE OF WORK 'IN THE MOMENT' AND LASTING WORK.<br class="hidden sm:block" />
+        CREATE PATHWAYS TO EMBED COPADO CAPABILITIES WHERE PEOPLE WORK.
+      </p>
+      <p class="text-slate-400 text-xs sm:text-sm mt-4 tracking-wide group-hover:text-slate-300 transition-colors">
+        LOGGED OUT VIEW · LOGGED IN, NEW USER · WITH QUICK ACTIONS<br class="hidden sm:block" />
+        CONTEXTUAL, SELF-CONTAINED AI INPUT
+      </p>
+    </a>
+
+    <!-- CTA Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 animate-fade-in-delay">
+      <a 
+        href="app.html"
+        class="bg-[#193cb8] hover:bg-[#1e4dd8] text-white px-8 sm:px-12 py-3 sm:py-4 rounded text-sm sm:text-base font-medium transition-all duration-200 border border-[#193cb8] hover:border-[#1e4dd8] shadow-lg hover:shadow-xl transform hover:scale-105 text-center"
+        style="letter-spacing: -0.02em"
+      >
+        Full Proto
+      </a>
+      <a 
+        href="public/launcher.html"
+        class="bg-slate-700 hover:bg-slate-600 text-white px-8 sm:px-12 py-3 sm:py-4 rounded text-sm sm:text-base font-medium transition-all duration-200 border border-slate-600 hover:border-slate-500 shadow-lg hover:shadow-xl transform hover:scale-105 text-center"
+        style="letter-spacing: -0.02em"
+      >
+        Component Library
+      </a>
+    </div>
+
+  </div>
+
+</body>
 </html>
